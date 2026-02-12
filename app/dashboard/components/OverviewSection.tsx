@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import type { MemberProfile, OverviewStats, OrderStats } from '../types';
+import type { MemberProfile, OverviewStats, OrderStats, OverviewStatsExpanded } from '../types';
 
 type OverviewSectionProps = {
   overviewLoading: boolean;
-  overviewStats: OverviewStats | null;
+  overviewStats: OverviewStats | OverviewStatsExpanded | null;
   profileLoading: boolean;
   profileError: string | null;
   unauthorized: boolean;
@@ -113,6 +113,7 @@ export default function OverviewSection({
                     {overviewStats?.userVoiceMinutes?.toLocaleString('tr-TR') ?? 0}
                   </p>
                 </div>
+                {/* Removed: Son 24 saat - Mesaj and Son 24 saat - Sesli dakika tiles */}
                 <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:col-span-2">
                   <p className="text-xs text-white/50">Sunucuya katılım tarihin</p>
                   <p className="mt-1 text-sm font-semibold text-white">
@@ -125,21 +126,40 @@ export default function OverviewSection({
                   <p className="text-xs text-white/50">Toplam rol</p>
                   <p className="mt-1 text-lg font-semibold text-white">{profile?.roles?.length ?? 0}</p>
                 </div>
+                {(overviewStats as OverviewStatsExpanded)?.totalsSinceVerified ? (
+                  <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:col-span-2">
+                    <p className="text-xs text-white/50">Doğrulandıktan beri (toplam)</p>
+                    <p className="mt-1 text-sm text-white/60">Mesaj: <span className="font-semibold">{(overviewStats as OverviewStatsExpanded)?.totalsSinceVerified?.messages?.toLocaleString?.('tr-TR') ?? (overviewStats as OverviewStatsExpanded)?.totalsSinceVerified?.messages ?? 0}</span> — Ses: <span className="font-semibold">{(overviewStats as OverviewStatsExpanded)?.totalsSinceVerified?.voice_minutes?.toLocaleString?.('tr-TR') ?? (overviewStats as OverviewStatsExpanded)?.totalsSinceVerified?.voice_minutes ?? 0}</span></p>
+                    <p className="mt-1 text-xs text-white/40">Doğrulanma tarihi: {(overviewStats as OverviewStatsExpanded)?.verifiedSince ? new Date((overviewStats as OverviewStatsExpanded)!.verifiedSince!).toLocaleString('tr-TR') : '—'}</p>
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-[#0b0d12]/60 p-5 overview-fade overview-delay-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Sunucu Özeti</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Tag & Boost Kazançlar</p>
               <div className="mt-4 space-y-3">
                 <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Toplam mesaj</p>
-                  <p className="mt-1 text-lg font-semibold text-white">
-                    {overviewStats?.serverMessages?.toLocaleString('tr-TR') ?? 0}
-                  </p>
+                  <p className="text-xs text-white/50">Tag Bonusu (Mesaj)</p>
+                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.tagBonusMessage ?? 0).toLocaleString('tr-TR')}</p>
                 </div>
                 <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Toplam sesli dakika</p>
-                  <p className="mt-1 text-lg font-semibold text-white">
-                    {overviewStats?.serverVoiceMinutes?.toLocaleString('tr-TR') ?? 0}
+                  <p className="text-xs text-white/50">Tag Bonusu (Ses)</p>
+                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.tagBonusVoice ?? 0).toLocaleString('tr-TR')}</p>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-xs text-white/50">Boost Bonusu (Mesaj)</p>
+                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.boosterBonusMessage ?? 0).toLocaleString('tr-TR')}</p>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-xs text-white/50">Boost Bonusu (Ses)</p>
+                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.boosterBonusVoice ?? 0).toLocaleString('tr-TR')}</p>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-xs text-white/50">Senin Durumun</p>
+                  <p className="mt-1 text-sm text-white/60">
+                    Tag: {(overviewStats as OverviewStatsExpanded)?.hasTag ? `Evet — ${new Date((overviewStats as OverviewStatsExpanded)!.tagGrantedAt!).toLocaleString('tr-TR')}` : 'Hayır'}
+                    <br />
+                    Boost: {(overviewStats as OverviewStatsExpanded)?.isBooster ? `Evet — ${new Date((overviewStats as OverviewStatsExpanded)!.boosterSince!).toLocaleString('tr-TR')}` : 'Hayır'}
                   </p>
                 </div>
               </div>

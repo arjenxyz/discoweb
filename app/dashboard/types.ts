@@ -86,6 +86,36 @@ export type OverviewStats = {
   userVoiceMinutes: number;
 };
 
+export type ActivePerk = {
+  role_id: string;
+  title: string | null;
+  applied_at: string | null;
+  expires_at: string | null;
+};
+
+export type TotalsSince = {
+  messages: number;
+  voice_minutes: number;
+};
+
+export type OverviewStatsExpanded = OverviewStats & {
+  hasVerifyRole?: boolean;
+  verifiedSince?: string | null;
+  totalsSinceVerified?: TotalsSince | null;
+  messagesLast24h?: number;
+  voiceMinutesLast24h?: number;
+  activePerks?: ActivePerk[];
+  // tag / booster info
+  tagBonusMessage?: number;
+  tagBonusVoice?: number;
+  boosterBonusMessage?: number;
+  boosterBonusVoice?: number;
+  hasTag?: boolean;
+  tagGrantedAt?: string | null;
+  isBooster?: boolean;
+  boosterSince?: string | null;
+};
+
 export type OrderStats = {
   paidTotal: number;
   pendingCount: number;

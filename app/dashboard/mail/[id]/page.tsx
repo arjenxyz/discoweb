@@ -87,7 +87,7 @@ export default function MailPage() {
     <div className="min-h-screen bg-white text-gray-900">
       <div className="max-w-5xl mx-auto p-6">
         <div className="mb-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 rounded-full hover:bg-gray-100">
+          <button onClick={() => router.push('/dashboard')} className="p-2 rounded-full hover:bg-gray-100">
             <LuChevronLeft className="w-5 h-5" />
           </button>
           <h2 className="text-lg font-medium">Mesaj</h2>

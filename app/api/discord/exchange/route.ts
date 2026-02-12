@@ -253,65 +253,14 @@ export async function POST(request: Request) {
         return !isAlreadyInSetup; // Setup edilmemiş olanları al
       });
 
-      for (const userGuild of allUserGuilds) {
-        try {
-          // Bot bu sunucuda mı kontrol et
-          const botGuildResponse = await fetch(
-            `https://discord.com/api/guilds/${userGuild.id}`,
-            {
-              headers: { Authorization: `Bot ${botToken}` },
-            },
-          );
-
-          if (botGuildResponse.ok) {
-            // Bot bu sunucuda, ama setup edilmemiş
-            const botGuild = await botGuildResponse.json();
-
-            // Kullanıcının bu sunucuda üye olup olmadığını tekrar kontrol et
-            const memberResponse = await fetch(
-              `https://discord.com/api/guilds/${userGuild.id}/members/${user.id}`,
-              {
-                headers: { Authorization: `Bot ${botToken}` },
-              },
-            );
-
-            if (memberResponse.ok) {
-              const member = (await memberResponse.json()) as { roles: string[] };
-
-              // Bu sunucu için veritabanında kayıt var mı kontrol et
-              const { data: existingServer } = await supabase
-                .from('servers')
-                .select('admin_role_id, verify_role_id, is_setup')
-                .eq('discord_id', userGuild.id)
-                .single();
-
-              if (existingServer) {
-                // Sunucu kayıtlı ama setup edilmemiş
-                const isAdmin = existingServer.admin_role_id ? member.roles.includes(existingServer.admin_role_id) : false;
-                adminGuilds.push({
-                  id: userGuild.id,
-                  name: botGuild.name,
-                  isAdmin: isAdmin,
-                  isSetup: false, // Setup edilmemiş olarak işaretle
-                  verifyRoleId: existingServer.verify_role_id,
-                  isOwner: Boolean(userGuild.owner)
-                });
-              } else {
-                // Sunucu hiç kayıtlı değil, ama bot orada
-                adminGuilds.push({
-                  id: userGuild.id,
-                  name: botGuild.name,
-                  isAdmin: false, // Setup olmadığı için admin değil
-                  isSetup: false,
-                  verifyRoleId: null,
-                  isOwner: Boolean(userGuild.owner)
-                });
-              }
-            }
-          }
-        } catch (error) {
-          console.log(`Sunucu ${userGuild.name} (${userGuild.id}) kontrol edilemedi:`, error);
-        }
+      // Skip checking non-setup servers for now. We will only monitor and
+      // perform member/admin checks for servers that have an entry in the
+      // `servers` table with `is_setup = true`. This prevents rewarding or
+      // listening to servers that haven't completed initial setup. Once a
+      // server is setup (created/updated in the DB), it will be included in
+      // the `setupServers` above and processed normally.
+      if (allUserGuilds.length > 0) {
+        console.log('Skipping checks for non-setup user guilds; they will be handled after setup. Count:', allUserGuilds.length);
       }
     }
 

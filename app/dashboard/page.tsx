@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { getSupabaseClient } from '../../lib/supabaseClient';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -20,6 +21,7 @@ import type {
   MemberProfile,
   Notification,
   OverviewStats,
+  OverviewStatsExpanded,
   StoreItem,
   MailItem,
   PurchaseFeedback,
@@ -38,7 +40,7 @@ export default function DashboardPage() {
   const unauthorizedRef = useRef(unauthorized);
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletLoading, setWalletLoading] = useState(true);
-  const [overviewStats, setOverviewStats] = useState<OverviewStats | null>(null);
+  const [overviewStats, setOverviewStats] = useState<OverviewStats | OverviewStatsExpanded | null>(null);
   const [adminOverview, setAdminOverview] = useState<any | null>(null);
   const [adminOverviewLoading, setAdminOverviewLoading] = useState(false);
   const [overviewLoading, setOverviewLoading] = useState(true);
@@ -422,6 +424,52 @@ export default function DashboardPage() {
     }
   }, [unauthorized]);
 
+  // Supabase realtime subscriptions for live updates
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    if (unauthorized) return;
+    const guildId = headerServer.data?.id;
+    if (!guildId) return;
+
+    let walletSub: any = null;
+    let overviewSub: any = null;
+
+    try {
+      // subscribe to member_wallets changes for this guild -> refresh balance
+      walletSub = supabase
+        .channel('public:member_wallets')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'member_wallets', filter: `guild_id=eq.${guildId}` }, (payload) => {
+          void refreshWalletBalance();
+        })
+        .subscribe();
+
+      // subscribe to member_overview_stats or server_overview_stats changes -> refresh overview
+      overviewSub = supabase
+        .channel('public:overview_stats')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'member_overview_stats', filter: `guild_id=eq.${guildId}` }, (payload) => {
+          // reload overview for current user
+          (async () => { const res = await fetch('/api/member/overview'); if (res.ok) { const data = await res.json(); setOverviewStats(data); } })();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'server_overview_stats', filter: `guild_id=eq.${guildId}` }, (payload) => {
+          (async () => { const res = await fetch('/api/member/overview'); if (res.ok) { const data = await res.json(); setOverviewStats(data); } })();
+        })
+        .subscribe();
+    } catch (e) {
+      // ignore subscription failures (fallback to polling already present)
+      console.warn('Supabase realtime subscription failed', e);
+    }
+
+    return () => {
+      try {
+        if (walletSub) supabase.removeChannel(walletSub);
+        if (overviewSub) supabase.removeChannel(overviewSub);
+      } catch (e) {
+        // ignore
+      }
+    };
+  }, [unauthorized, headerServer.data?.id]);
+
   const loginUrl = useMemo(() => {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? '';
     const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI ?? '';
@@ -749,30 +797,7 @@ export default function DashboardPage() {
             )}
             {!isSiteMaintenance && effectiveSection === 'overview' && (
               <>
-                {Array.isArray(headerServer.guilds) && headerServer.guilds.length > 0 && (
-                  <section className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6 overview-fade">
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Sunucu Hızlı İstatistik</p>
-                    <p className="mt-1 text-sm text-white/60">Son 24 saat ve toplam özet.</p>
-                    <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                      <div className="rounded-xl border border-white/10 bg-[#0b0d12]/60 p-4">
-                        <p className="text-xs text-white/50">24s Mesaj</p>
-                        <p className="mt-1 text-lg font-semibold text-white">{adminOverviewLoading ? '...' : (adminOverview?.rangeMessages ?? 0).toLocaleString('tr-TR')}</p>
-                      </div>
-                      <div className="rounded-xl border border-white/10 bg-[#0b0d12]/60 p-4">
-                        <p className="text-xs text-white/50">24s Sesli dakika</p>
-                        <p className="mt-1 text-lg font-semibold text-white">{adminOverviewLoading ? '...' : (adminOverview?.rangeVoiceMinutes ?? 0).toLocaleString('tr-TR')}</p>
-                      </div>
-                      <div className="rounded-xl border border-white/10 bg-[#0b0d12]/60 p-4">
-                        <p className="text-xs text-white/50">Toplam mesaj</p>
-                        <p className="mt-1 text-lg font-semibold text-white">{adminOverviewLoading ? '...' : (adminOverview?.totalMessages ?? 0).toLocaleString('tr-TR')}</p>
-                      </div>
-                      <div className="rounded-xl border border-white/10 bg-[#0b0d12]/60 p-4">
-                        <p className="text-xs text-white/50">Toplam sesli dakika</p>
-                        <p className="mt-1 text-lg font-semibold text-white">{adminOverviewLoading ? '...' : (adminOverview?.totalVoiceMinutes ?? 0).toLocaleString('tr-TR')}</p>
-                      </div>
-                    </div>
-                  </section>
-                )}
+                {/* Server quick stats removed as requested */}
                 <OverviewSection
                   overviewLoading={overviewLoading}
                   overviewStats={overviewStats}
