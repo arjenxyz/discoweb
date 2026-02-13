@@ -24,6 +24,7 @@ const SENDER_CONFIG = {
     name: 'Sistem Duyuruları',
     email: 'announcements@system.local',
     avatar: '🔔',
+    avatarUrl: '/gif/from.gif',
     verified: true
   },
   system: {
@@ -38,36 +39,42 @@ const SENDER_CONFIG = {
     name: 'Bakım Ekibi',
     email: 'maintenance@system.local',
     avatar: '🔧',
+    avatarUrl: '/gif/from.gif',
     verified: true
   },
   sponsor: {
     name: 'İş Ortaklıkları',
     email: 'partnerships@system.local',
     avatar: '💼',
+    avatarUrl: '/gif/from.gif',
     verified: false
   },
   update: {
     name: 'Ürün Güncellemeleri',
     email: 'updates@system.local',
     avatar: '✨',
+    avatarUrl: '/gif/from.gif',
     verified: true
   },
   lottery: {
     name: 'Kampanya Yönetimi',
     email: 'campaigns@system.local',
     avatar: '🎉',
+    avatarUrl: '/gif/from.gif',
     verified: false
   },
   reward: {
     name: 'Ödül Merkezi',
     email: 'rewards@system.local',
     avatar: '🎁',
+    avatarUrl: '/gif/from.gif',
     verified: true
   },
   order: {
     name: 'Sipariş Yönetimi',
     email: 'orders@system.local',
     avatar: '📦',
+    avatarUrl: '/gif/from.gif',
     verified: true
   },
 } as const;
@@ -178,6 +185,58 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
 
     // Receipt-style rendering for order/reward
     if (category === 'order' || category === 'reward') {
+      // Prefer metadata if present on the mail record (added by server)
+      try {
+        const meta = (mail as any)?.metadata;
+        if (meta && typeof meta === 'object') {
+          const items = Array.isArray(meta.items) ? meta.items : [];
+          const subtotal = Number(meta.subtotal || 0);
+          const discount = Number(meta.discount || 0);
+          const total = Number(meta.total || 0);
+
+          return (
+            <div className="receipt-card rounded-xl p-6 mt-2">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                    <div className="text-sm receipt-sub">Dijital Makbuz</div>
+                    <div className="text-lg receipt-title">{mail.title}</div>
+                </div>
+                <div className="text-right">
+                    <div className="text-xs receipt-sub">Tarih</div>
+                    <div className="text-sm receipt-sub">{new Date(meta.purchase_date || mail.created_at).toLocaleString('tr-TR')}</div>
+                </div>
+              </div>
+
+              <div className="grid gap-3">
+                {items.map((it: any, idx: number) => (
+                  <div key={idx} className="flex items-center justify-between">
+                      <div className="text-sm item-name truncate">{it.title}</div>
+                      <div className="text-sm item-price font-mono">{Number(it.total).toFixed(2)} Papel</div>
+                  </div>
+                ))}
+              </div>
+
+                <div className="mt-6 pt-4 border-t border-white/5">
+                  <div className="flex justify-between text-sm"><div className="subtotal-label">Ara Toplam</div><div className="subtotal-value">{subtotal.toFixed(2)} Papel</div></div>
+                  <div className="flex justify-between text-sm mt-2"><div className="discount-label">İndirim</div><div className="discount-value">{discount.toFixed(2)} Papel</div></div>
+                  {meta && (meta.coupon_code || meta.coupon_pct) && (
+                    <div className="mt-2">
+                      <div className="inline-flex items-center gap-3 px-3 py-2 bg-green-600 rounded-full text-sm shadow-sm coupon-badge">
+                        <div className="text-white font-medium">Kupon uygulandı</div>
+                        <div className="px-2 py-0.5 bg-white rounded text-xs font-mono text-green-700 border border-green-100">{meta.coupon_code ?? ''}</div>
+                        {meta.coupon_pct && <div className="text-white text-sm">{`(${meta.coupon_pct}%)`}</div>}
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex justify-between mt-4"><div className="text-lg font-semibold">Toplam</div><div className="total-value">{total.toFixed(2)} Papel</div></div>
+                </div>
+            </div>
+          );
+        }
+      } catch (e) {
+        // fall back to parsing the body below
+      }
+
       // Try to extract a table of line items if present
       const table = doc ? doc.querySelector('table') : null;
       const items: Array<{ label: string; qty?: string; price?: number }> = [];
@@ -207,30 +266,30 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
       const total = items.reduce((s, it) => s + (it.price || 0), 0);
 
       return (
-        <div className="receipt-card bg-white/5 border border-white/5 rounded-xl p-6 mt-2">
+        <div className="receipt-card rounded-xl p-6 mt-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="text-sm text-zinc-300">Dijital Makbuz</div>
-              <div className="text-lg font-semibold text-white">{mail.title}</div>
+              <div className="text-sm receipt-sub">Dijital Makbuz</div>
+              <div className="text-lg receipt-title">{mail.title}</div>
             </div>
             <div className="text-right">
-              <div className="text-xs text-zinc-400">Tarih</div>
-              <div className="text-sm text-zinc-300">{new Date(mail.created_at).toLocaleString('tr-TR')}</div>
+              <div className="text-xs receipt-sub">Tarih</div>
+              <div className="text-sm receipt-sub">{new Date(mail.created_at).toLocaleString('tr-TR')}</div>
             </div>
           </div>
 
           <div className="grid gap-3">
             {items.map((it, idx) => (
               <div key={idx} className="flex items-center justify-between">
-                <div className="text-sm text-zinc-300 truncate">{it.label}</div>
-                <div className="text-sm text-zinc-300 font-mono">{it.price ? it.price.toFixed(2) : '-'}</div>
+                <div className="text-sm item-name truncate">{it.label}</div>
+                <div className="text-sm item-price font-mono">{it.price ? it.price.toFixed(2) : '-'}</div>
               </div>
             ))}
           </div>
 
           <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-            <div className="text-sm text-zinc-400">Toplam</div>
-            <div className="text-2xl font-extrabold text-white" style={{ textShadow: '0 4px 18px rgba(99,102,241,0.12)' }}>{total.toFixed(2)} ₺</div>
+            <div className="text-sm subtotal-label">Toplam</div>
+            <div className="total-value" style={{ textShadow: '0 4px 18px rgba(79,70,229,0.08)' }}>{total.toFixed(2)} ₺</div>
           </div>
         </div>
       );
@@ -240,10 +299,10 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
     if (category === 'system' || category === 'maintenance') {
       // Render raw HTML for system/maintenance mails without extra boxed UI
       return (
-        <div className="mt-2 text-zinc-300 leading-relaxed">
+        <div className="mt-2 text-gray-700 leading-relaxed">
           <div dangerouslySetInnerHTML={{ __html: body }} />
           {doc && doc.querySelector('pre') && (
-            <pre className="mt-3 p-3 rounded-md font-mono text-xs text-zinc-300 overflow-auto">{textContent(doc.querySelector('pre'))}</pre>
+            <pre className="mt-3 p-3 rounded-md font-mono text-xs text-gray-700 overflow-auto">{textContent(doc.querySelector('pre'))}</pre>
           )}
         </div>
       );
@@ -252,7 +311,7 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
     // General HTML: render inside a themed container and style common tags
     // Render raw HTML without boxed/card UI so it appears as plain document content.
     return (
-      <div className="mt-2 text-zinc-300 leading-relaxed">
+      <div className="mt-2 text-gray-700 leading-relaxed">
         <div dangerouslySetInnerHTML={{ __html: body }} />
       </div>
     );
@@ -352,6 +411,29 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
         /* Ensure avatars and attachments keep light backgrounds */
         .email-modal .bg-blue-600 { background-color: #2563eb !important; }
         .email-modal .group-hover\:opacity-100 { opacity: 1 !important; }
+
+        /* Receipt card — solid background and colored accents for clarity */
+        .email-modal .receipt-card {
+          background: #ffffff !important;
+          border: 1px solid rgba(15,23,42,0.06);
+          color: #0f172a;
+          box-shadow: 0 6px 20px rgba(2,6,23,0.06);
+        }
+
+        .email-modal .receipt-card .receipt-title { color: #0b1220; font-weight: 700; }
+        .email-modal .receipt-card .receipt-sub { color: #374151; }
+        .email-modal .receipt-card .item-name { color: #0f172a; }
+        .email-modal .receipt-card .item-price { color: #4f46e5; font-weight: 700; }
+        .email-modal .receipt-card .subtotal-label, .email-modal .receipt-card .discount-label { color: #6b7280; font-weight: 600; }
+        .email-modal .receipt-card .subtotal-value { color: #dc2626; font-weight: 700; }
+        .email-modal .receipt-card .discount-value { color: #10B981; font-weight: 700; }
+        .email-modal .receipt-card .total-value { color: #0f172a; font-weight: 900; font-size: 1.25rem; }
+
+        /* Ensure coupon badge text visibility; allow making it fully black if requested */
+        .email-modal .receipt-card .coupon-badge { color: #0f172a !important; }
+        .email-modal .receipt-card .coupon-badge .text-white { color: #0f172a !important; }
+        .email-modal .receipt-card .coupon-badge .text-sm { color: #0f172a !important; }
+        .email-modal .receipt-card .coupon-badge .font-mono { color: #0f172a !important; }
 
       `}</style>
 

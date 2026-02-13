@@ -247,7 +247,14 @@ export async function POST(request: Request) {
       await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'roles_fetch_failed' }).eq('id', order?.id);
       return NextResponse.json({ error: 'roles_fetch_failed' }, { status: 500 });
     }
-    const rolesList = await rolesRes.json();
+    type DiscordRole = {
+      id: string;
+      name?: string;
+      position?: number;
+      permissions?: string | number;
+      [key: string]: unknown;
+    };
+    const rolesList: DiscordRole[] = await rolesRes.json();
 
     // bot identity
     const meRes = await discordFetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bot ${botToken}` } }, { retries: 2 });
@@ -264,9 +271,10 @@ export async function POST(request: Request) {
     let botPerms = BigInt(0);
     if (botMember && Array.isArray(botMember.roles)) {
       for (const rId of botMember.roles) {
-        const r = (rolesList || []).find((x: any) => String(x.id) === String(rId));
+        const r = (rolesList || []).find((x: DiscordRole) => String(x.id) === String(rId));
         if (r) {
           botMaxPos = Math.max(botMaxPos, Number(r.position ?? 0));
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           try { botPerms = botPerms | BigInt(r.permissions || 0); } catch (e) {}
         }
       }
@@ -275,7 +283,7 @@ export async function POST(request: Request) {
 
     for (const it of orderItems) {
       if (!it.role_id) continue;
-      const targetRole = (rolesList || []).find((r: any) => String(r.id) === String(it.role_id));
+      const targetRole = (rolesList || []).find((r: DiscordRole) => String(r.id) === String(it.role_id));
       if (!targetRole) {
         await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'invalid_role_id' }).eq('id', order?.id);
         return NextResponse.json({ error: 'invalid_role_id', message: 'Ürün rolü sunucuda bulunamadı.' }, { status: 400 });
@@ -399,6 +407,7 @@ export async function POST(request: Request) {
         if (!res.ok) return null;
         const u = await res.json();
         return { username: u.username, avatar: u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : null };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         return null;
       }
@@ -428,12 +437,22 @@ export async function POST(request: Request) {
 
     const receiptBody = lines.join('\n');
 
+    const metadata = {
+      order_id: updatedOrder.id,
+      items: orderItems.map(it => ({ title: it.title, qty: it.qty, price: it.price, total: it.total })),
+      subtotal: Number(subtotal),
+      discount: Number(discountAmount ?? 0),
+      total: Number(total),
+      purchase_date: updatedOrder.applied_at ?? updatedOrder.created_at,
+    };
+
     const { error: mailErr } = await supabase.from('system_mails').insert({
       guild_id: selectedGuildId,
       user_id: userId,
       title: `Sipariş Onayı`,
       body: receiptBody,
-      category: 'reward',
+      metadata: metadata,
+      category: 'order',
       status: 'published',
       created_at: new Date().toISOString(),
       author_name: userInfo?.username ?? null,

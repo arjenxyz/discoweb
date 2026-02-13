@@ -13,6 +13,7 @@ type Database = {
           user_id: string | null;
           title: string;
           body: string;
+          metadata?: any | null;
           category: string;
           status: string;
           created_at: string;
@@ -26,6 +27,7 @@ type Database = {
           user_id?: string | null;
           title: string;
           body: string;
+          metadata?: any | null;
           category: string;
           status?: string;
           created_at?: string;
@@ -39,6 +41,7 @@ type Database = {
           user_id?: string | null;
           title?: string;
           body?: string;
+          metadata?: any | null;
           category?: string;
           status?: string;
           created_at?: string;
@@ -98,7 +101,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('system_mails')
-    .select('id,title,body,category,status,created_at,user_id,author_name,author_avatar_url,image_url,details_url')
+    .select('id,title,body,metadata,category,status,created_at,user_id,author_name,author_avatar_url,image_url,details_url')
     .eq('guild_id', selectedGuildId)
     .eq('status', 'published')
     .or(`user_id.is.null,user_id.eq.${userId}`)
