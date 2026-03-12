@@ -18,6 +18,7 @@ import TransferModal from './components/TransferModal';
 import PromotionsModal from './components/PromotionsModal';
 import DiscountsModal from './components/DiscountsModal';
 import MailDetailModal from './components/MailDetailModal';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 import type {
   MemberProfile,
   Notification,
@@ -506,7 +507,8 @@ export default function DashboardPage() {
   };
 
   const renderNotificationBody = (body: string) => {
-    return <span dangerouslySetInnerHTML={{ __html: body }} />;
+    const safeBody = sanitizeHtml(body);
+    return <span dangerouslySetInnerHTML={{ __html: safeBody }} />;
   };
 
   const handlePurchase = async (itemId: string) => {

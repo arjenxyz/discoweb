@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { logWebEvent } from '@/lib/serverLogger';
+import { getSessionUserId } from '@/lib/auth';
+import { isAdminOrDeveloper } from '@/lib/adminAuth';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 const DEFAULT_SLUG = 'default';
@@ -21,71 +23,10 @@ const getSupabase = () => {
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 };
 
-const isAdminUser = async () => {
-  try {
-    const botToken = process.env.DISCORD_BOT_TOKEN;
-    if (!botToken) {
-      console.log('discounts isAdminUser: No bot token');
-      return false;
-    }
-
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
-    const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-    if (!userId || !selectedGuildId) {
-      console.log('discounts isAdminUser: Missing user ID or guild ID', { userId, selectedGuildId });
-      return false;
-    }
-
-    // Get admin role from server configuration
-    const supabase = getSupabase();
-    if (!supabase) {
-      console.log('discounts isAdminUser: No supabase client');
-      return false;
-    }
-
-    const { data: server } = await supabase
-      .from('servers')
-      .select('admin_role_id')
-      .eq('discord_id', selectedGuildId)
-      .maybeSingle();
-
-    console.log('discounts isAdminUser: Server data:', server);
-
-    if (!server?.admin_role_id) {
-      console.log('discounts isAdminUser: No admin role ID found');
-      return false;
-    }
-
-    console.log('discounts isAdminUser: Admin role ID:', server.admin_role_id);
-
-    // Check Discord API for user roles
-    const memberResponse = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${userId}`, {
-      headers: { Authorization: `Bot ${botToken}` },
-    });
-
-    console.log('discounts isAdminUser: Member response status:', memberResponse.status);
-
-    if (!memberResponse.ok) {
-      console.log('discounts isAdminUser: Member response not ok');
-      return false;
-    }
-
-    const member = (await memberResponse.json()) as { roles: string[] };
-    console.log('discounts isAdminUser: Member roles:', member.roles);
-    const hasRoleResult = member.roles.includes(server.admin_role_id);
-    console.log('discounts isAdminUser: Has admin role:', hasRoleResult);
-
-    return hasRoleResult;
-  } catch (error) {
-    console.error('discounts isAdminUser: Admin check failed:', error);
-    return false;
-  }
-};
+const isAdminUser = isAdminOrDeveloper;
 
 const getAdminId = async () => {
-  const cookieStore = await cookies();
-  return cookieStore.get('discord_user_id')?.value ?? null;
+  return getSessionUserId();
 };
 
 const resolveServerId = async (supabase: SupabaseClient) => {
@@ -227,12 +168,57 @@ export async function POST(request: Request) {
   try {
     if (payload.is_special) {
       const mailTitle = `Yeni Özel Promosyon Kodu: ${codeNormalized}`;
-      const mailBody = `Sunucunuz için yeni özel indirim kodu oluşturuldu: ${codeNormalized}.\n\nSepette görünmesi birkaç saniye alabilir; hesabınızda görünmüyorsa sayfayı yenileyin.`;
+      const mailBody = `
+<div style="font-family: Inter, Roboto, sans-serif; color: #0f172a; background: linear-gradient(180deg,#ffffff 0%, #fbfbff 100%); padding:20px; border-radius:12px; max-width:640px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div>
+      <div style="font-size:13px;color:#6b7280;margin-bottom:4px">Yeni Özel Promosyon</div>
+      <div style="font-size:18px;font-weight:700;color:#0b1220">${mailTitle}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <div style="background:linear-gradient(90deg,#7c3aed,#06b6d4);color:white;padding:8px 12px;border-radius:999px;font-weight:700;font-family:monospace">${codeNormalized}</div>
+      <div style="font-size:12px;color:#374151">Gönderildi: ${new Date().toLocaleDateString('tr-TR')}</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px">
+    <div style="padding:12px;border-radius:10px;background:#f8fafc">
+      <div style="font-size:12px;color:#6b7280">İndirim Oranı</div>
+      <div style="font-size:20px;font-weight:800;color:#111827">%${payload.percent}</div>
+    </div>
+    <div style="padding:12px;border-radius:10px;background:#f8fafc">
+      <div style="font-size:12px;color:#6b7280">Kullanım</div>
+      <div style="font-size:16px;font-weight:700;color:#111827">${maxUses === null ? 'Sınırsız' : String(maxUses)}</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:6px">Kullanıcı başına limit: <strong style="color:#0b1220">${perUserLimit}</strong></div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+    <div style="font-size:13px;color:#6b7280">Minimum Sepet: <strong style="color:#0b1220">${minSpendValue} Papel</strong></div>
+    <div style="font-size:13px;color:#6b7280">Son Kullanma: <strong style="color:#0b1220">${payload.expiresAt ? new Date(payload.expiresAt).toLocaleString('tr-TR') : '—'}</strong></div>
+  </div>
+
+  <div style="margin-top:14px;padding:12px;border-radius:8px;background:#fff;border:1px solid rgba(15,23,42,0.04);">
+    <div style="font-size:13px;color:#374151">Not:</div>
+    <div style="font-size:13px;color:#6b7280;margin-top:6px">Sepette görünmesi birkaç saniye alabilir; hesabınızda görünmüyorsa sayfayı yenileyin.</div>
+  </div>
+</div>
+`;
+
       await supabase.from('system_mails').insert({
         guild_id: selectedGuildId,
         user_id: null,
         title: mailTitle,
         body: mailBody,
+        metadata: {
+          code: codeNormalized,
+          percent: payload.percent,
+          maxUses,
+          perUserLimit,
+          minSpend: minSpendValue,
+          expiresAt: payload.expiresAt ?? null,
+          is_welcome: payload.is_welcome ?? false,
+        },
         category: 'lottery',
         status: 'published',
         created_at: new Date().toISOString(),

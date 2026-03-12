@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { logWebEvent } from '@/lib/serverLogger';
+import { getSessionUserId } from '@/lib/auth';
 
 const DEFAULT_SLUG = 'default';
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
@@ -47,8 +48,7 @@ const getSupabase = (): SupabaseClient | null => {
 };
 
 const getUserId = async () => {
-  const cookieStore = await cookies();
-  return cookieStore.get('discord_user_id')?.value ?? null;
+  return getSessionUserId();
 };
 
 const hasRole = async (userId: string, roleId?: string | null, guildId?: string) => {

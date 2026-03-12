@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
+import { getSessionUserId } from '@/lib/auth';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
 
   const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value;
+  const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const url = new URL(req.url);

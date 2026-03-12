@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { logWebEvent } from '@/lib/serverLogger';
+import { getSessionUserId } from '@/lib/auth';
 
 const DEFAULT_SLUG = 'default';
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
   }
 
   const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value;
+  const userId = await getSessionUserId();
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }

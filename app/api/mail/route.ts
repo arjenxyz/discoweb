@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { getSessionUserId, requireSessionUser } from '@/lib/auth';
 
 type Database = {
   public: {
@@ -88,8 +89,7 @@ export async function GET() {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
 
-  const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value ?? null;
+  const userId = await getSessionUserId();
   const selectedGuildId = await getSelectedGuildId();
 
   if (!selectedGuildId) {
@@ -166,11 +166,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
 
-  const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value ?? null;
-  if (!userId) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  const session = await requireSessionUser(request);
+  if (!session.ok) {
+    return session.response;
   }
+  const userId = session.userId;
 
   const payload = (await request.json()) as { id?: string; ids?: string[] };
   const ids = payload.ids ?? (payload.id ? [payload.id] : []);
@@ -194,7 +194,11 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
 
-  const cookieStore = await cookies();
+  const session = await requireSessionUser(request);
+  if (!session.ok) {
+    return session.response;
+  }
+  const userId = session.userId;
   const selectedGuildId = await getSelectedGuildId();
   if (!selectedGuildId) {
     return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
@@ -206,16 +210,17 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
   }
 
-  // Soft-delete mails by setting status to 'deleted' so they no longer appear
+  // Soft-delete personal mails by setting status to 'deleted'.
+  // Global mails (user_id is null) are not deleted by this endpoint.
   const { error } = await supabase
     .from('system_mails')
     .update({ status: 'deleted' })
     .in('id', ids)
-    .eq('guild_id', selectedGuildId);
+    .eq('guild_id', selectedGuildId)
+    .eq('user_id', userId);
 
   if (error) {
     return NextResponse.json({ error: 'delete_failed' }, { status: 500 });
   }
-
   return NextResponse.json({ status: 'ok' });
 }

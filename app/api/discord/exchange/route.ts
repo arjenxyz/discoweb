@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { logWebEvent } from '@/lib/serverLogger';
 import { createClient } from '@supabase/supabase-js';
+import { setSessionCookies } from '@/lib/auth';
 
 interface Guild {
   id: string;
@@ -64,11 +65,22 @@ export async function POST(request: Request) {
       scope: 'identify guilds',
     });
 
-    const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
-    });
+    let tokenResponse: Response;
+    try {
+      tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      });
+    } catch (e) {
+      console.error('discord/exchange token fetch failed', e);
+      await logWebEvent(request, {
+        event: 'discord_exchange_failed',
+        status: 'token_fetch_error',
+        metadata: { error: String(e) },
+      });
+      return NextResponse.json({ status: 'error', reason: 'token_fetch_error' }, { status: 502 });
+    }
 
     if (!tokenResponse.ok) {
       let discordBody = null;
@@ -92,9 +104,20 @@ export async function POST(request: Request) {
       token_type?: string;
     };
 
-    const userResponse = await fetch('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
-    });
+    let userResponse: Response;
+    try {
+      userResponse = await fetch('https://discord.com/api/users/@me', {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      });
+    } catch (e) {
+      console.error('discord/exchange user fetch failed', e);
+      await logWebEvent(request, {
+        event: 'discord_exchange_failed',
+        status: 'user_fetch_error',
+        metadata: { error: String(e) },
+      });
+      return NextResponse.json({ status: 'error', reason: 'user_fetch_error' }, { status: 502 });
+    }
 
     if (!userResponse.ok) {
       let discordBody = null;
@@ -120,9 +143,20 @@ export async function POST(request: Request) {
     };
 
     // Kullanıcının bulunduğu tüm sunucuları al
-    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
-    });
+    let guildsResponse: Response;
+    try {
+      guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      });
+    } catch (e) {
+      console.error('discord/exchange guilds fetch failed', e);
+      await logWebEvent(request, {
+        event: 'discord_exchange_failed',
+        status: 'guilds_fetch_error',
+        metadata: { error: String(e) },
+      });
+      return NextResponse.json({ status: 'error', reason: 'guilds_fetch_error' }, { status: 502 });
+    }
 
     if (!guildsResponse.ok) {
       let discordBody = null;
@@ -159,6 +193,7 @@ export async function POST(request: Request) {
           {
             discord_id: user.id,
             username: user.username,
+            avatar: user.avatar ?? null,
             email: user.email ?? null,
             oauth_access_token: tokenData.access_token,
             oauth_refresh_token: tokenData.refresh_token ?? null,
@@ -186,91 +221,85 @@ export async function POST(request: Request) {
       );
     }
 
-    // Sadece setup yapılmış ve kullanıcının erişebildiği sunucuları döndür
+    // Kullanıcının erişebildiği ve botun bulunduğu sunucuları döndür
     const adminGuilds: Guild[] = [];
 
     if (supabase) {
-      // Önce Supabase'den setup edilmiş sunucuları çek
-      const { data: setupServers } = await supabase
+      // Supabase'den bilinen sunucuları çek (setup şartı yok)
+      const { data: knownServers } = await supabase
         .from('servers')
         .select('discord_id, name, admin_role_id, verify_role_id, is_setup')
-        .eq('is_setup', true);
+        .in('discord_id', guilds.map((g) => g.id));
 
-      if (setupServers) {
-        for (const server of setupServers) {
-          // Bu sunucu kullanıcının bulunduğu sunucular arasında mı kontrol et
-          const userGuild = guilds.find(g => g.id === server.discord_id);
-          if (!userGuild) continue; // Kullanıcı bu sunucuda değil
+      const serverByGuildId = new Map((knownServers ?? []).map((server) => [server.discord_id, server]));
 
-          // Daha detaylı loglama ekle
-          console.log(`Admin kontrolü başlatıldı: Sunucu=${server.name}, Kullanıcı=${user.id}`);
+      for (const userGuild of guilds) {
+        const server = serverByGuildId.get(userGuild.id);
 
-          try {
-            const memberResponse = await fetch(
-              `https://discord.com/api/guilds/${server.discord_id}/members/${user.id}`,
-              {
-                headers: { Authorization: `Bot ${botToken}` },
-              },
-            );
+        // Daha detaylı loglama ekle
+        console.log(`Admin kontrolü başlatıldı: Sunucu=${userGuild.name}, Kullanıcı=${user.id}`);
 
-            if (memberResponse.ok) {
-              const member = (await memberResponse.json()) as { roles: string[] };
-              const isAdmin = server.admin_role_id ? member.roles.includes(server.admin_role_id) : false;
+        try {
+          const memberResponse = await fetch(
+            `https://discord.com/api/guilds/${userGuild.id}/members/${user.id}`,
+            {
+              headers: { Authorization: `Bot ${botToken}` },
+            },
+          );
 
-              console.log(`Sunucu ${server.name}: admin_role_id=${server.admin_role_id}, user_roles=${member.roles}, isAdmin=${isAdmin}`);
+          if (memberResponse.ok) {
+            const member = (await memberResponse.json()) as { roles: string[] };
+            const adminRoleId = server?.admin_role_id ?? null;
+            const isAdmin = adminRoleId ? member.roles.includes(adminRoleId) : false;
 
-              adminGuilds.push({
-                id: server.discord_id,
-                name: server.name,
-                isAdmin: isAdmin,
-                isSetup: true,
-                verifyRoleId: server.verify_role_id,
-                isOwner: Boolean(userGuild.owner)
-              });
-            } else {
-              console.log(`Discord API isteği başarısız: Sunucu=${server.name}, Kullanıcı=${user.id}, Status=${memberResponse.status}`);
-              let memberBody = null;
-              try { memberBody = await memberResponse.json(); } catch { try { memberBody = await memberResponse.text(); } catch {} }
-              await logWebEvent(request, {
-                event: 'discord_exchange_failed',
-                status: 'member_fetch_failed',
-                userId: user.id,
-                guildId: server.discord_id,
-                metadata: { status: memberResponse.status, body: memberBody },
-              });
-            }
-          } catch (error) {
-            console.log(`Sunucu ${server.name} kontrol edilemedi:`, error);
+            console.log(`Sunucu ${userGuild.name}: admin_role_id=${adminRoleId}, user_roles=${member.roles}, isAdmin=${isAdmin}`);
+
+            adminGuilds.push({
+              id: userGuild.id,
+              name: server?.name ?? userGuild.name,
+              isAdmin: isAdmin,
+              isSetup: Boolean(server?.is_setup),
+              verifyRoleId: server?.verify_role_id ?? null,
+              isOwner: Boolean(userGuild.owner)
+            });
+          } else {
+            // Bot bu sunucuda değilse veya kullanıcı bilgisi alınamıyorsa listeye ekleme
+            console.log(`Discord API isteği başarısız: Sunucu=${userGuild.name}, Kullanıcı=${user.id}, Status=${memberResponse.status}`);
+            let memberBody = null;
+            try { memberBody = await memberResponse.json(); } catch { try { memberBody = await memberResponse.text(); } catch {} }
+            await logWebEvent(request, {
+              event: 'discord_exchange_failed',
+              status: 'member_fetch_failed',
+              userId: user.id,
+              guildId: userGuild.id,
+              metadata: { status: memberResponse.status, body: memberBody },
+            });
           }
+        } catch (error) {
+          console.log(`Sunucu ${userGuild.name} kontrol edilemedi:`, error);
         }
-      }
-
-      // Ayrıca botun bulunduğu ama setup edilmemiş sunucuları da kontrol et
-      // Bu sunucularda bot varsa ama setup yapılmamışsa, kullanıcıyı bilgilendir
-      const allUserGuilds = guilds.filter(g => {
-        // Bu sunucu zaten setup edilmiş listede var mı kontrol et
-        const isAlreadyInSetup = setupServers?.some(s => s.discord_id === g.id);
-        return !isAlreadyInSetup; // Setup edilmemiş olanları al
-      });
-
-      // Skip checking non-setup servers for now. We will only monitor and
-      // perform member/admin checks for servers that have an entry in the
-      // `servers` table with `is_setup = true`. This prevents rewarding or
-      // listening to servers that haven't completed initial setup. Once a
-      // server is setup (created/updated in the DB), it will be included in
-      // the `setupServers` above and processed normally.
-      if (allUserGuilds.length > 0) {
-        console.log('Skipping checks for non-setup user guilds; they will be handled after setup. Count:', allUserGuilds.length);
       }
     }
 
     // Ana sunucudaki rol kontrolü (mevcut sistem için)
-    const mainGuildMemberResponse = await fetch(
-      `https://discord.com/api/guilds/${GUILD_ID}/members/${user.id}`,
-      {
-        headers: { Authorization: `Bot ${botToken}` },
-      },
-    );
+    let mainGuildMemberResponse: Response;
+    try {
+      mainGuildMemberResponse = await fetch(
+        `https://discord.com/api/guilds/${GUILD_ID}/members/${user.id}`,
+        {
+          headers: { Authorization: `Bot ${botToken}` },
+        },
+      );
+    } catch (e) {
+      console.error('discord/exchange main guild member fetch failed', e);
+      await logWebEvent(request, {
+        event: 'discord_exchange_failed',
+        status: 'main_guild_member_fetch_error',
+        metadata: { error: String(e) },
+      });
+      // continue with hasRole = false; isAdmin = false; // we'll just treat as missing
+      mainGuildMemberResponse = { ok: false, status: 0} as unknown as Response;
+    }
 
     let hasRole = false;
     let isAdmin = false;
@@ -330,12 +359,7 @@ export async function POST(request: Request) {
     
     console.log('Exchange response:', { status, isAdmin, adminGuilds }); // Debug log
     
-    response.cookies.set('discord_user_id', user.id, {
-      httpOnly: false,
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
+    setSessionCookies(response, user.id);
 
     response.cookies.set('discord_access_token', tokenData.access_token, {
       httpOnly: true,
@@ -360,11 +384,26 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err) {
+    // log to console so developers can see stack during local development
+    console.error('discord/exchange unhandled error', err);
     await logWebEvent(request, {
       event: 'discord_exchange_failed',
       status: 'unhandled_exception',
-      metadata: { error: String(err) },
+      metadata: {
+        error: String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      },
     });
-    return NextResponse.json({ status: 'error', reason: 'unhandled_exception' }, { status: 500 });
+
+    // include the error message in the response body during development
+    const responseBody: Record<string, unknown> = {
+      status: 'error',
+      reason: 'unhandled_exception',
+    };
+    if (process.env.NODE_ENV !== 'production') {
+      responseBody.error = String(err);
+    }
+
+    return NextResponse.json(responseBody, { status: 500 });
   }
 }

@@ -1,7 +1,9 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/auth';
 import { renderEarnNotification } from '@/lib/templates/EarnNotification.server';
+import { isAdminOrDeveloper } from '@/lib/adminAuth';
 
 // --- GÖRSEL BİLDİRİM ŞABLONU (KUTULU YAPI) ---
 type ChangeItem = { type: 'narrative' | 'tech'; text: string; dir?: 'up' | 'down' | 'same' };
@@ -16,26 +18,7 @@ const getSupabase = () => {
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 };
 
-const isAdminUser = async () => {
-  const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value;
-  const guildId = cookieStore.get('selected_guild_id')?.value;
-  const botToken = process.env.DISCORD_BOT_TOKEN;
-  if (!userId || !guildId || !botToken) return false;
-
-  const supabase = getSupabase();
-  if (!supabase) return false;
-
-  const { data: server } = await supabase.from('servers').select('admin_role_id').eq('discord_id', guildId).maybeSingle();
-  if (!server?.admin_role_id) return false;
-
-  const memberResp = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
-    headers: { Authorization: `Bot ${botToken}` },
-  });
-  if (!memberResp.ok) return false;
-  const member = await memberResp.json();
-  return Array.isArray(member.roles) && member.roles.includes(server.admin_role_id);
-};
+const isAdminUser = isAdminOrDeveloper;
 
 // --- API HANDLERS ---
 export async function GET() {

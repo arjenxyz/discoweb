@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/auth';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -25,7 +26,7 @@ export async function GET() {
     }
 
     const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
+    const userId = await getSessionUserId();
 
     if (!userId) {
       return NextResponse.json({ isAdmin: false }, { status: 200 });

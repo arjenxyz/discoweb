@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
+import { getSessionUserId } from '@/lib/auth';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -35,7 +36,7 @@ export async function GET() {
   }
 
   const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value;
+  const userId = await getSessionUserId();
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -72,6 +73,72 @@ export async function GET() {
       boosterSince = member.premium_since ?? null;
       isBooster = Boolean(boosterSince);
     }
+  }
+
+  // Papel leaderboard: top 10 and current user
+  let papelLeaderboard: Array<{ userId: string; avatarUrl: string; nickname: string | null; displayName: string | null; username: string; papel: number; isCurrentUser: boolean }> = [];
+  const { data: papelRows } = await supabase
+    .from('member_wallets')
+    .select('user_id,balance')
+    .eq('guild_id', selectedGuildId)
+    .order('balance', { ascending: false })
+    .limit(10);
+
+  if (papelRows && papelRows.length) {
+    const discordMembers: Array<any> = [];
+    for (const row of papelRows) {
+      const uid = row.user_id;
+      let avatarUrl = '', nickname = null, displayName = null, username = '';
+      if (botToken) {
+        const memberRes = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${uid}`, { headers: { Authorization: `Bot ${botToken}` } });
+        if (memberRes.ok) {
+          const member = await memberRes.json();
+          avatarUrl = member.user.avatar
+            ? `https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.png?size=64`
+            : `https://cdn.discordapp.com/embed/avatars/${Number(member.user.id) % 5}.png`;
+          nickname = member.nick ?? null;
+          displayName = member.user.global_name ?? null;
+          username = member.user.username;
+        }
+      }
+      discordMembers.push({ userId: uid, avatarUrl, nickname, displayName, username });
+    }
+    papelLeaderboard = papelRows.map((row: any, idx: number) => {
+      const info = discordMembers[idx] || {};
+      return {
+        userId: row.user_id,
+        avatarUrl: info.avatarUrl,
+        nickname: info.nickname,
+        displayName: info.displayName,
+        username: info.username,
+        papel: Number(row.balance ?? 0),
+        isCurrentUser: row.user_id === userId,
+      };
+    });
+  }
+
+  if (!papelLeaderboard.some((m) => m.userId === userId)) {
+    const { data: walletRow } = await supabase
+      .from('member_wallets')
+      .select('balance')
+      .eq('guild_id', selectedGuildId)
+      .eq('user_id', userId)
+      .maybeSingle();
+    const papel = Number(walletRow?.balance ?? 0);
+    let avatarUrl = '', nickname = null, displayName = null, username = '';
+    if (botToken) {
+      const memberRes = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${userId}`, { headers: { Authorization: `Bot ${botToken}` } });
+      if (memberRes.ok) {
+        const member = await memberRes.json();
+        avatarUrl = member.user.avatar
+          ? `https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.png?size=64`
+          : `https://cdn.discordapp.com/embed/avatars/${Number(member.user.id) % 5}.png`;
+        nickname = member.nick ?? null;
+        displayName = member.user.global_name ?? null;
+        username = member.user.username;
+      }
+    }
+    papelLeaderboard.push({ userId, avatarUrl, nickname, displayName, username, papel, isCurrentUser: true });
   }
 
   // load server record to get verify_role_id, tag/booster config and internal server id
@@ -144,7 +211,7 @@ export async function GET() {
       const now = Date.now();
       activePerks = (perks as any[])
         .filter((p) => !p.expires_at || new Date(p.expires_at).getTime() > now)
-        .map((p) => ({ role_id: p.role_id, title: p.item_title ?? null, applied_at: p.applied_at ?? null, expires_at: p.expires_at ?? null }));
+        .map((p) => ({ role_id: p.role_id, item_title: p.item_title ?? null, applied_at: p.applied_at ?? null, expires_at: p.expires_at ?? null }));
     }
   }
 
@@ -185,5 +252,6 @@ export async function GET() {
     messagesLast24h,
     voiceMinutesLast24h,
     activePerks,
+    papelLeaderboard,
   });
 }

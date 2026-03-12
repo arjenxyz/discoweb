@@ -1,8 +1,13 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { requireSessionUser } from '@/lib/auth';
 
 export async function GET() {
   try {
+    const auth = await requireSessionUser();
+    if (!auth.ok) {
+      return auth.response;
+    }
     console.log('Guilds API: Starting request');
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('discord_access_token')?.value;

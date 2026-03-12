@@ -1,23 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import {
-  LuChevronDown,
-  LuChrome,
-  LuLogOut,
-  LuSearch,
-  LuShield,
-  LuDatabase,
-  LuWrench,
-} from 'react-icons/lu';
-
-type UserInfo = {
-  id: string;
-  username: string;
-  avatar: string | null;
-};
+import { useEffect, useState } from 'react';
+import { LuUsers, LuSearch, LuArrowUpDown } from 'react-icons/lu';
 
 type UserItem = {
   id: string;
@@ -29,288 +13,135 @@ type UserItem = {
 };
 
 export default function DeveloperUsersPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const [accessLoading, setAccessLoading] = useState(true);
-  const [accessAllowed, setAccessAllowed] = useState(false);
-  const [accessError, setAccessError] = useState<string | null>(null);
   const [users, setUsers] = useState<UserItem[]>([]);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [dataError, setDataError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [sortKey, setSortKey] = useState<'username' | 'points' | 'role_level' | 'created_at'>('created_at');
+  const [sortAsc, setSortAsc] = useState(false);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const load = async () => {
       try {
-        const cookies = document.cookie.split('; ');
-        const userIdCookie = cookies.find((row) => row.startsWith('discord_user_id='));
-        const userId = userIdCookie?.split('=')[1];
-        if (!userId) {
-          return;
-        }
-        const response = await fetch(`/api/discord/user/${userId}`);
-        if (response.ok) {
-          const userData = (await response.json()) as UserInfo;
-          setUser(userData);
-        }
-      } catch {
-        // ignore
-      }
+        setLoading(true);
+        const res = await fetch('/api/developer/users', { credentials: 'include', cache: 'no-store' });
+        if (!res.ok) { setError('Veriler yüklenemedi.'); return; }
+        const data = await res.json();
+        setUsers(data.items ?? []);
+      } catch { setError('Veriler yüklenemedi.'); }
+      finally { setLoading(false); }
     };
-
-    const checkAccess = async () => {
-      try {
-        setAccessLoading(true);
-        const response = await fetch('/api/developer/check-access', { credentials: 'include', cache: 'no-store' });
-        if (response.ok) {
-          setAccessAllowed(true);
-          setAccessError(null);
-          return;
-        }
-        const data = (await response.json().catch(() => ({}))) as { error?: string };
-        if (data.error === 'developer_role_missing') {
-          setAccessError('Developer rolü tanımlı değil.');
-        } else if (data.error === 'unauthorized') {
-          setAccessError('Giriş yapmanız gerekiyor.');
-        } else {
-          setAccessError('Bu panele erişim izniniz yok.');
-        }
-        setAccessAllowed(false);
-      } catch {
-        setAccessError('Geliştirici paneli doğrulaması yapılamadı.');
-        setAccessAllowed(false);
-      } finally {
-        setAccessLoading(false);
-      }
-    };
-
-    fetchUserInfo();
-    checkAccess();
+    load();
   }, []);
 
-  useEffect(() => {
-    if (!accessAllowed) {
-      return;
-    }
+  const filtered = users
+    .filter(u => !search || u.username?.toLowerCase().includes(search.toLowerCase()) || u.discord_id?.includes(search))
+    .sort((a, b) => {
+      const mul = sortAsc ? 1 : -1;
+      if (sortKey === 'username') return mul * (a.username ?? '').localeCompare(b.username ?? '');
+      if (sortKey === 'points') return mul * (a.points - b.points);
+      if (sortKey === 'role_level') return mul * (a.role_level - b.role_level);
+      return mul * (new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    });
 
-    const loadData = async () => {
-      try {
-        setDataLoading(true);
-        setDataError(null);
-        const response = await fetch('/api/developer/users', { credentials: 'include', cache: 'no-store' });
-        if (!response.ok) {
-          setDataError('Veriler yüklenemedi.');
-          setDataLoading(false);
-          return;
-        }
-        const data = (await response.json()) as { items?: UserItem[] };
-        setUsers(data.items ?? []);
-      } catch {
-        setDataError('Veriler yüklenemedi.');
-      } finally {
-        setDataLoading(false);
-      }
-    };
-
-    loadData();
-  }, [accessAllowed]);
-
-  useEffect(() => {
-    if (!menuOpen) {
-      return undefined;
-    }
-
-    const handleClick = (event: MouseEvent) => {
-      if (!menuRef.current) {
-        return;
-      }
-      if (!menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [menuOpen]);
-
-  const handleLogout = async () => {
-    try {
-      localStorage.clear();
-      if (typeof document !== 'undefined') {
-        document.cookie.split(';').forEach((c) => {
-          const name = c.split('=')[0].trim();
-          try {
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
-          } catch (e) {
-            // ignore
-          }
-        });
-      }
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-      window.location.href = '/';
-    } catch {
-      localStorage.clear();
-      window.location.href = '/';
-    }
+  const toggleSort = (key: typeof sortKey) => {
+    if (sortKey === key) setSortAsc(!sortAsc);
+    else { setSortKey(key); setSortAsc(false); }
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0d12] text-white">
-      <nav className="border-b border-white/10 bg-[#0b0d12]">
-        <div className="flex w-full items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            {user?.avatar ? (
-              <Image
-                src={user.avatar}
-                alt={user.username}
-                width={44}
-                height={44}
-                className="h-11 w-11 rounded-full border-2 border-white/20"
-              />
-            ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white/20 bg-slate-600">
-                <span className="text-base font-bold text-white">
-                  {user?.username?.charAt(0).toUpperCase() ?? 'D'}
-                </span>
-              </div>
-            )}
-            <div>
-              <p className="text-sm font-semibold text-white">{user?.username ?? 'Developer'}</p>
-              <p className="text-xs text-white/50">Discord hesabınızla giriş yaptınız</p>
-            </div>
-          </div>
-          <div ref={menuRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/30 hover:text-white ${
-                menuOpen ? 'bg-white/10 text-white' : ''
-              }`}
-            >
-              Menü
-              <LuChevronDown className={`h-3.5 w-3.5 transition ${menuOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 z-50 mt-3 w-56 rounded-2xl border border-white/10 bg-[#0f1116] p-3 shadow-2xl">
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer')}
-                  className="flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuChrome className="h-3.5 w-3.5 text-indigo-300" />
-                  Developer Paneli
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/user-lookup')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuSearch className="h-3.5 w-3.5 text-indigo-300" />
-                  Kullanıcı Sorgulama
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/all-servers')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuDatabase className="h-3.5 w-3.5 text-indigo-300" />
-                  Tüm Sunucular
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/servers')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuDatabase className="h-3.5 w-3.5 text-indigo-300" />
-                  Sunucu Listesi
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/maintenance')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuWrench className="h-3.5 w-3.5 text-indigo-300" />
-                  Bakım Yönetimi
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/admin')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuShield className="h-3.5 w-3.5 text-indigo-300" />
-                  Admin Paneli
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuLogOut className="h-3.5 w-3.5 text-rose-300" />
-                  Çıkış yap
-                </button>
-              </div>
-            )}
-          </div>
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Kullanıcılar</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">Sistemdeki tüm kayıtlı kullanıcılar ({users.length})</p>
         </div>
-      </nav>
-
-      {accessLoading && (
-        <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="rounded-3xl border border-white/10 bg-[#0f131d] p-8">
-            <p className="text-sm text-white/70">Developer yetkisi kontrol ediliyor...</p>
-          </div>
+        <div className="relative">
+          <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <input
+            type="text"
+            placeholder="İsim veya Discord ID ara..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:border-[#5865F2]/50 focus:outline-none w-full md:w-72 transition-all"
+          />
         </div>
-      )}
+      </div>
 
-      {!accessLoading && !accessAllowed && (
-        <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="rounded-3xl border border-rose-500/30 bg-rose-500/10 p-8">
-            <p className="text-sm font-semibold text-rose-200">Erişim Reddedildi</p>
-            <p className="mt-2 text-sm text-rose-100/80">{accessError ?? 'Bu panele erişim izniniz yok.'}</p>
-            <button
-              type="button"
-              onClick={() => router.replace('/dashboard')}
-              className="mt-6 rounded-full border border-rose-300/40 px-4 py-2 text-xs text-rose-100 transition hover:border-rose-200"
-            >
-              Üye paneline dön
-            </button>
-          </div>
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-[#5865F2]/30 border-t-[#5865F2] rounded-full animate-spin" />
         </div>
-      )}
-
-      {!accessLoading && accessAllowed && (
-        <div className="mx-auto max-w-5xl px-6 py-8">
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h1 className="text-xl font-semibold text-white">Kullanıcı Listesi</h1>
-                <p className="mt-1 text-sm text-white/60">En son kayıtlı kullanıcılar.</p>
-              </div>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60">
-                {users.length} kullanıcı
-              </span>
-            </div>
-            {dataLoading && <p className="mt-4 text-sm text-white/60">Yükleniyor...</p>}
-            {dataError && <p className="mt-4 text-sm text-rose-300">{dataError}</p>}
-            {!dataLoading && !dataError && (
-              <div className="mt-4 max-h-[420px] space-y-2 overflow-y-auto pr-1">
-                {users.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-white">{item.username}</p>
-                        <p className="text-[11px] text-white/50">{item.discord_id}</p>
+      ) : error ? (
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-6 text-center">
+          <p className="text-sm text-rose-300">{error}</p>
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/8">
+                  {[
+                    { key: 'username' as const, label: 'Kullanıcı' },
+                    { key: 'points' as const, label: 'Puan' },
+                    { key: 'role_level' as const, label: 'Rol Seviyesi' },
+                    { key: 'created_at' as const, label: 'Kayıt Tarihi' },
+                  ].map(col => (
+                    <th key={col.key} className="text-left px-5 py-4">
+                      <button
+                        type="button"
+                        onClick={() => toggleSort(col.key)}
+                        className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-white/40 hover:text-white/60 transition-colors font-semibold"
+                      >
+                        {col.label}
+                        <LuArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((u) => (
+                  <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[#5865F2]/20 flex items-center justify-center">
+                          <LuUsers className="w-4 h-4 text-[#5865F2]" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-white">{u.username || '—'}</p>
+                          <p className="text-[11px] text-white/30 font-mono">{u.discord_id}</p>
+                        </div>
                       </div>
-                      <span className="text-[11px] text-white/50">{item.points} puan</span>
-                    </div>
-                  </div>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="text-sm font-semibold text-amber-300">{u.points.toLocaleString('tr-TR')}</span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ${
+                        u.role_level >= 999 ? 'bg-rose-500/15 text-rose-300 border border-rose-500/20' :
+                        u.role_level >= 100 ? 'bg-amber-500/15 text-amber-300 border border-amber-500/20' :
+                        'bg-white/5 text-white/50 border border-white/10'
+                      }`}>
+                        {u.role_level}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-xs text-white/40">
+                      {new Date(u.created_at).toLocaleDateString('tr-TR')}
+                    </td>
+                  </tr>
                 ))}
-                {users.length === 0 && <p className="text-sm text-white/50">Kullanıcı bulunamadı.</p>}
-              </div>
-            )}
-          </section>
+                {filtered.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-5 py-12 text-center text-sm text-white/30">
+                      Sonuç bulunamadı.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

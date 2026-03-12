@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
+import { requireSessionUser } from '@/lib/auth';
 
 const CHANNEL_TYPES = [
   'user_main',
@@ -23,6 +25,50 @@ const getSupabase = () => {
     return null;
   }
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+};
+
+const getSelectedGuildId = async () => {
+  const cookieStore = await cookies();
+  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
+  return selectedGuildId || (process.env.DISCORD_GUILD_ID ?? '1465698764453838882');
+};
+
+const isAdminUser = async (userId: string, guildId: string) => {
+  try {
+    const botToken = process.env.DISCORD_BOT_TOKEN;
+    if (!botToken) {
+      return false;
+    }
+
+    const supabase = getSupabase();
+    if (!supabase) {
+      return false;
+    }
+
+    const { data: server } = await supabase
+      .from('servers')
+      .select('admin_role_id')
+      .eq('discord_id', guildId)
+      .maybeSingle();
+
+    if (!server?.admin_role_id) {
+      return false;
+    }
+
+    const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
+      headers: { Authorization: `Bot ${botToken}` },
+    });
+
+    if (!memberResponse.ok) {
+      return false;
+    }
+
+    const member = (await memberResponse.json()) as { roles: string[] };
+    return member.roles.includes(server.admin_role_id);
+  } catch (error) {
+    console.error('log-channel test: admin check failed', error);
+    return false;
+  }
 };
 
 const getSiteBaseUrl = () => {
@@ -64,6 +110,11 @@ const getBotAvatarUrl = async () => {
 };
 
 export async function POST(request: Request) {
+  const session = await requireSessionUser(request);
+  if (!session.ok) {
+    return session.response;
+  }
+
   const { channelType } = (await request.json()) as {
     channelType?: ChannelType;
     source?: 'setup' | 'manual' | 'system';
@@ -80,9 +131,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
 
-  const cookieHeader = request.headers.get('cookie') || '';
-  const guildIdMatch = cookieHeader.match(/selected_guild_id=([^;]+)/);
-  const guildId = guildIdMatch ? guildIdMatch[1] : (process.env.DISCORD_GUILD_ID ?? '1465698764453838882');
+  const guildId = await getSelectedGuildId();
+
+  if (!(await isAdminUser(session.userId, guildId))) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
 
   const { data } = await supabase
     .from('log_channel_configs')
@@ -103,15 +156,13 @@ export async function POST(request: Request) {
   }
 
   const botAvatarUrl = await getBotAvatarUrl();
-  const userIdMatch = cookieHeader.match(/discord_user_id=([^;]+)/);
-  const userId = userIdMatch ? userIdMatch[1] : null;
   const botToken = process.env.DISCORD_BOT_TOKEN;
   let testerName: string | null = null;
   let testerAvatarUrl: string | null = null;
 
-  if (userId && botToken) {
+  if (botToken) {
     try {
-      const userResp = await fetch(`https://discord.com/api/users/${userId}`, {
+      const userResp = await fetch(`https://discord.com/api/users/${session.userId}`, {
         headers: { Authorization: `Bot ${botToken}` },
       });
       if (userResp.ok) {

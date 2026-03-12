@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import type { MailItem } from '../../types';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 import {
   LuReply,
   LuReplyAll,
@@ -134,7 +135,7 @@ export default function MailPage() {
             </div>
 
             <div className="prose max-w-none text-gray-800">
-              <div dangerouslySetInnerHTML={{ __html: mail.body ?? '' }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(mail.body ?? '') }} />
             </div>
 
             {mail.image_url && (

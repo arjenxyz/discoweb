@@ -6,6 +6,86 @@ const roleCheckCache = new Map<string, { roles: string[]; expires: number }>();
 const CACHE_DURATION = 30 * 1000; // 30 saniye (test için)
 const DEFAULT_DEVELOPER_GUILD_ID = '1465698764453838882';
 const DEFAULT_DEVELOPER_ROLE_ID = '1467580199481639013';
+const SESSION_COOKIE = 'discord_session';
+
+type SessionPayload = {
+  sub: string;
+  exp: number;
+};
+
+const getSecret = () => process.env.SESSION_SECRET;
+
+const base64UrlToBytes = (input: string) => {
+  const base64 = input.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+  if (typeof Buffer !== 'undefined') {
+    return new Uint8Array(Buffer.from(padded, 'base64'));
+  }
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+};
+
+const bytesToBase64Url = (bytes: Uint8Array) => {
+  let base64 = '';
+  if (typeof Buffer !== 'undefined') {
+    base64 = Buffer.from(bytes).toString('base64');
+  } else {
+    let binary = '';
+    bytes.forEach((b) => {
+      binary += String.fromCharCode(b);
+    });
+    base64 = btoa(binary);
+  }
+  return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+};
+
+const base64UrlDecode = (input: string) => {
+  return new TextDecoder().decode(base64UrlToBytes(input));
+};
+
+const sign = async (data: string, secret: string) => {
+  if (!globalThis.crypto?.subtle) {
+    throw new Error('WebCrypto unavailable');
+  }
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(data));
+  return bytesToBase64Url(new Uint8Array(sig));
+};
+
+const verifySessionToken = async (token: string): Promise<SessionPayload | null> => {
+  try {
+    const secret = getSecret();
+    if (!secret) return null;
+    const [encoded, sig] = token.split('.');
+    if (!encoded || !sig) return null;
+    const expected = await sign(encoded, secret);
+    if (sig !== expected) return null;
+    const payload = JSON.parse(base64UrlDecode(encoded)) as SessionPayload;
+    if (!payload?.sub || !payload?.exp) return null;
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp < now) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+};
+
+const getSessionUserId = async (request: NextRequest) => {
+  const token = request.cookies.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+  const payload = await verifySessionToken(token);
+  return payload?.sub ?? null;
+};
 
 async function checkUserRoles(userId: string, guildId: string): Promise<string[] | null> {
   try {
@@ -100,9 +180,9 @@ async function isDeveloper(userId: string): Promise<boolean> {
 }
 
 const IGNORED_PREFIXES = ['/api', '/_next'];
-const IGNORED_PATHS = ['/favicon.ico', '/robots.txt', '/sitemap.xml'];
+const IGNORED_PATHS = ['/favicon.ico', '/robots.txt', '/sitemap.xml', '/sw.js', '/manifest.json'];
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
 	const { pathname, origin } = request.nextUrl;
 
 	// Static dosyaları ve API'leri atla
@@ -117,9 +197,7 @@ export async function proxy(request: NextRequest) {
 			const data = (await response.json()) as { flags?: Record<string, { is_active?: boolean }> };
 			if (data?.flags?.site?.is_active) {
 				try {
-					const cookieStore = await (await import('next/headers')).cookies();
-					const userId = cookieStore.get('discord_user_id')?.value;
-
+					const userId = await getSessionUserId(request);
 					if (userId) {
 						const developer = await isDeveloper(userId);
 						if (developer) {
@@ -154,9 +232,8 @@ export async function proxy(request: NextRequest) {
 
 	// Kullanıcının giriş yapmış olup olmadığını ve sunucuda üye olup olmadığını kontrol et
 	try {
-		const cookieStore = await (await import('next/headers')).cookies();
-		const userId = cookieStore.get('discord_user_id')?.value;
-		const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
+		const userId = await getSessionUserId(request);
+		const selectedGuildId = request.cookies.get('selected_guild_id')?.value;
 
 		if (userId && selectedGuildId) {
 			console.log('🔍 Middleware: Checking server membership for user:', userId, 'guild:', selectedGuildId);
@@ -182,9 +259,8 @@ export async function proxy(request: NextRequest) {
 		console.log('🔐 Middleware: Admin page access detected:', pathname);
 		try {
 			// Cookie'lerden gerekli bilgileri al
-			const cookieStore = await (await import('next/headers')).cookies();
-			const userId = cookieStore.get('discord_user_id')?.value;
-			const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
+			const userId = await getSessionUserId(request);
+			const selectedGuildId = request.cookies.get('selected_guild_id')?.value;
 
 			console.log('🔐 Middleware: Cookies - userId:', userId, 'guildId:', selectedGuildId);
 
@@ -202,6 +278,8 @@ export async function proxy(request: NextRequest) {
 				console.log('🔐 Middleware: Could not fetch user roles, forcing logout');
 				// Roller alınamadı, çıkış yap
 				const response = NextResponse.redirect(new URL('/', request.url));
+				response.cookies.set('discord_session', '', { maxAge: 0, path: '/' });
+				response.cookies.set('csrf_token', '', { maxAge: 0, path: '/' });
 				response.cookies.set('discord_user_id', '', { maxAge: 0, path: '/' });
 				return response;
 			}
@@ -221,12 +299,21 @@ export async function proxy(request: NextRequest) {
 			console.log('🔐 Middleware: User has admin role:', hasAdminRole, 'Role ID:', adminRoleId, 'User roles:', userRoles);
 
 			if (!hasAdminRole) {
+				// Developer ise erişime izin ver
+				const developer = await isDeveloper(userId);
+				if (developer) {
+					console.log('🔐 Middleware: User is a developer, granting admin access');
+					return NextResponse.next();
+				}
+
 				console.log(`🔐 Middleware: User ${userId} no longer has admin role ${adminRoleId}, forcing logout`);
 
 				// Admin rolü yok, çıkış yap ve cache'i temizle
 				roleCheckCache.delete(`${userId}-${selectedGuildId}`);
 
 				const response = NextResponse.redirect(new URL('/', request.url));
+				response.cookies.set('discord_session', '', { maxAge: 0, path: '/' });
+				response.cookies.set('csrf_token', '', { maxAge: 0, path: '/' });
 				response.cookies.set('discord_user_id', '', { maxAge: 0, path: '/' });
 				response.cookies.set('selected_guild_id', '', { maxAge: 0, path: '/' });
 
@@ -238,6 +325,8 @@ export async function proxy(request: NextRequest) {
 			console.error('🔐 Middleware: Unexpected error:', error);
 			// Hata durumunda güvenli tarafta kal, çıkış yap
 			const response = NextResponse.redirect(new URL('/', request.url));
+			response.cookies.set('discord_session', '', { maxAge: 0, path: '/' });
+			response.cookies.set('csrf_token', '', { maxAge: 0, path: '/' });
 			response.cookies.set('discord_user_id', '', { maxAge: 0, path: '/' });
 			return response;
 		}

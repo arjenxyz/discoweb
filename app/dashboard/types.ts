@@ -31,6 +31,7 @@ export type MailItem = {
 };
 
 export type MemberProfile = {
+  userId?: string;                      // Discord/user unique id (optional for legacy profiles)
   username: string;
   nickname: string | null;
   displayName: string | null;
@@ -115,6 +116,17 @@ export type OverviewStatsExpanded = OverviewStats & {
   tagGrantedAt?: string | null;
   isBooster?: boolean;
   boosterSince?: string | null;
+  // papel leaderboard/support
+  papelLeaderboard?: Array<{
+    userId: string;
+    avatarUrl?: string;
+    nickname?: string;
+    displayName?: string;
+    username?: string;
+    papel: number;
+    isCurrentUser?: boolean;
+  }>;
+  papel?: number;
 };
 
 export type OrderStats = {

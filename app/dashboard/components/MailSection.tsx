@@ -4,14 +4,14 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import MailDetailModal from './MailDetailModal';
 import type { MailItem } from '../types';
-import { 
-  LuMailOpen, LuTrash2, 
+import {
+  LuMail, LuMailOpen, LuTrash2,
   LuRefreshCw, LuSearch, LuInbox,
-  LuSettings, LuStar,
-  LuTag, LuClock
+  LuStar, LuClock, LuCheckCheck,
+  LuMegaphone, LuWrench, LuGift,
+  LuReceipt, LuChevronLeft, LuChevronDown, LuChevronUp,
+  LuArchive, LuTag, LuSparkles,
 } from 'react-icons/lu';
-
-// MailDetailModal handled by parent via `onOpenMail` prop (navigate to page)
 
 const stripHtml = (s?: string) => (s ?? '').replace(/<[^>]+>/g, '').replace(/&nbsp;?/g, ' ');
 
@@ -20,49 +20,48 @@ const previewText = (s?: string, max = 100) => {
   return t.length > max ? `${t.slice(0, max - 1)}…` : t;
 };
 
-// Gmail-style category configuration
-const CATEGORY_CONFIG = {
+const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ReactNode; css: string }> = {
   announcement: {
     label: 'Duyurular',
-    icon: '📢',
-    color: '#1a73e8', // Gmail blue
+    icon: <LuMegaphone />,
+    css: 'border-[#5865F2]/30 bg-[#5865F2]/10 text-[#5865F2]',
   },
   system: {
     label: 'Sistem',
-    icon: '⚙️',
-    color: '#ea4335', // Gmail red
+    icon: <LuMail />,
+    css: 'border-red-500/30 bg-red-500/10 text-red-400',
   },
   maintenance: {
     label: 'Bakım',
-    icon: '🔧',
-    color: '#fbbc04', // Gmail yellow
+    icon: <LuWrench />,
+    css: 'border-amber-500/30 bg-amber-500/10 text-amber-400',
   },
   sponsor: {
     label: 'Sponsorluk',
-    icon: '💼',
-    color: '#9334e8', // Purple
+    icon: <LuStar />,
+    css: 'border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-400',
   },
   update: {
     label: 'Güncellemeler',
-    icon: '✨',
-    color: '#34a853', // Gmail green
+    icon: <LuSparkles />,
+    css: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-400',
   },
   lottery: {
     label: 'Promosyonlar',
-    icon: '🎁',
-    color: '#e91e63', // Pink
+    icon: <LuGift />,
+    css: 'border-rose-500/30 bg-rose-500/10 text-rose-400',
   },
   reward: {
     label: 'Ödüller',
-    icon: '🏆',
-    color: '#0f9d58', // Green
+    icon: <LuReceipt />,
+    css: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-400',
   },
   order: {
     label: 'Siparişler',
-    icon: '📦',
-    color: '#757575', // Gray
+    icon: <LuTag />,
+    css: 'border-white/20 bg-white/5 text-white/60',
   },
-} as const;
+};
 
 const FIXED_CATEGORIES = ['announcement', 'system', 'update', 'maintenance', 'reward', 'lottery', 'sponsor', 'order'] as const;
 
@@ -81,34 +80,38 @@ export default function MailSection({
   onOpenMail,
   onBack,
 }: MailSectionProps) {
-  
   const [activeCategory, setActiveCategory] = useState<'all' | string>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedMail, setSelectedMail] = useState<MailItem | null>(null);
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [showSettings, setShowSettings] = useState(false);
-  const settingsRef = useRef<HTMLDivElement | null>(null);
-  const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' }>({ 
-    open: false, 
-    message: '', 
-    type: 'success' 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' }>({
+    open: false,
+    message: '',
+    type: 'success',
   });
 
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ open: true, message, type });
+    setTimeout(() => setToast({ open: false, message: '', type }), 3500);
+  };
+
+  // Mobile detection
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('mailSectionTheme') || localStorage.getItem('uiTheme');
-      if (stored === 'dark' || stored === 'light') {
-        // initialize local state from storage; ThemeBootstrap applies the body class on first paint
-        setTheme(stored as 'dark' | 'light');
-      }
-    } catch {}
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Open modal when route contains /dashboard/mail and id search param is present
+  // Route-based modal sync
   useEffect(() => {
     try {
       const id = searchParams?.get('id') ?? null;
@@ -116,40 +119,15 @@ export default function MailSection({
       if (path.startsWith('/dashboard/mail')) {
         if (id) {
           const found = items.find(i => String(i.id) === String(id));
-          // Only update state if selectedMail is different to avoid render loops
           if (found && (!selectedMail || String(selectedMail.id) !== String(found.id))) {
             setSelectedMail(found);
           }
         }
       } else {
-        // If route moved away from mail page, ensure modal is closed
         if (selectedMail) setSelectedMail(null);
       }
     } catch {}
-    // Depend on pathname and the `id` search param only.
   }, [pathname, searchParams?.get('id')]);
-
-  // Temporarily set UI theme in component state. Persist only when user clicks "Kaydet".
-  const applyTheme = (t: 'light' | 'dark') => {
-    setTheme(t);
-  };
-
-  useEffect(() => {
-    const onDoc = (e: MouseEvent) => {
-      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
-        setShowSettings(false);
-      }
-    };
-    document.addEventListener('click', onDoc);
-    return () => document.removeEventListener('click', onDoc);
-  }, []);
-
-  // Persisted theme is only written when user explicitly saves.
-
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ open: true, message, type });
-    setTimeout(() => setToast({ open: false, message: '', type }), 3500);
-  };
 
   // Counts
   const countsTotal = useMemo(() => {
@@ -170,23 +148,25 @@ export default function MailSection({
   }, [items]);
 
   const filtered = useMemo(() => {
-    // derive visible list then sort by `created_at`
-    const base = activeCategory === 'all' ? items.slice() : items.filter((item) => item.category === activeCategory).slice();
+    let base = activeCategory === 'all' ? items.slice() : items.filter((item) => item.category === activeCategory);
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      base = base.filter(m => m.title.toLowerCase().includes(q) || stripHtml(m.body).toLowerCase().includes(q));
+    }
     base.sort((a, b) => {
       const ta = new Date(a.created_at).getTime();
       const tb = new Date(b.created_at).getTime();
       return sortOrder === 'desc' ? tb - ta : ta - tb;
     });
     return base;
-  }, [items, activeCategory, sortOrder]);
+  }, [items, activeCategory, sortOrder, searchQuery]);
 
-  const toggleSort = () => setSortOrder((s) => (s === 'desc' ? 'asc' : 'desc'));
+  const toggleSort = () => setSortOrder(s => (s === 'desc' ? 'asc' : 'desc'));
 
   const formatDate = (date: string) => {
     const d = new Date(date);
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-    
     if (diffDays === 0) {
       return d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
     } else if (diffDays < 7) {
@@ -199,296 +179,206 @@ export default function MailSection({
 
   const toggleSelect = (id: string) => {
     const newSet = new Set(selectedIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
     setSelectedIds(newSet);
   };
 
   const selectAll = () => {
-    // Toggle selection for items visible in `filtered` only
     const visibleIds = filtered.map(m => String(m.id));
-    const allVisibleSelected = visibleIds.every(id => selectedIds.has(id));
+    const allSelected = visibleIds.every(id => selectedIds.has(id));
     const newSet = new Set(selectedIds);
-    if (allVisibleSelected) {
-      // remove visible ids
+    if (allSelected) {
       for (const id of visibleIds) newSet.delete(id);
     } else {
-      // add visible ids
       for (const id of visibleIds) newSet.add(id);
     }
     setSelectedIds(newSet);
   };
 
+  const navItems = [
+    { key: 'all', label: 'Gelen Kutusu', icon: <LuInbox /> },
+    ...FIXED_CATEGORIES.map(cat => ({
+      key: cat,
+      label: CATEGORY_CONFIG[cat]?.label ?? cat,
+      icon: CATEGORY_CONFIG[cat]?.icon ?? <LuMail />,
+    })),
+  ];
+
   return (
-    <>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    <section className="relative w-full h-screen overflow-hidden bg-[#0b0d12] flex flex-col">
 
-        /* Design tokens for mail UI - light (default) */
-        .mail-list-container {
-          font-family: 'Roboto', sans-serif;
-          --bg: #ffffff;
-          --panel-bg: #f8fafc;
-          --muted-bg: #f1f5f9;
-          --text: #111827;
-          --muted-text: #6b7280;
-          --border: #e6e9ee;
-          --accent: #2563eb; /* blue-600 */
-          --item-hover-shadow: 0 1px 2px rgba(16,24,40,0.06);
-          --scroll-track: #f3f4f6;
-          --scroll-thumb: #cbd5e1;
-        }
+      {/* Background decorations */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-[#5865F2]/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none" />
 
-        /* Dark theme tokens */
-        .mail-list-container.theme-dark {
-          --bg: #0b0d12;
-          --panel-bg: #08090b;
-          --muted-bg: #0f1113;
-          --text: #e6eef8;
-          --muted-text: #9aa4b2;
-          --border: #1f2933;
-          --accent: #1e90ff; /* slightly brighter blue */
-          --item-hover-shadow: 0 1px 2px rgba(2,6,23,0.6);
-          --scroll-track: #050608;
-          --scroll-thumb: #202225;
-        }
+      {/* HEADER */}
+      <div className="relative z-10 flex-shrink-0 flex items-center justify-between border-b border-white/10 px-4 py-3 md:px-8 md:py-5 bg-white/[0.02]">
+        <div className="flex items-center gap-2 md:gap-4">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/70 transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
+            >
+              <LuChevronLeft className="w-4 h-4" /> <span className="hidden sm:inline">Geri</span>
+            </button>
+          )}
+          {/* Mobile sidebar toggle */}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10 transition-all"
+          >
+            <LuInbox className="w-4 h-4" /> Klasörler
+          </button>
+          <div className="hidden md:block p-3 bg-gradient-to-br from-[#5865F2] to-indigo-600 rounded-2xl shadow-lg shadow-[#5865F2]/20">
+            <LuMail className="w-6 h-6 text-white" />
+          </div>
+          <div className="hidden md:block">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#5865F2]">İletişim</p>
+            <h2 className="text-xl font-bold text-white tracking-tight">Posta Kutusu</h2>
+          </div>
+        </div>
 
-        /* Scrollbar (WebKit) */
-        .mail-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
-        .mail-scrollbar::-webkit-scrollbar-track { background: var(--scroll-track); }
-        .mail-scrollbar::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 6px; }
-        .mail-scrollbar::-webkit-scrollbar-thumb:hover { filter: brightness(0.9); }
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs font-medium text-white/60">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            {countsTotal.all ?? 0} <span className="hidden sm:inline">Mesaj &middot;</span> {countsUnread.all ?? 0} <span className="hidden sm:inline">Okunmamış</span>
+          </div>
+        </div>
+      </div>
 
-        /* Generic mail item hover */
-        .mail-item-hover { transition: box-shadow 0.12s ease, background-color 0.12s ease; }
-        .mail-item-hover:hover {
-          box-shadow: var(--item-hover-shadow);
-          z-index: 1;
-        }
+      <div className="relative z-10 flex flex-1 min-h-0">
 
-        /* Panel and divider tones */
-        .mail-list-container .border-gray-200 { border-color: var(--border) !important; }
-        .mail-list-container .bg-white { background-color: var(--bg) !important; }
-        .mail-list-container .bg-gray-50 { background-color: var(--panel-bg) !important; }
-        .mail-list-container .text-gray-700 { color: var(--text) !important; }
-        .mail-list-container .text-gray-500 { color: var(--muted-text) !important; }
-
-        /* Subtle category badge backgrounds and item accents */
-        .mail-list-container .mail-item-hover:not(.bg-blue-50) { }
-
-        /* Focus / active states */
-        .mail-list-container .rounded-full[aria-pressed='true'],
-        .mail-list-container .bg-blue-50 { background-color: rgba(37,99,235,0.06) !important; }
-
-        /* Accessibility: ensure contrast for interactive icons */
-        .mail-list-container svg { color: var(--muted-text); }
-        .mail-list-container .text-sm.font-medium, .mail-list-container .font-bold { color: var(--text); }
-
-      `}</style>
-
-      <section className={`mail-list-container ${theme === 'dark' ? 'theme-dark' : 'theme-light'} relative w-full h-screen overflow-hidden rounded-none shadow-none flex`}>
-        
-        {/* Sidebar */}
-        <div className={`w-64 flex flex-col ${theme === 'dark' ? 'bg-[#08090b] border-r border-gray-800' : 'bg-white border-r border-gray-200'}`}>
-          {/* Compose Button */}
-          <div className="p-4">
-            {onBack ? (
-              <button onClick={onBack} className={`w-full flex items-center gap-3 px-6 py-3 ${theme === 'dark' ? 'bg-[#0b0d12] hover:bg-[#0e1114] border border-gray-800' : 'bg-white hover:bg-gray-50 border border-gray-300'} rounded-full shadow-sm transition-all`}>
-                <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                <span className={`font-medium text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>Geri Dön</span>
-              </button>
-            ) : (
-              <button onClick={() => { setActiveCategory('all'); router.push('/dashboard/mail'); }} className={`w-full flex items-center gap-3 px-6 py-3 ${theme === 'dark' ? 'bg-[#0b0d12] hover:bg-[#0e1114] border border-gray-800' : 'bg-white hover:bg-gray-50 border border-gray-300'} rounded-full shadow-sm transition-all`}>
-                <svg className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                </svg>
-                <span className={`font-medium text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>Yeni Mesaj</span>
-              </button>
-            )}
+        {/* SIDEBAR - Desktop: inline, Mobile: drawer overlay */}
+        {isMobile && (
+          <div
+            className={`fixed inset-0 z-50 transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          </div>
+        )}
+        <div className={`${
+          isMobile
+            ? `fixed top-0 left-0 h-full w-72 z-50 transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
+            : 'w-72'
+        } flex flex-col border-r border-white/10 bg-[#0b0d12] backdrop-blur-md min-h-0`}>
+          <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4 custom-scrollbar">
+            <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-4 px-2">Klasörler</p>
+            <div className="space-y-1">
+              {navItems.map((item) => {
+                const isActive = activeCategory === item.key;
+                const count = countsUnread[item.key] ?? 0;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => { setActiveCategory(item.key); if (isMobile) setSidebarOpen(false); }}
+                    className={`group relative flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 ${
+                      isActive
+                        ? 'bg-[#5865F2]/10 text-white shadow-[inset_4px_0_0_0_#5865F2]'
+                        : 'text-white/50 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className={`text-lg transition-colors ${isActive ? 'text-[#5865F2]' : 'text-white/40 group-hover:text-white'}`}>
+                        {item.icon}
+                      </span>
+                      {item.label}
+                    </span>
+                    {count > 0 && (
+                      <span className={`flex h-5 min-w-[20px] items-center justify-center rounded-md px-1.5 text-[10px] font-bold ${
+                        isActive ? 'bg-[#5865F2] text-white' : 'bg-white/10 text-white/60'
+                      }`}>
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto px-2">
-            {/* Inbox */}
-            <button
-              onClick={() => setActiveCategory('all')}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-r-full mb-1 transition-all ${
-                activeCategory === 'all'
-                  ? (theme === 'dark' ? 'bg-red-900/30 text-red-400 font-bold' : 'bg-red-50 text-red-600 font-bold')
-                  : (theme === 'dark' ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-700 hover:bg-gray-100')
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <LuInbox className={`w-5 h-5 ${activeCategory === 'all' ? (theme === 'dark' ? 'text-red-400' : 'text-red-600') : (theme === 'dark' ? 'text-gray-300' : 'text-gray-600')}`} />
-                <span className={`text-sm ${theme === 'dark' ? 'text-gray-200' : ''}`}>Gelen Kutusu</span>
+          {/* Bottom stats */}
+          <div className="flex-shrink-0 px-5 pb-5">
+            <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2">Depolama</p>
+              <p className="text-xs text-white/50 mb-2">
+                {countsTotal.all} mesajdan {countsUnread.all} okunmadı
+              </p>
+              <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#5865F2] to-indigo-500 transition-all"
+                  style={{ width: `${countsTotal.all > 0 ? Math.min((countsUnread.all / countsTotal.all) * 100, 100) : 0}%` }}
+                />
               </div>
-              {countsUnread.all > 0 && (
-                <span className="text-xs font-bold">{countsUnread.all}</span>
-              )}
-            </button>
-
-            {/* Categories */}
-            {FIXED_CATEGORIES.map((cat) => {
-              const config = CATEGORY_CONFIG[cat];
-              const isActive = activeCategory === cat;
-              const unreadCount = countsUnread[cat] ?? 0;
-
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-r-full mb-1 transition-all ${
-                    isActive
-                      ? (theme === 'dark' ? 'bg-blue-900/20 text-blue-400 font-medium' : 'bg-blue-50 text-blue-600 font-medium')
-                      : (theme === 'dark' ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-700 hover:bg-gray-100')
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg">{config.icon}</span>
-                    <span className="text-sm">{config.label}</span>
-                  </div>
-                  {unreadCount > 0 && (
-                    <span className="text-xs font-bold">{unreadCount}</span>
-                  )}
-                </button>
-              );
-            })}
-
-            {/* Divider */}
-            <div className={`h-px my-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'}`} />
-
-            {/* Additional Items */}
-            <button className={`w-full flex items-center gap-3 px-3 py-2 rounded-r-full ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-700 hover:bg-gray-100'} transition-all mb-1`}>
-              <LuStar className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
-              <span className={`text-sm ${theme === 'dark' ? 'text-gray-200' : ''}`}>Yıldızlı</span>
-            </button>
-
-            <button className={`w-full flex items-center gap-3 px-3 py-2 rounded-r-full ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-700 hover:bg-gray-100'} transition-all`}>
-              <LuClock className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
-              <span className={`text-sm ${theme === 'dark' ? 'text-gray-200' : ''}`}>Ertelenmiş</span>
-            </button>
-          </nav>
-
-          {/* Storage Info */}
-          <div className={`p-4 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'}`}>
-            <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
-              {countsTotal.all} mesajdan {countsUnread.all} okunmadı
-            </div>
-            <div className={`w-full h-1 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'} rounded-full overflow-hidden`}>
-              <div 
-                className="h-full bg-blue-600 rounded-full transition-all"
-                style={{ width: `${Math.min((countsUnread.all / countsTotal.all) * 100, 100)}%` }}
-              />
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className={`flex-1 flex flex-col ${theme === 'dark' ? 'bg-[#0b0d12]' : 'bg-white'}`}>
-          
+        {/* MAIN CONTENT */}
+        <div className="flex-1 flex flex-col bg-gradient-to-b from-transparent to-[#0b0d12]/20 min-w-0 min-h-0">
+
           {/* Search Bar */}
-          <div className={`px-6 py-3 border-b ${theme === 'dark' ? 'border-gray-800 bg-transparent' : 'border-gray-200 bg-gray-50'}`}>
-            <div className="flex items-center gap-4">
-              <div className={`flex-1 flex items-center gap-2 px-4 py-2 ${theme === 'dark' ? 'bg-[#0b0d12] border border-gray-800' : 'bg-white border border-gray-300'} rounded-lg hover:shadow-sm transition-shadow`}>
-                <LuSearch className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
+          <div className="flex-shrink-0 px-3 md:px-6 py-4 border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="flex-1 flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] focus-within:border-[#5865F2]/30 transition-colors">
+                <LuSearch className="w-4 h-4 text-white/30" />
                 <input
+                  ref={searchInputRef}
                   type="text"
-                  placeholder="Mesajlarda ara"
-                  className={`flex-1 bg-transparent outline-none text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Mesajlarda ara..."
+                  className="flex-1 bg-transparent outline-none text-sm text-white placeholder-white/30"
                 />
-              </div>
-              <div className="relative" ref={settingsRef}>
-                <button onClick={() => setShowSettings(s => !s)} className={`p-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-900' : 'hover:bg-gray-100'}`}>
-                  <LuSettings className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
-                </button>
-                {showSettings && (
-                  <div className={`absolute right-0 mt-2 w-44 rounded-lg shadow-lg border ${theme === 'dark' ? 'bg-[#0b0d12] border-gray-800 text-gray-200' : 'bg-white border-gray-200 text-gray-700'}`}>
-                    <div className="px-3 py-2 text-sm font-semibold">Ayarlar</div>
-                    <div className="px-3 py-2 border-t">
-                      <label className="flex items-center gap-2">
-                        <input type="radio" checked={theme === 'light'} onChange={() => applyTheme('light')} />
-                        <span className="text-sm">Açık Tema</span>
-                      </label>
-                      <label className="flex items-center gap-2 mt-2">
-                        <input type="radio" checked={theme === 'dark'} onChange={() => applyTheme('dark')} />
-                        <span className="text-sm">Koyu Tema</span>
-                      </label>
-                      <div className="flex items-center gap-2 mt-3">
-                        <button
-                          onClick={() => {
-                            try {
-                              // persist current selection and apply immediately
-                              localStorage.setItem('mailSectionTheme', theme);
-                              localStorage.setItem('uiTheme', theme);
-                            } catch {}
-                            try { document.body.classList.toggle('mail-theme-dark', theme === 'dark'); } catch {}
-                            showToast('Tema kaydedildi', 'success');
-                            setShowSettings(false);
-                          }}
-                          className="px-3 py-1 rounded bg-blue-600 text-white text-sm hover:opacity-90"
-                        >
-                          Kaydet
-                        </button>
-                        
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
 
           {/* Toolbar */}
-          <div className={`px-4 py-2 border-b ${theme === 'dark' ? 'border-gray-800 bg-transparent' : 'border-gray-200 bg-white'} flex items-center justify-between`}>
-            <div className="flex items-center gap-1">
-              {/* Select All Checkbox */}
+          <div className="flex-shrink-0 px-3 md:px-6 py-3 border-b border-white/5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* Select All */}
               <button
                 onClick={selectAll}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-lg hover:bg-white/5 transition-colors"
+                title="Tümünü Seç"
               >
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
-                  selectedIds.size > 0 ? 'bg-blue-600 border-blue-600' : 'border-gray-400'
+                <div className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-all ${
+                  selectedIds.size > 0 ? 'bg-[#5865F2] border-[#5865F2]' : 'border-white/30'
                 }`}>
                   {selectedIds.size > 0 && (
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
               </button>
 
+              {/* Refresh */}
               <button
-                onClick={async () => {
-                  try {
-                    await fetch('/api/mail', { method: 'POST' });
-                    showToast('Yenilendi', 'success');
-                    window.dispatchEvent(new CustomEvent('mail:refresh'));
-                  } catch {}
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('mail:refresh'));
+                  showToast('Yenilendi', 'success');
                 }}
-                className={`p-2 rounded transition-colors ${theme === 'dark' ? 'hover:bg-gray-900' : 'hover:bg-gray-100'}`}
+                className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-white transition-colors"
                 title="Yenile"
               >
-                <LuRefreshCw className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
+                <LuRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               </button>
 
+              {/* Bulk actions when selected */}
               {selectedIds.size > 0 && (
                 <>
-                  <div className="w-px h-6 bg-gray-300 mx-1" />
-                  
+                  <div className="w-px h-5 bg-white/10 mx-1" />
+
                   <button
                     onClick={async () => {
                       const ids = Array.from(selectedIds);
                       try {
-                        await fetch('/api/mail', { 
-                          method: 'DELETE', 
-                          headers: { 'Content-Type': 'application/json' }, 
-                          body: JSON.stringify({ ids }) 
-                        });
+                        await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
                         showToast(`${ids.length} mesaj silindi`, 'success');
                         setSelectedIds(new Set());
                         window.dispatchEvent(new CustomEvent('mail:refresh'));
@@ -496,21 +386,17 @@ export default function MailSection({
                         showToast('Silme hatası', 'error');
                       }
                     }}
-                    className={`p-2 rounded transition-colors ${theme === 'dark' ? 'hover:bg-gray-900' : 'hover:bg-gray-100'}`}
+                    className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-rose-400 transition-colors"
                     title="Sil"
                   >
-                    <LuTrash2 className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
+                    <LuTrash2 className="w-4 h-4" />
                   </button>
 
                   <button
                     onClick={async () => {
                       const ids = Array.from(selectedIds);
                       try {
-                        await fetch('/api/mail', { 
-                          method: 'POST', 
-                          headers: { 'Content-Type': 'application/json' }, 
-                          body: JSON.stringify({ ids }) 
-                        });
+                        await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
                         showToast('Okundu işaretlendi', 'success');
                         setSelectedIds(new Set());
                         window.dispatchEvent(new CustomEvent('mail:refresh'));
@@ -518,186 +404,232 @@ export default function MailSection({
                         showToast('İşlem hatası', 'error');
                       }
                     }}
-                    className={`p-2 rounded transition-colors ${theme === 'dark' ? 'hover:bg-gray-900' : 'hover:bg-gray-100'}`}
+                    className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-[#5865F2] transition-colors"
                     title="Okundu işaretle"
                   >
-                    <LuMailOpen className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
+                    <LuMailOpen className="w-4 h-4" />
                   </button>
 
-                  <button className={`p-2 rounded transition-colors ${theme === 'dark' ? 'hover:bg-gray-900' : 'hover:bg-gray-100'}`} title="Taşı">
-                    <LuTag className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} />
-                  </button>
+                  <span className="text-[10px] font-bold text-[#5865F2] ml-1">{selectedIds.size} seçili</span>
                 </>
               )}
             </div>
 
-            <div className={`flex items-center gap-2 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <div className="flex items-center gap-3 text-xs text-white/40">
               <span>{filtered.length > 0 ? '1' : '0'}–{filtered.length} / {filtered.length}</span>
-              <div className="flex items-center gap-1">
-                <button onClick={toggleSort} title="Sırala" className="p-1 rounded hover:bg-gray-100 transition-colors">
-                  <span className="text-xs">{sortOrder === 'desc' ? '↓' : '↑'}</span>
-                </button>
-                <button className="p-1 rounded hover:bg-gray-100 transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </button>
-                <button className="p-1 rounded hover:bg-gray-100 transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
+              <button
+                onClick={toggleSort}
+                title={sortOrder === 'desc' ? 'En yeni önce' : 'En eski önce'}
+                className="p-1.5 rounded-lg hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+              >
+                {sortOrder === 'desc' ? <LuChevronDown className="w-4 h-4" /> : <LuChevronUp className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
           {/* Mail List */}
-          <div className="flex-1 overflow-y-auto mail-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
             {loading && (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+              <div className="flex flex-col items-center justify-center h-64 text-white/50">
                 <LuRefreshCw className="w-8 h-8 animate-spin mb-3" />
                 <span className="text-sm">Yükleniyor...</span>
               </div>
             )}
 
             {!loading && error && (
-              <div className="m-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm text-center">
                 {error}
               </div>
             )}
 
             {!loading && !error && filtered.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-                <LuInbox className="w-16 h-16 mb-4 text-gray-300" />
-                <p className="text-lg font-medium text-gray-700">Gelen kutunuz boş</p>
-                <p className="text-sm text-gray-500 mt-1">Bu kategoride mesaj yok</p>
+              <div className="flex flex-col items-center justify-center h-64 text-center">
+                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                  <LuArchive className="w-8 h-8 text-white/20" />
+                </div>
+                <p className="text-white font-bold">Kutu Boş</p>
+                <p className="text-sm text-white/40 mt-1">Bu kategoride henüz mesaj yok.</p>
               </div>
             )}
 
             {!loading && !error && filtered.map((mail) => {
-              const config = CATEGORY_CONFIG[mail.category as keyof typeof CATEGORY_CONFIG];
+              const config = CATEGORY_CONFIG[mail.category] ?? CATEGORY_CONFIG.order;
               const isSelected = selectedIds.has(String(mail.id));
 
               return (
                 <div
                   key={mail.id}
-                  className={`mail-item-hover border-b ${theme === 'dark' ? 'border-gray-800 cursor-pointer' : 'border-gray-200 cursor-pointer'} ${
-                    mail.is_read ? (theme === 'dark' ? 'bg-transparent' : 'bg-white') : (theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50/30')
-                  } ${isSelected ? (theme === 'dark' ? 'bg-blue-800/30' : 'bg-blue-50') : ''}`}
+                  className={`group relative flex items-center gap-4 rounded-2xl border p-4 transition-all duration-300 cursor-pointer hover:-translate-y-0.5 ${
+                    isSelected
+                      ? 'border-[#5865F2]/30 bg-[#5865F2]/10'
+                      : mail.is_read
+                        ? 'border-white/5 bg-[#0b0d12]/40 opacity-70 hover:opacity-100 hover:bg-[#0b0d12]/60 hover:border-white/10'
+                        : 'border-[#5865F2]/20 bg-gradient-to-r from-[#5865F2]/5 to-transparent hover:border-[#5865F2]/40 hover:shadow-[0_10px_30px_-10px_rgba(88,101,242,0.15)]'
+                  }`}
                   onClick={(e) => {
-                      if ((e.target as HTMLElement).closest('.checkbox-cell')) {
-                        return;
-                      }
-                      // open modal and push route so `/dashboard/mail?id=...` is navigable
-                      setSelectedMail(mail);
-                      try { router.push(`/dashboard/mail?id=${encodeURIComponent(String(mail.id))}`); } catch { }
-                    }}
+                    if ((e.target as HTMLElement).closest('.mail-action-btn')) return;
+                    setSelectedMail(mail);
+                    if (onOpenMail) onOpenMail(mail);
+                    try { router.push(`/dashboard/mail?id=${encodeURIComponent(String(mail.id))}`); } catch {}
+                  }}
                 >
-                  <div className="flex items-center gap-4 px-4 py-3">
-                    {/* Checkbox */}
-                    <div className="checkbox-cell flex-shrink-0">
-                      <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            toggleSelect(String(mail.id));
-                          }}
-                        className="p-1 hover:bg-gray-200 rounded transition-colors"
-                      >
-                        <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
-                          isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-400'
-                        }`}>
-                          {isSelected && (
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
-                      </button>
-                    </div>
-
-                    {/* Star */}
-                    <div className="flex-shrink-0">
-                      <button className="p-1 hover:bg-gray-200 rounded transition-colors">
-                        <LuStar
-                          className={`w-5 h-5 ${mail.is_starred ? 'text-yellow-400' : 'text-gray-400'} hover:text-yellow-400`}
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            try {
-                              if (mail.is_starred) {
-                                await fetch('/api/mail/star', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
-                              } else {
-                                await fetch('/api/mail/star', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
-                              }
-                              // optimistic UI update: refresh list
-                              window.dispatchEvent(new CustomEvent('mail:refresh'));
-                            } catch {
-                              showToast('Yıldız işlemi başarısız', 'error');
-                            }
-                          }}
-                        />
-                      </button>
-                    </div>
-
-                    {/* Category Badge */}
-                    <div className="flex-shrink-0">
-                      <div 
-                        className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium"
-                        style={{ 
-                          backgroundColor: theme === 'dark' ? `${config?.color}33` : `${config?.color}15`,
-                          color: config?.color 
-                        }}
-                      >
-                        <span>{config?.icon}</span>
-                        <span className="hidden sm:inline">{config?.label}</span>
+                  {/* Checkbox */}
+                  <div className="mail-action-btn flex-shrink-0">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); toggleSelect(String(mail.id)); }}
+                      className="p-1 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                      <div className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-all ${
+                        isSelected ? 'bg-[#5865F2] border-[#5865F2]' : 'border-white/30'
+                      }`}>
+                        {isSelected && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
                       </div>
-                    </div>
+                    </button>
+                  </div>
 
-                    {/* Subject & Preview */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-2">
-                        <span className={`text-sm truncate ${mail.is_read ? `font-normal ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}` : `font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}`}>
-                          {mail.title}
-                        </span>
-                        <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} truncate flex-shrink-0`}>
-                          — {previewText(mail.body, 80)}
-                        </span>
-                      </div>
-                    </div>
+                  {/* Star */}
+                  <div className="mail-action-btn flex-shrink-0">
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        try {
+                          if (mail.is_starred) {
+                            await fetch('/api/mail/star', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
+                          } else {
+                            await fetch('/api/mail/star', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
+                          }
+                          window.dispatchEvent(new CustomEvent('mail:refresh'));
+                        } catch {
+                          showToast('Yıldız işlemi başarısız', 'error');
+                        }
+                      }}
+                      className="p-1 rounded-lg hover:bg-white/10 transition-colors"
+                    >
+                      <LuStar className={`w-4 h-4 transition-colors ${mail.is_starred ? 'fill-yellow-400 text-yellow-400' : 'text-white/20 hover:text-yellow-400'}`} />
+                    </button>
+                  </div>
 
-                    {/* Date */}
-                    <div className={`flex-shrink-0 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {formatDate(mail.created_at)}
-                    </div>
+                  {/* Read/Unread icon */}
+                  <div className={`flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-xl border transition-all ${
+                    mail.is_read
+                      ? 'border-white/5 bg-white/5 text-white/20'
+                      : 'border-[#5865F2]/30 bg-[#5865F2]/20 text-[#5865F2] shadow-[0_0_15px_rgba(88,101,242,0.3)]'
+                  }`}>
+                    {mail.is_read ? <LuMailOpen className="w-5 h-5" /> : <LuMail className="w-5 h-5" />}
+                  </div>
+
+                  {/* Category badge */}
+                  <div className="flex-shrink-0">
+                    <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${config.css}`}>
+                      <span className="text-sm">{config.icon}</span>
+                      <span className="hidden sm:inline">{config.label}</span>
+                    </span>
+                  </div>
+
+                  {/* Title & preview */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className={`text-sm truncate ${mail.is_read ? 'font-medium text-white/60' : 'font-bold text-white'}`}>
+                      {mail.title}
+                    </h4>
+                    <p className="mt-0.5 text-xs text-white/30 line-clamp-1 group-hover:text-white/50 transition-colors">
+                      {previewText(mail.body, 80)}
+                    </p>
+                  </div>
+
+                  {/* Date */}
+                  <div className="flex-shrink-0 text-[10px] font-medium text-white/30 whitespace-nowrap">
+                    {formatDate(mail.created_at)}
+                  </div>
+
+                  {/* Delete */}
+                  <div className="mail-action-btn flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        try {
+                          await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: [mail.id] }) });
+                          showToast('Mesaj silindi', 'success');
+                          window.dispatchEvent(new CustomEvent('mail:refresh'));
+                        } catch {
+                          showToast('Silme hatası', 'error');
+                        }
+                      }}
+                      className="p-2 rounded-lg bg-white/5 hover:bg-rose-500/20 text-white/30 hover:text-rose-400 transition-all"
+                    >
+                      <LuTrash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Detail modal handled by parent via `onOpenMail` */}
+          {/* Footer actions */}
+          <div className="flex-shrink-0 border-t border-white/10 bg-[#0b0d12]/30 px-3 md:px-6 py-3 flex items-center justify-end gap-3 backdrop-blur-md">
+            <button
+              type="button"
+              onClick={async () => {
+                const ids = filtered.filter(m => !m.is_read).map(m => m.id);
+                if (ids.length === 0) return showToast('Okunmamış mesaj yok', 'error');
+                try {
+                  await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                  showToast('Tüm mesajlar okundu olarak işaretlendi', 'success');
+                  window.dispatchEvent(new CustomEvent('mail:refresh'));
+                } catch {
+                  showToast('İşlem başarısız', 'error');
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-bold text-white/70 hover:bg-white/10 hover:text-white transition-all"
+            >
+              <LuCheckCheck className="w-4 h-4" /> Tümünü Okundu Say
+            </button>
 
-        </div>
-
-        {/* Toast */}
-        {toast.open && (
-          <div 
-            className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg text-white text-sm font-medium ${
-              toast.type === 'success' ? 'bg-gray-800' : 'bg-red-600'
-            }`}
-          >
-            {toast.message}
+            <button
+              type="button"
+              onClick={async () => {
+                const ids = filtered.filter(m => m.category === 'reward' && !m.is_read).map(m => m.id);
+                if (ids.length === 0) return showToast('Talep edilecek ödül yok', 'error');
+                try {
+                  await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                  showToast('Ödüller talep edildi', 'success');
+                  window.dispatchEvent(new CustomEvent('mail:refresh'));
+                } catch {
+                  showToast('Talep başarısız', 'error');
+                }
+              }}
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-[#5865F2] to-indigo-600 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/20 hover:shadow-[#5865F2]/40 transition-all"
+            >
+              <LuGift className="w-4 h-4" /> Hepsini Al
+            </button>
           </div>
-        )}
-        {/* Local mail detail modal */}
-        {selectedMail && (
-          <MailDetailModal mail={selectedMail} onClose={() => {
+        </div>
+      </div>
+
+      {/* Toast */}
+      {toast.open && (
+        <div className={`fixed right-6 bottom-6 z-[9999] rounded-xl px-5 py-3 shadow-2xl text-sm font-medium backdrop-blur-xl border ${
+          toast.type === 'success'
+            ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300'
+            : 'bg-rose-500/20 border-rose-500/30 text-rose-300'
+        }`}>
+          {toast.message}
+        </div>
+      )}
+
+      {/* Mail detail modal */}
+      {selectedMail && (
+        <MailDetailModal
+          mail={selectedMail}
+          onClose={() => {
             setSelectedMail(null);
             try { router.push('/dashboard/mail'); } catch {}
-          }} />
-        )}
-      </section>
-    </>
+          }}
+        />
+      )}
+    </section>
   );
 }

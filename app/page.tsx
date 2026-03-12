@@ -101,7 +101,7 @@ export default function Home() {
               </div>
               <div className="mt-4">
                 <div className="relative inline-block leading-none">
-                  <img src="/cat.gif" alt="cat" className="absolute left-1/2 transform -translate-x-1/2 translate-y-60 bottom-full block" style={{margin:0}} />
+                  <img src="/gif/cat.gif" alt="cat" className="absolute left-1/2 transform -translate-x-1/2 translate-y-60 bottom-full block" style={{margin:0}} />
                   <h2 className="sr-only">Decorative cat overlay</h2>
                 </div>
               </div>

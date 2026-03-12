@@ -37,20 +37,39 @@ function DiscordAuthCallbackContent() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),
+          credentials: 'include',
         });
 
         if (!response.ok) {
-          let body: unknown = null;
+          let body: any = null;
+          let text: string | null = null;
           try {
             body = await response.json();
           } catch {
-            try { body = await response.text(); } catch { body = null; }
+            try {
+              text = await response.text();
+            } catch {
+              text = null;
+            }
           }
-          console.error('Discord exchange failed', { status: response.status, body });
+
+          // log both parsed body and raw text so we can troubleshoot missing data
+          console.error('Discord exchange failed - status:', response.status,
+            'statusText:', response.statusText,
+            'body:', body,
+            'text:', text,
+            'raw response object:', response);
+
           try {
-            localStorage.setItem('oauth_debug', JSON.stringify({ time: new Date().toISOString(), status: response.status, body }));
+            localStorage.setItem(
+              'oauth_debug',
+              JSON.stringify({ time: new Date().toISOString(), status: response.status, body, text }),
+            );
           } catch {}
-          router.replace('/auth/error');
+
+          // include reason in query so error page and logs can surface it
+          const reason = body?.reason || (text ? text : 'unknown');
+          router.replace(`/auth/error?reason=${encodeURIComponent(reason)}`);
           return;
         }
 
@@ -113,7 +132,8 @@ function DiscordAuthCallbackContent() {
         }
 
         router.replace('/auth/error');
-      } catch {
+      } catch (err) {
+        console.error('Discord exchange encountered exception', err);
         router.replace('/auth/error');
       }
     };

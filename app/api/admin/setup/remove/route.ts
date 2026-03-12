@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/auth';
+import { isAdminOrDeveloper } from '@/lib/adminAuth';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -17,64 +19,7 @@ const getSelectedGuildId = async (): Promise<string> => {
   return selectedGuildId || '1465698764453838882'; // Fallback
 };
 
-const isAdminUser = async () => {
-  try {
-    const botToken = process.env.DISCORD_TOKEN;
-    if (!botToken) {
-      console.warn('❌ Admin check failed: DISCORD_TOKEN is missing');
-      return false;
-    }
-
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
-    const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-    if (!userId || !selectedGuildId) {
-      console.warn('❌ Admin check failed: missing userId or selectedGuildId', {
-        hasUserId: !!userId,
-        hasSelectedGuildId: !!selectedGuildId
-      });
-      return false;
-    }
-
-    // Get admin role from server configuration
-    const supabase = getSupabase();
-    if (!supabase) {
-      return false;
-    }
-
-    const { data: server } = await supabase
-      .from('servers')
-      .select('admin_role_id')
-      .eq('discord_id', selectedGuildId)
-      .single();
-
-    if (!server?.admin_role_id) {
-      console.warn('❌ Admin check failed: admin_role_id not found for guild', selectedGuildId);
-      return false;
-    }
-
-    // Check if user has admin role
-    const memberResponse = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${userId}`, {
-      headers: { Authorization: `Bot ${botToken}` },
-    });
-
-    if (!memberResponse.ok) {
-      const errorText = await memberResponse.text();
-      console.warn('❌ Admin check failed: Discord member fetch failed', {
-        status: memberResponse.status,
-        statusText: memberResponse.statusText,
-        body: errorText
-      });
-      return false;
-    }
-
-    const member = await memberResponse.json();
-    return member.roles.includes(server.admin_role_id);
-  } catch (error) {
-    console.error('Admin check failed:', error);
-    return false;
-  }
-};
+const isAdminUser = isAdminOrDeveloper;
 
 export async function GET() {
   console.log('🔍 Setup remove preview request received');

@@ -25,6 +25,27 @@ export default function OverviewSection({
   renderPapelAmount,
   formatRoleColor,
 }: OverviewSectionProps) {
+  // Move papelLeaderboard and related variables here
+  type LeaderboardMember = NonNullable<OverviewStatsExpanded['papelLeaderboard']>[number] & {
+    userId: string;
+    papel: number;
+  };
+
+  const papelLeaderboard = ((overviewStats as OverviewStatsExpanded)?.papelLeaderboard ?? []) as LeaderboardMember[];
+  // Use the strongly-typed MemberProfile instead of `any` to satisfy ESLint/TS.
+  const prof = profile as MemberProfile | null;
+  const currentUserId = prof?.userId;
+  const currentUserInLeaderboard = papelLeaderboard.some((m: LeaderboardMember) => m.userId === currentUserId);
+  const currentUserInfo = currentUserId && prof ? {
+    userId: currentUserId,
+    avatarUrl: prof.avatarUrl,
+    nickname: prof.nickname,
+    displayName: prof.displayName,
+    username: prof.username,
+    papel: (overviewStats as OverviewStatsExpanded)?.papel ?? 0,
+    isCurrentUser: true,
+  } : null;
+
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6 overview-fade">
       <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Genel Bakış</p>
@@ -70,7 +91,7 @@ export default function OverviewSection({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {profile?.roles?.length ? (
-                    profile.roles.map((role) => (
+                    profile.roles.map((role: { id: string; name: string; color: number }) => (
                       <span
                         key={role.id}
                         className={`role-glow rounded-full border border-white/10 px-2 py-1 transition hover:scale-[1.03] ${
@@ -113,19 +134,20 @@ export default function OverviewSection({
                     {overviewStats?.userVoiceMinutes?.toLocaleString('tr-TR') ?? 0}
                   </p>
                 </div>
-                {/* Removed: Son 24 saat - Mesaj and Son 24 saat - Sesli dakika tiles */}
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:col-span-2">
-                  <p className="text-xs text-white/50">Sunucuya katılım tarihin</p>
-                  <p className="mt-1 text-sm font-semibold text-white">
-                    {overviewStats?.joinedAt
-                      ? new Date(overviewStats.joinedAt).toLocaleString('tr-TR')
-                      : 'Bilinmiyor'}
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-xs text-white/50">Tag Durumu</p>
+                  <p className="mt-1 text-sm text-white/60">
+                    {(overviewStats as OverviewStatsExpanded)?.hasTag ? `Evet` : 'Hayır'}
                   </p>
                 </div>
                 <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Toplam rol</p>
-                  <p className="mt-1 text-lg font-semibold text-white">{profile?.roles?.length ?? 0}</p>
+                  <p className="text-xs text-white/50">Boost Durumu</p>
+                  <p className="mt-1 text-sm text-white/60">
+                    {(overviewStats as OverviewStatsExpanded)?.isBooster ? `Evet` : 'Hayır'}
+                  </p>
                 </div>
+                {/* Removed: Son 24 saat - Mesaj and Son 24 saat - Sesli dakika tiles */}
+                {/* Sunucuya katılım tarihi ve toplam rol kaldırıldı */}
                 {(overviewStats as OverviewStatsExpanded)?.totalsSinceVerified ? (
                   <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:col-span-2">
                     <p className="text-xs text-white/50">Doğrulandıktan beri (toplam)</p>
@@ -136,32 +158,41 @@ export default function OverviewSection({
               </div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-[#0b0d12]/60 p-5 overview-fade overview-delay-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Tag & Boost Kazançlar</p>
-              <div className="mt-4 space-y-3">
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Tag Bonusu (Mesaj)</p>
-                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.tagBonusMessage ?? 0).toLocaleString('tr-TR')}</p>
-                </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Tag Bonusu (Ses)</p>
-                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.tagBonusVoice ?? 0).toLocaleString('tr-TR')}</p>
-                </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Boost Bonusu (Mesaj)</p>
-                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.boosterBonusMessage ?? 0).toLocaleString('tr-TR')}</p>
-                </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Boost Bonusu (Ses)</p>
-                  <p className="mt-1 text-lg font-semibold text-white">{((overviewStats as OverviewStatsExpanded)?.boosterBonusVoice ?? 0).toLocaleString('tr-TR')}</p>
-                </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50">Senin Durumun</p>
-                  <p className="mt-1 text-sm text-white/60">
-                    Tag: {(overviewStats as OverviewStatsExpanded)?.hasTag ? `Evet — ${new Date((overviewStats as OverviewStatsExpanded)!.tagGrantedAt!).toLocaleString('tr-TR')}` : 'Hayır'}
-                    <br />
-                    Boost: {(overviewStats as OverviewStatsExpanded)?.isBooster ? `Evet — ${new Date((overviewStats as OverviewStatsExpanded)!.boosterSince!).toLocaleString('tr-TR')}` : 'Hayır'}
-                  </p>
-                </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Sunucu Papel Sıralaması</p>
+              <div className="mt-4">
+                {/* Papel leaderboard: avatar, nickname, papel, rank, highlight current user */}
+                {papelLeaderboard.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {papelLeaderboard.map((member: LeaderboardMember, idx: number) => (
+                      <div
+                        key={member.userId}
+                        className={`flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 ${member.isCurrentUser ? 'ring-2 ring-indigo-400' : ''}`}
+                      >
+                        <span className="w-8 text-center font-bold text-white/80">{idx + 1}</span>
+                        <Image src={member.avatarUrl ?? "/default-avatar.png"} alt="avatar" width={32} height={32} className="rounded-full" />
+                        <span className="text-white font-semibold">{member.nickname ?? member.displayName ?? member.username}</span>
+                        <span className="ml-auto text-lg font-bold text-indigo-300">{renderPapelAmount(member.papel)}</span>
+                      </div>
+                    ))}
+                    {!currentUserInLeaderboard && currentUserInfo && (
+                      <div className="flex items-center gap-3 rounded-xl border border-indigo-400 bg-indigo-100/10 p-3 ring-2 ring-indigo-400 mt-2">
+                        <span className="w-8 text-center font-bold text-indigo-400">—</span>
+                        <Image src={currentUserInfo.avatarUrl} alt="avatar" width={32} height={32} className="rounded-full" />
+                        <span className="text-indigo-400 font-semibold">{currentUserInfo.nickname ?? currentUserInfo.displayName ?? currentUserInfo.username}</span>
+                        <span className="ml-auto text-lg font-bold text-indigo-400">{renderPapelAmount(currentUserInfo.papel)}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : currentUserInfo ? (
+                  <div className="flex items-center gap-3 rounded-xl border border-indigo-400 bg-indigo-100/10 p-3 ring-2 ring-indigo-400">
+                    <span className="w-8 text-center font-bold text-indigo-400">—</span>
+                    <Image src={currentUserInfo.avatarUrl} alt="avatar" width={32} height={32} className="rounded-full" />
+                    <span className="text-indigo-400 font-semibold">{currentUserInfo.nickname ?? currentUserInfo.displayName ?? currentUserInfo.username}</span>
+                    <span className="ml-auto text-lg font-bold text-indigo-400">{renderPapelAmount(currentUserInfo.papel)}</span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-white/40">Sıralama verisi bulunamadı.</p>
+                )}
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import MailSection from '../components/MailSection';
 import type { MailItem } from '../types';
@@ -49,13 +49,15 @@ export default function MailIndexPage() {
   }, []);
 
   return (
-    <div className="min-h-screen">
-      <MailSection
-        loading={mailLoading}
-        error={mailError}
-        items={mailItems}
-        onBack={() => router.push('/dashboard')}
-      />
+    <div className="h-screen overflow-hidden">
+      <Suspense fallback={<div>Yükleniyor...</div>}>
+        <MailSection
+          loading={mailLoading}
+          error={mailError}
+          items={mailItems}
+          onBack={() => router.push('/dashboard')}
+        />
+      </Suspense>
     </div>
   );
 }

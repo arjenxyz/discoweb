@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { logWebEvent } from '@/lib/serverLogger';
+import { getSessionUserId, requireSessionUser } from '@/lib/auth';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -35,17 +36,17 @@ const getSupabase = () => {
   });
 };
 
-const isAdminUser = async () => {
+const isAdminUser = async (userId?: string | null) => {
   try {
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) {
       return false;
     }
 
+    const resolvedUserId = userId ?? (await getSessionUserId());
     const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
     const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-    if (!userId || !selectedGuildId) {
+    if (!resolvedUserId || !selectedGuildId) {
       return false;
     }
 
@@ -66,7 +67,7 @@ const isAdminUser = async () => {
     }
 
     // Check Discord API for user roles
-    const memberResponse = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${userId}`, {
+    const memberResponse = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${resolvedUserId}`, {
       headers: { Authorization: `Bot ${botToken}` },
     });
 
@@ -83,8 +84,7 @@ const isAdminUser = async () => {
 };
 
 const getAdminId = async () => {
-  const cookieStore = await cookies();
-  return cookieStore.get('discord_user_id')?.value ?? null;
+  return (await getSessionUserId()) ?? null;
 };
 
 export async function GET() {
@@ -117,7 +117,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  if (!(await isAdminUser())) {
+  const session = await requireSessionUser(request);
+  if (!session.ok) {
+    return session.response;
+  }
+  if (!(await isAdminUser(session.userId))) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 

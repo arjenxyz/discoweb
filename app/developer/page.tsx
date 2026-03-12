@@ -1,141 +1,61 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import {
-  LuBell,
-  LuCode,
-  LuDatabase,
-  LuLifeBuoy,
-  LuShield,
-  LuWrench,
-  LuCommand,
-  LuFlag,
-  LuPodcast,
-  LuRadar,
-  LuChevronDown,
-  LuChrome,
-  LuLogOut,
-  LuSearch,
   LuUsers,
-  LuTrash2,
+  LuDatabase,
+  LuSearch,
+  LuWrench,
+  LuShoppingBag,
+  LuBell,
+  LuTriangleAlert,
+  LuMail,
+  LuRefreshCw,
+  LuArrowRight,
+  LuActivity,
+  LuZap,
+  LuShield,
+  LuGlobe,
 } from 'react-icons/lu';
 
-type UserInfo = {
-  id: string;
-  username: string;
-  avatar: string | null;
+type SystemStats = {
+  totalMembers: number;
+  totalServers: number;
+  totalOrders: number;
+  totalNotifications: number;
+  totalErrors: number;
+  totalMails: number;
+  maintenanceActive: boolean;
+  maintenanceModules: number;
+  activeMaintenanceCount: number;
 };
-
 
 export default function DeveloperPage() {
   const router = useRouter();
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [accessLoading, setAccessLoading] = useState(true);
-  const [accessAllowed, setAccessAllowed] = useState(false);
-  const [accessError, setAccessError] = useState<string | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [stats, setStats] = useState<SystemStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [syncLoading, setSyncLoading] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const cookies = document.cookie.split('; ');
-        const userIdCookie = cookies.find((row) => row.startsWith('discord_user_id='));
-        const userId = userIdCookie?.split('=')[1];
-        if (!userId) {
-          return;
-        }
-        const response = await fetch(`/api/discord/user/${userId}`);
-        if (response.ok) {
-          const userData = (await response.json()) as UserInfo;
-          setUser(userData);
-        }
-      } catch {
-        // ignore
-      }
-    };
-
-    const checkAccess = async () => {
-      try {
-        setAccessLoading(true);
-        const response = await fetch('/api/developer/check-access', { credentials: 'include', cache: 'no-store' });
-        const data = (await response.json().catch(() => ({}))) as { hasAccess?: boolean; error?: string };
-
-        if (response.ok && data.hasAccess) {
-          setAccessAllowed(true);
-          setAccessError(null);
-          return;
-        }
-
-        // Handle different error cases from API
-        if (response.status === 401 || data.error === 'unauthorized') {
-          setAccessError('Giriş yapmanız gerekiyor.');
-        } else if (response.status === 403 || data.error === 'forbidden') {
-          setAccessError('Bu panele erişim izniniz yok.');
-        } else if (data.error === 'developer_role_missing') {
-          setAccessError('Developer rolü tanımlı değil.');
-        } else {
-          setAccessError('Geliştirici paneli doğrulaması yapılamadı.');
-        }
-
-        setAccessAllowed(false);
-      } catch {
-        setAccessError('Geliştirici paneli doğrulaması yapılamadı.');
-        setAccessAllowed(false);
-      } finally {
-        setAccessLoading(false);
-      }
-    };
-
-    fetchUserInfo();
-    checkAccess();
-  }, []);
-
-
-  useEffect(() => {
-    if (!menuOpen) {
-      return undefined;
-    }
-
-    const handleClick = (event: MouseEvent) => {
-      if (!menuRef.current) {
-        return;
-      }
-      if (!menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [menuOpen]);
-
-  const handleLogout = async () => {
+  const loadStats = async () => {
     try {
-      localStorage.clear();
-      if (typeof document !== 'undefined') {
-        document.cookie.split(';').forEach((c) => {
-          const name = c.split('=')[0].trim();
-          try {
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
-          } catch {
-            // ignore
-          }
-        });
+      setStatsLoading(true);
+      const response = await fetch('/api/developer/system-stats', { credentials: 'include', cache: 'no-store' });
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data.stats);
       }
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-      window.location.href = '/';
     } catch {
-      localStorage.clear();
-      window.location.href = '/';
+      // ignore
+    } finally {
+      setStatsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadStats();
+  }, []);
 
   const handleSyncMembers = async () => {
     setSyncLoading(true);
@@ -145,6 +65,7 @@ export default function DeveloperPage() {
       if (response.ok) {
         const data = await response.json();
         setSyncMessage(data.message || 'Senkronizasyon tamamlandı.');
+        loadStats();
       } else {
         const data = await response.json().catch(() => ({}));
         setSyncMessage(data.error || 'Senkronizasyon başarısız.');
@@ -156,419 +77,193 @@ export default function DeveloperPage() {
     }
   };
 
+  const statCards = [
+    { label: 'Toplam Üye', value: stats?.totalMembers ?? 0, icon: LuUsers, color: 'from-indigo-500/20 to-indigo-600/10', iconColor: 'text-indigo-400', borderColor: 'border-indigo-500/20' },
+    { label: 'Sunucu', value: stats?.totalServers ?? 0, icon: LuDatabase, color: 'from-violet-500/20 to-violet-600/10', iconColor: 'text-violet-400', borderColor: 'border-violet-500/20' },
+    { label: 'Sipariş', value: stats?.totalOrders ?? 0, icon: LuShoppingBag, color: 'from-emerald-500/20 to-emerald-600/10', iconColor: 'text-emerald-400', borderColor: 'border-emerald-500/20' },
+    { label: 'Bildirim', value: stats?.totalNotifications ?? 0, icon: LuBell, color: 'from-amber-500/20 to-amber-600/10', iconColor: 'text-amber-400', borderColor: 'border-amber-500/20' },
+    { label: 'Hata Logu', value: stats?.totalErrors ?? 0, icon: LuTriangleAlert, color: 'from-rose-500/20 to-rose-600/10', iconColor: 'text-rose-400', borderColor: 'border-rose-500/20' },
+    { label: 'Sistem Maili', value: stats?.totalMails ?? 0, icon: LuMail, color: 'from-cyan-500/20 to-cyan-600/10', iconColor: 'text-cyan-400', borderColor: 'border-cyan-500/20' },
+  ];
+
+  const quickActions = [
+    { label: 'Kullanıcı Sorgula', desc: 'Tekil kullanıcı araması', href: '/developer/user-lookup', icon: LuSearch, color: 'bg-indigo-500/15 text-indigo-300 ring-indigo-400/20' },
+    { label: 'Sunucular & Üyeler', desc: 'Toplu görünüm ve analiz', href: '/developer/all-servers', icon: LuGlobe, color: 'bg-sky-500/15 text-sky-300 ring-sky-400/20' },
+    { label: 'Bakım Yönetimi', desc: 'Modül bakım durumları', href: '/developer/maintenance', icon: LuWrench, color: 'bg-amber-500/15 text-amber-300 ring-amber-400/20' },
+    { label: 'API Test', desc: 'Endpoint test aracı', href: '/developer/api-test', icon: LuZap, color: 'bg-pink-500/15 text-pink-300 ring-pink-400/20' },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#0b0d12] text-white">
-      <nav className="border-b border-white/10 bg-[#0b0d12]">
-        <div className="flex w-full items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            {user?.avatar ? (
-              <Image
-                src={user.avatar}
-                alt={user.username}
-                width={44}
-                height={44}
-                className="h-11 w-11 rounded-full border-2 border-white/20"
-              />
-            ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white/20 bg-slate-600">
-                <span className="text-base font-bold text-white">
-                  {user?.username?.charAt(0).toUpperCase() ?? 'D'}
-                </span>
-              </div>
-            )}
-            <div>
-              <p className="text-sm font-semibold text-white">{user?.username ?? 'Developer'}</p>
-              <p className="text-xs text-white/50">Discord hesabınızla giriş yaptınız</p>
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[11px] font-semibold text-emerald-300 uppercase tracking-wider">Sistem Aktif</span>
             </div>
-          </div>
-          <div ref={menuRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/30 hover:text-white ${
-                menuOpen ? 'bg-white/10 text-white' : ''
-              }`}
-            >
-              Menü
-              <LuChevronDown className={`h-3.5 w-3.5 transition ${menuOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 z-50 mt-3 w-56 rounded-2xl border border-white/10 bg-[#0f1116] p-3 shadow-2xl">
-                <button
-                  type="button"
-                  onClick={() => router.replace('/dashboard')}
-                  className="flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuChrome className="h-3.5 w-3.5 text-indigo-300" />
-                  Dashboard&apos;a dön
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/user-lookup')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuSearch className="h-3.5 w-3.5 text-indigo-300" />
-                  Kullanıcı Sorgulama
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/all-servers')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuDatabase className="h-3.5 w-3.5 text-indigo-300" />
-                  Tüm Sunucular
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/servers')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuDatabase className="h-3.5 w-3.5 text-indigo-300" />
-                  Sunucu Listesi
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/users')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuCode className="h-3.5 w-3.5 text-indigo-300" />
-                  Kullanıcı Listesi
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/maintenance')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuWrench className="h-3.5 w-3.5 text-indigo-300" />
-                  Bakım Yönetimi
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer/clear-data')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuTrash2 className="h-3.5 w-3.5 text-red-400" />
-                  Veri Temizleme
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/admin')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuShield className="h-3.5 w-3.5 text-indigo-300" />
-                  Admin Paneli
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuLogOut className="h-3.5 w-3.5 text-rose-300" />
-                  Çıkış yap
-                </button>
+            {stats?.maintenanceActive && (
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/20">
+                <LuWrench className="w-3 h-3 text-amber-400" />
+                <span className="text-[11px] font-semibold text-amber-300 uppercase tracking-wider">Bakım Modu</span>
               </div>
             )}
           </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Developer Dashboard</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">Sistem sağlığı, istatistikler ve hızlı operasyonlar.</p>
         </div>
-      </nav>
-
-      {accessLoading && (
-        <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="rounded-3xl border border-white/10 bg-[#0f131d] p-8">
-            <p className="text-sm text-white/70">Developer yetkisi kontrol ediliyor...</p>
-          </div>
-        </div>
-      )}
-
-      {!accessLoading && !accessAllowed && (
-        <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="rounded-3xl border border-rose-500/30 bg-rose-500/10 p-8">
-            <p className="text-sm font-semibold text-rose-200">Erişim Reddedildi</p>
-            <p className="mt-2 text-sm text-rose-100/80">{accessError ?? 'Bu panele erişim izniniz yok.'}</p>
-            <button
-              type="button"
-              onClick={() => router.replace('/dashboard')}
-              className="mt-6 rounded-full border border-rose-300/40 px-4 py-2 text-xs text-rose-100 transition hover:border-rose-200"
-            >
-              Üye paneline dön
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!accessLoading && accessAllowed && (
-        <div className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="space-y-6">
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                <LuCode className="h-6 w-6 text-indigo-300" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-indigo-300">DEVELOPER</p>
-                <h1 className="mt-1 text-xl font-semibold text-white">Developer Paneli</h1>
-                <p className="mt-1 text-xs text-white/50">Sistem yönetimi, bakım ve duyuru araçları.</p>
-              </div>
-            </div>
-          </section>
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <h2 className="text-lg font-semibold text-white">Hızlı Aksiyonlar</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Duyuru gönder, bakım modunu yönet ve kritik işlemleri tek yerden takip et.
-            </p>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-indigo-400/30 bg-indigo-500/10 px-4 py-3 text-left text-sm text-white/80 transition hover:border-indigo-300/60"
-              >
-                <LuBell className="h-5 w-5 text-indigo-300" />
-                Duyuru & Mail Gönder
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-3 text-left text-sm text-white/80 transition hover:border-amber-300/60"
-              >
-                <LuWrench className="h-5 w-5 text-amber-300" />
-                Bakım Modu Yönetimi
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-left text-sm text-white/80 transition hover:border-emerald-300/60"
-              >
-                <LuDatabase className="h-5 w-5 text-emerald-300" />
-                Veritabanı Kontrolleri
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-left text-sm text-white/80 transition hover:border-rose-300/60"
-              >
-                <LuShield className="h-5 w-5 text-rose-300" />
-                Güvenlik & Yetkiler
-              </button>
-              <button
-                type="button"
-                onClick={handleSyncMembers}
-                disabled={syncLoading}
-                className="flex items-center gap-3 rounded-2xl border border-blue-400/30 bg-blue-500/10 px-4 py-3 text-left text-sm text-white/80 transition hover:border-blue-300/60 disabled:opacity-50"
-              >
-                <LuUsers className="h-5 w-5 text-blue-300" />
-                {syncLoading ? 'Senkronize Ediliyor...' : 'Üyeleri Senkronize Et'}
-              </button>
-            </div>
-          </section>
-
-          {syncMessage && (
-            <section className="rounded-3xl border border-blue-500/30 bg-blue-500/10 p-6">
-              <p className="text-sm font-semibold text-blue-200">Üye Senkronizasyonu</p>
-              <p className="mt-2 text-sm text-blue-100/80">{syncMessage}</p>
-            </section>
-          )}
-
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-semibold text-white">Geliştirici Modülleri</h2>
-                <p className="mt-1 text-sm text-white/60">Her özellik kendi sayfasında.</p>
-              </div>
-            </div>
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => router.replace('/developer/user-lookup')}
-                className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <span className="flex items-center gap-2">
-                  <LuSearch className="h-4 w-4 text-indigo-300" />
-                  Kullanıcı Sorgulama
-                </span>
-                <span className="text-xs text-white/40">sayfa</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.replace('/developer/all-servers')}
-                className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <span className="flex items-center gap-2">
-                  <LuDatabase className="h-4 w-4 text-indigo-300" />
-                  Tüm Sunucular & Üyeler
-                </span>
-                <span className="text-xs text-white/40">sayfa</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.replace('/developer/servers')}
-                className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <span className="flex items-center gap-2">
-                  <LuDatabase className="h-4 w-4 text-indigo-300" />
-                  Sunucu Listesi
-                </span>
-                <span className="text-xs text-white/40">sayfa</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.replace('/developer/users')}
-                className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <span className="flex items-center gap-2">
-                  <LuCode className="h-4 w-4 text-indigo-300" />
-                  Kullanıcı Listesi
-                </span>
-                <span className="text-xs text-white/40">sayfa</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.replace('/developer/maintenance')}
-                className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <span className="flex items-center gap-2">
-                  <LuWrench className="h-4 w-4 text-indigo-300" />
-                  Bakım Yönetimi
-                </span>
-                <span className="text-xs text-white/40">sayfa</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.replace('/developer/users')}
-                className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <span className="flex items-center gap-2">
-                  <LuShield className="h-4 w-4 text-indigo-300" />
-                  Yetkiler & Güvenlik
-                </span>
-                <span className="text-xs text-white/40">sayfa</span>
-              </button>
-            </div>
-          </section>
-
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <h2 className="text-lg font-semibold text-white">Süper Kontrol Merkezi</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Sunucunun tamamını buradan yönetin. Operasyon, otomasyon ve olay yönetimi tek panelde.
-            </p>
-            <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs text-white/50">Canlı Sistem</p>
-                <p className="mt-2 text-sm font-semibold text-emerald-300">Stabil</p>
-                <p className="mt-1 text-[11px] text-white/40">Çekirdek servisler yeşil</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs text-white/50">Görev Kuyruğu</p>
-                <p className="mt-2 text-sm font-semibold text-white/70">0 bekleyen</p>
-                <p className="mt-1 text-[11px] text-white/40">Otomasyon temiz</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs text-white/50">Güvenlik</p>
-                <p className="mt-2 text-sm font-semibold text-emerald-300">Koruma aktif</p>
-                <p className="mt-1 text-[11px] text-white/40">Kritik kurallar devrede</p>
-              </div>
-            </div>
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <LuRadar className="h-4 w-4 text-indigo-300" />
-                Canlı İzleme Aç
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <LuCommand className="h-4 w-4 text-indigo-300" />
-                Komut Kontrol Paneli
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <LuPodcast className="h-4 w-4 text-indigo-300" />
-                Acil Yayın Modu
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/80 transition hover:border-white/20"
-              >
-                <LuFlag className="h-4 w-4 text-indigo-300" />
-                Özellik Bayrakları
-              </button>
-            </div>
-          </section>
-
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <h2 className="text-lg font-semibold text-white">Bakım Yönetimi</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Bakım modülü artık ayrı sayfada yönetiliyor.
-            </p>
-            <button
-              type="button"
-              onClick={() => router.replace('/developer/maintenance')}
-              className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-white/20"
-            >
-              <LuWrench className="h-4 w-4 text-indigo-300" />
-              Bakım sayfasına git
-            </button>
-          </section>
-
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <h2 className="text-lg font-semibold text-white">Sistem Durumu</h2>
-            <div className="mt-4 grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs text-white/50">Mail Servisi</p>
-                <p className="mt-2 text-sm font-semibold text-emerald-300">Aktif</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs text-white/50">Bildirimler</p>
-                <p className="mt-2 text-sm font-semibold text-emerald-300">Aktif</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs text-white/50">Bakım</p>
-                <p className="mt-2 text-sm font-semibold text-white/70">Kapalı</p>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <aside className="space-y-6">
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <h2 className="text-base font-semibold text-white">Geliştirici Notları</h2>
-            <p className="mt-2 text-sm text-white/60">
-              Sistem ayarları üzerinde çalışırken kritik değişiklikleri burada takip edebilirsiniz.
-            </p>
-            <ul className="mt-4 space-y-3 text-sm text-white/70">
-              <li className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                Mail kategorileri güncellendi.
-              </li>
-              <li className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                Verify rol kontrolü mailde kapatıldı.
-              </li>
-              <li className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                Mail kutusu tam ekran deneyimine taşındı.
-              </li>
-              <li className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                Bakım yönetimi developer paneline taşındı.
-              </li>
-            </ul>
-          </section>
-
-          <section className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <h2 className="text-base font-semibold text-white">Destek</h2>
-            <p className="mt-2 text-sm text-white/60">Acil müdahale ve destek kanalları.</p>
-            <button
-              type="button"
-              className="mt-4 flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70 transition hover:border-white/30 hover:text-white"
-            >
-              <span className="flex items-center gap-2">
-                <LuLifeBuoy className="h-4 w-4 text-indigo-300" />
-                Teknik Destek Kanalı
-              </span>
-              <span className="text-xs text-white/40">discord</span>
-            </button>
-          </section>
-        </aside>
+        <button
+          type="button"
+          onClick={loadStats}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-all"
+        >
+          <LuRefreshCw className={`w-4 h-4 ${statsLoading ? 'animate-spin' : ''}`} />
+          Yenile
+        </button>
       </div>
-      )}
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {statCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <div
+              key={card.label}
+              className={`relative overflow-hidden rounded-2xl border ${card.borderColor} bg-gradient-to-br ${card.color} backdrop-blur-xl p-4 transition-all hover:scale-[1.02]`}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Icon className={`w-4 h-4 ${card.iconColor}`} />
+                <span className="text-[11px] text-white/50 font-medium uppercase tracking-wide">{card.label}</span>
+              </div>
+              <p className="text-2xl font-bold text-white">
+                {statsLoading ? (
+                  <span className="inline-block w-12 h-7 bg-white/10 rounded animate-pulse" />
+                ) : (
+                  card.value.toLocaleString('tr-TR')
+                )}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Quick Actions + System Status */}
+      <div className="grid lg:grid-cols-[1fr_0.55fr] gap-6">
+        {/* Quick Actions */}
+        <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Hızlı İşlemler</h2>
+              <p className="text-xs text-white/40 mt-0.5">Sık kullanılan operasyonlar</p>
+            </div>
+            <LuActivity className="w-5 h-5 text-[#5865F2]/60" />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.href}
+                  type="button"
+                  onClick={() => router.push(action.href)}
+                  className="group flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-4 py-3.5 text-left transition-all hover:border-white/15 hover:bg-white/5"
+                >
+                  <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${action.color} ring-1`}>
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white">{action.label}</p>
+                    <p className="text-[11px] text-white/40">{action.desc}</p>
+                  </div>
+                  <LuArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Sync Members */}
+          <div className="mt-4 pt-4 border-t border-white/8">
+            <button
+              type="button"
+              onClick={handleSyncMembers}
+              disabled={syncLoading}
+              className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-[#5865F2]/20 bg-[#5865F2]/10 text-sm font-semibold text-[#5865F2] hover:bg-[#5865F2]/15 transition-all ${syncLoading ? 'opacity-60' : ''}`}
+            >
+              <LuRefreshCw className={`w-4 h-4 ${syncLoading ? 'animate-spin' : ''}`} />
+              {syncLoading ? 'Senkronize Ediliyor...' : 'Discord Üyelerini Senkronize Et'}
+            </button>
+            {syncMessage && (
+              <div className="mt-3 p-3 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20">
+                <p className="text-xs text-[#5865F2]/80">{syncMessage}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* System Status */}
+        <div className="space-y-4">
+          <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
+            <h2 className="text-base font-semibold text-white mb-4">Sistem Durumu</h2>
+            <div className="space-y-2.5">
+              {[
+                { label: 'Veritabanı', status: true, color: 'bg-emerald-400' },
+                { label: 'Discord Bot', status: true, color: 'bg-emerald-400' },
+                { label: 'OAuth Servisi', status: true, color: 'bg-emerald-400' },
+                { label: 'Bakım Modu', status: stats?.maintenanceActive ?? false, color: stats?.maintenanceActive ? 'bg-amber-400' : 'bg-emerald-400' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/5">
+                  <span className="text-xs text-white/60">{item.label}</span>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                    <span className={`text-xs font-medium ${
+                      item.label === 'Bakım Modu'
+                        ? item.status ? 'text-amber-300' : 'text-emerald-300'
+                        : item.status ? 'text-emerald-300' : 'text-rose-300'
+                    }`}>
+                      {item.label === 'Bakım Modu'
+                        ? item.status ? 'Aktif' : 'Kapalı'
+                        : item.status ? 'Çalışıyor' : 'Hata'
+                      }
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Platform Info */}
+          <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
+            <h2 className="text-base font-semibold text-white mb-4">Platform Bilgisi</h2>
+            <div className="space-y-2.5">
+              {[
+                { label: 'Ortam', value: process.env.NODE_ENV === 'production' ? 'Production' : 'Development' },
+                { label: 'Framework', value: 'Next.js 15' },
+                { label: 'Veritabanı', value: 'Supabase' },
+                { label: 'Bot', value: 'Discord.js' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/5">
+                  <span className="text-xs text-white/60">{item.label}</span>
+                  <span className="text-xs font-medium text-white/80">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Security Badge */}
+          <div className="rounded-3xl border border-[#5865F2]/15 bg-[#5865F2]/5 backdrop-blur-xl p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#5865F2]/20">
+                <LuShield className="w-5 h-5 text-[#5865F2]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">Güvenli Oturum</p>
+                <p className="text-[11px] text-white/40">Discord Developer rolü ile doğrulanmış</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

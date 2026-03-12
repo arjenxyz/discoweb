@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { logWebEvent } from '@/lib/serverLogger';
 import { createClient } from '@supabase/supabase-js';
+import { requireSessionUser } from '@/lib/auth';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -23,17 +24,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ status: 'error' }, { status: 500 });
     }
 
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
-    const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-
-    if (!userId) {
+    const session = await requireSessionUser(request);
+    if (!session.ok) {
       await logWebEvent(request, {
         event: 'discord_role_assign_failed',
         status: 'missing_cookie',
       });
-      return NextResponse.json({ status: 'unauthorized' }, { status: 401 });
+      return session.response;
     }
+    const userId = session.userId;
+
+    const cookieStore = await cookies();
+    const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
 
     // Seçilen sunucuyu al (select-server'den geliyorsa selected_guild_id var)
     let targetGuildId = selectedGuildId;

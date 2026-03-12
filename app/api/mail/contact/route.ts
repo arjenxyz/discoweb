@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { requireSessionUser } from '@/lib/auth';
 
 type Database = {
   public: {
@@ -42,11 +43,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
 
-  const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value ?? null;
-  if (!userId) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  const session = await requireSessionUser(request);
+  if (!session.ok) {
+    return session.response;
   }
+  const userId = session.userId;
 
   const payload = (await request.json()) as { subject?: string; message?: string };
   const subject = payload.subject?.trim() ?? '';

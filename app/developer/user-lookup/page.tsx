@@ -1,34 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import {
-  LuChevronDown,
-  LuChrome,
-  LuLogOut,
-  LuSearch,
-  LuShield,
-} from 'react-icons/lu';
-
-type UserInfo = {
-  id: string;
-  username: string;
-  avatar: string | null;
-};
-
-const DENIED_MESSAGES = [
-  'Hop dur bakalım, nereye böyle kereta?',
-  'Burası geliştirici alanı, gizli geçit kapalı.',
-  'Yetkisiz giriş tespit edildi. Geri dön!',
-  'Bu kapı sadece developer için açılıyor.',
-  'Dur bakalım kahraman, buraya giriş yetkin yok.',
-  'Şifreli bölge! Erişim reddedildi.',
-  'Bu taraf VIP, önce izin lazım.',
-  'Yetki yoksa buradan geçiş yok!',
-  'Gizli laboratuvar. Girişin yasak.',
-  'Uyarı: Yetkisiz ziyaretçi algılandı.',
-];
+import { useState } from 'react';
+import { LuSearch, LuUsers, LuGlobe, LuMail, LuShield } from 'react-icons/lu';
 
 type UserItem = {
   id: string;
@@ -40,431 +13,194 @@ type UserItem = {
   created_at: string;
 };
 
+type ServerInfo = {
+  discord_id: string | null;
+  name: string;
+  slug: string;
+  invite_link?: string | null;
+};
+
+type GuildInfo = {
+  discord_id: string;
+  name: string;
+  icon_url?: string | null;
+  owner?: boolean;
+  permissions?: string;
+};
+
 export default function DeveloperUserLookupPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const [accessLoading, setAccessLoading] = useState(true);
-  const [accessAllowed, setAccessAllowed] = useState(false);
-  const [accessError, setAccessError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
-  const [searchUsers, setSearchUsers] = useState<UserItem[]>([]);
-  const [searchServers, setSearchServers] = useState<Array<{ discord_id: string | null; name: string; slug: string; invite_link?: string | null }>>([]);
-  const [oauthGuilds, setOauthGuilds] = useState<
-    Array<{
-      discord_id: string | null;
-      name: string;
-      slug: string;
-      icon_url?: string | null;
-      link?: string | null;
-      invite?: string | null;
-    }>
-  >([]);
-  const [targetOauthGuilds, setTargetOauthGuilds] = useState<
-    Array<{
-      discord_id: string;
-      name: string;
-      icon_url?: string | null;
-      owner?: boolean;
-      permissions?: string;
-    }>
-  >([]);
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<UserItem[]>([]);
+  const [servers, setServers] = useState<ServerInfo[]>([]);
+  const [targetGuilds, setTargetGuilds] = useState<GuildInfo[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
-  const [deniedMessage, setDeniedMessage] = useState<string | null>(null);
-
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const cookies = document.cookie.split('; ');
-        const userIdCookie = cookies.find((row) => row.startsWith('discord_user_id='));
-        const userId = userIdCookie?.split('=')[1];
-        if (!userId) {
-          return;
-        }
-        const response = await fetch(`/api/discord/user/${userId}`);
-        if (response.ok) {
-          const userData = (await response.json()) as UserInfo;
-          setUser(userData);
-        }
-      } catch {
-        // ignore
-      }
-    };
-
-    const checkAccess = async () => {
-      try {
-        setAccessLoading(true);
-        const response = await fetch('/api/developer/check-access', { cache: 'no-store', credentials: 'include' });
-        if (response.ok) {
-          setAccessAllowed(true);
-          setAccessError(null);
-          return;
-        }
-        const data = (await response.json().catch(() => ({}))) as { error?: string };
-        if (data.error === 'developer_role_missing') {
-          setAccessError('Developer rolü tanımlı değil.');
-        } else if (data.error === 'unauthorized') {
-          setAccessError('Giriş yapmanız gerekiyor.');
-        } else {
-          setAccessError('Bu panele erişim izniniz yok.');
-        }
-        setAccessAllowed(false);
-      } catch {
-        setAccessError('Geliştirici paneli doğrulaması yapılamadı.');
-        setAccessAllowed(false);
-      } finally {
-        setAccessLoading(false);
-      }
-    };
-
-    fetchUserInfo();
-    checkAccess();
-  }, []);
-
-  useEffect(() => {
-    if (!accessLoading && !accessAllowed) {
-      const index = Math.floor(Math.random() * DENIED_MESSAGES.length);
-      setDeniedMessage(DENIED_MESSAGES[index]);
-    }
-  }, [accessLoading, accessAllowed]);
-
-  useEffect(() => {
-    if (!menuOpen) {
-      return undefined;
-    }
-
-    const handleClick = (event: MouseEvent) => {
-      if (!menuRef.current) {
-        return;
-      }
-      if (!menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [menuOpen]);
-
-  const handleLogout = async () => {
-    try {
-      localStorage.clear();
-      if (typeof document !== 'undefined') {
-        document.cookie.split(';').forEach((c) => {
-          const name = c.split('=')[0].trim();
-          try {
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
-          } catch (e) {
-            // ignore
-          }
-        });
-      }
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-      window.location.href = '/';
-    } catch {
-      localStorage.clear();
-      window.location.href = '/';
-    }
-  };
 
   const handleSearch = async () => {
-    const query = searchQuery.trim();
-    if (!query) {
-      setSearchUsers([]);
-      setSearchServers([]);
-      setOauthGuilds([]);
-      setTargetOauthGuilds([]);
-      setSearchError('Lütfen arama terimi girin.');
-      return;
-    }
-    if (!/^\d{10,}$/.test(query) && query.length < 3) {
-      setSearchError('Kullanıcı adı için en az 3 karakter girin.');
-      return;
-    }
+    const q = query.trim();
+    if (!q) { setError('Lütfen arama terimi girin.'); return; }
+    if (!/^\d{10,}$/.test(q) && q.length < 3) { setError('En az 3 karakter girin.'); return; }
+
+    setLoading(true);
+    setError(null);
+    setHasSearched(true);
+    setUsers([]);
+    setServers([]);
+    setTargetGuilds([]);
+
     try {
-      setSearchLoading(true);
-      setSearchError(null);
-      setHasSearched(true);
-      // Yeni arama öncesi tüm state'leri sıfırla
-      setSearchUsers([]);
-      setSearchServers([]);
-      setOauthGuilds([]);
-      setTargetOauthGuilds([]);
-      const response = await fetch(`/api/developer/user-lookup?query=${encodeURIComponent(query)}`, { cache: 'no-store', credentials: 'include' });
-      if (!response.ok) {
-        const data = (await response.json().catch(() => ({}))) as { error?: string };
-        if (data.error === 'unauthorized') {
-          setSearchError('Giriş yapmanız gerekiyor.');
-        } else if (data.error === 'forbidden') {
-          setSearchError('Bu işlem için yetkiniz yok.');
-        } else if (data.error === 'developer_role_missing') {
-          setSearchError('Developer rolü tanımlı değil.');
-        } else if (data.error === 'missing_query') {
-          setSearchError('Arama terimi gerekli.');
-        } else {
-          setSearchError('Kullanıcı bulunamadı.');
-        }
-        setSearchUsers([]);
-        setSearchServers([]);
-        setOauthGuilds([]);
-        setTargetOauthGuilds([]);
+      const res = await fetch(`/api/developer/user-lookup?query=${encodeURIComponent(q)}`, { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error === 'not_found' ? 'Kullanıcı bulunamadı.' : data.error || 'Arama başarısız.');
         return;
       }
-      const data = (await response.json()) as {
-        users?: UserItem[];
-        servers?: Array<{ discord_id: string | null; name: string; slug: string; invite_link?: string | null }>;
-        oauthGuilds?: Array<{
-          discord_id: string | null;
-          name: string;
-          slug: string;
-          icon_url?: string | null;
-          link?: string | null;
-          invite?: string | null;
-        }>;
-        targetOauthGuilds?: Array<{
-          discord_id: string;
-          name: string;
-          icon_url?: string | null;
-          owner?: boolean;
-          permissions?: string;
-        }>;
-      };
-      setSearchUsers(data.users ?? []);
-      setSearchServers(data.servers ?? []);
-      setOauthGuilds(data.oauthGuilds ?? []);
-      setTargetOauthGuilds(data.targetOauthGuilds ?? []);
+      const data = await res.json();
+      setUsers(data.users ?? []);
+      setServers(data.servers ?? []);
+      setTargetGuilds(data.targetGuilds ?? data.target_guilds ?? []);
     } catch {
-      setSearchError('Kullanıcı sorgulanamadı.');
-      setSearchUsers([]);
-      setSearchServers([]);
-      setOauthGuilds([]);
-      setTargetOauthGuilds([]);
+      setError('Arama sırasında hata oluştu.');
     } finally {
-      setSearchLoading(false);
+      setLoading(false);
     }
   };
 
-  
-
   return (
-    <div className="min-h-screen bg-[#0b0d12] text-white">
-      <nav className="border-b border-white/10 bg-[#0b0d12]">
-        <div className="flex w-full items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            {user?.avatar ? (
-              <Image
-                src={user.avatar}
-                alt={user.username}
-                width={44}
-                height={44}
-                className="h-11 w-11 rounded-full border-2 border-white/20"
-              />
-            ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white/20 bg-slate-600">
-                <span className="text-base font-bold text-white">
-                  {user?.username?.charAt(0).toUpperCase() ?? 'D'}
-                </span>
-              </div>
-            )}
-            <div>
-              <p className="text-sm font-semibold text-white">{user?.username ?? 'Developer'}</p>
-              <p className="text-xs text-white/50">Discord hesabınızla giriş yaptınız</p>
-            </div>
-          </div>
-          <div ref={menuRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/30 hover:text-white ${
-                menuOpen ? 'bg-white/10 text-white' : ''
-              }`}
-            >
-              Menü
-              <LuChevronDown className={`h-3.5 w-3.5 transition ${menuOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 z-50 mt-3 w-56 rounded-2xl border border-white/10 bg-[#0f1116] p-3 shadow-2xl">
-                <button
-                  type="button"
-                  onClick={() => router.replace('/dashboard')}
-                  className="flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuChrome className="h-3.5 w-3.5 text-indigo-300" />
-                  Dashboard&apos;a dön
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/developer')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuSearch className="h-3.5 w-3.5 text-indigo-300" />
-                  Developer Paneli
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.replace('/admin')}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuShield className="h-3.5 w-3.5 text-indigo-300" />
-                  Admin Paneli
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-left text-xs text-white/70 transition hover:border-white/15 hover:text-white"
-                >
-                  <LuLogOut className="h-3.5 w-3.5 text-rose-300" />
-                  Çıkış yap
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
+    <div className="max-w-5xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white">Kullanıcı Sorgula</h1>
+        <p className="text-sm text-[#99AAB5] mt-1">Discord ID veya kullanıcı adı ile arama yapın.</p>
+      </div>
 
-      {accessLoading && (
-        <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="rounded-3xl border border-white/10 bg-[#0f131d] p-8">
-            <p className="text-sm text-white/70">Developer yetkisi kontrol ediliyor...</p>
+      {/* Search Bar */}
+      <div className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-5">
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/25" />
+            <input
+              type="text"
+              placeholder="Discord ID veya kullanıcı adı..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/25 text-sm focus:border-[#5865F2]/50 focus:outline-none transition-all"
+            />
           </div>
+          <button
+            type="button"
+            onClick={handleSearch}
+            disabled={loading}
+            className="px-6 py-3.5 rounded-xl bg-[#5865F2] text-white font-semibold text-sm hover:bg-[#4752C4] disabled:opacity-50 transition-all shadow-lg shadow-[#5865F2]/20"
+          >
+            {loading ? 'Aranıyor...' : 'Ara'}
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4">
+          <p className="text-sm text-rose-300">{error}</p>
         </div>
       )}
 
-      {!accessLoading && !accessAllowed && (
-        <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="rounded-3xl border border-rose-500/30 bg-rose-500/10 p-8">
-            <p className="text-sm font-semibold text-rose-200">Erişim Reddedildi</p>
-            <p className="mt-2 text-sm text-rose-100/80">{deniedMessage ?? accessError ?? 'Bu panele erişim izniniz yok.'}</p>
-            <button
-              type="button"
-              onClick={() => router.replace('/dashboard')}
-              className="mt-6 rounded-full border border-rose-300/40 px-4 py-2 text-xs text-rose-100 transition hover:border-rose-200"
-            >
-              Üye paneline dön
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!accessLoading && accessAllowed && (
-        <div className="mx-auto max-w-5xl px-6 py-8">
-          <div className="rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-            <h1 className="text-xl font-semibold text-white">Kullanıcı Sorgulama</h1>
-            <p className="mt-1 text-sm text-white/60">Discord ID veya kullanıcı adına göre ara.</p>
-            <div className="mt-4 space-y-3">
-              <input
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    handleSearch();
-                  }
-                }}
-                placeholder="Örn: 1234567890 veya username"
-                className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-3 py-2 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={handleSearch}
-                disabled={searchLoading}
-                className="w-full rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:opacity-60"
-              >
-                {searchLoading ? 'Sorgulanıyor...' : 'Sorgula'}
-              </button>
-              {searchError && <p className="text-xs text-rose-300">{searchError}</p>}
-            </div>
-
-            {(searchUsers.length > 0 || searchServers.length > 0 || oauthGuilds.length > 0) && (
-              <div className="mt-6 space-y-4">
-                <div className="grid gap-3 md:grid-cols-2">
-                  {searchUsers.length > 0 ? (
-                    (() => {
-                      const item = searchUsers[0];
-                      return (
-                        <div key={item.id} className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                          <p className="text-sm font-semibold text-white">{item.username}</p>
-                          <p className="text-[11px] text-white/50">{item.discord_id}</p>
-                          {item.email && <p className="text-[11px] text-white/40">{item.email}</p>}
-                          <p className="mt-1 text-[11px] text-white/40">{item.points} puan</p>
-                        </div>
-                      );
-                    })()
-                  ) : null}
-                  {searchUsers.length > 1 && (
-                    <p className="text-xs text-white/40">Birden fazla sonuç bulundu. Lütfen aramayı daraltın.</p>
-                  )}
-                </div>
-                {/* joinMessage removed — server-adding UI disabled */}
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/40">Sunucular</p>
-                  <div className="mt-2 grid gap-2 md:grid-cols-2">
-                    {searchServers.map((server) => (
-                      <div key={server.discord_id ?? server.slug} className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                        <p className="text-sm text-white/80">{server.name}</p>
-                        <p className="text-[11px] text-white/40">{server.discord_id ?? server.slug}</p>
-                        {server.invite_link && (
-                          <div className="mt-2">
-                            <a
-                              href={server.invite_link}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex text-xs text-blue-200/80 transition hover:text-blue-100"
-                            >
-                              Widget Davet Bağlantısı
-                            </a>
-                          </div>
-                        )}
+      {/* Results */}
+      {hasSearched && !loading && !error && (
+        <div className="space-y-4">
+          {/* User Profiles */}
+          {users.length > 0 && (
+            <div className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
+              <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                <LuUsers className="w-4 h-4 text-[#5865F2]" />
+                Kullanıcı Bilgileri
+              </h2>
+              <div className="space-y-3">
+                {users.map((u) => (
+                  <div key={u.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#5865F2]/20 flex items-center justify-center">
+                        <LuUsers className="w-5 h-5 text-[#5865F2]" />
                       </div>
-                    ))}
-                    {searchServers.length === 0 && (
-                      <p className="text-xs text-white/40">Sunucu kaydı bulunamadı.</p>
-                    )}
-                  </div>
-                </div>
-                {targetOauthGuilds.length > 0 && (
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">Kullanıcının Discord Sunucuları (OAuth)</p>
-                    <div className="mt-2 grid gap-2 md:grid-cols-2">
-                      {targetOauthGuilds.map((server) => (
-                        <div key={server.discord_id} className="rounded-xl border border-white/10 bg-emerald-500/10 px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            {server.icon_url ? (
-                              <Image
-                                src={server.icon_url}
-                                alt={server.name}
-                                width={36}
-                                height={36}
-                                className="h-9 w-9 rounded-full border border-white/10"
-                              />
-                            ) : (
-                              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/10 text-xs font-semibold text-white/70">
-                                {server.name.charAt(0).toUpperCase()}
-                              </div>
-                            )}
-                            <div>
-                              <p className="text-sm text-white/80">{server.name}</p>
-                              <p className="text-[11px] text-white/40">{server.discord_id}</p>
-                              {server.owner && <span className="text-[10px] text-yellow-300">Sahibi</span>}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{u.username || '—'}</p>
+                        <p className="text-[11px] text-white/30 font-mono">{u.discord_id}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] bg-amber-500/15 text-amber-300 border border-amber-500/20 font-semibold">
+                        {u.points} puan
+                      </span>
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${
+                        u.role_level >= 999 ? 'bg-rose-500/15 text-rose-300 border border-rose-500/20' :
+                        u.role_level >= 100 ? 'bg-violet-500/15 text-violet-300 border border-violet-500/20' :
+                        'bg-white/5 text-white/50 border border-white/10'
+                      }`}>
+                        Seviye {u.role_level}
+                      </span>
+                      {u.email && (
+                        <span className="px-2.5 py-1 rounded-full text-[11px] bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 font-semibold flex items-center gap-1">
+                          <LuMail className="w-3 h-3" /> {u.email}
+                        </span>
+                      )}
                     </div>
                   </div>
-                )}
+                ))}
               </div>
-            )}
-            {hasSearched && searchUsers.length === 0 && searchServers.length === 0 && targetOauthGuilds.length === 0 && !searchLoading && !searchError && (
-              <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60">
-                Sonuç bulunamadı.
+            </div>
+          )}
+
+          {/* Servers */}
+          {servers.length > 0 && (
+            <div className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
+              <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                <LuGlobe className="w-4 h-4 text-cyan-400" />
+                Uygulama Sunucuları ({servers.length})
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {servers.map((s, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                    <LuGlobe className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm text-white truncate">{s.name}</p>
+                      <p className="text-[10px] text-white/30">{s.slug}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Discord Guilds */}
+          {targetGuilds.length > 0 && (
+            <div className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
+              <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                <LuShield className="w-4 h-4 text-violet-400" />
+                Discord Sunucuları ({targetGuilds.length})
+              </h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {targetGuilds.map((g) => (
+                  <div key={g.discord_id} className="flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                    {g.icon_url ? (
+                      <img src={g.icon_url} alt="" className="w-7 h-7 rounded-lg" />
+                    ) : (
+                      <div className="w-7 h-7 rounded-lg bg-violet-500/20 flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-violet-300">{g.name?.charAt(0)}</span>
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-white truncate">{g.name}</p>
+                      {g.owner && <span className="text-[10px] text-amber-300">Sahip</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {users.length === 0 && servers.length === 0 && targetGuilds.length === 0 && (
+            <div className="py-12 text-center text-sm text-white/30">Sonuç bulunamadı.</div>
+          )}
         </div>
       )}
     </div>

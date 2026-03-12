@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireSessionUser } from '@/lib/auth';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -18,13 +19,11 @@ export async function GET() {
       return NextResponse.json({ error: 'Bot token not configured' }, { status: 500 });
     }
 
-    const { cookies } = await import('next/headers');
-    const cookieStore = await cookies();
-    const discordUserId = cookieStore.get('discord_user_id')?.value;
-
-    if (!discordUserId) {
-      return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    const auth = await requireSessionUser();
+    if (!auth.ok) {
+      return auth.response;
     }
+    const discordUserId = auth.userId;
 
     const developerRoleId = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
     const developerGuildId = process.env.DEVELOPER_GUILD_ID ?? process.env.DISCORD_GUILD_ID ?? '1465698764453838882';

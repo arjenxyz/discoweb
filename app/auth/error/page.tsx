@@ -12,6 +12,24 @@ const loginUrl = CLIENT_ID && REDIRECT_URI
   : '/';
 
 export default function DiscordAuthErrorPage() {
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const reason = searchParams.get('reason');
+
+  const getReasonText = () => {
+    if (!reason) return null;
+    switch (reason) {
+      case 'token_fetch_error':
+      case 'user_fetch_error':
+      case 'guilds_fetch_error':
+      case 'discord_unreachable':
+        return 'Discord API ile bağlantı kurulamadı. İnternete bağlı olduğunuzdan ve sunucunuza Discord erişimine izin verdiğinizden emin olun.';
+      default:
+        return `Hata: ${reason}`;
+    }
+  };
+
+  const reasonText = getReasonText();
+
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-[#0b0d12] text-white">
       <div className="absolute inset-0 -z-10">
@@ -30,6 +48,11 @@ export default function DiscordAuthErrorPage() {
             Oturum açma isteği tamamlanamadı. Lütfen tekrar deneyin veya yönlendirme adresini
             kontrol edin. Sorun devam ederse destek ekibimizle iletişime geçebilirsiniz.
           </p>
+          {reasonText && (
+            <p className="mt-2 text-sm text-yellow-300">
+              {reasonText}
+            </p>
+          )}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/"

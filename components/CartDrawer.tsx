@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   LuX, LuTrash2, LuPlus, LuMinus,
-  LuTicket, LuCircleCheck, LuChevronDown, LuChevronUp, LuLock
+  LuTicket, LuCircleCheck, LuChevronDown, LuChevronUp, LuLock, LuEye, LuEyeOff
 } from 'react-icons/lu';
 import Image from 'next/image';
 import { useCart } from '../lib/cart';
@@ -35,6 +35,7 @@ export default function CartDrawer() {
   const [applying, setApplying] = useState(false);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
   const [showCouponInput, setShowCouponInput] = useState(false);
+  const [showCouponList, setShowCouponList] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const [checkoutError, setCheckoutError] = useState(false);
@@ -78,6 +79,11 @@ export default function CartDrawer() {
     }
   }, [appliedCoupon, removeCoupon]);
 
+  // Eğer sepette ürün ekleme/çıkarma yapıldıysa kupon girişini kapat (kullanıcı gizlediyse açılmasın)
+  useEffect(() => {
+    setShowCouponInput(false);
+  }, [items.length]);
+
   if (!open) return null;
 
   // --- KUPON UYGULAMA ---
@@ -120,13 +126,8 @@ export default function CartDrawer() {
         // Başarılı ise context'e uygula
         // Backend'den dönen veriyi, context'in beklediği yapıya çevirip yolluyoruz
         // Böylece minSpend gibi detaylar state'e işleniyor.
-        const res = applyCoupon(couponCode);
+        const res = applyCoupon(couponCode, data.discount);
         
-        // Eğer applyCoupon sadece string alıyorsa, burada state'i güncelleyemeyebiliriz.
-        // Ancak genellikle backend validasyonu sonrası sayfayı yenilemek veya 
-        // coupon detaylarını state'e manuel set etmek gerekebilir.
-        // Bu örnekte applyCoupon'un çalıştığını varsayıyoruz.
-
         if (res.ok) {
             setMessage({ text: 'Kupon aktif!', type: 'success' });
             setCode('');
@@ -260,7 +261,7 @@ export default function CartDrawer() {
         </div>
 
         {/* --- CONTENT --- */}
-        <div className="relative z-10 flex-1 overflow-y-auto p-4 no-scrollbar">
+        <div className="relative z-10 flex-1 overflow-y-auto p-4 no-scrollbar pb-40">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-4 animate-fadeIn">
               <div className="relative w-32 h-32 opacity-60 grayscale hover:grayscale-0 transition-all">
@@ -311,7 +312,7 @@ export default function CartDrawer() {
 
         {/* --- FOOTER --- */}
         {items.length > 0 && (
-          <div className="relative z-20 bg-[#0b0d12] border-t border-white/10">
+          <div className="sticky bottom-0 z-20 bg-[#0b0d12] border-t border-white/10">
             
             {/* --- LİMİT BAR (Sadece Kupon Varsa ve Limit Varsa) --- */}
             {appliedCoupon && currentMinSpend > 0 && (
@@ -334,14 +335,27 @@ export default function CartDrawer() {
               <div>
                 {!appliedCoupon ? (
                   <div className="border-b border-white/5 pb-2">
-                    <button 
-                      onClick={() => setShowCouponInput(!showCouponInput)}
-                      className="flex items-center gap-2 text-xs font-bold text-[#5865F2] hover:text-white transition-colors select-none"
-                    >
-                      <LuTicket /> İndirim Kodu Kullan {showCouponInput ? <LuChevronUp /> : <LuChevronDown />}
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button 
+                        onClick={() => setShowCouponInput(!showCouponInput)}
+                        className="flex items-center gap-2 text-xs font-bold text-[#5865F2] hover:text-white transition-colors select-none"
+                      >
+                        <LuTicket /> İndirim Kodu Kullan {showCouponInput ? <LuChevronUp /> : <LuChevronDown />}
+                      </button>
 
-                    {showCouponInput && (
+                      <div className="flex-1" />
+
+                      <button
+                        onClick={() => setShowCouponList(prev => !prev)}
+                        className="text-white/50 hover:text-white p-2 rounded-md transition-colors"
+                        aria-label={showCouponList ? 'Kuponları kapat' : 'Kuponları aç'}
+                        title={showCouponList ? 'Kuponları kapat' : 'Kuponları aç'}
+                      >
+                        {showCouponList ? <LuEye className="w-4 h-4" /> : <LuEyeOff className="w-4 h-4" />}
+                      </button>
+                    </div>
+
+                    {showCouponInput && showCouponList && (
                       <div className="mt-3 space-y-2 animate-fadeIn">
                         <div className="flex gap-2">
                           <input 
@@ -368,47 +382,65 @@ export default function CartDrawer() {
                       <LuCircleCheck className="text-emerald-400 w-4 h-4" />
                       <div>
                         <p className="text-xs font-bold text-emerald-400">{appliedCoupon.code}</p>
-                        {currentMinSpend > 0 && <p className="text-[9px] text-white/40">Min. {currentMinSpend} Papel</p>}
+                        <div className="text-[9px] text-white/40 space-y-0.5">
+                          {currentMinSpend > 0 && <p>Min. {currentMinSpend} Papel</p>}
+                            <p>Kullanım: {(appliedCoupon as any).userUsageCount ?? (appliedCoupon as any).used_count ?? 0} / {(appliedCoupon as any).perUserLimit ?? (appliedCoupon as any).max_uses ?? '∞'}</p>
+                        </div>
                       </div>
                     </div>
                     <button onClick={handleRemoveCoupon} className="text-[10px] text-white/50 hover:text-white underline">Kaldır</button>
                   </div>
                 )}
 
-                {/* Hoşgeldin Kuponu */}
-                {welcomeCoupon && !appliedCoupon && (
-                  <div className="mt-3 p-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs font-bold text-indigo-300">Hoşgeldin İndirimi</p>
-                        <p className="text-[10px] text-white/60">%{welcomeCoupon.percent} indirim kazan</p>
-                        {Number((welcomeCoupon as Coupon).minSpend || (welcomeCoupon as Coupon).min_spend || 0) > 0 && <p className="text-[9px] text-white/40">Min. {Number((welcomeCoupon as Coupon).minSpend || (welcomeCoupon as Coupon).min_spend || 0)} Papel</p>}
-                      </div>
-                      <button onClick={() => handleApply(welcomeCoupon.code)} disabled={applying} className="px-3 py-1 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold rounded-lg transition-colors">
-                        Kullan
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Özel Kuponlar */}
-                {!appliedCoupon && specialCoupons.map((coupon) => {
-                  const couponMinSpend = Number((coupon as Coupon).minSpend || (coupon as Coupon).min_spend || 0);
-                  return (
-                    <div key={coupon.id} className="mt-3 p-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs font-bold text-emerald-300">Özel İndirim</p>
-                          <p className="text-[10px] text-white/60">%{coupon.percent} indirim</p>
-                          {couponMinSpend > 0 && <p className="text-[9px] text-white/40">Min. {couponMinSpend} Papel</p>}
+                {showCouponList && (
+                  <>
+                    {/* Hoşgeldin Kuponu */}
+                    {welcomeCoupon && !appliedCoupon && (() => {
+                      return (
+                        <div className="mt-3 p-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-xs font-bold text-indigo-300">Hoşgeldin İndirimi</p>
+                              <p className="text-[10px] text-white/60">
+                                {welcomeCoupon.percent + "% indirim kazan"}
+                              </p>
+                            </div>
+                            <button onClick={() => handleApply((welcomeCoupon as Coupon).code)} disabled={applying} className="px-3 py-1 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold rounded-lg transition-colors">
+                              Kullan
+                            </button>
+                          </div>
                         </div>
-                        <button onClick={() => handleApply(coupon.code)} disabled={applying} className="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold rounded-lg transition-colors">
-                          Kullan
-                        </button>
+                      );
+                    })()}
+
+                    {/* Özel Kuponlar (kaydırılabilir) */}
+                    {!appliedCoupon && specialCoupons.length > 0 && (
+                      <div className="mt-3 max-h-44 overflow-y-auto space-y-2 pr-2">
+                        {specialCoupons.map((coupon) => {
+                          const couponMinSpend = Number((coupon as Coupon).minSpend || (coupon as Coupon).min_spend || 0);
+                          const userUsageCount = (coupon as any).user_usage_count ?? (coupon as any).userUsageCount ?? 0;
+                          const perUserLimit = (coupon as any).per_user_limit ?? (coupon as any).perUserLimit ?? 1;
+                          const id = String(coupon.id);
+                          return (
+                            <div key={coupon.id} className="p-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-lg">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-xs font-bold text-emerald-300">Özel İndirim</p>
+                                  <p className="text-[10px] text-white/60">
+                                    {coupon.percent + "% indirim"}
+                                  </p>
+                                </div>
+                                <button onClick={() => handleApply(coupon.code)} disabled={applying} className="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold rounded-lg transition-colors">
+                                  Kullan
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    </div>
-                  );
-                })}
+                    )}
+                  </>
+                )}
               </div>
 
               {/* FİYAT & BUTON */}

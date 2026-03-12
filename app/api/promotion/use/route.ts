@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireSessionUser } from '@/lib/auth';
 
 const getSelectedGuildId = async (): Promise<string> => {
   const cookieStore = await cookies();
@@ -19,11 +20,11 @@ const getSupabase = () => {
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = await requireSessionUser(request);
+    if (!session.ok) {
+      return session.response;
     }
+    const userId = session.userId;
 
     const { code } = await request.json();
     if (!code || typeof code !== 'string') {

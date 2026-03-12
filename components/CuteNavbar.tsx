@@ -78,13 +78,34 @@ export default function CuteNavbar() {
   }, [mobileOpen]);
 
   useEffect(() => {
-    // Check if user is logged in via localStorage (since this app uses custom auth)
-    const checkLoginStatus = () => {
+    // Check if user is logged in via localStorage + validate session cookie
+    const checkLoginStatus = async () => {
       const discordUser = localStorage.getItem('discordUser');
       const adminGuilds = localStorage.getItem('adminGuilds');
-      const loggedIn = !!(discordUser && adminGuilds);
-      console.log('Login status check:', { discordUser: !!discordUser, adminGuilds: !!adminGuilds, loggedIn });
-      setIsLoggedIn(loggedIn);
+      const hasLocalData = !!(discordUser && adminGuilds);
+
+      if (!hasLocalData) {
+        setIsLoggedIn(false);
+        return;
+      }
+
+      // Verify session cookie is still valid
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+        if (res.ok) {
+          setIsLoggedIn(true);
+        } else {
+          // Session expired — clear stale localStorage
+          console.log('Session expired, clearing stale localStorage');
+          localStorage.removeItem('discordUser');
+          localStorage.removeItem('adminGuilds');
+          localStorage.removeItem('adminGuildsUpdatedAt');
+          setIsLoggedIn(false);
+        }
+      } catch {
+        // Network error — keep showing logged-in state, will fail at select-server
+        setIsLoggedIn(hasLocalData);
+      }
     };
 
     checkLoginStatus();
@@ -224,7 +245,6 @@ export default function CuteNavbar() {
                   <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
                     <div className="relative z-20 space-y-1">
                       <DropdownLink href="#">🎁 Ürünler</DropdownLink>
-                      <DropdownLink href="#">💾 İndirilebilirler</DropdownLink>
                       <DropdownLink href="#">🔥 Kampanyalar</DropdownLink>
                     </div>
                     <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
@@ -255,9 +275,8 @@ export default function CuteNavbar() {
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72 animate-slideUp origin-top z-50">
                   <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
                       <div className="relative z-20 space-y-1">
-                      <DropdownLink href="#">📚 API Dokümantasyonu</DropdownLink>
-                      <DropdownLink href="#">🛠️ SDK&apos;lar</DropdownLink>
-                      <DropdownLink href="#">💡 Örnekler</DropdownLink>
+                      <DropdownLink href="#">👨🏻‍💻 Hakkında</DropdownLink>
+                      <DropdownLink href="#">🛠 Canlı Destek</DropdownLink>
                     </div>
                     <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
                       <img src="/gif/indir2.gif" alt="Developer GIF" className="w-full h-full object-contain" />

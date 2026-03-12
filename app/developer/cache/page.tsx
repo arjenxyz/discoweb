@@ -1,16 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { LuZap, LuTrash2, LuRefreshCw, LuDatabase, LuClock, LuHardDrive, LuActivity, LuCheck, LuX } from 'react-icons/lu';
+import { LuHardDrive, LuTrash2, LuRefreshCw, LuDatabase, LuClock, LuActivity, LuCpu } from 'react-icons/lu';
 
 interface CacheStats {
   totalKeys: number;
   memoryUsage: string;
-  hitRate: number;
-  missRate: number;
   uptime: string;
-  connections: number;
+  nodeMemory: string;
+  heapTotal: string;
+  rss: string;
 }
 
 interface CacheEntry {
@@ -22,317 +21,167 @@ interface CacheEntry {
 }
 
 export default function CachePage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<CacheStats | null>(null);
   const [entries, setEntries] = useState<CacheEntry[]>([]);
   const [showEntries, setShowEntries] = useState(false);
-  const [clearingCache, setClearingCache] = useState(false);
-  const [clearMessage, setClearMessage] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
+  const [clearing, setClearing] = useState(false);
+  const [clearMsg, setClearMsg] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadCacheStats();
-  }, []);
-
-  const loadCacheStats = async () => {
+  const loadStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/developer/cache/stats', { credentials: 'include', cache: 'no-store' });
-
-      if (!response.ok) {
-        throw new Error('Cache statistics could not be loaded');
-      }
-
-      const data = await response.json();
+      const res = await fetch('/api/developer/cache/stats', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) throw new Error('Yüklenemedi');
+      const data = await res.json();
       setStats(data.stats);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : 'Bilinmeyen hata');
     } finally {
       setLoading(false);
     }
   };
 
-  const loadCacheEntries = async () => {
+  const loadEntries = async () => {
     try {
-      const response = await fetch('/api/developer/cache/entries', { credentials: 'include', cache: 'no-store' });
-
-      if (!response.ok) {
-        throw new Error('Cache entries could not be loaded');
-      }
-
-      const data = await response.json();
+      const res = await fetch('/api/developer/cache/entries', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) throw new Error('Yüklenemedi');
+      const data = await res.json();
       setEntries(data.entries || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load cache entries');
+    } catch {
+      // ignore
     }
   };
 
   const clearCache = async () => {
     try {
-      setClearingCache(true);
-      setClearMessage(null);
-
-      const response = await fetch('/api/developer/cache/clear', {
-        method: 'POST',
-        cache: 'no-store',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error('Cache could not be cleared');
-      }
-
-      const data = await response.json();
-      setClearMessage(data.message || 'Cache cleared successfully');
-
-      // Reload stats
-      await loadCacheStats();
-      if (showEntries) {
-        await loadCacheEntries();
-      }
+      setClearing(true);
+      setClearMsg(null);
+      const res = await fetch('/api/developer/cache/clear', { method: 'POST', credentials: 'include', cache: 'no-store' });
+      if (!res.ok) throw new Error('Temizlenemedi');
+      const data = await res.json();
+      setClearMsg(data.message || 'Cache temizlendi.');
+      await loadStats();
+      if (showEntries) await loadEntries();
     } catch (err) {
-      setClearMessage(err instanceof Error ? err.message : 'Failed to clear cache');
+      setClearMsg(err instanceof Error ? err.message : 'Hata');
     } finally {
-      setClearingCache(false);
+      setClearing(false);
     }
   };
 
+  useEffect(() => { loadStats(); }, []);
+
   const toggleEntries = async () => {
-    if (!showEntries) {
-      await loadCacheEntries();
-    }
+    if (!showEntries) await loadEntries();
     setShowEntries(!showEntries);
   };
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ['B', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
   const formatTTL = (ttl: number) => {
-    if (ttl === -1) return 'No expiration';
-    if (ttl === -2) return 'Expired';
-    const hours = Math.floor(ttl / 3600);
-    const minutes = Math.floor((ttl % 3600) / 60);
-    const seconds = ttl % 60;
-    return `${hours}h ${minutes}m ${seconds}s`;
+    if (ttl <= 0) return 'Süresi dolmuş';
+    const m = Math.floor(ttl / 60);
+    const s = ttl % 60;
+    return m > 0 ? `${m}dk ${s}sn` : `${s}sn`;
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0f131d] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white/70">Loading cache information...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-[#0f131d] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-red-500/10 border border-red-500/20 rounded-3xl p-8 text-center">
-          <LuX className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-white mb-2">Error</h1>
-          <p className="text-red-300 mb-6">{error}</p>
-          <div className="flex gap-3">
-            <button
-              onClick={loadCacheStats}
-              className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-300 font-medium py-3 rounded-xl transition"
-            >
-              Try Again
-            </button>
-            <button
-              onClick={() => router.back()}
-              className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-3 rounded-xl transition"
-            >
-              Go Back
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#0f131d] p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-white/70 hover:text-white mb-4 transition"
-          >
-            ← Go Back
-          </button>
-          <h1 className="text-3xl font-bold text-white mb-2">Cache Management</h1>
-          <p className="text-white/60">Monitor and manage application cache.</p>
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Cache Yönetimi</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">Sunucu tarafı cache istatistikleri ve yönetimi.</p>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <LuDatabase className="w-5 h-5 text-blue-400" />
-              <span className="text-sm text-white/60">Total Keys</span>
-            </div>
-            <div className="text-2xl font-bold text-white">{stats?.totalKeys || 0}</div>
-          </div>
-
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <LuHardDrive className="w-5 h-5 text-green-400" />
-              <span className="text-sm text-white/60">Memory Usage</span>
-            </div>
-            <div className="text-2xl font-bold text-white">{stats?.memoryUsage || '0 MB'}</div>
-          </div>
-
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <LuActivity className="w-5 h-5 text-purple-400" />
-              <span className="text-sm text-white/60">Hit Rate</span>
-            </div>
-            <div className="text-2xl font-bold text-white">{stats?.hitRate || 0}%</div>
-          </div>
-
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <LuClock className="w-5 h-5 text-orange-400" />
-              <span className="text-sm text-white/60">Uptime</span>
-            </div>
-            <div className="text-2xl font-bold text-white">{stats?.uptime || '0h'}</div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex flex-wrap gap-4 mb-8">
-          <button
-            onClick={() => setRefreshing(true)}
-            disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition disabled:opacity-50"
-          >
-            {refreshing ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <LuRefreshCw className="w-4 h-4" />
-            )}
-            Refresh Stats
+        <div className="flex gap-2">
+          <button type="button" onClick={loadStats} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-all">
+            <LuRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Yenile
           </button>
-
-          <button
-            onClick={toggleEntries}
-            className="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition"
-          >
-            <LuDatabase className="w-4 h-4" />
-            {showEntries ? 'Hide Entries' : 'Show Entries'}
+          <button type="button" onClick={clearCache} disabled={clearing} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-sm text-rose-300 hover:bg-rose-500/15 disabled:opacity-50 transition-all">
+            <LuTrash2 className={`w-4 h-4 ${clearing ? 'animate-spin' : ''}`} /> Temizle
           </button>
-
-          <button
-            onClick={clearCache}
-            disabled={clearingCache}
-            className="flex items-center gap-2 px-4 py-3 rounded-xl border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 text-red-300 hover:text-red-200 transition disabled:opacity-50"
-          >
-            {clearingCache ? (
-              <div className="w-4 h-4 border-2 border-red-300/30 border-t-red-300 rounded-full animate-spin" />
-            ) : (
-              <LuTrash2 className="w-4 h-4" />
-            )}
-            Clear All Cache
-          </button>
-        </div>
-
-        {clearMessage && (
-          <div className={`mb-6 p-4 rounded-xl border ${
-            clearMessage.includes('success') || clearMessage.includes('cleared')
-              ? 'bg-green-500/10 border-green-500/20 text-green-300'
-              : 'bg-red-500/10 border-red-500/20 text-red-300'
-          }`}>
-            {clearMessage.includes('success') || clearMessage.includes('cleared') ? (
-              <LuCheck className="w-5 h-5 inline mr-2" />
-            ) : (
-              <LuX className="w-5 h-5 inline mr-2" />
-            )}
-            {clearMessage}
-          </div>
-        )}
-
-        {/* Cache Entries */}
-        {showEntries && (
-          <div className="rounded-3xl border border-white/10 bg-[#0f131d] overflow-hidden">
-            <div className="p-6 border-b border-white/10">
-              <h2 className="text-lg font-semibold text-white">Cache Entries</h2>
-              <p className="text-sm text-white/60 mt-1">Current cache contents</p>
-            </div>
-
-            <div className="p-6">
-              {entries.length === 0 ? (
-                <div className="text-center py-8">
-                  <LuDatabase className="w-16 h-16 text-white/20 mx-auto mb-4" />
-                  <p className="text-white/60">No cache entries found</p>
-                </div>
-              ) : (
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {entries.map((entry) => (
-                    <div key={entry.key} className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <code className="text-sm font-mono text-blue-300 bg-black/30 px-2 py-1 rounded truncate">
-                            {entry.key}
-                          </code>
-                          <span className="px-2 py-1 rounded text-xs font-medium bg-gray-500/20 text-gray-300">
-                            {entry.type}
-                          </span>
-                        </div>
-                        <div className="text-sm text-white/60 space-y-1">
-                          <div>TTL: {formatTTL(entry.ttl)}</div>
-                          <div>Size: {formatSize(entry.size)}</div>
-                        </div>
-                      </div>
-                      <div className="ml-4 text-right">
-                        <div className="text-sm text-white/90 font-mono truncate max-w-xs">
-                          {entry.value.length > 50 ? `${entry.value.substring(0, 50)}...` : entry.value}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Cache Information */}
-        <div className="mt-8 rounded-3xl border border-white/10 bg-[#0f131d] p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Cache Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-            <div>
-              <h3 className="text-white/80 font-medium mb-2">Performance Metrics</h3>
-              <ul className="space-y-2 text-white/60">
-                <li>• Hit Rate: {stats?.hitRate || 0}% of requests served from cache</li>
-                <li>• Miss Rate: {stats?.missRate || 0}% of requests required database queries</li>
-                <li>• Memory Usage: {stats?.memoryUsage || '0 MB'} of allocated cache memory</li>
-                <li>• Active Connections: {stats?.connections || 0} concurrent connections</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white/80 font-medium mb-2">Management Tips</h3>
-              <ul className="space-y-2 text-white/60">
-                <li>• Clear cache periodically to free up memory</li>
-                <li>• Monitor hit rates for performance optimization</li>
-                <li>• Check TTL values to ensure data freshness</li>
-                <li>• Use cache warming for frequently accessed data</li>
-              </ul>
-            </div>
-          </div>
         </div>
       </div>
+
+      {clearMsg && (
+        <div className="rounded-xl border border-[#5865F2]/20 bg-[#5865F2]/10 p-3">
+          <p className="text-sm text-[#5865F2]">{clearMsg}</p>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-[#5865F2]/30 border-t-[#5865F2] rounded-full animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-6 text-center">
+          <p className="text-sm text-rose-300">{error}</p>
+        </div>
+      ) : (
+        <>
+          {/* Stat Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[
+              { label: 'Cache Anahtarları', value: stats?.totalKeys ?? 0, icon: LuDatabase, color: 'text-indigo-400', border: 'border-indigo-500/20', bg: 'from-indigo-500/20 to-indigo-600/10' },
+              { label: 'Cache Boyutu', value: stats?.memoryUsage ?? '0 MB', icon: LuHardDrive, color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'from-emerald-500/20 to-emerald-600/10' },
+              { label: 'Uptime', value: stats?.uptime ?? '—', icon: LuClock, color: 'text-amber-400', border: 'border-amber-500/20', bg: 'from-amber-500/20 to-amber-600/10' },
+              { label: 'Heap Kullanımı', value: stats?.nodeMemory ?? '—', icon: LuActivity, color: 'text-violet-400', border: 'border-violet-500/20', bg: 'from-violet-500/20 to-violet-600/10' },
+              { label: 'Heap Toplam', value: stats?.heapTotal ?? '—', icon: LuCpu, color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'from-cyan-500/20 to-cyan-600/10' },
+              { label: 'RSS Bellek', value: stats?.rss ?? '—', icon: LuActivity, color: 'text-pink-400', border: 'border-pink-500/20', bg: 'from-pink-500/20 to-pink-600/10' },
+            ].map((card) => {
+              const Icon = card.icon;
+              return (
+                <div key={card.label} className={`rounded-2xl border ${card.border} bg-gradient-to-br ${card.bg} backdrop-blur-xl p-4`}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Icon className={`w-4 h-4 ${card.color}`} />
+                    <span className="text-[10px] text-white/40 font-medium uppercase tracking-wider">{card.label}</span>
+                  </div>
+                  <p className="text-lg font-bold text-white">{typeof card.value === 'number' ? card.value.toLocaleString() : card.value}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Cache Entries */}
+          <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+            <button type="button" onClick={toggleEntries} className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-white/[0.02] transition-colors">
+              <span className="text-sm font-semibold text-white">Cache Kayıtları</span>
+              <span className="text-xs text-white/40">{showEntries ? 'Gizle' : 'Göster'}</span>
+            </button>
+            {showEntries && (
+              <div className="border-t border-white/5">
+                {entries.length === 0 ? (
+                  <p className="px-6 py-8 text-sm text-white/30 text-center">Cache boş.</p>
+                ) : (
+                  <div className="divide-y divide-white/5">
+                    {entries.map((entry, i) => (
+                      <div key={i} className="px-6 py-3 flex items-center justify-between hover:bg-white/[0.02]">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-mono text-white/70 truncate">{entry.key}</p>
+                          <p className="text-[10px] text-white/30 truncate">{entry.value}</p>
+                        </div>
+                        <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+                          <span className="text-[10px] text-white/30">{formatSize(entry.size)}</span>
+                          <span className="text-[10px] text-amber-300/60">{formatTTL(entry.ttl)}</span>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] bg-white/5 text-white/40 border border-white/10">{entry.type}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

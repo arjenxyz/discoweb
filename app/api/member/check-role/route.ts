@@ -1,6 +1,6 @@
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireSessionUser } from '@/lib/auth';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -24,11 +24,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'bot_token_missing' }, { status: 500 });
     }
 
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
-    if (!userId) {
-      return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    const session = await requireSessionUser(request);
+    if (!session.ok) {
+      return session.response;
     }
+    const userId = session.userId;
 
     const supabase = getSupabase();
     if (!supabase) {

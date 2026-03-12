@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { logWebEvent } from '@/lib/serverLogger';
+import { requireSessionUser } from '@/lib/auth';
 
 const DEFAULT_DEVELOPER_GUILD_ID = '1465698764453838882';
 const DEFAULT_DEVELOPER_ROLE_ID = '1467580199481639013';
@@ -14,13 +15,8 @@ const getSupabase = () => {
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 };
 
-const checkDeveloperAccess = async (request: NextRequest): Promise<boolean> => {
+const checkDeveloperAccess = async (discordUserId: string): Promise<boolean> => {
   try {
-    const cookies = request.cookies;
-    const discordUserId = cookies.get('discord_user_id')?.value;
-
-    if (!discordUserId) return false;
-
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) return false;
 
@@ -41,7 +37,13 @@ const checkDeveloperAccess = async (request: NextRequest): Promise<boolean> => {
 };
 
 export async function POST(request: NextRequest) {
-  if (!(await checkDeveloperAccess(request))) {
+  const auth = await requireSessionUser(request);
+  if (!auth.ok) {
+    return auth.response;
+  }
+
+  const discordUserId = auth.userId;
+  if (!(await checkDeveloperAccess(discordUserId))) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 
@@ -97,9 +99,7 @@ export async function POST(request: NextRequest) {
     </div>
   `;
 
-  const cookies = request.cookies;
-  const discordUserId = cookies.get('discord_user_id')?.value;
-  const selectedGuildId = payload.guildId ?? cookies.get('selected_guild_id')?.value ?? DEFAULT_DEVELOPER_GUILD_ID;
+  const selectedGuildId = payload.guildId ?? request.cookies.get('selected_guild_id')?.value ?? DEFAULT_DEVELOPER_GUILD_ID;
 
   const { error } = await supabase.from('system_mails').insert({
     guild_id: selectedGuildId,

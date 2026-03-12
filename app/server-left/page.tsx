@@ -17,19 +17,7 @@ export default function ServerLeftPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        // Cookie'den user ID'yi al
-        const userId = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('discord_user_id='))
-          ?.split('=')[1];
-
-        if (!userId) {
-          setLoading(false);
-          return;
-        }
-
-        // Discord API'den kullanıcı bilgilerini al
-        const response = await fetch(`/api/discord/user/${userId}`);
+        const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);

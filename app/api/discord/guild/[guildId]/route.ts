@@ -1,16 +1,27 @@
 import { NextResponse } from 'next/server';
+import { requireSessionUser } from '@/lib/auth';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ guildId: string }> }
 ) {
   try {
+    const auth = await requireSessionUser(request);
+    if (!auth.ok) {
+      return auth.response;
+    }
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) {
       return NextResponse.json({ error: 'Bot token not configured' }, { status: 500 });
     }
 
     const { guildId } = await params;
+    const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${auth.userId}`, {
+      headers: { Authorization: `Bot ${botToken}` },
+    });
+    if (!memberResponse.ok) {
+      return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+    }
 
     // Discord API'den sunucu bilgilerini al
     const response = await fetch(`https://discord.com/api/guilds/${guildId}`, {

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,10 +49,7 @@ const checkAdminAccess = async (selectedGuildId: string): Promise<boolean> => {
   try {
     console.log('Checking admin access for guild:', selectedGuildId);
     
-    // Kullanıcı ID'sini cookie'den al
-    const { cookies } = await import('next/headers');
-    const cookieStore = await cookies();
-    const discordUserId = cookieStore.get('discord_user_id')?.value;
+    const discordUserId = await getSessionUserId();
     
     console.log('Discord user ID:', discordUserId);
     

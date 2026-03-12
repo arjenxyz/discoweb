@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient, SupabaseClient, PostgrestResponse } from '@supabase/supabase-js';
 import RemoveSetupButton from './RemoveSetupButton';
+import { getSessionUserId } from '@/lib/auth';
 
 interface SupabaseQueryResult {
   data: unknown;
@@ -57,10 +58,7 @@ const checkAdminAccess = async (selectedGuildId: string): Promise<boolean> => {
   try {
     console.log('Checking admin access for guild:', selectedGuildId);
     
-    // Kullanıcı ID'sini cookie'den al
-    const { cookies } = await import('next/headers');
-    const cookieStore = await cookies();
-    const discordUserId = cookieStore.get('discord_user_id')?.value;
+    const discordUserId = await getSessionUserId();
     
     console.log('Discord user ID:', discordUserId);
     

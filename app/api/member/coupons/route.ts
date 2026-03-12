@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/auth';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -42,7 +43,7 @@ export async function GET() {
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
 
   const cookieStore = await cookies();
-  const userId = cookieStore.get('discord_user_id')?.value ?? null;
+  const userId = await getSessionUserId();
 
   const serverId = await resolveServerId(supabase);
   if (!serverId) return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
@@ -62,6 +63,9 @@ export async function GET() {
 
   let filtered = discounts ?? [];
 
+  // Filter out discounts that reached their max uses
+  filtered = filtered.filter((d: any) => !d.max_uses || d.used_count < d.max_uses);
+
   // If we have a user id, filter out discounts the user already used
   if (userId && filtered.length > 0) {
     const ids = filtered.map((d: any) => d.id);
@@ -75,16 +79,33 @@ export async function GET() {
     filtered = filtered.filter((d: any) => !usedIds.has(d.id));
   }
 
-  // Mark welcome coupons by DB flag
-  const mapped = (filtered as any[]).map((d) => ({
-    id: d.id,
-    code: d.code,
-    percent: Number(d.percent),
-    max_uses: d.max_uses ?? null,
-    used_count: d.used_count ?? 0,
-    expires_at: d.expires_at ?? null,
-    is_welcome: d.is_welcome ?? false,
-    is_special: d.is_special ?? false,
+  // Calculate per-user usage for each discount
+  const mapped = await Promise.all((filtered as any[]).map(async (d) => {
+    let userUsageCount = 0;
+    let perUserLimit = 1; // Each user can use a coupon only once due to unique constraint
+
+    if (userId) {
+      const { data: userUsages } = await supabase
+        .from('discount_usages')
+        .select('id')
+        .eq('discount_id', d.id)
+        .eq('user_id', userId);
+
+      userUsageCount = userUsages ? userUsages.length : 0;
+    }
+
+    return {
+      id: d.id,
+      code: d.code,
+      percent: Number(d.percent),
+      max_uses: d.max_uses ?? null,
+      used_count: d.used_count ?? 0,
+      userUsageCount,
+      perUserLimit,
+      expires_at: d.expires_at ?? null,
+      is_welcome: d.is_welcome ?? false,
+      is_special: d.is_special ?? false,
+    };
   }));
 
   return NextResponse.json(mapped);

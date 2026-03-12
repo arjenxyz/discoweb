@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/auth';
 import { checkMaintenance } from '@/lib/maintenance';
 
 const getSelectedGuildId = async (): Promise<string> => {
@@ -34,7 +35,7 @@ export async function GET() {
     }
 
     const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
+    const userId = await getSessionUserId();
     if (!userId) {
       return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     }
@@ -141,7 +142,7 @@ export async function POST(request: Request) {
     }
 
     const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
+    const userId = await getSessionUserId();
     if (!userId) {
       return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     }

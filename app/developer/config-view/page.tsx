@@ -1,59 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { LuSettings, LuDatabase, LuServer, LuKey, LuGlobe, LuShield, LuRefreshCw, LuEye, LuEyeOff } from 'react-icons/lu';
-
-interface ConfigCategory {
-  name: string;
-  icon: React.ReactNode;
-  color: string;
-  configs: ConfigItem[];
-}
+import { LuSettings, LuDatabase, LuServer, LuKey, LuGlobe, LuShield, LuRefreshCw, LuEye, LuEyeOff, LuSearch } from 'react-icons/lu';
 
 interface ConfigItem {
   key: string;
   value: string | number | boolean;
   type: 'string' | 'number' | 'boolean' | 'secret';
-  description?: string;
+  description: string;
   category: string;
 }
 
-const CONFIG_CATEGORIES: ConfigCategory[] = [
-  {
-    name: 'Environment',
-    icon: <LuGlobe className="w-5 h-5" />,
-    color: 'blue',
-    configs: []
-  },
-  {
-    name: 'Database',
-    icon: <LuDatabase className="w-5 h-5" />,
-    color: 'green',
-    configs: []
-  },
-  {
-    name: 'API Keys',
-    icon: <LuKey className="w-5 h-5" />,
-    color: 'purple',
-    configs: []
-  },
-  {
-    name: 'Security',
-    icon: <LuShield className="w-5 h-5" />,
-    color: 'red',
-    configs: []
-  },
-  {
-    name: 'Server',
-    icon: <LuServer className="w-5 h-5" />,
-    color: 'orange',
-    configs: []
-  }
-];
+const CATEGORY_META: Record<string, { icon: typeof LuGlobe; color: string }> = {
+  'Environment': { icon: LuGlobe, color: 'text-blue-400' },
+  'Database': { icon: LuDatabase, color: 'text-emerald-400' },
+  'API Keys': { icon: LuKey, color: 'text-violet-400' },
+  'Security': { icon: LuShield, color: 'text-rose-400' },
+  'Server': { icon: LuServer, color: 'text-amber-400' },
+};
 
 export default function ConfigViewPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [configs, setConfigs] = useState<ConfigItem[]>([]);
@@ -61,264 +27,141 @@ export default function ConfigViewPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadConfigs();
-  }, []);
+  useEffect(() => { loadConfigs(); }, []);
 
   const loadConfigs = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/developer/config-view', { credentials: 'include', cache: 'no-store' });
-
-      if (!response.ok) {
-        throw new Error('Configuration data could not be retrieved');
-      }
-
-      const data = await response.json();
+      const res = await fetch('/api/developer/config-view', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) throw new Error('Yüklenemedi');
+      const data = await res.json();
       setConfigs(data.configs || []);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : 'Bilinmeyen hata');
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleSecretVisibility = (key: string) => {
-    const newVisible = new Set(visibleSecrets);
-    if (newVisible.has(key)) {
-      newVisible.delete(key);
-    } else {
-      newVisible.add(key);
-    }
-    setVisibleSecrets(newVisible);
+  const toggleSecret = (key: string) => {
+    const newSet = new Set(visibleSecrets);
+    if (newSet.has(key)) newSet.delete(key); else newSet.add(key);
+    setVisibleSecrets(newSet);
   };
 
-  const formatValue = (item: ConfigItem) => {
-    if (item.type === 'secret' && !visibleSecrets.has(item.key)) {
-      return '••••••••';
-    }
+  const categories = [...new Set(configs.map(c => c.category))];
 
-    if (item.type === 'boolean') {
-      return item.value ? '✅ True' : '❌ False';
-    }
-
-    if (item.type === 'number') {
-      return item.value.toString();
-    }
-
-    return item.value.toString();
-  };
-
-  const getValueColor = (item: ConfigItem) => {
-    if (item.type === 'boolean') {
-      return item.value ? 'text-green-300' : 'text-red-300';
-    }
-    if (item.type === 'secret') {
-      return 'text-yellow-300 font-mono';
-    }
-    return 'text-white/90';
-  };
-
-  const filteredConfigs = configs.filter(config => {
-    const matchesSearch = config.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         config.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || config.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+  const filtered = configs.filter(c => {
+    const matchesSearch = !searchTerm || c.key.toLowerCase().includes(searchTerm.toLowerCase()) || c.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCat = !selectedCategory || c.category === selectedCategory;
+    return matchesSearch && matchesCat;
   });
 
-  const groupedConfigs = CONFIG_CATEGORIES.map(category => ({
-    ...category,
-    configs: filteredConfigs.filter(config => config.category === category.name)
-  })).filter(group => group.configs.length > 0);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0f131d] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white/70">Loading configuration...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-[#0f131d] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-red-500/10 border border-red-500/20 rounded-3xl p-8 text-center">
-          <LuShield className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-white mb-2">Error</h1>
-          <p className="text-red-300 mb-6">{error}</p>
-          <div className="flex gap-3">
-            <button
-              onClick={loadConfigs}
-              className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-300 font-medium py-3 rounded-xl transition"
-            >
-              Try Again
-            </button>
-            <button
-              onClick={() => router.back()}
-              className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-3 rounded-xl transition"
-            >
-              Go Back
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const grouped = categories
+    .map(cat => ({ name: cat, items: filtered.filter(c => c.category === cat) }))
+    .filter(g => g.items.length > 0);
 
   return (
-    <div className="min-h-screen bg-[#0f131d] p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+    <div className="max-w-5xl mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Sistem Ayarları</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">Ortam değişkenleri ve yapılandırma durumları.</p>
+        </div>
+        <button type="button" onClick={loadConfigs} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-all">
+          <LuRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Yenile
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <input
+            type="text"
+            placeholder="Ayar adı veya açıklama ara..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:border-[#5865F2]/50 focus:outline-none transition-all"
+          />
+        </div>
+        <div className="flex gap-2 flex-wrap">
           <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-white/70 hover:text-white mb-4 transition"
+            type="button"
+            onClick={() => setSelectedCategory(null)}
+            className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border ${!selectedCategory ? 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20' : 'bg-white/5 text-white/50 border-white/10 hover:text-white'}`}
           >
-            ← Go Back
+            Tümü
           </button>
-          <h1 className="text-3xl font-bold text-white mb-2">Configuration View</h1>
-          <p className="text-white/60">Monitor system configurations and settings.</p>
-        </div>
-
-        {/* Controls */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Search configuration..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder-white/40 focus:border-blue-500/50 focus:outline-none transition"
-            />
-          </div>
-          <div className="flex gap-2">
-            <select
-              value={selectedCategory || ''}
-              onChange={(e) => setSelectedCategory(e.target.value || null)}
-              className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white min-w-[150px]"
-            >
-              <option value="">All Categories</option>
-              {CONFIG_CATEGORIES.map(category => (
-                <option key={category.name} value={category.name}>{category.name}</option>
-              ))}
-            </select>
+          {categories.map(cat => (
             <button
-              onClick={loadConfigs}
-              className="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition"
+              key={cat}
+              type="button"
+              onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
+              className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border ${selectedCategory === cat ? 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20' : 'bg-white/5 text-white/50 border-white/10 hover:text-white'}`}
             >
-              <LuRefreshCw className="w-4 h-4" />
-              Yenile
+              {cat}
             </button>
-          </div>
+          ))}
         </div>
+      </div>
 
-        {/* Stats */}
-        <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="text-2xl font-bold text-white">{configs.length}</div>
-            <div className="text-sm text-white/60">Total Configurations</div>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="text-2xl font-bold text-blue-300">{configs.filter(c => c.type === 'secret').length}</div>
-            <div className="text-sm text-white/60">Secret Values</div>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="text-2xl font-bold text-green-300">{groupedConfigs.length}</div>
-            <div className="text-sm text-white/60">Aktif Kategori</div>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="text-2xl font-bold text-purple-300">{filteredConfigs.length}</div>
-            <div className="text-sm text-white/60">Filtered</div>
-          </div>
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-[#5865F2]/30 border-t-[#5865F2] rounded-full animate-spin" />
         </div>
-
-        {/* Config Categories */}
-        <div className="space-y-6">
-          {groupedConfigs.map((category) => (
-            <div key={category.name} className="rounded-3xl border border-white/10 bg-[#0f131d] overflow-hidden">
-              {/* Category Header */}
-              <div className={`flex items-center gap-3 p-6 border-b border-white/10 ${
-                category.color === 'blue' ? 'bg-blue-500/10' :
-                category.color === 'green' ? 'bg-green-500/10' :
-                category.color === 'purple' ? 'bg-purple-500/10' :
-                category.color === 'red' ? 'bg-red-500/10' :
-                'bg-orange-500/10'
-              }`}>
-                <div className={`p-2 rounded-lg ${
-                  category.color === 'blue' ? 'bg-blue-500/20 text-blue-300' :
-                  category.color === 'green' ? 'bg-green-500/20 text-green-300' :
-                  category.color === 'purple' ? 'bg-purple-500/20 text-purple-300' :
-                  category.color === 'red' ? 'bg-red-500/20 text-red-300' :
-                  'bg-orange-500/20 text-orange-300'
-                }`}>
-                  {category.icon}
+      ) : error ? (
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-6 text-center">
+          <p className="text-sm text-rose-300">{error}</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {grouped.map(group => {
+            const meta = CATEGORY_META[group.name] ?? { icon: LuSettings, color: 'text-white/50' };
+            const Icon = meta.icon;
+            return (
+              <div key={group.name} className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+                <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
+                  <Icon className={`w-4 h-4 ${meta.color}`} />
+                  <span className="text-sm font-semibold text-white">{group.name}</span>
+                  <span className="text-[10px] text-white/30 ml-auto">{group.items.length} ayar</span>
                 </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-white">{category.name}</h2>
-                  <p className="text-sm text-white/60">{category.configs.length} configurations</p>
-                </div>
-              </div>
-
-              {/* Config Items */}
-              <div className="p-6">
-                <div className="space-y-4">
-                  {category.configs.map((config) => (
-                    <div key={config.key} className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition">
+                <div className="divide-y divide-white/5">
+                  {group.items.map(item => (
+                    <div key={item.key} className="px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-2 hover:bg-white/[0.02] transition-colors">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
-                          <code className="text-sm font-mono text-blue-300 bg-black/30 px-2 py-1 rounded">
-                            {config.key}
-                          </code>
-                          {config.type === 'secret' && (
-                            <button
-                              onClick={() => toggleSecretVisibility(config.key)}
-                              className="p-1 rounded-lg hover:bg-white/10 transition"
-                            >
-                              {visibleSecrets.has(config.key) ? (
-                                <LuEyeOff className="w-4 h-4 text-yellow-300" />
-                              ) : (
-                                <LuEye className="w-4 h-4 text-yellow-300" />
-                              )}
-                            </button>
-                          )}
-                        </div>
-                        {config.description && (
-                          <p className="text-sm text-white/60 mb-2">{config.description}</p>
-                        )}
-                        <div className={`text-sm font-mono ${getValueColor(config)} break-all`}>
-                          {formatValue(config)}
-                        </div>
+                        <p className="text-xs font-mono text-white/70">{item.key}</p>
+                        <p className="text-[10px] text-white/30">{item.description}</p>
                       </div>
-                      <div className="ml-4 flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          config.type === 'string' ? 'bg-gray-500/20 text-gray-300' :
-                          config.type === 'number' ? 'bg-blue-500/20 text-blue-300' :
-                          config.type === 'boolean' ? 'bg-green-500/20 text-green-300' :
-                          'bg-yellow-500/20 text-yellow-300'
-                        }`}>
-                          {config.type}
-                        </span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {item.type === 'boolean' ? (
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${
+                            item.value ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' : 'bg-rose-500/15 text-rose-300 border border-rose-500/20'
+                          }`}>
+                            {item.value ? 'Aktif' : 'Pasif'}
+                          </span>
+                        ) : item.type === 'secret' ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-mono text-amber-300/70">
+                              {visibleSecrets.has(item.key) ? String(item.value) : '••••••••'}
+                            </span>
+                            <button type="button" onClick={() => toggleSecret(item.key)} className="text-white/30 hover:text-white/60 transition-colors">
+                              {visibleSecrets.has(item.key) ? <LuEyeOff className="w-3.5 h-3.5" /> : <LuEye className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-white/70 font-mono">{String(item.value)}</span>
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-
-        {groupedConfigs.length === 0 && (
-          <div className="text-center py-12">
-            <LuSettings className="w-16 h-16 text-white/20 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-white/60 mb-2">No Configuration Found</h3>
-            <p className="text-white/40">No configuration matches your search criteria.</p>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

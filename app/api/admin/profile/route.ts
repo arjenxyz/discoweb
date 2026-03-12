@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/auth';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -25,7 +26,7 @@ export async function GET() {
       return NextResponse.json({ error: 'missing_bot_token' }, { status: 500 });
     }
     const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
+    const userId = await getSessionUserId();
     if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
     const selectedGuildId = await getSelectedGuildId();
@@ -63,10 +64,33 @@ export async function GET() {
     // Admin rolü kontrolü: önce veritabanından, yoksa env'den
     const adminRoleId = adminRoleFromDb || process.env.ADMIN_ROLE_ID;
     const developerRoleId = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
+    const developerGuildId = process.env.DEVELOPER_GUILD_ID ?? '1465698764453838882';
     if (!adminRoleId && !developerRoleId) return NextResponse.json({ error: 'admin_role_missing' }, { status: 403 });
 
     const hasAdminRole = adminRoleId ? member.roles.includes(adminRoleId) : false;
-    const hasDeveloperRole = developerRoleId ? member.roles.includes(developerRoleId) : false;
+
+    // Developer rolü developer sunucusunda kontrol edilmeli (seçili sunucuda değil)
+    let hasDeveloperRole = false;
+    if (developerRoleId) {
+      if (selectedGuildId === developerGuildId) {
+        // Zaten developer sunucusundayız, mevcut member verisi yeterli
+        hasDeveloperRole = member.roles.includes(developerRoleId);
+      } else {
+        // Farklı bir sunucu seçili — developer sunucusundaki rolleri ayrıca kontrol et
+        try {
+          const devMemberRes = await fetch(
+            `https://discord.com/api/guilds/${developerGuildId}/members/${userId}`,
+            { headers: { Authorization: `Bot ${botToken}` } },
+          );
+          if (devMemberRes.ok) {
+            const devMember = (await devMemberRes.json()) as { roles: string[] };
+            hasDeveloperRole = devMember.roles.includes(developerRoleId);
+          }
+        } catch {
+          // Developer sunucusuna erişilemezse developer rolü yok say
+        }
+      }
+    }
     if (!hasAdminRole && !hasDeveloperRole) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
     const avatarHash = member.user.avatar;

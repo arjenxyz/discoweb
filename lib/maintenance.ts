@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
+import { getSessionUserId } from '@/lib/auth';
 
 
 export const MAINTENANCE_KEYS = [
@@ -39,8 +39,7 @@ const DEFAULT_DEVELOPER_ROLE_ID = '1467580199481639013';
 
 const getUserIdFromCookies = async () => {
   try {
-    const cookieStore = await cookies();
-    return cookieStore.get('discord_user_id')?.value ?? null;
+    return await getSessionUserId();
   } catch {
     return null;
   }

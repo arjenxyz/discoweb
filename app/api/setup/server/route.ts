@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
+import { getSessionUserId, requireSessionUser } from '@/lib/auth';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -8,6 +10,11 @@ const getSupabase = () => {
     return null;
   }
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+};
+
+const getSelectedGuildId = async () => {
+  const cookieStore = await cookies();
+  return cookieStore.get('selected_guild_id')?.value ?? null;
 };
 
 // Slugify function to create URL-friendly slugs
@@ -32,9 +39,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Veritabanı bağlantısı yapılandırılmamış' }, { status: 500 });
   }
 
-  const cookies = request.headers.get('cookie') || '';
-  const guildIdMatch = cookies.match(/selected_guild_id=([^;]+)/);
-  const guildId = guildIdMatch ? guildIdMatch[1] : null;
+  const userId = await getSessionUserId();
+  if (!userId) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+
+  const guildId = await getSelectedGuildId();
 
   if (!guildId) {
     return NextResponse.json({ error: 'Sunucu kimliği bulunamadı' }, { status: 400 });
@@ -90,16 +100,11 @@ export async function POST(request: Request) {
     }
 
     // Kullanıcının admin olup olmadığını kontrol et
-    const cookies = request.headers.get('cookie') || '';
-    const userIdMatch = cookies.match(/discord_user_id=([^;]+)/);
-    const userId = userIdMatch ? userIdMatch[1] : null;
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Kullanıcı kimliği bulunamadı' },
-        { status: 401 }
-      );
+    const session = await requireSessionUser(request);
+    if (!session.ok) {
+      return session.response;
     }
+    const userId = session.userId;
 
     // Kullanıcının sunucuda admin olup olmadığını kontrol et
     const memberResponse = await fetch(

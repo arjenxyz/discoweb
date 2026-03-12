@@ -17,6 +17,7 @@ import NotificationsModal from './components/NotificationsModal';
 import TransferModal from './components/TransferModal';
 import PromotionsModal from './components/PromotionsModal';
 import DiscountsModal from './components/DiscountsModal';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 import type {
   MemberProfile,
   Notification,
@@ -583,7 +584,8 @@ export default function DashboardPage() {
     color ? `#${color.toString(16).padStart(6, '0')}` : '#64748b';
 
   const renderNotificationBody = useCallback((body: string) => {
-    return <span dangerouslySetInnerHTML={{ __html: body }} />;
+    const safeBody = sanitizeHtml(body);
+    return <span dangerouslySetInnerHTML={{ __html: safeBody }} />;
   }, []);
 
   const handleCloseNotificationModal = useCallback(() => {
@@ -709,7 +711,7 @@ export default function DashboardPage() {
 
   const mainWrapperClass = effectiveSection === 'mail'
     ? 'mx-0 w-full max-w-full px-0'
-    : 'mx-auto max-w-6xl px-6';
+    : 'mx-auto max-w-6xl px-3 sm:px-6';
   const mainSpacingClass = effectiveSection === 'mail' ? 'py-0 gap-0' : 'pt-24 pb-10 gap-6';
 
   return (
@@ -808,6 +810,7 @@ export default function DashboardPage() {
                   renderPapelAmount={renderPapelAmount}
                   formatRoleColor={formatRoleColor}
                 />
+                {/* Chat is now a separate page at /chat */}
               </>
             )}
 

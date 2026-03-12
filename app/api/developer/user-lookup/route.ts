@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { serverCache } from '@/lib/serverCache';
 import { logWebEvent } from '@/lib/serverLogger';
+import { requireSessionUser } from '@/lib/auth';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -26,13 +27,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Bot token not configured' }, { status: 500 });
     }
 
-    const { cookies } = await import('next/headers');
-    const cookieStore = await cookies();
-    const discordUserId = cookieStore.get('discord_user_id')?.value;
-
-    if (!discordUserId) {
-      return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    const auth = await requireSessionUser(request);
+    if (!auth.ok) {
+      return auth.response;
     }
+    const discordUserId = auth.userId;
 
     const developerRoleId = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
     const developerGuildId = process.env.DEVELOPER_GUILD_ID ?? process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
@@ -233,7 +232,7 @@ export async function GET(request: NextRequest) {
 
     try {
       // Mevcut geliştirici oturumunun tokenı (cookie)
-      const accessToken = cookieStore.get('discord_access_token')?.value;
+      const accessToken = request.cookies.get('discord_access_token')?.value;
 
       // Eğer oturum tokenı varsa, developer'ın görebileceği oauthGuilds'i al
       if (accessToken) {

@@ -1,8 +1,8 @@
 'use server';
 
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { getSupabaseClient } from '@/lib/supabaseClient';
+import { requireSessionUser } from '@/lib/auth';
 
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 
@@ -45,11 +45,14 @@ const TABLES_TO_CLEAR = [
   'server_overview_stats'
 ];
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     // Developer yetkisi kontrolü
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('discord_user_id')?.value;
+    const auth = await requireSessionUser(request);
+    if (!auth.ok) {
+      return auth.response;
+    }
+    const userId = auth.userId;
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -105,20 +108,19 @@ export async function POST() {
       memberError
     });
 
-    // GEÇİCİ: Developer kontrolünü kaldır (test için)
-    // const hasUserAccess = userCheck && !userError && userCheck.role_level >= 999;
-    // const hasMemberAccess = memberCheck && !memberError && memberCheck.role_level >= 999;
+    const hasUserAccess = userCheck && !userError && userCheck.role_level >= 999;
+    const hasMemberAccess = memberCheck && !memberError && memberCheck.role_level >= 999;
 
-    // if (!hasUserAccess && !hasMemberAccess) {
-    //   return NextResponse.json({
-    //     error: 'Developer access required',
-    //     debug: {
-    //       userRoleLevel: userCheck ? (userCheck as any).role_level : undefined,
-    //       memberRoleLevel: memberCheck ? (memberCheck as any).role_level : undefined,
-    //       requiredLevel: 999
-    //     }
-    //   }, { status: 403 });
-    // }
+    if (!hasUserAccess && !hasMemberAccess) {
+      return NextResponse.json({
+        error: 'Developer access required',
+        debug: {
+          userRoleLevel: userCheck ? (userCheck as any).role_level : undefined,
+          memberRoleLevel: memberCheck ? (memberCheck as any).role_level : undefined,
+          requiredLevel: 999
+        }
+      }, { status: 403 });
+    }
 
     const results = {
       logChannelsDeleted: 0,
