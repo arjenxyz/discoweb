@@ -37,6 +37,14 @@ export async function GET(req: Request) {
   const selectedGuildId = cookieStore.get('selected_guild_id')?.value || GUILD_ID;
 
   try {
+    // Get internal server ID for store queries
+    const { data: serverRow } = await supabase
+      .from('servers')
+      .select('id')
+      .eq('discord_id', selectedGuildId)
+      .maybeSingle();
+    const serverId = serverRow?.id;
+
     const [
       { data: overview },
       { data: rangeTotals },
@@ -58,9 +66,15 @@ export async function GET(req: Request) {
       supabase.from('member_overview_stats').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId),
       supabase.from('member_wallets').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId),
       supabase.from('member_wallets').select('balance').eq('guild_id', selectedGuildId),
-      supabase.from('store_orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('store_orders').select('id', { count: 'exact', head: true }).eq('status', 'paid'),
-      supabase.from('store_items').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+      serverId
+        ? supabase.from('store_orders').select('id', { count: 'exact', head: true }).eq('server_id', serverId).eq('status', 'pending')
+        : Promise.resolve({ count: 0 } as any),
+      serverId
+        ? supabase.from('store_orders').select('id', { count: 'exact', head: true }).eq('server_id', serverId).eq('status', 'paid')
+        : Promise.resolve({ count: 0 } as any),
+      serverId
+        ? supabase.from('store_items').select('id', { count: 'exact', head: true }).eq('server_id', serverId).eq('status', 'active')
+        : Promise.resolve({ count: 0 } as any),
       supabase.from('member_profiles').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId).eq('has_tag', true),
       supabase.from('member_profiles').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId).eq('is_booster', true),
     ]);

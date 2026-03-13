@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import RemoveSetupButton from './RemoveSetupButton';
 import {
   LuMessageSquare,
@@ -10,17 +9,19 @@ import {
   LuUsers,
   LuWallet,
   LuTrendingUp,
-  LuShoppingBag,
   LuClock,
   LuTag,
   LuZap,
   LuArrowUpRight,
   LuRefreshCw,
-  LuDatabase,
   LuShield,
   LuPackage,
   LuCoins,
   LuChartBar,
+  LuDatabase,
+  LuSettings,
+  LuBell,
+  LuStore,
 } from 'react-icons/lu';
 
 type OverviewStats = {
@@ -45,8 +46,6 @@ type Props = {
   serverName: string | null;
   serverSetup: boolean;
   selectedGuildId: string;
-  systemHealth: Array<{ label: string; ok: boolean; detail: string }>;
-  tableStatuses: Array<{ table: string; ok: boolean; error?: string; count?: number }>;
 };
 
 const fmt = new Intl.NumberFormat('tr-TR');
@@ -88,13 +87,10 @@ export default function AdminOverviewClient({
   serverName,
   serverSetup,
   selectedGuildId,
-  systemHealth,
-  tableStatuses,
 }: Props) {
   const [stats, setStats] = useState<OverviewStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [showTables, setShowTables] = useState(false);
 
   const fetchStats = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -117,11 +113,6 @@ export default function AdminOverviewClient({
     return () => clearInterval(interval);
   }, []);
 
-  const healthOk = systemHealth.filter((h) => h.ok).length;
-  const healthTotal = systemHealth.length;
-  const tablesOk = tableStatuses.filter((t) => t.ok).length;
-  const tablesTotal = tableStatuses.length;
-
   return (
     <div className="space-y-8">
       {/* Hero Header */}
@@ -131,16 +122,16 @@ export default function AdminOverviewClient({
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Yonetim Paneli</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Yönetim Paneli</p>
               <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${serverSetup ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'}`}>
-                {serverSetup ? 'Aktif' : 'Kurulmamis'}
+                {serverSetup ? 'Aktif' : 'Kurulmamış'}
               </span>
             </div>
             <h1 className="mt-3 text-3xl font-bold text-white">
-              {serverName ?? 'Yonetim Merkezi'}
+              {serverName ?? 'Yönetim Merkezi'}
             </h1>
             <p className="mt-2 text-sm text-white/50">
-              Sunucu ID: <span className="font-mono text-white/40">{selectedGuildId}</span>
+              Sunucunuzun genel durumunu ve istatistiklerini buradan takip edin.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -158,14 +149,14 @@ export default function AdminOverviewClient({
               className="inline-flex items-center gap-2 rounded-xl bg-indigo-500/90 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400"
             >
               <LuChartBar className="h-4 w-4" />
-              Kazanc Ayarlari
+              Kazanç Ayarları
             </Link>
             <Link
               href="/admin/maintenance"
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white/70 transition hover:border-white/20 hover:text-white"
             >
               <LuShield className="h-4 w-4" />
-              Bakim Modu
+              Bakım Modu
             </Link>
           </div>
         </div>
@@ -182,67 +173,31 @@ export default function AdminOverviewClient({
         <>
           {/* Activity Stats */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Aktivite (Son 24 Saat)</p>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Sunucu Aktivitesi</p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 icon={<LuMessageSquare className="h-5 w-5" />}
-                label="Mesaj (24s)"
+                label="Mesaj (Son 24 Saat)"
                 value={stats.rangeMessages}
                 sub={`Toplam: ${fmt.format(stats.totalMessages)}`}
                 color="bg-blue-500"
               />
               <StatCard
                 icon={<LuMic className="h-5 w-5" />}
-                label="Sesli Dakika (24s)"
+                label="Sesli Dakika (Son 24 Saat)"
                 value={stats.rangeVoiceMinutes}
-                sub={`Toplam: ${fmt.format(stats.totalVoiceMinutes)}`}
+                sub={`Toplam: ${fmt.format(stats.totalVoiceMinutes)} dk`}
                 color="bg-violet-500"
               />
               <StatCard
                 icon={<LuUsers className="h-5 w-5" />}
-                label="Kayitli Uye"
+                label="Kayıtlı Üye"
                 value={stats.totalMembers}
-                sub={`${fmt.format(stats.totalWallets)} cuzdan olusturulmus`}
+                sub={`${fmt.format(stats.totalWallets)} cüzdan oluşturulmuş`}
                 color="bg-cyan-500"
               />
-              <StatCard
-                icon={<LuTrendingUp className="h-5 w-5" />}
-                label="En Yuksek Bakiye"
-                value={`${fmt.format(stats.highestBalance)} P`}
-                sub={`Ortalama: ${fmt.format(stats.avgBalance)} papel`}
-                color="bg-amber-500"
-              />
-            </div>
-          </div>
-
-          {/* Economy & Store */}
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Ekonomi & Magaza</p>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard
-                icon={<LuCoins className="h-5 w-5" />}
-                label="Toplam Dolasimdaki Papel"
-                value={`${fmt.format(stats.totalCirculation)} P`}
-                color="bg-emerald-500"
-                href="/admin/wallet"
-              />
-              <StatCard
-                icon={<LuPackage className="h-5 w-5" />}
-                label="Aktif Urun"
-                value={stats.activeStoreItems}
-                sub={`${fmt.format(stats.paidOrders)} tamamlanan siparis`}
-                color="bg-pink-500"
-                href="/admin/store/products"
-              />
-              <StatCard
-                icon={<LuClock className="h-5 w-5" />}
-                label="Bekleyen Siparis"
-                value={stats.pendingOrders}
-                color="bg-orange-500"
-                href="/admin/store/orders/pending"
-              />
               <div className="grid grid-rows-2 gap-4">
-                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f1116] p-4">
+                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f1116] p-4 transition hover:border-white/20">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/15 text-indigo-300">
                     <LuTag className="h-4 w-4" />
                   </div>
@@ -251,7 +206,7 @@ export default function AdminOverviewClient({
                     <p className="text-xs text-white/40">Tag Sahibi</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f1116] p-4">
+                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f1116] p-4 transition hover:border-white/20">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/15 text-purple-300">
                     <LuZap className="h-4 w-4" />
                   </div>
@@ -263,22 +218,63 @@ export default function AdminOverviewClient({
               </div>
             </div>
           </div>
+
+          {/* Economy & Store */}
+          <div>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Ekonomi & Mağaza</p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <StatCard
+                icon={<LuCoins className="h-5 w-5" />}
+                label="Dolaşımdaki Papel"
+                value={`${fmt.format(stats.totalCirculation)} P`}
+                sub={`Ortalama: ${fmt.format(stats.avgBalance)} papel/üye`}
+                color="bg-emerald-500"
+                href="/admin/wallet"
+              />
+              <StatCard
+                icon={<LuTrendingUp className="h-5 w-5" />}
+                label="En Yüksek Bakiye"
+                value={`${fmt.format(stats.highestBalance)} P`}
+                color="bg-amber-500"
+              />
+              <StatCard
+                icon={<LuPackage className="h-5 w-5" />}
+                label="Aktif Ürün"
+                value={stats.activeStoreItems}
+                sub={`${fmt.format(stats.paidOrders)} tamamlanan sipariş`}
+                color="bg-pink-500"
+                href="/admin/store/products"
+              />
+              <StatCard
+                icon={<LuClock className="h-5 w-5" />}
+                label="Bekleyen Sipariş"
+                value={stats.pendingOrders}
+                sub={stats.pendingOrders > 0 ? 'İşlem bekliyor' : 'Bekleyen yok'}
+                color="bg-orange-500"
+                href="/admin/store/orders/pending"
+              />
+            </div>
+          </div>
         </>
       ) : (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/50">
-          Istatistik verileri yuklenemedi.
+          İstatistik verileri yüklenemedi. Lütfen sayfayı yenileyin.
         </div>
       )}
 
       {/* Quick Actions */}
       <div>
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Hizli Islemler</p>
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Hızlı İşlemler</p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { href: '/admin/store/products/new', label: 'Yeni Urun Olustur', icon: <LuPackage className="h-5 w-5" />, color: 'text-emerald-300' },
-            { href: '/admin/wallet', label: 'Bakiye Yonetimi', icon: <LuWallet className="h-5 w-5" />, color: 'text-blue-300' },
-            { href: '/admin/notifications/send', label: 'Bildirim Gonder', icon: <LuMessageSquare className="h-5 w-5" />, color: 'text-violet-300' },
-            { href: '/admin/log-channels', label: 'Log Kanallari', icon: <LuDatabase className="h-5 w-5" />, color: 'text-amber-300' },
+            { href: '/admin/store/products/new', label: 'Yeni Ürün Oluştur', icon: <LuPackage className="h-5 w-5" />, color: 'text-emerald-300' },
+            { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-5 w-5" />, color: 'text-blue-300' },
+            { href: '/admin/notifications/send', label: 'Bildirim Gönder', icon: <LuBell className="h-5 w-5" />, color: 'text-violet-300' },
+            { href: '/admin/store/promos/new', label: 'Promosyon Kodu Oluştur', icon: <LuTag className="h-5 w-5" />, color: 'text-pink-300' },
+            { href: '/admin/store/discounts/new', label: 'İndirim Kodu Oluştur', icon: <LuCoins className="h-5 w-5" />, color: 'text-amber-300' },
+            { href: '/admin/log-channels', label: 'Log Kanalları', icon: <LuDatabase className="h-5 w-5" />, color: 'text-cyan-300' },
+            { href: '/admin/earn-settings', label: 'Kazanç Ayarları', icon: <LuSettings className="h-5 w-5" />, color: 'text-indigo-300' },
+            { href: '/admin/guide', label: 'Kullanım Kılavuzu', icon: <LuStore className="h-5 w-5" />, color: 'text-white/50' },
           ].map((action) => (
             <Link
               key={action.href}
@@ -293,86 +289,13 @@ export default function AdminOverviewClient({
         </div>
       </div>
 
-      {/* System Health Summary */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-white/10 bg-[#0f1116] p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-white">Sistem Sagligi</h2>
-              <p className="mt-1 text-xs text-white/40">{healthOk}/{healthTotal} kontrol basarili</p>
-            </div>
-            <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${healthOk === healthTotal ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'}`}>
-              {healthOk === healthTotal ? (
-                <LuShield className="h-5 w-5" />
-              ) : (
-                <span>{healthOk}</span>
-              )}
-            </div>
-          </div>
-          <div className="mt-4 space-y-2">
-            {systemHealth.map((item) => (
-              <div
-                key={item.label}
-                className="flex items-center justify-between rounded-xl border border-white/5 bg-white/3 px-3 py-2 text-sm"
-              >
-                <div className="flex items-center gap-2">
-                  <span className={`h-1.5 w-1.5 rounded-full ${item.ok ? 'bg-emerald-400' : 'bg-rose-400'}`} />
-                  <span className="text-white/70">{item.label}</span>
-                </div>
-                <span className="text-xs text-white/40">{item.detail}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-[#0f1116] p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-white">Veritabani</h2>
-              <p className="mt-1 text-xs text-white/40">{tablesOk}/{tablesTotal} tablo erisilebiir</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowTables(!showTables)}
-              className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/50 transition hover:border-white/20 hover:text-white/70"
-            >
-              {showTables ? 'Gizle' : 'Detay'}
-            </button>
-          </div>
-          {/* Compact summary bar */}
-          <div className="mt-4 flex h-2 overflow-hidden rounded-full bg-white/5">
-            <div className="bg-emerald-500/60 transition-all" style={{ width: `${(tablesOk / tablesTotal) * 100}%` }} />
-            <div className="bg-rose-500/60 transition-all" style={{ width: `${((tablesTotal - tablesOk) / tablesTotal) * 100}%` }} />
-          </div>
-          <p className="mt-2 text-xs text-white/30">
-            {tablesOk === tablesTotal ? 'Tum tablolar erisilebiir.' : `${tablesTotal - tablesOk} tablo erisilemiyor.`}
-          </p>
-          {showTables && (
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              {tableStatuses.map((table) => (
-                <div
-                  key={table.table}
-                  className="flex items-center justify-between rounded-lg border border-white/5 bg-white/3 px-3 py-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`h-1.5 w-1.5 rounded-full ${table.ok ? 'bg-emerald-400' : 'bg-rose-400'}`} />
-                    <span className="font-mono text-[11px] text-white/60">{table.table}</span>
-                  </div>
-                  <span className="text-[10px] text-white/30">{table.ok ? table.count ?? 0 : 'Hata'}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Danger Zone */}
       <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold text-red-400">Tehlikeli Bolge</h2>
+            <h2 className="text-base font-semibold text-red-400">Tehlikeli Bölge</h2>
             <p className="mt-1 text-sm text-white/50">
-              Bu islemler geri alinamaz. Dikkatli kullanin.
+              Bu işlemler geri alınamaz. Dikkatli kullanın.
             </p>
           </div>
           <RemoveSetupButton />

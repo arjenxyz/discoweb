@@ -303,12 +303,7 @@ export default async function AdminDashboardPage() {
   const overview = await getOverviewData();
   console.log('Overview data:', overview);
 
-  console.log('Getting Supabase table statuses...');
-  const tableStatuses = await getSupabaseTableStatuses();
-  console.log('Table statuses:', tableStatuses);
-
   if (!overview) {
-    console.log('No overview data, showing error');
     return (
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/60">
         Admin verileri yüklenemedi. Sunucu ayarlarını ve yetkileri kontrol edin.
@@ -316,40 +311,11 @@ export default async function AdminDashboardPage() {
     );
   }
 
-  // Prepare system health items for client component
-  const systemHealth = [
-    { label: 'Service Role Key', ok: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY), detail: 'Sunucu erişimi' },
-    { label: 'Discord Bot Token', ok: Boolean(process.env.DISCORD_BOT_TOKEN), detail: 'Bot bağlantısı' },
-    { label: 'Admin Rol ID', ok: Boolean(process.env.DISCORD_ADMIN_ROLE_ID), detail: 'Yetki doğrulama' },
-    { label: 'Bakım Rol ID', ok: Boolean(MAINTENANCE_ROLE_ID), detail: 'Bakım yetkisi' },
-    {
-      label: 'Log Kanal Seti',
-      ok: REQUIRED_CHANNELS.every((type) => (overview.configuredChannels ?? []).some((cfg) => cfg.channel_type === type)),
-      detail: 'Webhook yapılandırması',
-    },
-    { label: 'Webhook Sayısı', ok: (overview.webhookCount ?? 0) >= REQUIRED_CHANNELS.length, detail: `${overview.webhookCount ?? 0} aktif` },
-    {
-      label: 'Audit Log Akışı',
-      ok: (overview.logActivityCount ?? 0) > 0,
-      detail: (overview.recentLogs ?? [])[0]
-        ? `Son kayıt: ${formatShortDate.format(new Date((overview.recentLogs ?? [])[0].created_at))}`
-        : 'Kayıt bulunamadı',
-    },
-    { label: 'Audit Log (24s)', ok: (overview.auditLogs24h ?? 0) > 0, detail: `${formatNumber.format(overview.auditLogs24h ?? 0)} kayıt` },
-    {
-      label: 'Public Metrics',
-      ok: Boolean(overview.metricsUpdatedAt),
-      detail: overview.metricsUpdatedAt ? `Güncellendi: ${formatShortDate.format(new Date(overview.metricsUpdatedAt))}` : 'Güncelleme yok',
-    },
-  ];
-
   return (
     <AdminOverviewClient
       serverName={overview.server?.name ?? null}
       serverSetup={overview.server?.is_setup ?? false}
       selectedGuildId={overview.selectedGuildId}
-      systemHealth={systemHealth}
-      tableStatuses={tableStatuses}
     />
   );
 }
