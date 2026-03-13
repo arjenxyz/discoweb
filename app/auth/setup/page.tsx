@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuSkipForward, LuGauge } from 'react-icons/lu';
+import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuSkipForward, LuGauge, LuChevronDown } from 'react-icons/lu';
 
 interface DiscordRole {
   id: string;
@@ -87,6 +87,26 @@ export default function SetupPage() {
 
   // Helper: convert Discord role color int to hex
   const roleColorHex = (color: number) => color ? `#${color.toString(16).padStart(6, '0')}` : '#99AAB5';
+
+  // Custom dropdown states
+  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
+  const [verifyDropdownOpen, setVerifyDropdownOpen] = useState(false);
+  const adminDropdownRef = useRef<HTMLDivElement>(null);
+  const verifyDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (adminDropdownRef.current && !adminDropdownRef.current.contains(e.target as Node)) {
+        setAdminDropdownOpen(false);
+      }
+      if (verifyDropdownRef.current && !verifyDropdownRef.current.contains(e.target as Node)) {
+        setVerifyDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const checkPermissionsAndLoadData = async () => {
@@ -529,21 +549,54 @@ export default function SetupPage() {
                         <LuShield className="w-3.5 h-3.5 text-[#5865F2]" />
                         Admin Rolü
                       </label>
-                      <select
-                        value={selectedAdminRole}
-                        onChange={(e) => setSelectedAdminRole(e.target.value)}
-                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-[#5865F2]/50 focus:outline-none focus:ring-1 focus:ring-[#5865F2]/20 transition-all"
-                      >
-                        <option value="">Rol seçin...</option>
-                        {roles
-                          .filter(role => {
-                            const perms = parseInt(role.permissions);
-                            return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
-                          })
-                          .map((role) => (
-                            <option key={role.id} value={role.id}>{role.name}</option>
-                          ))}
-                      </select>
+                      <div className="relative" ref={adminDropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => { setAdminDropdownOpen(v => !v); setVerifyDropdownOpen(false); }}
+                          className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition-all ${
+                            adminDropdownOpen
+                              ? 'border-[#5865F2]/50 bg-white/5 ring-1 ring-[#5865F2]/20'
+                              : 'border-white/10 bg-white/5 hover:border-white/20'
+                          }`}
+                        >
+                          {selectedAdminRole ? (
+                            <span className="flex items-center gap-2">
+                              <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: roleColorHex(roles.find(r => r.id === selectedAdminRole)?.color ?? 0) }} />
+                              <span className="text-white">{getRoleNameById(selectedAdminRole)}</span>
+                            </span>
+                          ) : (
+                            <span className="text-white/40">Rol seçin...</span>
+                          )}
+                          <LuChevronDown className={`w-4 h-4 text-white/40 transition-transform ${adminDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        {adminDropdownOpen && (
+                          <div className="absolute z-50 mt-1.5 w-full rounded-xl border border-white/10 bg-[#0c0e14] shadow-[0_8px_30px_rgba(0,0,0,0.6)] overflow-hidden">
+                            <div className="max-h-[200px] overflow-y-auto custom-scrollbar py-1">
+                              {roles
+                                .filter(role => {
+                                  const perms = parseInt(role.permissions);
+                                  return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
+                                })
+                                .map((role) => (
+                                  <button
+                                    key={role.id}
+                                    type="button"
+                                    onClick={() => { setSelectedAdminRole(role.id); setAdminDropdownOpen(false); }}
+                                    className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${
+                                      selectedAdminRole === role.id
+                                        ? 'bg-[#5865F2]/15 text-white'
+                                        : 'text-white/70 hover:bg-white/5 hover:text-white'
+                                    }`}
+                                  >
+                                    <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: roleColorHex(role.color) }} />
+                                    <span>{role.name}</span>
+                                    {selectedAdminRole === role.id && <LuCheck className="w-3.5 h-3.5 text-[#5865F2] ml-auto" />}
+                                  </button>
+                                ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       <p className="mt-1.5 text-[10px] text-white/30">Bu role sahip kişiler admin paneline erişebilir</p>
                     </div>
 
@@ -553,16 +606,49 @@ export default function SetupPage() {
                         <LuUsers className="w-3.5 h-3.5 text-emerald-400" />
                         Doğrulama Rolü
                       </label>
-                      <select
-                        value={selectedVerifyRole}
-                        onChange={(e) => setSelectedVerifyRole(e.target.value)}
-                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-all"
-                      >
-                        <option value="">Rol seçin...</option>
-                        {roles.map((role) => (
-                          <option key={role.id} value={role.id}>{role.name}</option>
-                        ))}
-                      </select>
+                      <div className="relative" ref={verifyDropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => { setVerifyDropdownOpen(v => !v); setAdminDropdownOpen(false); }}
+                          className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition-all ${
+                            verifyDropdownOpen
+                              ? 'border-emerald-500/50 bg-white/5 ring-1 ring-emerald-500/20'
+                              : 'border-white/10 bg-white/5 hover:border-white/20'
+                          }`}
+                        >
+                          {selectedVerifyRole ? (
+                            <span className="flex items-center gap-2">
+                              <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: roleColorHex(roles.find(r => r.id === selectedVerifyRole)?.color ?? 0) }} />
+                              <span className="text-white">{getRoleNameById(selectedVerifyRole)}</span>
+                            </span>
+                          ) : (
+                            <span className="text-white/40">Rol seçin...</span>
+                          )}
+                          <LuChevronDown className={`w-4 h-4 text-white/40 transition-transform ${verifyDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        {verifyDropdownOpen && (
+                          <div className="absolute z-50 mt-1.5 w-full rounded-xl border border-white/10 bg-[#0c0e14] shadow-[0_8px_30px_rgba(0,0,0,0.6)] overflow-hidden">
+                            <div className="max-h-[200px] overflow-y-auto custom-scrollbar py-1">
+                              {roles.map((role) => (
+                                <button
+                                  key={role.id}
+                                  type="button"
+                                  onClick={() => { setSelectedVerifyRole(role.id); setVerifyDropdownOpen(false); }}
+                                  className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${
+                                    selectedVerifyRole === role.id
+                                      ? 'bg-emerald-500/15 text-white'
+                                      : 'text-white/70 hover:bg-white/5 hover:text-white'
+                                  }`}
+                                >
+                                  <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: roleColorHex(role.color) }} />
+                                  <span>{role.name}</span>
+                                  {selectedVerifyRole === role.id && <LuCheck className="w-3.5 h-3.5 text-emerald-400 ml-auto" />}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       <p className="mt-1.5 text-[10px] text-white/30">Bu role sahip üyeler papel kazanabilir ve mağazayı kullanabilir</p>
                     </div>
                   </div>
