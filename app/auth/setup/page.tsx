@@ -107,6 +107,9 @@ export default function SetupPage() {
         const rolesData = await rolesResponse.json();
         setRoles(rolesData);
 
+        // Sunucu sahibi mi kontrol et
+        const isServerOwner = Boolean(user?.id) && guildData.owner_id === user?.id;
+
         // Kullanıcının admin olup olmadığını kontrol et
         const adminRoles = rolesData.filter((role: DiscordRole) => {
           const perms = parseInt(role.permissions);
@@ -128,9 +131,10 @@ export default function SetupPage() {
           );
         }
 
-        setIsAdmin(userHasAdminRole);
+        // Sunucu sahibi ise her zaman admin yetkisi ver
+        setIsAdmin(isServerOwner || userHasAdminRole);
 
-        if (adminRoles.length === 0) {
+        if (!isServerOwner && adminRoles.length === 0) {
           setError('Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.');
         }
 
