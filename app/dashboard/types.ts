@@ -1,5 +1,5 @@
 // Ortak Section tipi
-export type Section = 'overview' | 'store' | 'notifications' | 'profile' | 'settings' | 'mail' | 'transactions' | 'tracking';
+export type Section = 'overview' | 'store' | 'notifications' | 'profile' | 'settings' | 'mail' | 'transactions' | 'tracking' | 'leaderboard';
 export type Notification = {
   id: string;
   title: string;
@@ -126,6 +126,16 @@ export type OverviewStatsExpanded = OverviewStats & {
     papel: number;
     isCurrentUser?: boolean;
   }>;
+  // current user stats for leaderboard
+  currentUserRank?: number;
+  currentUser?: {
+    userId: string;
+    avatarUrl?: string;
+    nickname?: string | null;
+    displayName?: string | null;
+    username?: string;
+    papel: number;
+  };
   papel?: number;
 };
 

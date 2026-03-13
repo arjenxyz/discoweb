@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server';
 
 // Cache için basit bir map (production'da Redis kullan)
 const roleCheckCache = new Map<string, { roles: string[]; expires: number }>();
-const CACHE_DURATION = 30 * 1000; // 30 saniye (test için)
+const CACHE_DURATION = 2 * 60 * 1000; // 2 dakika
+const CACHE_GRACE_DURATION = 30 * 1000; // 30 saniye ekstra (geçici hata durumlarında stale cache kullanmak için)
 const DEFAULT_DEVELOPER_GUILD_ID = '1465698764453838882';
 const DEFAULT_DEVELOPER_ROLE_ID = '1467580199481639013';
 const SESSION_COOKIE = 'discord_session';
@@ -88,6 +89,11 @@ const getSessionUserId = async (request: NextRequest) => {
 };
 
 async function checkUserRoles(userId: string, guildId: string): Promise<string[] | null> {
+  // Cache kontrolü
+  const cacheKey = `${userId}-${guildId}`;
+  let cached = roleCheckCache.get(cacheKey);
+  const now = Date.now();
+
   try {
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) {
@@ -95,10 +101,7 @@ async function checkUserRoles(userId: string, guildId: string): Promise<string[]
       return null;
     }
 
-    // Cache kontrolü
-    const cacheKey = `${userId}-${guildId}`;
-    const cached = roleCheckCache.get(cacheKey);
-    if (cached && cached.expires > Date.now()) {
+    if (cached && cached.expires > now) {
       return cached.roles;
     }
 
@@ -109,6 +112,19 @@ async function checkUserRoles(userId: string, guildId: string): Promise<string[]
 
     if (!memberResponse.ok) {
       console.error(`Middleware: Failed to fetch member roles: ${memberResponse.status}`);
+
+      // Eğer geçmişte cache'lenmiş roller varsa ve bu süre grace içindeyse, stale cache kullan
+      if (cached && now < cached.expires + CACHE_GRACE_DURATION) {
+        console.warn('Middleware: Using stale cached roles due to transient fetch failure');
+        return cached.roles;
+      }
+
+      // 404 -> üye sunucuda değil
+      if (memberResponse.status === 404) {
+        return [];
+      }
+
+      // 429 veya 5xx gibi geçici hatalar için null döndür
       return null;
     }
 
@@ -117,12 +133,19 @@ async function checkUserRoles(userId: string, guildId: string): Promise<string[]
     // Cache'e kaydet
     roleCheckCache.set(cacheKey, {
       roles: member.roles,
-      expires: Date.now() + CACHE_DURATION
+      expires: now + CACHE_DURATION,
     });
 
     return member.roles;
   } catch (error) {
     console.error('Middleware: Error checking user roles:', error);
+
+    // Geçici hata durumunda cache varsa kullan
+    if (cached) {
+      console.warn('Middleware: Using stale cached roles due to error');
+      return cached.roles;
+    }
+
     return null;
   }
 }
@@ -242,12 +265,14 @@ export async function middleware(request: NextRequest) {
 			const userRoles = await checkUserRoles(userId, selectedGuildId);
 
 			if (userRoles === null) {
+				console.warn('🚧 Middleware: Could not verify server membership (transient error), allowing access for now');
+			} else if (userRoles.length === 0) {
 				console.log('🚪 Middleware: User is not a member of the selected server, redirecting to /server-left');
 				// Kullanıcı sunucudan ayrılmış, server-left sayfasına yönlendir
 				return NextResponse.redirect(new URL('/server-left', request.url));
+			} else {
+				console.log('✅ Middleware: User is a member of the server');
 			}
-
-			console.log('✅ Middleware: User is a member of the server');
 		}
 	} catch (error) {
 		console.error('🔍 Middleware: Error checking server membership:', error);
@@ -274,14 +299,14 @@ export async function middleware(request: NextRequest) {
 			const userRoles = await checkUserRoles(userId, selectedGuildId);
 			console.log('🔐 Middleware: User roles fetched:', userRoles);
 
-			if (!userRoles) {
-				console.log('🔐 Middleware: Could not fetch user roles, forcing logout');
-				// Roller alınamadı, çıkış yap
-				const response = NextResponse.redirect(new URL('/', request.url));
-				response.cookies.set('discord_session', '', { maxAge: 0, path: '/' });
-				response.cookies.set('csrf_token', '', { maxAge: 0, path: '/' });
-				response.cookies.set('discord_user_id', '', { maxAge: 0, path: '/' });
-				return response;
+			if (userRoles === null) {
+				console.warn('🔐 Middleware: Could not fetch user roles (transient error), redirecting to home without logging out');
+				return NextResponse.redirect(new URL('/', request.url));
+			}
+
+			if (userRoles.length === 0) {
+				console.log('🔐 Middleware: User is not a member of the selected server, redirecting to /server-left');
+				return NextResponse.redirect(new URL('/server-left', request.url));
 			}
 
 			// Sunucunun admin rolünü al
@@ -306,18 +331,11 @@ export async function middleware(request: NextRequest) {
 					return NextResponse.next();
 				}
 
-				console.log(`🔐 Middleware: User ${userId} no longer has admin role ${adminRoleId}, forcing logout`);
+				console.log(`🔐 Middleware: User ${userId} no longer has admin role ${adminRoleId}, redirecting to home`);
 
-				// Admin rolü yok, çıkış yap ve cache'i temizle
+				// Admin rolü yok, erişimi engelle (ama oturumu silme)
 				roleCheckCache.delete(`${userId}-${selectedGuildId}`);
-
-				const response = NextResponse.redirect(new URL('/', request.url));
-				response.cookies.set('discord_session', '', { maxAge: 0, path: '/' });
-				response.cookies.set('csrf_token', '', { maxAge: 0, path: '/' });
-				response.cookies.set('discord_user_id', '', { maxAge: 0, path: '/' });
-				response.cookies.set('selected_guild_id', '', { maxAge: 0, path: '/' });
-
-				return response;
+				return NextResponse.redirect(new URL('/', request.url));
 			}
 
 			console.log('🔐 Middleware: Access granted for admin page');

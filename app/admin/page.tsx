@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient, SupabaseClient, PostgrestResponse } from '@supabase/supabase-js';
 import RemoveSetupButton from './RemoveSetupButton';
 import { getSessionUserId } from '@/lib/auth';
+import AdminOverviewClient from './AdminOverviewClient';
 
 interface SupabaseQueryResult {
   data: unknown;
@@ -315,183 +316,40 @@ export default async function AdminDashboardPage() {
     );
   }
 
+  // Prepare system health items for client component
+  const systemHealth = [
+    { label: 'Service Role Key', ok: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY), detail: 'Sunucu erişimi' },
+    { label: 'Discord Bot Token', ok: Boolean(process.env.DISCORD_BOT_TOKEN), detail: 'Bot bağlantısı' },
+    { label: 'Admin Rol ID', ok: Boolean(process.env.DISCORD_ADMIN_ROLE_ID), detail: 'Yetki doğrulama' },
+    { label: 'Bakım Rol ID', ok: Boolean(MAINTENANCE_ROLE_ID), detail: 'Bakım yetkisi' },
+    {
+      label: 'Log Kanal Seti',
+      ok: REQUIRED_CHANNELS.every((type) => (overview.configuredChannels ?? []).some((cfg) => cfg.channel_type === type)),
+      detail: 'Webhook yapılandırması',
+    },
+    { label: 'Webhook Sayısı', ok: (overview.webhookCount ?? 0) >= REQUIRED_CHANNELS.length, detail: `${overview.webhookCount ?? 0} aktif` },
+    {
+      label: 'Audit Log Akışı',
+      ok: (overview.logActivityCount ?? 0) > 0,
+      detail: (overview.recentLogs ?? [])[0]
+        ? `Son kayıt: ${formatShortDate.format(new Date((overview.recentLogs ?? [])[0].created_at))}`
+        : 'Kayıt bulunamadı',
+    },
+    { label: 'Audit Log (24s)', ok: (overview.auditLogs24h ?? 0) > 0, detail: `${formatNumber.format(overview.auditLogs24h ?? 0)} kayıt` },
+    {
+      label: 'Public Metrics',
+      ok: Boolean(overview.metricsUpdatedAt),
+      detail: overview.metricsUpdatedAt ? `Güncellendi: ${formatShortDate.format(new Date(overview.metricsUpdatedAt))}` : 'Güncelleme yok',
+    },
+  ];
+
   return (
-    <div className="space-y-8">
-      <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_80px_rgba(10,12,18,0.55)]">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Admin</p>
-            <h1 className="mt-3 text-3xl font-semibold">
-              {overview.server ? `${overview.server.name} • Yönetim Merkezi` : 'Yönetim Merkezi'}
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm text-white/60">
-              {overview.server ? 
-                `Sunucu ID: ${overview.selectedGuildId} • ${overview.server.is_setup ? '✅ Kurulmuş' : '❌ Kurulmamış'}` :
-                'Sistem bileşenlerinin sağlığını ve olası sorunları buradan takip edin.'
-              }
-            </p>
-          </div>
-          <Link
-            href="/auth/select-server"
-            className="rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-500"
-          >
-            Sunucu Değiştir
-          </Link>
-        </div>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/admin/log-channels"
-            className="rounded-xl bg-indigo-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-400"
-          >
-            Log Kanalları
-          </Link>
-          <Link
-            href="/admin/guide"
-            className="rounded-xl border border-white/15 px-5 py-2 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
-          >
-            Kılavuzlar
-          </Link>
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">Sistem Durumu</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Panel yalnızca sistem sağlık kontrollerini gösterir.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {[
-            {
-              label: 'Service Role Key',
-              ok: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-              detail: 'Sunucu erişimi',
-            },
-            {
-              label: 'Discord Bot Token',
-              ok: Boolean(process.env.DISCORD_BOT_TOKEN),
-              detail: 'Bot bağlantısı',
-            },
-            {
-              label: 'Admin Rol ID',
-              ok: Boolean(process.env.DISCORD_ADMIN_ROLE_ID),
-              detail: 'Yetki doğrulama',
-            },
-            {
-              label: 'Bakım Rol ID',
-              ok: Boolean(MAINTENANCE_ROLE_ID),
-              detail: 'Bakım yetkisi',
-            },
-            {
-              label: 'Log Kanal Seti',
-              ok: REQUIRED_CHANNELS.every((type) =>
-                (overview.configuredChannels ?? []).some((cfg) => cfg.channel_type === type),
-              ),
-              detail: 'Webhook yapılandırması',
-            },
-            {
-              label: 'Webhook Sayısı',
-              ok: (overview.webhookCount ?? 0) >= REQUIRED_CHANNELS.length,
-              detail: `${overview.webhookCount ?? 0} aktif`,
-            },
-            {
-              label: 'Audit Log Akışı',
-              ok: (overview.logActivityCount ?? 0) > 0,
-              detail: (overview.recentLogs ?? [])[0]
-                ? `Son kayıt: ${formatShortDate.format(new Date((overview.recentLogs ?? [])[0].created_at))}`
-                : 'Kayıt bulunamadı',
-            },
-            {
-              label: 'Audit Log (24s)',
-              ok: (overview.auditLogs24h ?? 0) > 0,
-              detail: `${formatNumber.format(overview.auditLogs24h ?? 0)} kayıt`,
-            },
-            {
-              label: 'Public Metrics',
-              ok: Boolean(overview.metricsUpdatedAt),
-              detail: overview.metricsUpdatedAt
-                ? `Güncellendi: ${formatShortDate.format(new Date(overview.metricsUpdatedAt))}`
-                : 'Güncelleme yok',
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="flex items-center justify-between rounded-xl border border-white/10 bg-[#0b0d12]/60 px-4 py-3 text-sm"
-            >
-              <div>
-                <p className="text-white/80">{item.label}</p>
-                <p className="text-xs text-white/40">{item.detail}</p>
-              </div>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[11px] ${
-                  item.ok ? 'bg-emerald-500/10 text-emerald-300' : 'bg-rose-500/10 text-rose-300'
-                }`}
-              >
-                {item.ok ? 'Sağlam' : 'Sorun'}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">Supabase Tablo Bağlantıları</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Veritabanı tablolarının erişilebilirlik durumu.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {tableStatuses.map((table) => (
-            <div
-              key={table.table}
-              className="flex items-center justify-between rounded-xl border border-white/10 bg-[#0b0d12]/60 px-4 py-3 text-sm"
-            >
-              <div>
-                <p className="text-white/80 font-mono text-xs">{table.table}</p>
-                <p className="text-xs text-white/40">
-                  {table.ok ? `Kayıt: ${table.count ?? 0}` : `Hata: ${table.error}`}
-                </p>
-              </div>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[11px] ${
-                  table.ok ? 'bg-emerald-500/10 text-emerald-300' : 'bg-rose-500/10 text-rose-300'
-                }`}
-              >
-                {table.ok ? 'OK' : 'Error'}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Danger Zone */}
-      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold text-red-400">Tehlikeli Bölge</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Kritik yönetim işlemleri. Bu bölümü dikkatli kullanın.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 flex gap-3">
-          <RemoveSetupButton />
-        </div>
-        <div className="mt-3 space-y-2">
-          <p className="text-xs text-red-400">
-            <strong>Kurulumu Kaldır:</strong> Sunucudaki tüm bot verilerini, kanalları ve webhook'ları kalıcı olarak siler.
-          </p>
-          <p className="text-xs text-green-400">
-            Discord kanalları ve webhook'ları otomatik olarak temizlenir.
-          </p>
-        </div>
-      </div>
-    </div>
+    <AdminOverviewClient
+      serverName={overview.server?.name ?? null}
+      serverSetup={overview.server?.is_setup ?? false}
+      selectedGuildId={overview.selectedGuildId}
+      systemHealth={systemHealth}
+      tableStatuses={tableStatuses}
+    />
   );
 }

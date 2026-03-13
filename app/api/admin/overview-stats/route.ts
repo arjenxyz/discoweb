@@ -34,14 +34,35 @@ export async function GET(req: Request) {
   const start = new Date(now.getTime() - Math.max(1, rangeHours) * 60 * 60 * 1000);
   const startDate = start.toISOString().split('T')[0];
 
+  const selectedGuildId = cookieStore.get('selected_guild_id')?.value || GUILD_ID;
+
   try {
-    const [{ data: overview }, { data: rangeTotals }] = await Promise.all([
-      supabase.from('server_overview_stats').select('total_messages,total_voice_minutes').eq('guild_id', GUILD_ID).maybeSingle(),
+    const [
+      { data: overview },
+      { data: rangeTotals },
+      { count: totalMembers },
+      { count: totalWallets },
+      { data: economyData },
+      { count: pendingOrders },
+      { count: paidOrders },
+      { count: activeStoreItems },
+      { count: tagCount },
+      { count: boosterCount },
+    ] = await Promise.all([
+      supabase.from('server_overview_stats').select('total_messages,total_voice_minutes').eq('guild_id', selectedGuildId).maybeSingle(),
       supabase
         .from('server_daily_stats')
         .select('message_count,voice_minutes')
-        .eq('guild_id', GUILD_ID)
+        .eq('guild_id', selectedGuildId)
         .gte('stat_date', startDate),
+      supabase.from('member_overview_stats').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId),
+      supabase.from('member_wallets').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId),
+      supabase.from('member_wallets').select('balance').eq('guild_id', selectedGuildId),
+      supabase.from('store_orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabase.from('store_orders').select('id', { count: 'exact', head: true }).eq('status', 'paid'),
+      supabase.from('store_items').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+      supabase.from('member_profiles').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId).eq('has_tag', true),
+      supabase.from('member_profiles').select('user_id', { count: 'exact', head: true }).eq('guild_id', selectedGuildId).eq('is_booster', true),
     ]);
 
     let rangeMessages = 0;
@@ -53,15 +74,38 @@ export async function GET(req: Request) {
       }
     }
 
+    // Economy calculations
+    let totalCirculation = 0;
+    let highestBalance = 0;
+    if (Array.isArray(economyData)) {
+      for (const w of economyData) {
+        const bal = Number(w.balance ?? 0);
+        totalCirculation += bal;
+        if (bal > highestBalance) highestBalance = bal;
+      }
+    }
+    const avgBalance = (totalWallets ?? 0) > 0 ? totalCirculation / (totalWallets ?? 1) : 0;
+
     return NextResponse.json({
       rangeHours,
       rangeMessages,
       rangeVoiceMinutes,
       totalMessages: Number(overview?.total_messages ?? 0),
       totalVoiceMinutes: Number(overview?.total_voice_minutes ?? 0),
-      // tag/boost metrics not tracked as daily aggregates in the schema currently
-      tagUsage: { messages: 0, voiceMinutes: 0 },
-      boostUsage: { seconds: 0 },
+      // member stats
+      totalMembers: totalMembers ?? 0,
+      totalWallets: totalWallets ?? 0,
+      // economy
+      totalCirculation,
+      avgBalance: Math.round(avgBalance * 100) / 100,
+      highestBalance,
+      // store
+      pendingOrders: pendingOrders ?? 0,
+      paidOrders: paidOrders ?? 0,
+      activeStoreItems: activeStoreItems ?? 0,
+      // tag/boost
+      tagCount: tagCount ?? 0,
+      boosterCount: boosterCount ?? 0,
     });
   } catch (err) {
     return NextResponse.json({ error: 'query_failed', detail: String(err) }, { status: 500 });

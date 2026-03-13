@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { LuHouse, LuMail, LuShield, LuStore, LuLogOut, LuSettings, LuChevronRight, LuArrowLeft } from 'react-icons/lu';
+import { LuHouse, LuMail, LuShield, LuStore, LuLogOut, LuSettings, LuChevronRight, LuArrowLeft, LuChartBar } from 'react-icons/lu';
 import Image from 'next/image';
 import DiscordAgreementButton from '@/components/DiscordAgreementButton';
 import type { Notification, Section } from '../types';
@@ -20,6 +20,7 @@ type DashboardHeaderProps = {
     activeSection: Section;
     onNavigate: (section: Section) => void;
   };
+  onOpenLeaderboard?: () => void;
   profile: {
     name: string;
     username: string;
@@ -101,6 +102,7 @@ export default function DashboardHeader({
   loginUrl,
   isDeveloper,
   navigation,
+  onOpenLeaderboard,
   profile,
   server,
   notifications,
@@ -198,6 +200,7 @@ export default function DashboardHeader({
     { key: 'overview', label: 'Genel', icon: <LuHouse className="h-4 w-4" /> },
     { key: 'store', label: 'Mağaza', icon: <LuStore className="h-4 w-4" /> },
     { key: 'mail', label: 'Mail', requiresAuth: true, icon: <LuMail className="h-4 w-4" /> },
+    { key: 'leaderboard', label: 'Sıralama', requiresAuth: true, icon: <LuChartBar className="h-4 w-4" /> },
   ];
 
   return (
@@ -329,12 +332,19 @@ export default function DashboardHeader({
                       if (item.key === 'mail') {
                         navigation.onNavigate('mail');
                         try { router.push('/dashboard/mail'); } catch { navigation.onNavigate('mail'); }
-                      } else {
-                        navigation.onNavigate(item.key);
+                        return;
                       }
+                      if (item.key === 'leaderboard') {
+                        onOpenLeaderboard?.();
+                        return;
+                      }
+
+                      navigation.onNavigate(item.key);
                     }}
                     className={`group relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                        navigation.activeSection === item.key
+                        (item.key === 'leaderboard'
+                          ? navigation.activeSection === 'overview'
+                          : navigation.activeSection === item.key)
                         ? 'bg-white/10 text-white shadow-inner'
                         : 'text-white/60 hover:text-white hover:bg-white/5'
                     }`}
@@ -644,6 +654,8 @@ export default function DashboardHeader({
                       if (item.key === 'mail') {
                         navigation.onNavigate('mail');
                         try { router.push('/dashboard/mail'); } catch { navigation.onNavigate('mail'); }
+                      } else if (item.key === 'leaderboard') {
+                        onOpenLeaderboard?.();
                       } else {
                         navigation.onNavigate(item.key);
                       }

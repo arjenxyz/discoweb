@@ -21,7 +21,9 @@ const getSupabase = () => {
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 };
 
-export async function GET() {
+import { NextRequest } from 'next/server';
+
+export async function GET(request: NextRequest) {
   const maintenance = await checkMaintenance(['site']);
   if (maintenance.blocked) {
     return NextResponse.json(
@@ -75,34 +77,92 @@ export async function GET() {
     }
   }
 
-  // Papel leaderboard: top 10 and current user
+  // Papel leaderboard: top 30 and provided current user rank
   let papelLeaderboard: Array<{ userId: string; avatarUrl: string; nickname: string | null; displayName: string | null; username: string; papel: number; isCurrentUser: boolean }> = [];
-  const { data: papelRows } = await supabase
+
+  // Parse offset and limit from query params
+  const searchParams = new URL(request.url).searchParams;
+  const offset = Number(searchParams.get('offset') ?? 0);
+  const limit = Number(searchParams.get('limit') ?? 10);
+
+  // Fetch paged leaderboard
+  const { data: papelRows, count: totalCount } = await supabase
     .from('member_wallets')
-    .select('user_id,balance')
+    .select('user_id,balance', { count: 'exact' })
     .eq('guild_id', selectedGuildId)
     .order('balance', { ascending: false })
-    .limit(10);
+    .order('user_id', { ascending: true })
+    .range(offset, offset + limit - 1);
+
+  const fetchDiscordUser = async (uid: string) => {
+    let avatarUrl = '';
+    let username = uid;
+
+    try {
+      const userRes = await fetch(`https://discord.com/api/users/${uid}`, {
+        headers: { Authorization: `Bot ${botToken}` },
+      });
+      if (!userRes.ok) return { avatarUrl, username };
+
+      const user = await userRes.json();
+      avatarUrl = user.avatar
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`
+        : `https://cdn.discordapp.com/embed/avatars/${Number(user.id) % 5}.png`;
+      username = user.username || uid;
+    } catch {
+      // ignore fetch errors
+    }
+
+    return { avatarUrl, username };
+  };
+
+  const fetchMember = async (uid: string) => {
+    let avatarUrl = '';
+    let nickname: string | null = null;
+    let displayName: string | null = null;
+    let username = '';
+
+    if (!botToken) {
+      return { userId: uid, avatarUrl, nickname, displayName, username };
+    }
+
+    try {
+      const memberRes = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${uid}`, {
+        headers: { Authorization: `Bot ${botToken}` },
+      });
+      if (memberRes.ok) {
+        const member = await memberRes.json();
+        avatarUrl = member.user.avatar
+          ? `https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.png?size=64`
+          : `https://cdn.discordapp.com/embed/avatars/${Number(member.user.id) % 5}.png`;
+        nickname = member.nick ?? null;
+        displayName = member.user.global_name ?? null;
+        username = member.user.username || uid;
+      } else {
+        // If the user left the guild or we can't access guild member info, fall back to the global user object.
+        const userInfo = await fetchDiscordUser(uid);
+        avatarUrl = userInfo.avatarUrl;
+        username = userInfo.username;
+      }
+    } catch {
+      // ignore fetch errors, dönen roster’da boş kalacak
+      username = uid;
+    }
+
+    return { userId: uid, avatarUrl, nickname, displayName, username };
+  };
 
   if (papelRows && papelRows.length) {
+    // Discord API’den hızla kullanıcı bilgisi almak için paralel istekler (kümeleme)
+    const concurrency = 30;
     const discordMembers: Array<any> = [];
-    for (const row of papelRows) {
-      const uid = row.user_id;
-      let avatarUrl = '', nickname = null, displayName = null, username = '';
-      if (botToken) {
-        const memberRes = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${uid}`, { headers: { Authorization: `Bot ${botToken}` } });
-        if (memberRes.ok) {
-          const member = await memberRes.json();
-          avatarUrl = member.user.avatar
-            ? `https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.png?size=64`
-            : `https://cdn.discordapp.com/embed/avatars/${Number(member.user.id) % 5}.png`;
-          nickname = member.nick ?? null;
-          displayName = member.user.global_name ?? null;
-          username = member.user.username;
-        }
-      }
-      discordMembers.push({ userId: uid, avatarUrl, nickname, displayName, username });
+
+    for (let i = 0; i < papelRows.length; i += concurrency) {
+      const batch = papelRows.slice(i, i + concurrency);
+      const results = await Promise.all(batch.map((row: any) => fetchMember(row.user_id)));
+      discordMembers.push(...results);
     }
+
     papelLeaderboard = papelRows.map((row: any, idx: number) => {
       const info = discordMembers[idx] || {};
       return {
@@ -117,29 +177,49 @@ export async function GET() {
     });
   }
 
-  if (!papelLeaderboard.some((m) => m.userId === userId)) {
-    const { data: walletRow } = await supabase
-      .from('member_wallets')
-      .select('balance')
-      .eq('guild_id', selectedGuildId)
-      .eq('user_id', userId)
-      .maybeSingle();
-    const papel = Number(walletRow?.balance ?? 0);
-    let avatarUrl = '', nickname = null, displayName = null, username = '';
-    if (botToken) {
-      const memberRes = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${userId}`, { headers: { Authorization: `Bot ${botToken}` } });
-      if (memberRes.ok) {
-        const member = await memberRes.json();
-        avatarUrl = member.user.avatar
-          ? `https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}.png?size=64`
-          : `https://cdn.discordapp.com/embed/avatars/${Number(member.user.id) % 5}.png`;
-        nickname = member.nick ?? null;
-        displayName = member.user.global_name ?? null;
-        username = member.user.username;
-      }
-    }
-    papelLeaderboard.push({ userId, avatarUrl, nickname, displayName, username, papel, isCurrentUser: true });
+  // Ensure we can show the current user's rank even if they're not in the top 30.
+  const { data: walletRow } = await supabase
+    .from('member_wallets')
+    .select('balance')
+    .eq('guild_id', selectedGuildId)
+    .eq('user_id', userId)
+    .maybeSingle();
+  const currentUserPapel = Number(walletRow?.balance ?? 0);
+
+  let currentUserAvatar = '';
+  let currentUserNickname: string | null = null;
+  let currentUserDisplayName: string | null = null;
+  let currentUserUsername = '';
+
+  if (botToken) {
+    const memberInfo = await fetchMember(userId);
+    currentUserAvatar = memberInfo.avatarUrl;
+    currentUserNickname = memberInfo.nickname;
+    currentUserDisplayName = memberInfo.displayName;
+    currentUserUsername = memberInfo.username;
   }
+
+  const currentUserEntry = {
+    userId,
+    avatarUrl: currentUserAvatar,
+    nickname: currentUserNickname,
+    displayName: currentUserDisplayName,
+    username: currentUserUsername,
+    papel: currentUserPapel,
+    isCurrentUser: true,
+  };
+
+  // Rank calculation: how many users have a strictly higher balance than current user.
+  const { count: higherCount } = await supabase
+    .from('member_wallets')
+    .select('user_id', { count: 'exact', head: true })
+    .eq('guild_id', selectedGuildId)
+    .gt('balance', currentUserPapel);
+  const currentUserRank = (higherCount ?? 0) + 1;
+
+  // Don't push current user into the paged leaderboard array — it messes up
+  // ordering and counts. The client uses `currentUser` + `currentUserRank`
+  // separately to show the footer.
 
   // load server record to get verify_role_id, tag/booster config and internal server id
   const { data: serverRow } = await supabase
@@ -216,19 +296,25 @@ export async function GET() {
     }
   }
 
-  // tag info from member_profiles
+  // tag info from member_profiles (bot writes has_tag/is_booster directly)
   let hasTag = false;
   let tagGrantedAt: string | null = null;
   if (selectedGuildId) {
     const { data: profileRow } = await supabase
       .from('member_profiles')
-      .select('tag_granted_at')
+      .select('tag_granted_at,has_tag,is_booster,booster_since')
       .eq('guild_id', selectedGuildId)
       .eq('user_id', userId)
       .maybeSingle();
     if (profileRow) {
       tagGrantedAt = profileRow.tag_granted_at ?? null;
-      hasTag = Boolean(tagGrantedAt);
+      // Prefer the bot-written has_tag field, fall back to tag_granted_at
+      hasTag = profileRow.has_tag === true || profileRow.has_tag === 'true' || Boolean(tagGrantedAt);
+      // Also use bot-written boost status as fallback
+      if (!isBooster && (profileRow.is_booster === true || profileRow.is_booster === 'true')) {
+        isBooster = true;
+        boosterSince = profileRow.booster_since ?? boosterSince;
+      }
     }
   }
 
@@ -254,5 +340,8 @@ export async function GET() {
     voiceMinutesLast24h,
     activePerks,
     papelLeaderboard,
+    currentUserRank,
+    currentUser: currentUserEntry,
+    totalLeaderboardCount: totalCount ?? 0,
   });
 }

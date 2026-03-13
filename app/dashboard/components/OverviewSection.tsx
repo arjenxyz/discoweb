@@ -46,6 +46,10 @@ export default function OverviewSection({
     isCurrentUser: true,
   } : null;
 
+
+  const getSafeAvatarUrl = (url: unknown) =>
+    typeof url === 'string' && url.trim() ? url : '/default-avatar.png';
+
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6 overview-fade">
       <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Genel Bakış</p>
@@ -159,45 +163,13 @@ export default function OverviewSection({
             </div>
             <div className="rounded-2xl border border-white/10 bg-[#0b0d12]/60 p-5 overview-fade overview-delay-3">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Sunucu Papel Sıralaması</p>
-              <div className="mt-4">
-                {/* Papel leaderboard: avatar, nickname, papel, rank, highlight current user */}
-                {papelLeaderboard.length > 0 ? (
-                  <div className="flex flex-col gap-2">
-                    {papelLeaderboard.map((member: LeaderboardMember, idx: number) => (
-                      <div
-                        key={member.userId}
-                        className={`flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 ${member.isCurrentUser ? 'ring-2 ring-indigo-400' : ''}`}
-                      >
-                        <span className="w-8 text-center font-bold text-white/80">{idx + 1}</span>
-                        <Image src={member.avatarUrl ?? "/default-avatar.png"} alt="avatar" width={32} height={32} className="rounded-full" />
-                        <span className="text-white font-semibold">{member.nickname ?? member.displayName ?? member.username}</span>
-                        <span className="ml-auto text-lg font-bold text-indigo-300">{renderPapelAmount(member.papel)}</span>
-                      </div>
-                    ))}
-                    {!currentUserInLeaderboard && currentUserInfo && (
-                      <div className="flex items-center gap-3 rounded-xl border border-indigo-400 bg-indigo-100/10 p-3 ring-2 ring-indigo-400 mt-2">
-                        <span className="w-8 text-center font-bold text-indigo-400">—</span>
-                        <Image src={currentUserInfo.avatarUrl} alt="avatar" width={32} height={32} className="rounded-full" />
-                        <span className="text-indigo-400 font-semibold">{currentUserInfo.nickname ?? currentUserInfo.displayName ?? currentUserInfo.username}</span>
-                        <span className="ml-auto text-lg font-bold text-indigo-400">{renderPapelAmount(currentUserInfo.papel)}</span>
-                      </div>
-                    )}
-                  </div>
-                ) : currentUserInfo ? (
-                  <div className="flex items-center gap-3 rounded-xl border border-indigo-400 bg-indigo-100/10 p-3 ring-2 ring-indigo-400">
-                    <span className="w-8 text-center font-bold text-indigo-400">—</span>
-                    <Image src={currentUserInfo.avatarUrl} alt="avatar" width={32} height={32} className="rounded-full" />
-                    <span className="text-indigo-400 font-semibold">{currentUserInfo.nickname ?? currentUserInfo.displayName ?? currentUserInfo.username}</span>
-                    <span className="ml-auto text-lg font-bold text-indigo-400">{renderPapelAmount(currentUserInfo.papel)}</span>
-                  </div>
-                ) : (
-                  <p className="text-sm text-white/40">Sıralama verisi bulunamadı.</p>
-                )}
-              </div>
+              <p className="mt-2 text-sm text-white/60">Menüden Sıralama’ya tıklayarak açabilirsiniz.</p>
             </div>
           </div>
+
         </div>
       )}
+
     </section>
   );
 }

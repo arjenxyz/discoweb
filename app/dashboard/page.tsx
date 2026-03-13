@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import DashboardHeader from './components/DashboardHeader';
 import { useCart } from '../../lib/cart';
 import OverviewSection from './components/OverviewSection';
+import LeaderboardDrawer from './components/LeaderboardDrawer';
 import ProfileSection from './components/ProfileSection';
 import StoreSection from './components/StoreSection';
 import SettingsSection from './components/SettingsSection';
@@ -48,6 +49,7 @@ export default function DashboardPage() {
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [storeItemsLoading, setStoreItemsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<Section>('overview');
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [searchParams, setSearchParams] = useState<URLSearchParams | null>(null);
 
   useEffect(() => {
@@ -761,6 +763,7 @@ export default function DashboardPage() {
           }}
           mailUnreadCount={mailUnreadCount}
           renderNotificationBody={renderNotificationBody}
+          onOpenLeaderboard={() => setLeaderboardOpen(true)}
           settings={{
             open: settingsOpen,
             onToggle: handleToggleSettings,
@@ -823,6 +826,15 @@ export default function DashboardPage() {
                 {/* Chat is now a separate page at /chat */}
               </>
             )}
+
+            <LeaderboardDrawer
+              isOpen={leaderboardOpen}
+              onClose={() => setLeaderboardOpen(false)}
+              overviewStats={overviewStats}
+              overviewLoading={overviewLoading}
+              profile={profile}
+              renderPapelAmount={renderPapelAmount}
+            />
 
             {!isSiteMaintenance && effectiveSection === 'profile' && (
               <ProfileSection

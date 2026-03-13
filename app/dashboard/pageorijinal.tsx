@@ -48,7 +48,7 @@ export default function DashboardPage() {
   const [walletLoading, setWalletLoading] = useState(true);
   const [overviewStats, setOverviewStats] = useState<OverviewStats | null>(null);
   const [overviewLoading, setOverviewLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<'overview' | 'store' | 'transactions' | 'tracking' | 'notifications' | 'profile' | 'settings' | 'mail'>(
+  const [activeSection, setActiveSection] = useState<'overview' | 'store' | 'transactions' | 'tracking' | 'notifications' | 'profile' | 'settings' | 'mail' | 'leaderboard'>(
     'overview',
   );
   const [notificationsOpen, setNotificationsOpen] = useState(false);
