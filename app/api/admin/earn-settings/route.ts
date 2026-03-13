@@ -40,7 +40,28 @@ export async function GET() {
     }
   } catch {}
 
-  return NextResponse.json({ ...data, tag_configured: Boolean(data?.tag_id ?? false), _guildPreview: guildPreview });
+  // Fetch Discord channels for channel config UI
+  let channels: Array<{ id: string; name: string; type: number; parent_id: string | null }> = [];
+  try {
+    const chRes = await fetch(`https://discord.com/api/guilds/${guildId}/channels`, {
+      headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` }
+    });
+    if (chRes.ok) {
+      const allChannels = await chRes.json();
+      // type 0 = text, 2 = voice, 4 = category
+      channels = allChannels
+        .filter((c: any) => [0, 2, 4].includes(c.type))
+        .map((c: any) => ({ id: c.id, name: c.name, type: c.type, parent_id: c.parent_id ?? null }))
+        .sort((a: any, b: any) => a.name.localeCompare(b.name));
+    }
+  } catch {}
+
+  return NextResponse.json({
+    ...data,
+    tag_configured: Boolean(data?.tag_id ?? false),
+    _guildPreview: guildPreview,
+    _channels: channels,
+  });
 }
 
 export async function PUT(request: Request) {
@@ -75,6 +96,7 @@ export async function PUT(request: Request) {
     tag_bonus_voice: number;
     booster_bonus_message: number;
     booster_bonus_voice: number;
+    earn_channels: any;
   };
 
   const updateObj: ServerUpdate = {
@@ -89,6 +111,7 @@ export async function PUT(request: Request) {
     tag_bonus_voice: Number(payload.tag_bonus_voice ?? 0),
     booster_bonus_message: Number(payload.booster_bonus_message ?? 0),
     booster_bonus_voice: Number(payload.booster_bonus_voice ?? 0),
+    earn_channels: payload.earn_channels ?? null,
   };
 
   const { data: oldData } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();

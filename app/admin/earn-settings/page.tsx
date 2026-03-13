@@ -2,18 +2,37 @@
 
 import { useEffect, useState } from "react";
 import Image from 'next/image';
-import { 
-  LuMessageSquare, 
-  LuMic, 
-  LuSave, 
-  LuShieldAlert, 
-  LuZap, 
-  LuTag, 
-  LuCheck, 
+import {
+  LuMessageSquare,
+  LuMic,
+  LuSave,
+  LuShieldAlert,
+  LuZap,
+  LuTag,
+  LuCheck,
   LuUndo2,
   LuLoader,
-  LuServer
+  LuServer,
+  LuHash,
+  LuVolume2,
+  LuFolder,
+  LuX,
 } from 'react-icons/lu';
+
+type DiscordChannel = {
+  id: string;
+  name: string;
+  type: number; // 0=text, 2=voice, 4=category
+  parent_id: string | null;
+};
+
+type EarnChannels = {
+  mode: 'all' | 'whitelist' | 'blacklist';
+  message_channels: string[];
+  message_categories: string[];
+  voice_channels: string[];
+  voice_categories: string[];
+};
 
 type EarnSettings = {
   earn_per_message: number;
@@ -27,11 +46,12 @@ type EarnSettings = {
   tag_bonus_voice: number;
   booster_bonus_message: number;
   booster_bonus_voice: number;
-  // API'den gelen ekstra sunucu bilgisi (Opsiyonel)
+  earn_channels?: EarnChannels | null;
   _guildPreview?: {
     name: string;
     icon: string | null;
   };
+  _channels?: DiscordChannel[];
 };
 
 export default function EarnSettingsPage() {
@@ -379,7 +399,265 @@ export default function EarnSettingsPage() {
             </div>
         </div>
 
+        {/* KART 5: KANAL YAPILANDIRMASI */}
+        <ChannelEarnConfig
+          settings={settings}
+          onUpdate={(earnChannels) => setSettings({ ...settings, earn_channels: earnChannels })}
+        />
+
       </div>
+    </div>
+  );
+}
+
+/* --- KANAL YAPILANDIRMA BİLEŞENİ --- */
+function ChannelEarnConfig({
+  settings,
+  onUpdate,
+}: {
+  settings: EarnSettings;
+  onUpdate: (channels: EarnChannels) => void;
+}) {
+  const channels = settings._channels ?? [];
+  const earnChannels: EarnChannels = settings.earn_channels ?? {
+    mode: 'all',
+    message_channels: [],
+    message_categories: [],
+    voice_channels: [],
+    voice_categories: [],
+  };
+
+  const categories = channels.filter((c) => c.type === 4);
+  const textChannels = channels.filter((c) => c.type === 0);
+  const voiceChannels = channels.filter((c) => c.type === 2);
+
+  const update = (partial: Partial<EarnChannels>) => {
+    onUpdate({ ...earnChannels, ...partial });
+  };
+
+  const toggleItem = (list: string[], id: string): string[] =>
+    list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+
+  const getChannelName = (id: string) => channels.find((c) => c.id === id)?.name ?? id;
+  const getCategoryName = (id: string) => categories.find((c) => c.id === id)?.name ?? id;
+
+  if (channels.length === 0) {
+    return (
+      <div className="lg:col-span-2 rounded-2xl bg-[#0f1116] border border-white/5 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <LuHash size={20} />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-white">Kazanç Kanalları</h2>
+            <p className="text-xs text-zinc-500">Kanal bilgisi yüklenemedi.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="lg:col-span-2 rounded-2xl bg-[#0f1116] border border-white/5 p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <LuHash size={20} />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-white">Kazanç Kanalları</h2>
+            <p className="text-xs text-zinc-500">Hangi kanallarda papel kazanılacağını belirleyin.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mode Selection */}
+      <div className="flex flex-wrap gap-3">
+        {([
+          { value: 'all', label: 'Tüm Kanallar', desc: 'Her kanalda kazanç aktif' },
+          { value: 'whitelist', label: 'Beyaz Liste', desc: 'Sadece seçilen kanallarda kazanç' },
+          { value: 'blacklist', label: 'Kara Liste', desc: 'Seçilen kanallar hariç kazanç' },
+        ] as const).map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => update({ mode: opt.value })}
+            className={`flex-1 min-w-[140px] rounded-xl border p-4 text-left transition ${
+              earnChannels.mode === opt.value
+                ? 'border-cyan-500/40 bg-cyan-500/10'
+                : 'border-white/5 bg-zinc-900/50 hover:border-white/10'
+            }`}
+          >
+            <p className={`text-sm font-semibold ${earnChannels.mode === opt.value ? 'text-cyan-300' : 'text-white/70'}`}>
+              {opt.label}
+            </p>
+            <p className="text-xs text-zinc-500 mt-1">{opt.desc}</p>
+          </button>
+        ))}
+      </div>
+
+      {earnChannels.mode !== 'all' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Mesaj Kanalları */}
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-300 flex items-center gap-2">
+              <LuMessageSquare size={14} />
+              Mesaj Kanalları
+            </p>
+
+            {/* Kategori Seçimi */}
+            <div>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuFolder size={12} /> Kategoriler</p>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => {
+                  const selected = earnChannels.message_categories.includes(cat.id);
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => update({ message_categories: toggleItem(earnChannels.message_categories, cat.id) })}
+                      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                        selected
+                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                          : 'bg-zinc-800 text-zinc-400 border border-white/5 hover:border-white/10'
+                      }`}
+                    >
+                      <LuFolder size={12} />
+                      {cat.name}
+                      {selected && <LuX size={12} className="ml-1" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Kanal Seçimi */}
+            <div>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuHash size={12} /> Metin Kanalları</p>
+              <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-white/5 bg-zinc-900/50 p-2">
+                {textChannels.map((ch) => {
+                  const selected = earnChannels.message_channels.includes(ch.id);
+                  const catName = ch.parent_id ? getCategoryName(ch.parent_id) : null;
+                  return (
+                    <button
+                      key={ch.id}
+                      type="button"
+                      onClick={() => update({ message_channels: toggleItem(earnChannels.message_channels, ch.id) })}
+                      className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition ${
+                        selected
+                          ? 'bg-blue-500/15 text-blue-300'
+                          : 'text-zinc-400 hover:bg-white/5'
+                      }`}
+                    >
+                      <LuHash size={12} className="shrink-0" />
+                      <span className="truncate">{ch.name}</span>
+                      {catName && <span className="ml-auto text-[10px] text-zinc-600 truncate">{catName}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Sesli Kanallar */}
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-violet-300 flex items-center gap-2">
+              <LuMic size={14} />
+              Sesli Kanallar
+            </p>
+
+            {/* Kategori Seçimi */}
+            <div>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuFolder size={12} /> Kategoriler</p>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => {
+                  const selected = earnChannels.voice_categories.includes(cat.id);
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => update({ voice_categories: toggleItem(earnChannels.voice_categories, cat.id) })}
+                      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                        selected
+                          ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30'
+                          : 'bg-zinc-800 text-zinc-400 border border-white/5 hover:border-white/10'
+                      }`}
+                    >
+                      <LuFolder size={12} />
+                      {cat.name}
+                      {selected && <LuX size={12} className="ml-1" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Kanal Seçimi */}
+            <div>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuVolume2 size={12} /> Ses Kanalları</p>
+              <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-white/5 bg-zinc-900/50 p-2">
+                {voiceChannels.map((ch) => {
+                  const selected = earnChannels.voice_channels.includes(ch.id);
+                  const catName = ch.parent_id ? getCategoryName(ch.parent_id) : null;
+                  return (
+                    <button
+                      key={ch.id}
+                      type="button"
+                      onClick={() => update({ voice_channels: toggleItem(earnChannels.voice_channels, ch.id) })}
+                      className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition ${
+                        selected
+                          ? 'bg-violet-500/15 text-violet-300'
+                          : 'text-zinc-400 hover:bg-white/5'
+                      }`}
+                    >
+                      <LuVolume2 size={12} className="shrink-0" />
+                      <span className="truncate">{ch.name}</span>
+                      {catName && <span className="ml-auto text-[10px] text-zinc-600 truncate">{catName}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Seçim Özeti */}
+      {earnChannels.mode !== 'all' && (
+        <div className="rounded-xl border border-white/5 bg-zinc-900/50 p-4">
+          <p className="text-xs font-semibold text-zinc-400 uppercase mb-2">
+            {earnChannels.mode === 'whitelist' ? 'Sadece şu kanallarda kazanç aktif:' : 'Şu kanallar hariç kazanç aktif:'}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {earnChannels.message_categories.map((id) => (
+              <span key={`mc-${id}`} className="inline-flex items-center gap-1 rounded-md bg-blue-500/10 px-2 py-1 text-[11px] text-blue-300">
+                <LuFolder size={10} /> {getCategoryName(id)} <span className="text-blue-500">(mesaj)</span>
+              </span>
+            ))}
+            {earnChannels.message_channels.map((id) => (
+              <span key={`ch-${id}`} className="inline-flex items-center gap-1 rounded-md bg-blue-500/10 px-2 py-1 text-[11px] text-blue-300">
+                <LuHash size={10} /> {getChannelName(id)}
+              </span>
+            ))}
+            {earnChannels.voice_categories.map((id) => (
+              <span key={`vc-${id}`} className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-1 text-[11px] text-violet-300">
+                <LuFolder size={10} /> {getCategoryName(id)} <span className="text-violet-500">(ses)</span>
+              </span>
+            ))}
+            {earnChannels.voice_channels.map((id) => (
+              <span key={`vch-${id}`} className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-1 text-[11px] text-violet-300">
+                <LuVolume2 size={10} /> {getChannelName(id)}
+              </span>
+            ))}
+            {earnChannels.message_channels.length === 0 &&
+              earnChannels.message_categories.length === 0 &&
+              earnChannels.voice_channels.length === 0 &&
+              earnChannels.voice_categories.length === 0 && (
+                <span className="text-xs text-zinc-500">Henüz kanal seçilmedi.</span>
+              )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
