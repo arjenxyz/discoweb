@@ -307,19 +307,7 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
       );
     }
 
-    // System alert rendering
-    if (category === 'system' || category === 'maintenance') {
-      return (
-        <div className="mt-4 text-white/70 leading-relaxed">
-          <div className="mail-body-content" dangerouslySetInnerHTML={{ __html: safeBody }} />
-          {doc && doc.querySelector('pre') && (
-            <pre className="mt-3 p-4 rounded-xl bg-white/[0.03] border border-white/5 font-mono text-xs text-white/60 overflow-auto">{textContent(doc.querySelector('pre'))}</pre>
-          )}
-        </div>
-      );
-    }
-
-    // General HTML
+    // Unified rendering for all other categories (system, maintenance, general, etc.)
     return (
       <div className="mt-4 text-white/70 leading-relaxed">
         <div className="mail-body-content" dangerouslySetInnerHTML={{ __html: safeBody }} />
@@ -383,13 +371,22 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
           background: rgba(255, 255, 255, 0.2);
         }
 
+        /* --- Unified dark theme for ALL mail body content --- */
+        .mail-body-content,
+        .mail-body-content * {
+          color: rgba(255, 255, 255, 0.7) !important;
+          background-color: transparent !important;
+          border-color: rgba(255, 255, 255, 0.08) !important;
+          font-family: inherit !important;
+        }
+
         .mail-body-content a {
-          color: #818cf8;
+          color: #818cf8 !important;
           text-decoration: underline;
         }
 
         .mail-body-content a:hover {
-          color: #a5b4fc;
+          color: #a5b4fc !important;
         }
 
         .mail-body-content p {
@@ -406,10 +403,54 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
         }
 
         .mail-body-content h1, .mail-body-content h2, .mail-body-content h3 {
-          color: white;
+          color: white !important;
           font-weight: 700;
           margin-bottom: 0.5rem;
           margin-top: 1rem;
+        }
+
+        .mail-body-content h2 {
+          font-size: 0.8rem !important;
+          opacity: 0.5;
+        }
+
+        /* Card-like blocks inside notifications */
+        .mail-body-content div[style*="border"] {
+          background: rgba(255, 255, 255, 0.03) !important;
+          border: 1px solid rgba(255, 255, 255, 0.08) !important;
+          border-radius: 12px;
+        }
+
+        /* Direction indicators */
+        .mail-body-content span[style*="color: #059669"],
+        .mail-body-content div[style*="color: #059669"],
+        .mail-body-content *[style*="color: #10b981"] {
+          color: #34d399 !important;
+        }
+
+        .mail-body-content span[style*="color: #dc2626"],
+        .mail-body-content div[style*="color: #dc2626"] {
+          color: #f87171 !important;
+        }
+
+        /* Override light backgrounds from old templates */
+        .mail-body-content div[style*="background-color: #f3f4f6"],
+        .mail-body-content div[style*="background-color: #f9fafb"],
+        .mail-body-content div[style*="background: #f3f4f6"] {
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* Override light borders from old templates */
+        .mail-body-content div[style*="border-bottom: 1px solid #e5e7eb"],
+        .mail-body-content div[style*="border-top: 1px solid #e5e7eb"],
+        .mail-body-content div[style*="border-left: 2px solid #e5e7eb"] {
+          border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* Monospace code blocks */
+        .mail-body-content *[style*="monospace"],
+        .mail-body-content *[style*="Courier"] {
+          font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace !important;
         }
 
         .mail-body-content table {
@@ -421,16 +462,21 @@ export default function MailDetailModal({ mail, onClose }: MailDetailModalProps)
         .mail-body-content th,
         .mail-body-content td {
           padding: 0.5rem 0.75rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
           text-align: left;
         }
 
         .mail-body-content th {
-          color: rgba(255, 255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.5) !important;
           font-weight: 600;
           font-size: 0.75rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
+        }
+
+        /* Hide metadata scripts */
+        .mail-body-content script {
+          display: none;
         }
       `}</style>
 

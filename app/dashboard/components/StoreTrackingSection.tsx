@@ -88,11 +88,12 @@ export default function StoreTrackingSection({ ordersLoading, orders }: StoreTra
     const firstExpiresAt = first?.expires_at ? new Date(first.expires_at) : null;
     if (!firstExpiresAt) return 'Süresiz';
 
-    const extraDays = sorted
+    // duration_days now stores minutes
+    const extraMinutes = sorted
       .slice(1)
       .reduce((sum, order) => sum + (order.duration_days && order.duration_days > 0 ? order.duration_days : 0), 0);
     const baseSeconds = Math.max(0, Math.floor((firstExpiresAt.getTime() - now.getTime()) / 1000));
-    const totalSeconds = baseSeconds + extraDays * 86400;
+    const totalSeconds = baseSeconds + extraMinutes * 60;
 
     if (totalSeconds <= 0) return 'Süresi doldu';
     const totalDays = Math.floor(totalSeconds / 86400);
@@ -117,10 +118,11 @@ export default function StoreTrackingSection({ ordersLoading, orders }: StoreTra
     const firstExpiresAt = first?.expires_at ? new Date(first.expires_at) : null;
     if (!firstExpiresAt) return null;
 
-    const extraDays = sorted
+    // duration_days now stores minutes
+    const extraMinutes = sorted
       .slice(1)
       .reduce((sum, order) => sum + (order.duration_days && order.duration_days > 0 ? order.duration_days : 0), 0);
-    return new Date(firstExpiresAt.getTime() + extraDays * 86400000);
+    return new Date(firstExpiresAt.getTime() + extraMinutes * 60000);
   };
 
   return (

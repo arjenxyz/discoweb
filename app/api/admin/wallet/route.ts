@@ -150,6 +150,40 @@ const insertLedger = async (supabase: SupabaseClient, userId: string, amount: nu
 
 
 
+export async function GET() {
+  if (!(await isAdminUser())) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  const supabase = getSupabase();
+  if (!supabase) {
+    return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
+  }
+
+  const selectedGuildId = await getSelectedGuildId();
+
+  // Fetch all wallets for this guild with basic stats
+  const { data: wallets, error } = await supabase
+    .from('member_wallets')
+    .select('user_id,balance,updated_at')
+    .eq('guild_id', selectedGuildId)
+    .order('balance', { ascending: false })
+    .limit(100);
+
+  if (error) {
+    return NextResponse.json({ error: 'fetch_failed' }, { status: 500 });
+  }
+
+  const items = wallets ?? [];
+  const totalCirculation = items.reduce((sum, w) => sum + Number(w.balance || 0), 0);
+
+  return NextResponse.json({
+    wallets: items,
+    totalCount: items.length,
+    totalCirculation: Number(totalCirculation.toFixed(2)),
+  });
+}
+
 export async function POST(request: Request) {
   if (!(await isAdminUser())) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });

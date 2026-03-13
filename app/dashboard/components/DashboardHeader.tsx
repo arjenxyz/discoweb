@@ -20,6 +20,7 @@ type DashboardHeaderProps = {
     activeSection: Section;
     onNavigate: (section: Section) => void;
   };
+  leaderboardOpen?: boolean;
   onOpenLeaderboard?: () => void;
   profile: {
     name: string;
@@ -105,9 +106,7 @@ export default function DashboardHeader({
   onOpenLeaderboard,
   profile,
   server,
-  notifications,
   mailUnreadCount = 0,
-  renderNotificationBody,
   settings,
 }: DashboardHeaderProps) {
   const router = useRouter();
@@ -139,6 +138,7 @@ export default function DashboardHeader({
   useEffect(() => {
     if (isProfileOpen) {
       const randomIndex = Math.floor(Math.random() * RANDOM_GIFS.length);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentGif(RANDOM_GIFS[randomIndex]);
       setActiveSubmenu('main'); // Her açılışta ana menüye sıfırla
     }

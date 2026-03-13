@@ -54,9 +54,9 @@ type Database = {
         Relationships: [];
       };
       system_mail_reads: {
-        Row: { mail_id: string; user_id: string; read_at: string | null };
-        Insert: { mail_id: string; user_id: string; read_at?: string | null };
-        Update: { mail_id?: string; user_id?: string; read_at?: string | null };
+        Row: { mail_id: string; user_id: string; read_at: string | null; deleted_at: string | null };
+        Insert: { mail_id: string; user_id: string; read_at?: string | null; deleted_at?: string | null };
+        Update: { mail_id?: string; user_id?: string; read_at?: string | null; deleted_at?: string | null };
         Relationships: [];
       };
     };
@@ -130,7 +130,7 @@ export async function GET() {
   const ids = mails.map((item) => item.id);
   const { data: reads } = await supabase
     .from('system_mail_reads')
-    .select('mail_id')
+    .select('mail_id,deleted_at')
     .eq('user_id', userId)
     .in('mail_id', ids);
 
@@ -140,7 +140,9 @@ export async function GET() {
     .eq('user_id', userId)
     .in('mail_id', ids);
 
-  const readSet = new Set(((reads ?? []) as Array<{ mail_id: string }>).map((entry) => entry.mail_id));
+  const readEntries = (reads ?? []) as Array<{ mail_id: string; deleted_at: string | null }>;
+  const deletedSet = new Set(readEntries.filter((e) => e.deleted_at).map((e) => e.mail_id));
+  const readSet = new Set(readEntries.map((entry) => entry.mail_id));
   const starSet = new Set(((stars ?? []) as Array<{ mail_id: string }>).map((entry) => entry.mail_id));
   const unescapeHtml = (s: string) =>
     String(s)
@@ -150,12 +152,14 @@ export async function GET() {
       .replace(/&quot;/g, '"')
       .replace(/&#39;/g, "'");
 
-  const mapped = mails.map((item) => ({
-    ...item,
-    body: typeof item.body === 'string' ? unescapeHtml(item.body) : item.body,
-    is_read: readSet.has(item.id),
-    is_starred: starSet.has(item.id),
-  }));
+  const mapped = mails
+    .filter((item) => !deletedSet.has(item.id))
+    .map((item) => ({
+      ...item,
+      body: typeof item.body === 'string' ? unescapeHtml(item.body) : item.body,
+      is_read: readSet.has(item.id),
+      is_starred: starSet.has(item.id),
+    }));
 
   return NextResponse.json(mapped);
 }
@@ -210,17 +214,27 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
   }
 
-  // Soft-delete personal mails by setting status to 'deleted'.
-  // Global mails (user_id is null) are not deleted by this endpoint.
-  const { error } = await supabase
+  // 1. Soft-delete personal mails (user_id matches) by setting status to 'deleted'
+  await supabase
     .from('system_mails')
     .update({ status: 'deleted' })
     .in('id', ids)
     .eq('guild_id', selectedGuildId)
     .eq('user_id', userId);
 
-  if (error) {
-    return NextResponse.json({ error: 'delete_failed' }, { status: 500 });
-  }
+  // 2. For global/system mails (user_id is null), mark as deleted per-user
+  //    via system_mail_reads with deleted_at timestamp
+  const now = new Date().toISOString();
+  const deleteMarks = ids.map((mid) => ({
+    mail_id: mid,
+    user_id: userId,
+    read_at: now,
+    deleted_at: now,
+  }));
+
+  await (supabase.from('system_mail_reads') as any).upsert(deleteMarks, {
+    onConflict: 'mail_id,user_id',
+  });
+
   return NextResponse.json({ status: 'ok' });
 }

@@ -36,7 +36,7 @@ function AdminStoreProductCreatePageContent() {
   const [roleLoading, setRoleLoading] = useState(false);
   const [roleError, setRoleError] = useState<string | null>(null);
   const [selectedRoleName, setSelectedRoleName] = useState('');
-  const [durationDays, setDurationDays] = useState('30');
+  const [durationDays, setDurationDays] = useState('43200'); // minutes (30 days default)
   const [itemStatus, setItemStatus] = useState<'active' | 'inactive'>('active');
   const [itemSaving, setItemSaving] = useState(false);
   const [loadingItem, setLoadingItem] = useState(false);
@@ -153,7 +153,7 @@ function AdminStoreProductCreatePageContent() {
     setDescription('');
     setPrice('');
     setRoleId('');
-    setDurationDays('30');
+    setDurationDays('43200');
     setItemStatus('active');
     setItemSaving(false);
   };
@@ -309,7 +309,7 @@ function AdminStoreProductCreatePageContent() {
               />
             </div>
 
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-4">
               <div>
                 <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
                   Fiyat (papel)
@@ -322,17 +322,111 @@ function AdminStoreProductCreatePageContent() {
                   className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
                 />
               </div>
-              <div>
+              <div className="md:col-span-2">
                 <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                  Süre (gün)
+                  Süre
                 </label>
-                <input
-                  value={durationDays}
-                  onChange={(event) => setDurationDays(event.target.value)}
-                  placeholder="0 = süresiz"
-                  type="number"
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-                />
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  <div>
+                    <div className="relative">
+                      <input
+                        value={(() => { const m = Number(durationDays); return m > 0 ? String(Math.floor(m / 1440)) : '0'; })()}
+                        onChange={(event) => {
+                          const d = Math.max(0, Number(event.target.value) || 0);
+                          const cur = Number(durationDays) || 0;
+                          const h = Math.floor((cur % 1440) / 60);
+                          const mn = cur % 60;
+                          setDurationDays(String(d * 1440 + h * 60 + mn));
+                        }}
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 pr-10 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30 pointer-events-none">gün</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="relative">
+                      <input
+                        value={(() => { const m = Number(durationDays); return m > 0 ? String(Math.floor((m % 1440) / 60)) : '0'; })()}
+                        onChange={(event) => {
+                          const h = Math.max(0, Math.min(23, Number(event.target.value) || 0));
+                          const cur = Number(durationDays) || 0;
+                          const d = Math.floor(cur / 1440);
+                          const mn = cur % 60;
+                          setDurationDays(String(d * 1440 + h * 60 + mn));
+                        }}
+                        type="number"
+                        min="0"
+                        max="23"
+                        placeholder="0"
+                        className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 pr-12 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30 pointer-events-none">saat</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="relative">
+                      <input
+                        value={(() => { const m = Number(durationDays); return m > 0 ? String(m % 60) : '0'; })()}
+                        onChange={(event) => {
+                          const mn = Math.max(0, Math.min(59, Number(event.target.value) || 0));
+                          const cur = Number(durationDays) || 0;
+                          const d = Math.floor(cur / 1440);
+                          const h = Math.floor((cur % 1440) / 60);
+                          setDurationDays(String(d * 1440 + h * 60 + mn));
+                        }}
+                        type="number"
+                        min="0"
+                        max="59"
+                        placeholder="0"
+                        className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 pr-10 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30 pointer-events-none">dk</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {[
+                    { label: '30dk', value: 30 },
+                    { label: '1 Saat', value: 60 },
+                    { label: '6 Saat', value: 360 },
+                    { label: '12 Saat', value: 720 },
+                    { label: '1 Gün', value: 1440 },
+                    { label: '7 Gün', value: 10080 },
+                    { label: '30 Gün', value: 43200 },
+                    { label: 'Süresiz', value: 0 },
+                  ].map((preset) => (
+                    <button
+                      key={preset.value}
+                      type="button"
+                      onClick={() => setDurationDays(String(preset.value))}
+                      className={`rounded-lg border px-2.5 py-1 text-[10px] font-semibold transition ${
+                        Number(durationDays) === preset.value
+                          ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300'
+                          : 'border-white/10 bg-white/5 text-white/50 hover:text-white/80'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+                {Number(durationDays) > 0 && (
+                  <p className="mt-1.5 text-[11px] text-white/30">
+                    Toplam: {(() => {
+                      const m = Number(durationDays);
+                      const d = Math.floor(m / 1440);
+                      const h = Math.floor((m % 1440) / 60);
+                      const mn = m % 60;
+                      const p: string[] = [];
+                      if (d > 0) p.push(`${d} gün`);
+                      if (h > 0) p.push(`${h} saat`);
+                      if (mn > 0) p.push(`${mn} dakika`);
+                      return p.join(' ') || '0';
+                    })()} ({durationDays} dakika)
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
@@ -400,7 +494,7 @@ function AdminStoreProductCreatePageContent() {
               </li>
               <li className="flex gap-2">
                 <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Süreyi gün bazında yazın, 30 = 30 gün üyelik.
+                Süre dakika cinsindendir. 1440 = 1 gün, 60 = 1 saat.
               </li>
               <li className="flex gap-2">
                 <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
@@ -425,7 +519,17 @@ function AdminStoreProductCreatePageContent() {
                     ? 'Süre girilmedi'
                     : durationDays === '0'
                       ? 'Süresiz'
-                      : `${durationDays} gün`}
+                      : (() => {
+                          const m = Number(durationDays);
+                          const d = Math.floor(m / 1440);
+                          const h = Math.floor((m % 1440) / 60);
+                          const mn = m % 60;
+                          const p: string[] = [];
+                          if (d > 0) p.push(`${d}g`);
+                          if (h > 0) p.push(`${h}sa`);
+                          if (mn > 0) p.push(`${mn}dk`);
+                          return p.join(' ') || `${m}dk`;
+                        })()}
                 </span>
                 <span className="rounded-full border border-white/10 px-2 py-1">
                   {itemStatus === 'active' ? 'Aktif' : 'Pasif'}

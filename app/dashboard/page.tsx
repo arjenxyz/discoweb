@@ -703,7 +703,17 @@ export default function DashboardPage() {
     setPurchaseLoadingId(null);
 
     if (!response.ok) {
-      setPurchaseFeedback(prev => ({ ...prev, [itemId]: { status: 'error', message: data.error || 'Satın alma başarısız' } }));
+      const errorMessages: Record<string, string> = {
+        bot_missing_manage_roles: 'Bot rol yönetim yetkisine sahip değil',
+        insufficient_balance: 'Yetersiz bakiye',
+        item_not_found: 'Ürün bulunamadı',
+        already_owned: 'Bu ürüne zaten sahipsiniz',
+        role_not_found: 'Rol bulunamadı',
+        not_verified: 'Hesabınız doğrulanmamış',
+        forbidden: 'Erişim reddedildi',
+      };
+      const msg = errorMessages[data.error ?? ''] || data.error || 'Satın alma başarısız';
+      setPurchaseFeedback(prev => ({ ...prev, [itemId]: { status: 'error', message: msg } }));
       setTimeout(() => setPurchaseFeedback(prev => ({ ...prev, [itemId]: undefined })), 3000);
       return;
     }
@@ -723,8 +733,14 @@ export default function DashboardPage() {
 
   const mainWrapperClass = effectiveSection === 'mail'
     ? 'mx-0 w-full max-w-full px-0'
-    : 'mx-auto max-w-6xl px-3 sm:px-6';
-  const mainSpacingClass = effectiveSection === 'mail' ? 'py-0 gap-0' : 'pt-24 pb-10 gap-6';
+    : effectiveSection === 'store'
+      ? 'mx-auto max-w-6xl px-0 sm:px-6'
+      : 'mx-auto max-w-6xl px-3 sm:px-6';
+  const mainSpacingClass = effectiveSection === 'mail'
+    ? 'py-0 gap-0'
+    : effectiveSection === 'store'
+      ? 'pt-20 sm:pt-24 pb-0 sm:pb-10 gap-0 sm:gap-6'
+      : 'pt-24 pb-10 gap-6';
 
   return (
     <div className="min-h-screen bg-[#0b0d12] text-white">
@@ -763,6 +779,7 @@ export default function DashboardPage() {
           }}
           mailUnreadCount={mailUnreadCount}
           renderNotificationBody={renderNotificationBody}
+          leaderboardOpen={leaderboardOpen}
           onOpenLeaderboard={() => setLeaderboardOpen(true)}
           settings={{
             open: settingsOpen,

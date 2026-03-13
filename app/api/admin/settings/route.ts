@@ -5,85 +5,110 @@ import { logWebEvent } from '@/lib/serverLogger';
 import { getSessionUserId } from '@/lib/auth';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
 
-const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
-
-const getSelectedGuildId = async (): Promise<string> => {
+const getSelectedGuildId = async (): Promise<string | null> => {
   const cookieStore = await cookies();
-  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || GUILD_ID; // Fallback to default
+  return cookieStore.get('selected_guild_id')?.value ?? null;
 };
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceRoleKey) {
-    return null;
-  }
+  if (!supabaseUrl || !serviceRoleKey) return null;
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 };
 
 const isAdminUser = isAdminOrDeveloper;
 
-const getAdminId = async () => {
-  return getSessionUserId();
-};
-
 export async function GET() {
-  if (!(await isAdminUser())) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  try {
+    if (!(await isAdminUser())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+
+    const supabase = getSupabase();
+    const guildId = await getSelectedGuildId();
+    if (!supabase || !guildId) return NextResponse.json({ error: 'missing_config' }, { status: 500 });
+
+    const { data, error } = await supabase
+      .from('servers')
+      .select('admin_role_id,verify_role_id,approval_threshold,is_setup,discord_id')
+      .eq('discord_id', guildId)
+      .maybeSingle();
+
+    if (error) return NextResponse.json({ error: 'fetch_failed' }, { status: 500 });
+
+    // Fetch guild roles from Discord
+    let roles: Array<{ id: string; name: string; color: number }> = [];
+    try {
+      const botToken = process.env.DISCORD_BOT_TOKEN;
+      if (botToken) {
+        const res = await fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
+          headers: { Authorization: `Bot ${botToken}` },
+        });
+        if (res.ok) {
+          const allRoles = await res.json();
+          roles = allRoles
+            .filter((r: any) => !r.managed && r.name !== '@everyone')
+            .sort((a: any, b: any) => b.position - a.position)
+            .map((r: any) => ({ id: r.id, name: r.name, color: r.color }));
+        }
+      }
+    } catch {}
+
+    return NextResponse.json({
+      admin_role_id: data?.admin_role_id ?? null,
+      verify_role_id: data?.verify_role_id ?? null,
+      approval_threshold: data?.approval_threshold ?? 80,
+      is_setup: data?.is_setup ?? false,
+      _roles: roles,
+    });
+  } catch (e) {
+    console.error('admin/settings GET error:', e);
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 });
   }
-
-  const supabase = getSupabase();
-  if (!supabase) {
-    return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
-  }
-
-  const { data, error } = await supabase
-    .from('servers')
-    .select('approval_threshold')
-    .eq('slug', 'default')
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: 'fetch_failed' }, { status: 500 });
-  }
-
-  return NextResponse.json({ approval_threshold: data?.approval_threshold ?? 80 });
 }
 
 export async function POST(request: Request) {
-  if (!(await isAdminUser())) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  try {
+    if (!(await isAdminUser())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+
+    const supabase = getSupabase();
+    const guildId = await getSelectedGuildId();
+    if (!supabase || !guildId) return NextResponse.json({ error: 'missing_config' }, { status: 500 });
+
+    const adminId = await getSessionUserId();
+    const payload = await request.json();
+
+    const updateObj: Record<string, any> = {};
+
+    // Only include fields that were sent
+    if (payload.admin_role_id !== undefined) updateObj.admin_role_id = payload.admin_role_id || null;
+    if (payload.verify_role_id !== undefined) updateObj.verify_role_id = payload.verify_role_id || null;
+    if (payload.approval_threshold !== undefined) updateObj.approval_threshold = Number(payload.approval_threshold);
+
+    if (Object.keys(updateObj).length === 0) {
+      return NextResponse.json({ error: 'no_changes' }, { status: 400 });
+    }
+
+    const { error } = await supabase
+      .from('servers')
+      .update(updateObj)
+      .eq('discord_id', guildId);
+
+    if (error) {
+      console.error('admin/settings POST db error:', error);
+      return NextResponse.json({ error: 'save_failed' }, { status: 500 });
+    }
+
+    await logWebEvent(request, {
+      event: 'admin_settings_update',
+      status: 'success',
+      userId: adminId ?? undefined,
+      guildId,
+      metadata: updateObj,
+    });
+
+    return NextResponse.json({ status: 'ok' });
+  } catch (e) {
+    console.error('admin/settings POST error:', e);
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 });
   }
-
-  const supabase = getSupabase();
-  if (!supabase) {
-    return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
-  }
-
-  const adminId = await getAdminId();
-  const selectedGuildId = await getSelectedGuildId();
-  const payload = (await request.json()) as { approval_threshold?: number };
-  if (payload.approval_threshold === undefined) {
-    return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
-  }
-
-  const { error } = await supabase
-    .from('servers')
-    .update({ approval_threshold: payload.approval_threshold })
-    .eq('slug', 'default');
-
-  if (error) {
-    return NextResponse.json({ error: 'save_failed' }, { status: 500 });
-  }
-
-  await logWebEvent(request, {
-    event: 'admin_settings_update',
-    status: 'success',
-    userId: adminId ?? undefined,
-    guildId: selectedGuildId,
-    metadata: { approval_threshold: payload.approval_threshold },
-  });
-
-  return NextResponse.json({ status: 'ok' });
 }

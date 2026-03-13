@@ -22,12 +22,14 @@ const isAdminUser = isAdminOrDeveloper;
 
 // --- API HANDLERS ---
 export async function GET() {
+  try {
   if (!(await isAdminUser())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   const supabase = getSupabase();
   const guildId = (await cookies()).get('selected_guild_id')?.value;
-  if (!supabase || !guildId) return NextResponse.json({ error: 'error' }, { status: 500 });
+  if (!supabase || !guildId) return NextResponse.json({ error: 'missing_config', detail: !supabase ? 'supabase' : 'guildId' }, { status: 500 });
 
-  const { data } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
+  const { data, error: dbErr } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
+  if (dbErr) console.error('earn-settings GET db error:', dbErr);
 
   let guildPreview = null;
   try {
@@ -62,9 +64,14 @@ export async function GET() {
     _guildPreview: guildPreview,
     _channels: channels,
   });
+  } catch (e) {
+    console.error('earn-settings GET unexpected error:', e);
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 });
+  }
 }
 
 export async function PUT(request: Request) {
+  try {
   if (!(await isAdminUser())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   const supabase = getSupabase();
   const guildId = (await cookies()).get('selected_guild_id')?.value;
@@ -72,16 +79,7 @@ export async function PUT(request: Request) {
 
   const payload = await request.json();
 
-  // Defensive: do not allow enabling tag_required when no tag is configured for this guild
-  try {
-    if (payload?.tag_required) {
-      const { data: existing } = await supabase.from('servers').select('tag_id').eq('discord_id', guildId).maybeSingle();
-      const existingTagId = existing?.tag_id ?? null;
-      if (!existingTagId) return NextResponse.json({ error: 'no_tag_configured' }, { status: 400 });
-    }
-  } catch (e) {
-    console.warn('Could not validate tag configuration', e);
-  }
+  // tag_id is automatically set to guildId when tag_required is true (see updateObj below)
 
   // 1. Sadece DB sütunlarını filtrele (500 hatasını önleyen kritik kısım)
   type ServerUpdate = {
@@ -116,8 +114,19 @@ export async function PUT(request: Request) {
 
   const { data: oldData } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
 
-  const { error } = await supabase.from('servers').update(updateObj).eq('discord_id', guildId);
-  if (error) return NextResponse.json({ error: 'save_failed' }, { status: 500 });
+  // Try full update first; if earn_channels column doesn't exist yet, retry without it
+  let saveError = null;
+  const { error: err1 } = await supabase.from('servers').update(updateObj).eq('discord_id', guildId);
+  if (err1) {
+    // Possibly earn_channels column missing — retry without it
+    const { earn_channels: _ec, ...updateWithout } = updateObj;
+    const { error: err2 } = await supabase.from('servers').update(updateWithout).eq('discord_id', guildId);
+    saveError = err2;
+    if (!err2) {
+      console.warn('earn-settings: earn_channels column missing, saved without it. Run: ALTER TABLE servers ADD COLUMN earn_channels jsonb DEFAULT NULL;');
+    }
+  }
+  if (saveError) return NextResponse.json({ error: 'save_failed' }, { status: 500 });
 
   // --- BİLDİRİM MANTIĞI ---
   const changeGroups: Record<string, ChangeItem[]> = { general: [], tag: [], boost: [] };
@@ -172,4 +181,8 @@ export async function PUT(request: Request) {
   }
 
   return NextResponse.json({ status: 'ok' });
+  } catch (e) {
+    console.error('earn-settings PUT unexpected error:', e);
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 });
+  }
 }

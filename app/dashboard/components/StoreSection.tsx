@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { useCart } from '../../../lib/cart';
 import CartDrawer from '../../../components/CartDrawer';
 import ProductDetailModal from './ProductDetailModal';
+import { formatDuration } from '../../../lib/formatDuration';
 
 // GIF pool for products — only penguin gifs from public/penguin
 const GIFS = [
@@ -59,7 +60,7 @@ export default function StoreSection({
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-none sm:rounded-[32px] border-0 sm:border border-white/10 bg-white/5 backdrop-blur-2xl p-4 sm:p-8 shadow-2xl transition-all">
+      <section className="relative overflow-hidden rounded-none sm:rounded-[32px] border-0 sm:border border-white/10 bg-white/5 backdrop-blur-2xl p-3 sm:p-8 shadow-2xl transition-all sm:min-h-0 flex flex-col">
 
         {/* Glow Efektleri */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#5865F2]/10 rounded-full blur-[80px] pointer-events-none" />
@@ -100,8 +101,8 @@ export default function StoreSection({
             <p className="text-sm font-medium">Yükleniyor...</p>
           </div>
         ) : (
-          <div className="relative z-10">
-            
+          <div className="relative z-10 flex-1 flex flex-col">
+
             {items.length ? (
               <>
                 {/* Desktop grid */}
@@ -167,7 +168,7 @@ export default function StoreSection({
                               : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                           }`}>
                             <LuClock className="w-3 h-3" />
-                            {(item.duration_days ?? 0) === 0 ? 'Süresiz' : `${item.duration_days ?? 0} Gün`}
+                            {formatDuration(item.duration_days ?? 0)}
                           </span>
 
                           {item.role_id && (
@@ -232,8 +233,8 @@ export default function StoreSection({
                   ))}
                 </div>
 
-                {/* Mobile compact list */}
-                <div className="sm:hidden space-y-1.5">
+                {/* Mobile cards */}
+                <div className="sm:hidden space-y-3 flex-1">
                   {items.map((item) => {
                     const isInCart = cart?.items.some(it => it.itemId === item.id);
                     const feedback = purchaseFeedback[item.id];
@@ -241,72 +242,87 @@ export default function StoreSection({
                     return (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-2.5 active:bg-white/[0.06] transition-colors"
+                        className="relative flex overflow-hidden rounded-2xl border border-white/10 bg-[#0b0d12]"
                       >
-                        {/* GIF thumbnail */}
+                        {/* GIF left side */}
                         <div
-                          className="relative flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-[#0b0d12] border border-white/10"
+                          className="relative flex-shrink-0 w-28 min-h-[120px] overflow-hidden"
                           onClick={() => setExpandedItem(item)}
                         >
+                          <div className="absolute inset-0 bg-[#0b0d12]/20 z-10" />
                           <Image
                             src={gifMap.get(item.id) ?? '/gif/image.gif'}
                             alt=""
                             fill
-                            className="object-cover opacity-90"
+                            className="object-cover opacity-80"
                             unoptimized
                           />
                         </div>
 
-                        {/* Info */}
-                        <div className="flex-1 min-w-0" onClick={() => setExpandedItem(item)}>
-                          <h4 className="text-[13px] font-bold text-white truncate">{item.title}</h4>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            <div className="inline-flex items-center text-[11px]">
-                              {renderPapelAmount(item.price)}
-                            </div>
-                            <span className="text-[8px] text-white/30">·</span>
-                            <span className={`text-[9px] font-semibold ${
-                              (item.duration_days ?? 0) === 0 ? 'text-emerald-400' : 'text-amber-400'
-                            }`}>
-                              {(item.duration_days ?? 0) === 0 ? 'Süresiz' : `${item.duration_days}G`}
-                            </span>
-                          </div>
-                        </div>
+                        {/* Right content */}
+                        <div className="flex-1 flex flex-col justify-between p-3 min-w-0">
+                          <div onClick={() => setExpandedItem(item)}>
+                            <h4 className="text-sm font-bold text-white leading-tight truncate">{item.title}</h4>
+                            <p className="text-[11px] text-white/40 line-clamp-1 mt-0.5">{item.description || 'Açıklama yok.'}</p>
 
-                        {/* Actions */}
-                        <div className="flex-shrink-0 flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (cart) cart.addToCart(item);
-                              onAddToCart(item);
-                            }}
-                            className={`flex items-center justify-center w-8 h-8 rounded-lg border transition-all active:scale-90 ${
-                              isInCart
-                                ? 'border-emerald-500/30 bg-emerald-500/20 text-emerald-400'
-                                : 'border-white/10 bg-white/5 text-white/40'
-                            }`}
-                          >
-                            <LuShoppingCart className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => onPurchase(item.id)}
-                            disabled={isLoading}
-                            className={`flex items-center justify-center gap-1 h-8 px-3 rounded-lg text-[11px] font-bold text-white transition-all active:scale-95 disabled:opacity-70 ${
-                              feedback?.status === 'success'
-                                ? 'bg-emerald-500'
-                                : feedback?.status === 'error'
-                                  ? 'bg-rose-500'
-                                  : 'bg-[#5865F2]'
-                            }`}
-                          >
-                            {isLoading ? (
-                              <LuLoader className="w-3 h-3 animate-spin" />
-                            ) : (
-                              <span>{feedback?.message ?? 'Al'}</span>
-                            )}
-                          </button>
+                            {/* Price + tags row */}
+                            <div className="flex items-center gap-2 mt-2">
+                              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[11px]">
+                                {renderPapelAmount(item.price)}
+                              </div>
+                              <span className={`inline-flex items-center gap-0.5 text-[9px] font-bold ${
+                                (item.duration_days ?? 0) === 0 ? 'text-emerald-400' : 'text-amber-400'
+                              }`}>
+                                <LuClock className="w-2.5 h-2.5" />
+                                {formatDuration(item.duration_days ?? 0)}
+                              </span>
+                              {item.role_id && (
+                                <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-violet-400">
+                                  <LuShield className="w-2.5 h-2.5" />
+                                  Rol
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Action buttons */}
+                          <div className="flex items-center gap-2 mt-2.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (cart) cart.addToCart(item);
+                                onAddToCart(item);
+                              }}
+                              className={`flex items-center justify-center w-8 h-8 rounded-lg border transition-all active:scale-90 ${
+                                isInCart
+                                  ? 'border-emerald-500/30 bg-emerald-500/20 text-emerald-400'
+                                  : 'border-white/10 bg-white/5 text-white/50'
+                              }`}
+                            >
+                              <LuShoppingCart className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onPurchase(item.id)}
+                              disabled={isLoading}
+                              className={`flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg text-[11px] font-bold text-white transition-all active:scale-95 disabled:opacity-70 ${
+                                feedback?.status === 'success'
+                                  ? 'bg-emerald-500'
+                                  : feedback?.status === 'error'
+                                    ? 'bg-rose-500'
+                                    : 'bg-[#5865F2]'
+                              }`}
+                            >
+                              {isLoading ? (
+                                <LuLoader className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <>
+                                  <LuBadgeCheck className="w-3.5 h-3.5" />
+                                  <span>{feedback?.message ?? 'Satın Al'}</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );
@@ -325,7 +341,7 @@ export default function StoreSection({
             )}
 
             {/* --- KOMPAKT BİLGİLENDİRME (AKORDEON) --- */}
-            <div className="mt-5 sm:mt-8">
+            <div className="mt-5 sm:mt-8 hidden sm:block">
               <button
                 onClick={() => setInfoOpen(!infoOpen)}
                 className="w-full flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group"

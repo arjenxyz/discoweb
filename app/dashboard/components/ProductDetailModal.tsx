@@ -125,7 +125,16 @@ export default function ProductDetailModal({
                     : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                 }`}>
                     <LuClock size={12} />
-                    <span>{durationDays > 0 ? `${durationDays} Gün` : 'Süresiz'}</span>
+                    <span>{durationDays > 0 ? (() => {
+                      const d = Math.floor(durationDays / 1440);
+                      const h = Math.floor((durationDays % 1440) / 60);
+                      const m = durationDays % 60;
+                      const p: string[] = [];
+                      if (d > 0) p.push(`${d}g`);
+                      if (h > 0) p.push(`${h}sa`);
+                      if (m > 0) p.push(`${m}dk`);
+                      return p.join(' ') || `${durationDays}dk`;
+                    })() : 'Süresiz'}</span>
                 </div>
 
                 {/* Rol Etiketi */}

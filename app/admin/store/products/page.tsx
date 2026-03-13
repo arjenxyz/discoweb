@@ -79,7 +79,17 @@ export default function AdminStoreProductsPage() {
                     {item.status === 'active' ? 'Aktif' : 'Pasif'}
                   </span>
                   <span className="rounded-full border border-white/10 px-2 py-1 text-[11px] text-white/50">
-                    {item.duration_days === 0 ? 'Süresiz' : `${item.duration_days} gün`}
+                    {item.duration_days === 0 ? 'Süresiz' : (() => {
+                      const m = item.duration_days;
+                      const d = Math.floor(m / 1440);
+                      const h = Math.floor((m % 1440) / 60);
+                      const mn = m % 60;
+                      const p: string[] = [];
+                      if (d > 0) p.push(`${d}g`);
+                      if (h > 0) p.push(`${h}sa`);
+                      if (mn > 0) p.push(`${mn}dk`);
+                      return p.join(' ') || `${m}dk`;
+                    })()}
                   </span>
                   <span className="rounded-full border border-white/10 px-2 py-1 text-[11px] text-white/50">
                     Rol: {item.role_id}

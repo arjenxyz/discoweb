@@ -234,7 +234,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'order_failed', details: orderError.message ?? orderError }, { status: 500 });
   }
 
-  // --- PRE-CHECK: validate roles and attempt assignment BEFORE deducting funds ---
+  // --- ROLE ASSIGNMENT: directly attempt via Discord REST API (works even if bot is offline) ---
   const assignedRoles: Array<{ roleId: string }> = [];
   try {
     const botToken = process.env.DISCORD_BOT_TOKEN;
@@ -243,79 +243,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'missing_bot_token' }, { status: 500 });
     }
 
-    // fetch guild roles once
-    const rolesRes = await discordFetch(`https://discord.com/api/guilds/${selectedGuildId}/roles`, { headers: { Authorization: `Bot ${botToken}` } }, { retries: 3 });
-    if (!rolesRes.ok) {
-      await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'roles_fetch_failed' }).eq('id', order?.id);
-      return NextResponse.json({ error: 'roles_fetch_failed' }, { status: 500 });
-    }
-    type DiscordRole = {
-      id: string;
-      name?: string;
-      position?: number;
-      permissions?: string | number;
-      [key: string]: unknown;
-    };
-    const rolesList: DiscordRole[] = await rolesRes.json();
-
-    // bot identity
-    const meRes = await discordFetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bot ${botToken}` } }, { retries: 2 });
-    const me = meRes.ok ? await meRes.json().catch(() => null) : null;
-    const botId = me?.id;
-    let botMember = null;
-    if (botId) {
-      const botMemberRes = await discordFetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${botId}`, { headers: { Authorization: `Bot ${botToken}` } }, { retries: 2 });
-      if (botMemberRes.ok) botMember = await botMemberRes.json().catch(() => null);
-    }
-
-    // compute bot perms/position
-    let botMaxPos = -1;
-    let botPerms = BigInt(0);
-    if (botMember && Array.isArray(botMember.roles)) {
-      for (const rId of botMember.roles) {
-        const r = (rolesList || []).find((x: DiscordRole) => String(x.id) === String(rId));
-        if (r) {
-          botMaxPos = Math.max(botMaxPos, Number(r.position ?? 0));
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          try { botPerms = botPerms | BigInt(r.permissions || 0); } catch (e) {}
-        }
-      }
-    }
-    const MANAGE_ROLES = BigInt(0x10000000);
-
     for (const it of orderItems) {
       if (!it.role_id) continue;
-      const targetRole = (rolesList || []).find((r: DiscordRole) => String(r.id) === String(it.role_id));
-      if (!targetRole) {
-        await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'invalid_role_id' }).eq('id', order?.id);
-        return NextResponse.json({ error: 'invalid_role_id', message: 'Ürün rolü sunucuda bulunamadı.' }, { status: 400 });
-      }
 
-      const targetPos = Number(targetRole.position ?? 0);
-      if (botPerms && (botPerms & MANAGE_ROLES) !== MANAGE_ROLES) {
-        await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'bot_missing_manage_roles' }).eq('id', order?.id);
-        return NextResponse.json({ error: 'bot_missing_manage_roles', message: 'Botun rol yönetimi yetkisi yok.' }, { status: 403 });
-      }
-      if (botMaxPos >= 0 && botMaxPos <= targetPos) {
-        await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'bot_role_hierarchy' }).eq('id', order?.id);
-        return NextResponse.json({ error: 'bot_role_hierarchy', message: 'Botun rol hiyerarşisi yetmiyor.' }, { status: 403 });
-      }
+      // Directly try to assign the role — Discord API handles permission validation
+      const assignRes = await discordFetch(
+        `https://discord.com/api/guilds/${selectedGuildId}/members/${userId}/roles/${it.role_id}`,
+        { method: 'PUT', headers: { Authorization: `Bot ${botToken}`, 'Content-Type': 'application/json' } },
+        { retries: 3 },
+      );
 
-      // attempt to assign role
-      const assignRes = await discordFetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${userId}/roles/${it.role_id}`, { method: 'PUT', headers: { Authorization: `Bot ${botToken}` } }, { retries: 2 });
       if (!assignRes.ok) {
         const respText = await assignRes.text().catch(() => '');
-        await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'role_assign_failed', failure_code: assignRes.status, failure_response: respText }).eq('id', order?.id);
+        console.error('Role assign failed:', { status: assignRes.status, body: respText, roleId: it.role_id });
+        await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'role_assign_failed' }).eq('id', order?.id);
 
-        // send system mail HTML
+        // Send failure notification mail
         try {
           const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || '';
           const normalizedSite = siteUrl ? siteUrl.replace(/\/$/, '') : '';
           const refundUrl = normalizedSite ? `${normalizedSite}/api/member/refund?orderId=${order?.id}` : null;
           const { refundButtonHtml } = await import('@/lib/mailHelpers');
           const buttonHtml = refundButtonHtml('role_assign_failed', refundUrl);
-          const html = `<!doctype html><html><head><meta charset="utf-8"></head><body style="background:#0f1113;color:#e6eef8;font-family:Inter,system-ui,Arial;padding:20px"><div style="max-width:600px;margin:0 auto;background:#0b0c0d;padding:20px;border-radius:12px"><div style="display:flex;gap:12px;align-items:center"><div style="width:48px;height:48;border-radius:10px;background:linear-gradient(135deg,#5865F2,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff">FOX</div><div><div style="font-weight:800">🛠️ Sistem Raporu: İşlem Kesintisi Bildirimi</div><div style="color:#b9bbbe;font-size:13px">DiscoWeb</div></div></div><div style="margin-top:12px;background:#111214;padding:14px;border-radius:10px;line-height:1.6"><p>Merhaba, ben DiscoWeb Baş Geliştiricisi.</p><p>Satın alma teslimatı sırasında bir hata oluştu. Ödeme düşülmeden önce rol verme işlemi başarısız oldu.</p><div style="font-family:Courier New,monospace;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;margin-top:12px">Durum: <strong>FAILED_TO_DELIVER</strong><br>Hata Kodu: <strong>ROLE_ASSIGN_FAILED</strong><br>HTTP: ${assignRes.status}</div><p style="margin-top:12px">Aşağıdaki butonu kullanarak iade talebini başlatabilirsin.</p><div style="margin-top:10px">${buttonHtml}</div><p style="margin-top:12px;color:#9aa0a6">Yaşanan aksaklık için üzgünüz.</p></div></div></body></html>`;
-          await supabase.from('system_mails').insert({ guild_id: selectedGuildId, user_id: userId, title: '🛠️ Sistem Raporu: İşlem Kesintisi Bildirimi', body: html, category: 'system', status: 'published', author_name: 'DiscoWeb Baş Geliştiricisi', created_at: new Date().toISOString() });
+          const html = `<!doctype html><html><head><meta charset="utf-8"></head><body style="background:#0f1113;color:#e6eef8;font-family:Inter,system-ui,Arial;padding:20px"><div style="max-width:600px;margin:0 auto;background:#0b0c0d;padding:20px;border-radius:12px"><div style="display:flex;gap:12px;align-items:center"><div style="width:48px;height:48;border-radius:10px;background:linear-gradient(135deg,#5865F2,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff">FOX</div><div><div style="font-weight:800">Sistem Raporu: İşlem Kesintisi</div><div style="color:#b9bbbe;font-size:13px">DiscoWeb</div></div></div><div style="margin-top:12px;background:#111214;padding:14px;border-radius:10px;line-height:1.6"><p>Satın alma teslimatı sırasında bir hata oluştu. Ödeme düşülmeden önce rol verme işlemi başarısız oldu.</p><div style="font-family:Courier New,monospace;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;margin-top:12px">Durum: <strong>FAILED_TO_DELIVER</strong><br>HTTP: ${assignRes.status}</div><p style="margin-top:12px">Aşağıdaki butonu kullanarak iade talebini başlatabilirsin.</p><div style="margin-top:10px">${buttonHtml}</div><p style="margin-top:12px;color:#9aa0a6">Yaşanan aksaklık için üzgünüz.</p></div></div></body></html>`;
+          await supabase.from('system_mails').insert({ guild_id: selectedGuildId, user_id: userId, title: 'Sistem Raporu: İşlem Kesintisi', body: html, category: 'system', status: 'published', author_name: 'DiscoWeb Sistem', created_at: new Date().toISOString() });
         } catch (e) {
           console.warn('Failed to insert delivery-failure mail', e);
         }
@@ -326,9 +277,9 @@ export async function POST(request: Request) {
       assignedRoles.push({ roleId: it.role_id });
     }
   } catch (err) {
-    console.error('Role pre-check error:', err);
-    await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'role_precheck_error' }).eq('id', order?.id);
-    return NextResponse.json({ error: 'role_precheck_error' }, { status: 500 });
+    console.error('Role assignment error:', err);
+    await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'role_assign_error' }).eq('id', order?.id);
+    return NextResponse.json({ error: 'role_assign_error', message: 'Rol verme sırasında hata oluştu.' }, { status: 500 });
   }
 
   // Attempt to atomically deduct from wallet only if enough balance
