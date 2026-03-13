@@ -474,7 +474,7 @@ export default function SetupPage() {
           </div>
         )}
 
-        {setupMode !== 'select' && !setupStarted ? (
+        {setupMode !== 'select' && !setupStarted && (
           <>
             {/* Step indicator */}
             <div className="mb-8">
@@ -941,7 +941,9 @@ export default function SetupPage() {
               </div>
             </div>
           </>
-        ) : (
+        )}
+
+        {setupStarted && (
           /* Terminal */
           <section className="rounded-2xl border border-white/8 bg-[#0a0c10] shadow-[0_0_40px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between border-b border-white/8 px-5 py-3">
