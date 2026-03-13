@@ -190,7 +190,7 @@ export default function EarnSettingsPage() {
                           type="number" 
                           min={0} 
                           step="0.01" 
-                          value={settings.earn_per_message.toFixed(2)} 
+                          value={(settings?.earn_per_message ?? 0).toFixed(2)} 
                           onChange={(e) => updateNumber('earn_per_message', Number(e.target.value))}
                           className="w-full pl-8 pr-4 py-2.5 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                         />
@@ -230,7 +230,7 @@ export default function EarnSettingsPage() {
                           type="number" 
                           min={0} 
                           step="0.01" 
-                          value={settings.earn_per_voice_minute.toFixed(2)} 
+                          value={(settings?.earn_per_voice_minute ?? 0).toFixed(2)} 
                           onChange={(e) => updateNumber('earn_per_voice_minute', Number(e.target.value))}
                           className="w-full pl-8 pr-4 py-2.5 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-violet-500/50 outline-none transition-all"
                         />
@@ -296,11 +296,11 @@ export default function EarnSettingsPage() {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Mesaj Bonusu</label>
-                        <input type="number" min={0} step="0.01" value={settings.tag_bonus_message.toFixed(2)} onChange={(e) => updateNumber('tag_bonus_message', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
+                          <input type="number" min={0} step="0.01" value={(settings?.tag_bonus_message ?? 0).toFixed(2)} onChange={(e) => updateNumber('tag_bonus_message', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Ses Bonusu</label>
-                        <input type="number" min={0} step="0.01" value={settings.tag_bonus_voice.toFixed(2)} onChange={(e) => updateNumber('tag_bonus_voice', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
+                          <input type="number" min={0} step="0.01" value={(settings?.tag_bonus_voice ?? 0).toFixed(2)} onChange={(e) => updateNumber('tag_bonus_voice', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
                         </div>
                     </div>
                     {!settings.tag_configured && (
@@ -323,11 +323,11 @@ export default function EarnSettingsPage() {
                      <div className="grid grid-cols-2 gap-4 pt-2">
                         <div>
                             <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Mesaj Bonusu</label>
-                            <input type="number" min={0} step="0.01" value={settings.booster_bonus_message.toFixed(2)} onChange={(e) => updateNumber('booster_bonus_message', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
+                            <input type="number" min={0} step="0.01" value={(settings?.booster_bonus_message ?? 0).toFixed(2)} onChange={(e) => updateNumber('booster_bonus_message', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Ses Bonusu</label>
-                            <input type="number" min={0} step="0.01" value={settings.booster_bonus_voice.toFixed(2)} onChange={(e) => updateNumber('booster_bonus_voice', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
+                            <input type="number" min={0} step="0.01" value={(settings?.booster_bonus_voice ?? 0).toFixed(2)} onChange={(e) => updateNumber('booster_bonus_voice', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
                         </div>
                     </div>
                 </div>

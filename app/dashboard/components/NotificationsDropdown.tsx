@@ -88,7 +88,7 @@ export default function NotificationsDropdown({
                   </div>
                   <div className="mt-1 text-[11px] text-white/50 line-clamp-2">{renderNotificationBody(item.body)}</div>
                   <span className="mt-2 inline-flex text-[10px] text-white/40">
-                    {new Date(item.created_at).toLocaleString('tr-TR')}
+                    {(() => { const d = new Date(item.created_at); return isNaN(d.getTime()) ? '' : d.toLocaleString('tr-TR'); })()}
                   </span>
                 </button>
               ))

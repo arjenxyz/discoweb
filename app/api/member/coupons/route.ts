@@ -25,6 +25,7 @@ const resolveServerId = async (supabase: SupabaseClient) => {
     .from('servers')
     .select('id')
     .eq('discord_id', selectedGuildId)
+    .eq('is_setup', true)
     .maybeSingle();
 
   if ((byDiscord as { id?: string } | null)?.id) return (byDiscord as { id?: string }).id;

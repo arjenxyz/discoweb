@@ -54,10 +54,6 @@ export default function StoreSection({
       m.set(it.id, idx < GIFS.length ? GIFS[idx] : undefined);
     });
 
-    if (items.length > GIFS.length) {
-      console.warn(`Not enough GIFs for all products: items=${items.length}, gifs=${GIFS.length}. Extra products will have no GIF.`);
-    }
-
     return m;
   }, [items]);
 

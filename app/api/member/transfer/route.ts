@@ -141,6 +141,7 @@ export async function POST(request: Request) {
     .from('servers')
     .select('id,transfer_daily_limit,transfer_tax_rate')
     .eq('discord_id', selectedGuildId)
+    .eq('is_setup', true)
     .maybeSingle();
 
   if (!server) {

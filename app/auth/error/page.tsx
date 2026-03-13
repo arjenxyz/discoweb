@@ -4,7 +4,7 @@ import Link from 'next/link';
 import DiscordAgreementButton from '@/components/DiscordAgreementButton';
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI;
+const REDIRECT_URI = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
 const loginUrl = CLIENT_ID && REDIRECT_URI
   ? `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
       REDIRECT_URI,

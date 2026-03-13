@@ -40,6 +40,7 @@ export async function POST(request: Request) {
       .from('servers')
       .select('verify_role_id')
       .eq('discord_id', guildId)
+      .eq('is_setup', true)
       .maybeSingle();
 
     if (!server?.verify_role_id) {

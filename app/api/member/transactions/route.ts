@@ -46,6 +46,7 @@ export async function GET() {
     .from('servers')
     .select('id')
     .eq('discord_id', selectedGuildId)
+    .eq('is_setup', true)
     .maybeSingle();
 
   if (serverError || !server) {

@@ -146,6 +146,7 @@ export async function GET() {
     .from('servers')
     .select('id,verify_role_id,tag_bonus_message,tag_bonus_voice,booster_bonus_message,booster_bonus_voice,tag_id')
     .eq('discord_id', selectedGuildId)
+    .eq('is_setup', true)
     .maybeSingle();
 
   // compute last 24h stats (approx by stat_date >= today-1)

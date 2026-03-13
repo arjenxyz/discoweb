@@ -97,11 +97,17 @@ export default function MailSection({
     message: '',
     type: 'success',
   });
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ open: true, message, type });
-    setTimeout(() => setToast({ open: false, message: '', type }), 3500);
+    toastTimerRef.current = setTimeout(() => setToast({ open: false, message: '', type }), 3500);
   };
+
+  useEffect(() => {
+    return () => { if (toastTimerRef.current) clearTimeout(toastTimerRef.current); };
+  }, []);
 
   // Mobile detection
   useEffect(() => {
@@ -113,21 +119,20 @@ export default function MailSection({
 
   // Route-based modal sync
   useEffect(() => {
-    try {
-      const id = searchParams?.get('id') ?? null;
-      const path = pathname ?? '';
-      if (path.startsWith('/dashboard/mail')) {
-        if (id) {
-          const found = items.find(i => String(i.id) === String(id));
-          if (found && (!selectedMail || String(selectedMail.id) !== String(found.id))) {
-            setSelectedMail(found);
-          }
+    const id = searchParams?.get('id') ?? null;
+    const path = pathname ?? '';
+    if (path.startsWith('/dashboard/mail')) {
+      if (id) {
+        const found = items.find(i => String(i.id) === String(id));
+        if (found && (!selectedMail || String(selectedMail.id) !== String(found.id))) {
+          setSelectedMail(found);
         }
-      } else {
-        if (selectedMail) setSelectedMail(null);
       }
-    } catch {}
-  }, [pathname, searchParams?.get('id')]);
+    } else {
+      if (selectedMail) setSelectedMail(null);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams]);
 
   // Counts
   const countsTotal = useMemo(() => {
@@ -378,7 +383,8 @@ export default function MailSection({
                     onClick={async () => {
                       const ids = Array.from(selectedIds);
                       try {
-                        await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                        const res = await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                        if (!res.ok) { showToast('Silme hatası', 'error'); return; }
                         showToast(`${ids.length} mesaj silindi`, 'success');
                         setSelectedIds(new Set());
                         window.dispatchEvent(new CustomEvent('mail:refresh'));
@@ -396,7 +402,8 @@ export default function MailSection({
                     onClick={async () => {
                       const ids = Array.from(selectedIds);
                       try {
-                        await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                        const res = await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                        if (!res.ok) { showToast('İşlem hatası', 'error'); return; }
                         showToast('Okundu işaretlendi', 'success');
                         setSelectedIds(new Set());
                         window.dispatchEvent(new CustomEvent('mail:refresh'));
@@ -497,11 +504,9 @@ export default function MailSection({
                       onClick={async (e) => {
                         e.stopPropagation();
                         try {
-                          if (mail.is_starred) {
-                            await fetch('/api/mail/star', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
-                          } else {
-                            await fetch('/api/mail/star', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
-                          }
+                          const method = mail.is_starred ? 'DELETE' : 'POST';
+                          const res = await fetch('/api/mail/star', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
+                          if (!res.ok) { showToast('Yıldız işlemi başarısız', 'error'); return; }
                           window.dispatchEvent(new CustomEvent('mail:refresh'));
                         } catch {
                           showToast('Yıldız işlemi başarısız', 'error');
@@ -551,7 +556,8 @@ export default function MailSection({
                       onClick={async (e) => {
                         e.stopPropagation();
                         try {
-                          await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: [mail.id] }) });
+                          const res = await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: [mail.id] }) });
+                          if (!res.ok) { showToast('Silme hatası', 'error'); return; }
                           showToast('Mesaj silindi', 'success');
                           window.dispatchEvent(new CustomEvent('mail:refresh'));
                         } catch {
@@ -576,7 +582,8 @@ export default function MailSection({
                 const ids = filtered.filter(m => !m.is_read).map(m => m.id);
                 if (ids.length === 0) return showToast('Okunmamış mesaj yok', 'error');
                 try {
-                  await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                  const res = await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                  if (!res.ok) { showToast('İşlem başarısız', 'error'); return; }
                   showToast('Tüm mesajlar okundu olarak işaretlendi', 'success');
                   window.dispatchEvent(new CustomEvent('mail:refresh'));
                 } catch {
@@ -594,7 +601,8 @@ export default function MailSection({
                 const ids = filtered.filter(m => m.category === 'reward' && !m.is_read).map(m => m.id);
                 if (ids.length === 0) return showToast('Talep edilecek ödül yok', 'error');
                 try {
-                  await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                  const res = await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                  if (!res.ok) { showToast('Talep başarısız', 'error'); return; }
                   showToast('Ödüller talep edildi', 'success');
                   window.dispatchEvent(new CustomEvent('mail:refresh'));
                 } catch {

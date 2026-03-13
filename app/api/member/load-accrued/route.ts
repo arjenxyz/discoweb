@@ -39,6 +39,7 @@ export async function POST() {
     .from('servers')
     .select('id')
     .eq('discord_id', selectedGuildId)
+    .eq('is_setup', true)
     .maybeSingle();
 
   if (!server) return NextResponse.json({ error: 'server_not_found' }, { status: 404 });

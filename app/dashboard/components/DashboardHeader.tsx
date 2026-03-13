@@ -3,11 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { LuHouse, LuMail, LuShield, LuStore, LuLogOut, LuSettings, LuChevronRight, LuArrowLeft, LuMenu, LuX } from 'react-icons/lu';
+import { LuHouse, LuMail, LuShield, LuStore, LuLogOut, LuSettings, LuChevronRight, LuArrowLeft } from 'react-icons/lu';
 import Image from 'next/image';
 import DiscordAgreementButton from '@/components/DiscordAgreementButton';
 import type { Notification, Section } from '../types';
-import NotificationsDropdown from './NotificationsDropdown';
 import type { JSX, RefObject } from 'react';
 
 
@@ -116,7 +115,6 @@ export default function DashboardHeader({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentGif, setCurrentGif] = useState(RANDOM_GIFS[0]);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
-  const [logoMenuOpen, setLogoMenuOpen] = useState(false);
   const [fetchedIcons, setFetchedIcons] = useState<Record<string, string | null>>({});
   const fetchedIconsSeenRef = useRef<Set<string>>(new Set());
   const [switchingServerId, setSwitchingServerId] = useState<string | null>(null);
@@ -124,44 +122,6 @@ export default function DashboardHeader({
 
   // YENİ: Alt menü state'i (Sunucu seçimi için)
   const [activeSubmenu, setActiveSubmenu] = useState<'main' | 'servers'>('main');
-
-  // Button to load accrued balances (message + voice) into user's wallet
-  const LoadAccruedButton = () => {
-    const [loading, setLoading] = useState(false);
-
-    const handleLoad = async () => {
-      if (loading) return;
-      setLoading(true);
-      try {
-        const res = await fetch('/api/member/load-accrued', { method: 'POST', credentials: 'include' });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          window.alert('Hata: ' + (err?.error || res.statusText));
-          setLoading(false);
-          return;
-        }
-        const data = await res.json();
-        window.alert(`Başarılı: ${data.totalTransferred ?? 0} papel yüklendi (${data.count ?? 0} kayıt).`);
-        // refresh the page to update wallet display
-        window.location.reload();
-      } catch {
-        window.alert('İşlem sırasında hata oluştu.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return (
-      <button
-        onClick={handleLoad}
-        disabled={loading}
-        className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500 text-xs font-bold text-emerald-400 hover:text-white transition-all border border-emerald-500/20 hover:border-transparent group"
-      >
-        <LuStore className="w-4 h-4 group-hover:scale-110 transition-transform" />
-        {loading ? 'Yükleniyor...' : 'Bakiyelerimi Yükle'}
-      </button>
-    );
-  };
 
   // Mobile menu body overflow lock
   useEffect(() => {
@@ -181,27 +141,6 @@ export default function DashboardHeader({
       setActiveSubmenu('main'); // Her açılışta ana menüye sıfırla
     }
   }, [isProfileOpen]);
-
-  useEffect(() => {
-    console.log('DashboardHeader Props:', {
-      unauthorized,
-      walletLoading,
-      walletBalance,
-      isDeveloper,
-      profile,
-      server,
-      notifications,
-      settings,
-    });
-
-    if (server?.data) {
-      console.log('Active Server:', server.data);
-    }
-
-    if (server?.guilds) {
-      console.log('Available Guilds:', server.guilds);
-    }
-  }, [unauthorized, walletLoading, walletBalance, isDeveloper, profile, server, notifications, settings]);
 
   // Fetch missing guild icons from server-side Discord route when available
   useEffect(() => {
@@ -228,7 +167,6 @@ export default function DashboardHeader({
 
   const handleSelectServer = (guild: { id: string; name: string; isSetup: boolean }) => {
     if (!guild.isSetup) {
-      console.log(`Kurulum yapılmamış sunucu: ${guild.name}`);
       return;
     }
     setSwitchingServerId(guild.id);
@@ -275,101 +213,73 @@ export default function DashboardHeader({
         }`}
       />
 
-      {/* Server switching overlay (large gif + improved design) */}
+      {/* Sunucu geçiş overlay */}
       {switchingServerId && (() => {
-          const selected = server?.guilds?.find((g) => g.id === switchingServerId);
-          const selectedName = selected?.name ?? server?.data?.name ?? 'Sunucu';
-          const selectedIcon = selected?.iconUrl ?? fetchedIcons[switchingServerId ?? ''] ?? server.data?.iconUrl ?? null;
+        const selected    = server?.guilds?.find((g) => g.id === switchingServerId);
+        const selectedName = selected?.name ?? server?.data?.name ?? 'Sunucu';
+        const selectedIcon = selected?.iconUrl ?? fetchedIcons[switchingServerId ?? ''] ?? server.data?.iconUrl ?? null;
 
-          return (
-            <div
-              role="status"
-              aria-live="polite"
-              className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80"
-            >
-              <div className="pointer-events-none absolute inset-0" />
-              <div className="pointer-events-auto rounded-2xl bg-[#0f1116]/85 border border-white/8 p-6 shadow-2xl max-w-[90%] w-[min(1100px,95%)] text-left">
-                <div className="flex flex-col items-center gap-6 md:gap-8">
-                  {/* Decorative rotating ring with server avatar in center */}
-                  <div className="relative flex items-center justify-center">
-                    <div
-                      className="absolute rounded-full -inset-2 md:-inset-3"
-                      style={{
-                        background: 'conic-gradient(from 0deg, rgba(16,185,129,0.15), rgba(99,102,241,0.18), rgba(236,72,153,0.12), rgba(16,185,129,0.15))',
-                        filter: 'blur(14px) saturate(120%)',
-                        transformOrigin: 'center',
-                        animation: 'spin 4s linear infinite',
-                      }}
-                    />
-                    <div className="relative z-10 flex items-center justify-center w-40 h-40 md:w-52 md:h-52 rounded-full bg-[#0b0d12] ring-1 ring-white/6 overflow-hidden">
-                      {selectedIcon ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={selectedIcon} alt={selectedName} className="w-full h-full object-cover" />
-                        ) : (
-                        <div className="flex items-center justify-center w-full h-full text-3xl font-bold text-white/90">
-                          {selectedName.charAt(0)}
-                        </div>
-                      )}
+        return (
+          <div
+            role="status"
+            aria-live="polite"
+            className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#0b0d12]/90 backdrop-blur-2xl"
+          >
+            {/* Arka plan dekorasyon */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#5865F2]/5 blur-3xl" />
+              <div className="absolute top-1/3 left-1/3 w-[300px] h-[300px] rounded-full bg-emerald-500/5 blur-3xl" />
+            </div>
+
+            {/* Kart */}
+            <div className="relative flex flex-col items-center gap-7 px-10 py-10 bg-[#1e1f22]/80 border border-white/8 rounded-[28px] shadow-2xl w-[min(360px,90vw)]">
+
+              {/* Sunucu ikonu */}
+              <div className="relative">
+                {/* Dış parlama */}
+                <div className="absolute -inset-4 rounded-[32px] bg-[#5865F2]/20 blur-2xl animate-pulse" />
+                {/* İkon çerçevesi */}
+                <div className="relative w-24 h-24 rounded-[22px] overflow-hidden ring-2 ring-[#5865F2]/40 shadow-xl">
+                  {selectedIcon ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={selectedIcon} alt={selectedName} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-[#5865F2]/20 flex items-center justify-center text-4xl font-black text-white select-none">
+                      {selectedName.charAt(0)}
                     </div>
-                  </div>
-
-                  <div className="w-full max-w-[56rem] text-center">
-                    <h3 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-emerald-300 via-purple-400 to-pink-400 bg-clip-text text-transparent truncate">{selectedName}</h3>
-                    <p className="text-sm text-white/60 mt-2">Sunucunuza bağlanırken birkaç işlem gerçekleştiriliyor. Bu işlem kısa sürecektir.</p>
-                  </div>
-
+                  )}
                 </div>
               </div>
-            </div>
-          );
-      })()}
 
-      {/* slide-in logo menu - modern style */}
-      <div className={`fixed top-0 left-0 h-full w-[320px] bg-[#181a20] border-r border-[#5865F2]/30 shadow-2xl transform transition-transform duration-300 z-[9989] ${logoMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {/* Overlay for closing menu */}
-        {/* No overlay or blur, only menu panel visible */}
-        <div className="relative h-full flex flex-col">
-          <button className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10" onClick={() => setLogoMenuOpen(false)}>
-            <LuX className="w-5 h-5" />
-          </button>
-          {/* Profile info */}
-          <div className="flex items-center gap-3 p-6 border-b border-white/10">
-            <div className="w-12 h-12 rounded-full bg-[#5865F2] overflow-hidden">
-              <Image src={profile?.avatarUrl || '/gif/cat.gif'} alt="Profile" width={48} height={48} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <div className="text-white font-bold text-lg">{profile?.username || 'Kullanıcı'}</div>
-              <div className="text-xs text-white/40">{server.data?.name || 'Sunucu Seçilmedi'}</div>
+              {/* Metin */}
+              <div className="text-center space-y-1.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/35">
+                  Bağlanıyor
+                </p>
+                <h2 className="text-lg font-bold text-white truncate max-w-[260px]">
+                  {selectedName}
+                </h2>
+              </div>
+
+              {/* Noktalı yükleme göstergesi */}
+              <div className="flex items-center gap-2">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="block w-2 h-2 rounded-full bg-[#5865F2]"
+                    style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
+                  />
+                ))}
+              </div>
+
+              {/* Alt yazı */}
+              <p className="text-xs text-white/30 text-center -mt-2 max-w-[220px] leading-relaxed">
+                Sunucu verileri yükleniyor, lütfen bekleyin.
+              </p>
             </div>
           </div>
-          {/* Menu items */}
-          <nav className="flex-1 flex flex-col gap-2 p-6">
-            <button className={`flex items-center gap-2 px-4 py-3 rounded-xl text-white/90 font-medium transition-all hover:bg-[#5865F2]/20 ${navigation.activeSection === 'overview' ? 'bg-[#5865F2]/10' : ''}`} onClick={() => { navigation.onNavigate('overview'); setLogoMenuOpen(false); }}>
-              <LuHouse className="w-5 h-5 text-[#5865F2]" /> Genel
-            </button>
-            <button className={`flex items-center gap-2 px-4 py-3 rounded-xl text-white/90 font-medium transition-all hover:bg-[#5865F2]/20 ${navigation.activeSection === 'store' ? 'bg-[#5865F2]/10' : ''}`} onClick={() => { navigation.onNavigate('store'); setLogoMenuOpen(false); }}>
-              <LuStore className="w-5 h-5 text-[#10b981]" /> Mağaza
-            </button>
-            <button className={`flex items-center gap-2 px-4 py-3 rounded-xl text-white/90 font-medium transition-all hover:bg-[#5865F2]/20 ${navigation.activeSection === 'mail' ? 'bg-[#5865F2]/10' : ''}`} onClick={() => { navigation.onNavigate('mail'); setLogoMenuOpen(false); }}>
-              <LuMail className="w-5 h-5 text-[#f59e42]" /> Mail
-              {mailUnreadCount > 0 && <span className="ml-2 px-2 py-0.5 rounded-full bg-rose-500 text-white text-xs font-bold">{mailUnreadCount > 99 ? '99+' : mailUnreadCount}</span>}
-            </button>
-            <button className="flex items-center gap-2 px-4 py-3 rounded-xl text-white/90 font-medium transition-all hover:bg-[#5865F2]/20" onClick={settings.onOpenSettings}>
-              <LuSettings className="w-5 h-5 text-[#a78bfa]" /> Ayarlar
-            </button>
-            <button className="flex items-center gap-2 px-4 py-3 rounded-xl text-white/90 font-medium transition-all hover:bg-[#5865F2]/20" onClick={handleLogout}>
-              <LuLogOut className="w-5 h-5 text-[#ef4444]" /> Çıkış
-            </button>
-          </nav>
-          {/* Bakiye info */}
-          {!unauthorized && (
-            <div className="flex items-center justify-center gap-2 p-4 border-t border-white/10">
-              <Image src="/papel.gif" alt="Papel" width={20} height={20} className="h-5 w-5" />
-              <span className="text-sm font-bold text-emerald-400">{walletLoading ? '...' : walletBalance.toFixed(2)}</span>
-            </div>
-          )}
-        </div>
-      </div>
+        );
+      })()}
 
       {/* --- HEADER --- */}
       <header className={`fixed inset-x-0 top-0 flex h-20 items-center gap-4 bg-[#0b0d12]/90 px-3 sm:px-6 backdrop-blur border-b border-white/5 shadow-lg overflow-visible transition-all duration-200 ${
@@ -384,14 +294,14 @@ export default function DashboardHeader({
               </div>
             </div>
 
-            <div 
-              className="relative flex flex-col items-start gap-1 cursor-pointer h-full group"
+            <div
+              className="relative flex flex-col items-start gap-1 cursor-pointer lg:cursor-default h-full group"
               onMouseEnter={() => setIsLogoHovered(true)}
               onMouseLeave={() => setIsLogoHovered(false)}
-              onClick={() => setLogoMenuOpen(open => !open)}
+              onClick={() => { if (typeof window !== 'undefined' && window.innerWidth < 1024) setMobileMenuOpen(open => !open); }}
             >
               <div className="text-white font-black text-xl tracking-tight z-50 relative">DiscoWeb</div>
-              <span className="text-[10px] text-white/50">Tıklayın</span>
+              <span className="text-[10px] text-white/50 lg:hidden">Tıklayın</span>
 
               {/* Sarkan Penguen */}
               <div className={`absolute top-[60%] left-1/2 -translate-x-1/2 z-0 transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) ${
@@ -452,15 +362,6 @@ export default function DashboardHeader({
         {/* --- SAĞ TARAF --- */}
         <div className="flex items-center gap-2 sm:gap-3">
 
-            {/* Hamburger menu button - mobile only */}
-            <button
-              type="button"
-              onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setIsProfileOpen(false); setLogoMenuOpen(false); }}
-              className="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white/70 hover:text-white transition-all"
-            >
-              {mobileMenuOpen ? <LuX className="w-5 h-5" /> : <LuMenu className="w-5 h-5" />}
-            </button>
-            
             {!unauthorized && (
             <div className="flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 shadow-sm gap-2 text-xs sm:text-sm transition-transform hover:scale-105">
                 <Image src="/papel.gif" alt="Papel" width={20} height={20} className="h-5 w-5" />
@@ -468,20 +369,6 @@ export default function DashboardHeader({
                     {walletLoading ? '...' : walletBalance.toFixed(2)}
                 </span>
             </div>
-            )}
-
-            {!unauthorized && (
-            <NotificationsDropdown
-                open={notifications.open}
-                unreadCount={notifications.unreadCount}
-                loading={notifications.loading}
-                notifications={notifications.items}
-                onToggle={notifications.onToggle}
-                onOpenNotification={notifications.onOpenNotification}
-                onOpenModal={notifications.onOpenModal}
-                menuRef={notifications.menuRef}
-                renderNotificationBody={renderNotificationBody}
-            />
             )}
 
             {/* Sunucu seçimi navbar'dan kaldırıldı, sadece profil dropdown'da mevcut */}
@@ -627,8 +514,6 @@ export default function DashboardHeader({
                                           <div className="p-4 text-center text-white/50 text-xs">Sunucu bulunamadı.</div>
                                       ) : (
                                           server.guilds.map((guild) => {
-                                            // Sunucu bilgilerini loglayarak kontrol et
-                                            console.log(`Sunucu: ${guild.name}, isSetup: ${guild.isSetup}`);
                                             const displayIcon = guild.iconUrl ?? fetchedIcons[guild.id] ?? (server.data?.id === guild.id ? server.data.iconUrl : null);
                                             return (
                                               <button
@@ -665,9 +550,8 @@ export default function DashboardHeader({
 
                             </div>
 
-                            {/* Footer (Yükle + Çıkış) */}
+                            {/* Footer (Çıkış) */}
                             <div className="bg-black/20 p-3 border-t border-white/5 mt-auto flex gap-2">
-                                <LoadAccruedButton />
                                 <button
                                   onClick={handleLogout}
                                   className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-red-500/10 hover:bg-red-500 text-xs font-bold text-red-400 hover:text-white transition-all border border-red-500/20 hover:border-transparent group"
@@ -698,9 +582,58 @@ export default function DashboardHeader({
       {/* Mobile Navigation Overlay */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-[9992]">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="absolute top-20 left-3 right-3 bg-[#0f1116]/95 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl overflow-y-auto p-4 max-h-[calc(100vh-6rem)]">
-            <nav className="space-y-1">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setMobileMenuOpen(false)} />
+          <div className="absolute top-20 left-3 right-3 bg-[#13151a]/98 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl overflow-hidden">
+
+            {/* Profil & Sunucu Bilgi Alanı */}
+            {!unauthorized && (
+              <div className="px-4 pt-4 pb-2 space-y-3">
+                {/* Profil Kartı */}
+                {profile && (
+                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#5865F2]/10 via-white/[0.03] to-transparent border border-white/[0.06] p-3.5">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-[#5865F2]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                    <div className="relative flex items-center gap-3">
+                      <div className="relative">
+                        <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#5865F2]/30 ring-offset-2 ring-offset-[#13151a]">
+                          <Image src={profile.avatarUrl || '/gif/cat.gif'} alt="Profile" width={40} height={40} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#13151a]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-semibold text-[13px] truncate leading-tight">{profile.name}</p>
+                        <p className="text-white/35 text-[11px] truncate">@{profile.username}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/15">
+                        <Image src="/papel.gif" alt="Papel" width={14} height={14} className="h-3.5 w-3.5" />
+                        <span className="text-[11px] font-bold text-emerald-400 tabular-nums">
+                          {walletLoading ? '...' : walletBalance.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Aktif Sunucu */}
+                {server.data && (
+                  <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                    {server.data.iconUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={server.data.iconUrl} width={28} height={28} className="rounded-lg object-cover" alt="Server" loading="lazy" />
+                    ) : (
+                      <div className="w-7 h-7 rounded-lg bg-[#5865F2]/15 flex items-center justify-center font-bold text-xs text-white/80">{server.data.name?.charAt(0)}</div>
+                    )}
+                    <p className="text-white/60 text-xs font-medium truncate flex-1">{server.data.name}</p>
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Ayırıcı */}
+            {!unauthorized && <div className="mx-4 border-t border-white/[0.06]" />}
+
+            {/* Navigasyon */}
+            <nav className="px-4 py-3 space-y-1">
               {navItems
                 .filter((item) => (!item.requiresAuth || !unauthorized) && (!item.requiresDeveloper || isDeveloper))
                 .map((item) => (
@@ -716,13 +649,17 @@ export default function DashboardHeader({
                       }
                       setMobileMenuOpen(false);
                     }}
-                    className={`flex w-full items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all ${
+                    className={`flex w-full items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
                       navigation.activeSection === item.key
                         ? 'bg-[#5865F2]/15 text-white border border-[#5865F2]/30'
                         : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
                     }`}
                   >
-                    <span className={navigation.activeSection === item.key ? 'text-[#5865F2]' : ''}>{item.icon}</span>
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                      navigation.activeSection === item.key ? 'bg-[#5865F2]/20 text-[#5865F2]' : 'bg-white/5 text-white/50'
+                    }`}>
+                      {item.icon}
+                    </div>
                     {item.label}
                     {item.key === 'mail' && mailUnreadCount > 0 && (
                       <span className="ml-auto bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -733,17 +670,6 @@ export default function DashboardHeader({
                 ))}
             </nav>
 
-            {/* Wallet balance on mobile */}
-            {!unauthorized && (
-              <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between px-4 py-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
-                <div className="flex items-center gap-2">
-                  <Image src="/papel.gif" alt="Papel" width={20} height={20} className="h-5 w-5" />
-                  <span className="text-sm font-bold text-emerald-400">
-                    {walletLoading ? '...' : walletBalance.toFixed(2)} Papel
-                  </span>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}

@@ -51,6 +51,14 @@ export default function SetupPage() {
   const [roles, setRoles] = useState<DiscordRole[]>([]);
   const [selectedAdminRole, setSelectedAdminRole] = useState<string>('');
   const [selectedVerifyRole, setSelectedVerifyRole] = useState<string>('');
+  const [messageEarnEnabled, setMessageEarnEnabled] = useState(false);
+  const [voiceEarnEnabled, setVoiceEarnEnabled] = useState(false);
+  const [earnPerMessage, setEarnPerMessage] = useState('1');
+  const [earnPerVoiceMinute, setEarnPerVoiceMinute] = useState('0.5');
+  const [tagBonusMessage, setTagBonusMessage] = useState('0');
+  const [tagBonusVoice, setTagBonusVoice] = useState('0');
+  const [boosterBonusMessage, setBoosterBonusMessage] = useState('0');
+  const [boosterBonusVoice, setBoosterBonusVoice] = useState('0');
   const [loading, setLoading] = useState(true);
   const [settingUp, setSettingUp] = useState(false);
   const [setupStarted, setSetupStarted] = useState(false);
@@ -132,12 +140,16 @@ export default function SetupPage() {
           const setupStatus = await setupStatusResponse.json();
           if (setupStatus?.is_setup) {
             setAlreadySetup(true);
-            if (setupStatus.admin_role_id) {
-              setSelectedAdminRole(setupStatus.admin_role_id);
-            }
-            if (setupStatus.verify_role_id) {
-              setSelectedVerifyRole(setupStatus.verify_role_id);
-            }
+            if (setupStatus.admin_role_id) setSelectedAdminRole(setupStatus.admin_role_id);
+            if (setupStatus.verify_role_id) setSelectedVerifyRole(setupStatus.verify_role_id);
+            if (setupStatus.earn_per_message != null) setEarnPerMessage(String(setupStatus.earn_per_message));
+            if (setupStatus.earn_per_voice_minute != null) setEarnPerVoiceMinute(String(setupStatus.earn_per_voice_minute));
+            if (setupStatus.message_earn_enabled) setMessageEarnEnabled(true);
+            if (setupStatus.voice_earn_enabled) setVoiceEarnEnabled(true);
+            if (setupStatus.tag_bonus_message != null) setTagBonusMessage(String(setupStatus.tag_bonus_message));
+            if (setupStatus.tag_bonus_voice != null) setTagBonusVoice(String(setupStatus.tag_bonus_voice));
+            if (setupStatus.booster_bonus_message != null) setBoosterBonusMessage(String(setupStatus.booster_bonus_message));
+            if (setupStatus.booster_bonus_voice != null) setBoosterBonusVoice(String(setupStatus.booster_bonus_voice));
           }
         }
 
@@ -180,6 +192,7 @@ export default function SetupPage() {
       `cd ${guildId}`,
       `env: guild=${guildId} adminRole=${adminRoleName} verifyRole=${verifyRoleName}`,
       `roles: admin="${adminRoleName}" verify="${verifyRoleName}"`,
+      `economy: msg=${messageEarnEnabled ? earnPerMessage : '0'} voice=${voiceEarnEnabled ? earnPerVoiceMinute : '0'}/min`,
       'discord:channels:create',
       'discord:webhooks:create',
       'db:upsert:servers',
@@ -191,7 +204,19 @@ export default function SetupPage() {
       const response = await fetch('/api/setup/server', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ guildId, adminRoleId: selectedAdminRole, verifyRoleId: selectedVerifyRole }),
+        body: JSON.stringify({
+          guildId,
+          adminRoleId: selectedAdminRole,
+          verifyRoleId: selectedVerifyRole,
+          messageEarnEnabled,
+          voiceEarnEnabled,
+          earnPerMessage: messageEarnEnabled ? Number(earnPerMessage) : 0,
+          earnPerVoiceMinute: voiceEarnEnabled ? Number(earnPerVoiceMinute) : 0,
+          tagBonusMessage: Number(tagBonusMessage),
+          tagBonusVoice: Number(tagBonusVoice),
+          boosterBonusMessage: Number(boosterBonusMessage),
+          boosterBonusVoice: Number(boosterBonusVoice),
+        }),
       });
 
       if (!response.ok) {
@@ -427,9 +452,11 @@ export default function SetupPage() {
         </header>
 
         {!setupStarted ? (
-          <section className="mt-6 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-xs text-white/70">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div className="grid gap-3 sm:grid-cols-2 lg:w-[70%]">
+          <div className="mt-6 flex flex-col gap-4">
+            {/* Roller */}
+            <section className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-xs text-white/70">
+              <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-white/40">Roller</p>
+              <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <label className="mb-1 block text-[11px] uppercase tracking-wide text-white/50">Admin Rolü</label>
                   <select
@@ -441,14 +468,10 @@ export default function SetupPage() {
                     {roles
                       .filter(role => {
                         const perms = parseInt(role.permissions);
-                        return (perms & 0x8) ||
-                               (perms & 0x20) ||
-                               (perms & 0x10000000);
+                        return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
                       })
                       .map((role) => (
-                        <option key={role.id} value={role.id}>
-                          {role.name}
-                        </option>
+                        <option key={role.id} value={role.id}>{role.name}</option>
                       ))}
                   </select>
                 </div>
@@ -461,30 +484,166 @@ export default function SetupPage() {
                   >
                     <option value="">Rol seçin...</option>
                     {roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {role.name}
-                      </option>
+                      <option key={role.id} value={role.id}>{role.name}</option>
                     ))}
                   </select>
                 </div>
               </div>
-              <div className="flex w-full items-end justify-end lg:w-auto">
-                <button
-                  onClick={handleSetup}
-                  disabled={settingUp || !selectedAdminRole || !selectedVerifyRole}
-                  className={`inline-flex w-full items-center justify-center gap-2 rounded-lg border px-5 py-2 text-xs font-semibold transition-colors sm:w-auto ${
-                    settingUp
-                      ? 'border-blue-500/40 bg-blue-500/10 text-blue-200/70'
-                      : selectedAdminRole && selectedVerifyRole
-                        ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25'
-                        : 'border-white/10 bg-white/5 text-white/50'
-                  }`}
+            </section>
+
+            {/* Ekonomi Ayarları */}
+            <section className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-xs text-white/70">
+              <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-white/40">Ekonomi Ayarları</p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Mesaj Kazancı */}
+                <div className="rounded-xl border border-white/8 bg-white/3 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] uppercase tracking-wide text-white/50">Mesaj Kazancı</span>
+                    <button
+                      type="button"
+                      onClick={() => setMessageEarnEnabled(v => !v)}
+                      className={`relative h-5 w-9 rounded-full transition-colors ${messageEarnEnabled ? 'bg-emerald-500' : 'bg-white/10'}`}
+                    >
+                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${messageEarnEnabled ? 'left-4' : 'left-0.5'}`} />
+                    </button>
+                  </div>
+                  <div className={`flex items-center gap-2 transition-opacity ${messageEarnEnabled ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={earnPerMessage}
+                      onChange={(e) => setEarnPerMessage(e.target.value)}
+                      className="w-full rounded-lg border border-white/10 bg-gray-900/70 px-3 py-1.5 text-xs text-white focus:border-emerald-500 focus:outline-none"
+                    />
+                    <span className="shrink-0 text-white/40">papel/mesaj</span>
+                  </div>
+                </div>
+
+                {/* Ses Kazancı */}
+                <div className="rounded-xl border border-white/8 bg-white/3 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] uppercase tracking-wide text-white/50">Ses Kazancı</span>
+                    <button
+                      type="button"
+                      onClick={() => setVoiceEarnEnabled(v => !v)}
+                      className={`relative h-5 w-9 rounded-full transition-colors ${voiceEarnEnabled ? 'bg-indigo-500' : 'bg-white/10'}`}
+                    >
+                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${voiceEarnEnabled ? 'left-4' : 'left-0.5'}`} />
+                    </button>
+                  </div>
+                  <div className={`flex items-center gap-2 transition-opacity ${voiceEarnEnabled ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={earnPerVoiceMinute}
+                      onChange={(e) => setEarnPerVoiceMinute(e.target.value)}
+                      className="w-full rounded-lg border border-white/10 bg-gray-900/70 px-3 py-1.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                    />
+                    <span className="shrink-0 text-white/40">papel/dakika</span>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-2 text-[10px] text-white/30">Bu ayarları daha sonra Admin Panel → Kazanç Ayarları'ndan da değiştirebilirsiniz.</p>
+            </section>
+
+            {/* Tag ve Booster Bonus Ayarları */}
+            <section className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-xs text-white/70">
+              <p className="mb-3 text-[11px] uppercase tracking-[0.2em] text-white/40">Tag & Booster Bonusları</p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Tag Bonus Mesaj */}
+                <div className="rounded-xl border border-white/8 bg-white/3 p-3">
+                  <div className="mb-2">
+                    <span className="text-[11px] uppercase tracking-wide text-white/50">Tag — Mesaj Bonusu</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={tagBonusMessage}
+                      onChange={(e) => setTagBonusMessage(e.target.value)}
+                      className="w-full rounded-lg border border-white/10 bg-gray-900/70 px-3 py-1.5 text-xs text-white focus:border-purple-500 focus:outline-none"
+                    />
+                    <span className="shrink-0 text-white/40">papel/mesaj</span>
+                  </div>
+                </div>
+
+                {/* Tag Bonus Ses */}
+                <div className="rounded-xl border border-white/8 bg-white/3 p-3">
+                  <div className="mb-2">
+                    <span className="text-[11px] uppercase tracking-wide text-white/50">Tag — Ses Bonusu</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={tagBonusVoice}
+                      onChange={(e) => setTagBonusVoice(e.target.value)}
+                      className="w-full rounded-lg border border-white/10 bg-gray-900/70 px-3 py-1.5 text-xs text-white focus:border-purple-500 focus:outline-none"
+                    />
+                    <span className="shrink-0 text-white/40">papel/dakika</span>
+                  </div>
+                </div>
+
+                {/* Booster Bonus Mesaj */}
+                <div className="rounded-xl border border-white/8 bg-white/3 p-3">
+                  <div className="mb-2">
+                    <span className="text-[11px] uppercase tracking-wide text-white/50">Booster — Mesaj Bonusu</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={boosterBonusMessage}
+                      onChange={(e) => setBoosterBonusMessage(e.target.value)}
+                      className="w-full rounded-lg border border-white/10 bg-gray-900/70 px-3 py-1.5 text-xs text-white focus:border-pink-500 focus:outline-none"
+                    />
+                    <span className="shrink-0 text-white/40">papel/mesaj</span>
+                  </div>
+                </div>
+
+                {/* Booster Bonus Ses */}
+                <div className="rounded-xl border border-white/8 bg-white/3 p-3">
+                  <div className="mb-2">
+                    <span className="text-[11px] uppercase tracking-wide text-white/50">Booster — Ses Bonusu</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={boosterBonusVoice}
+                      onChange={(e) => setBoosterBonusVoice(e.target.value)}
+                      className="w-full rounded-lg border border-white/10 bg-gray-900/70 px-3 py-1.5 text-xs text-white focus:border-pink-500 focus:outline-none"
+                    />
+                    <span className="shrink-0 text-white/40">papel/dakika</span>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-2 text-[10px] text-white/30">Tag ve Booster sahibi üyeler bu ek bonusları temel kazançlarına ek olarak alır.</p>
+            </section>
+
+            {/* Kurulum Butonu */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleSetup}
+                disabled={settingUp || !selectedAdminRole || !selectedVerifyRole}
+                className={`inline-flex w-full items-center justify-center gap-2 rounded-lg border px-5 py-2 text-xs font-semibold transition-colors sm:w-auto ${
+                  settingUp
+                    ? 'border-blue-500/40 bg-blue-500/10 text-blue-200/70'
+                    : selectedAdminRole && selectedVerifyRole
+                      ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25'
+                      : 'border-white/10 bg-white/5 text-white/50'
+                }`}
                 >
                   {settingUp ? 'Kuruluyor...' : 'Kurulumu Tamamla'}
                 </button>
-              </div>
             </div>
-          </section>
+          </div>
         ) : (
           <section className="mt-6 rounded-2xl border border-white/10 bg-[#0a0d12] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]">
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-3 text-[11px] text-white/50">

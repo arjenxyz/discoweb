@@ -161,6 +161,10 @@ export default function DashboardPage() {
     }
   }, [isSiteMaintenance, maintenanceLoading, router]);
 
+  const refreshMailRef = useRef<() => Promise<void>>();
+  const refreshWalletRef = useRef<() => Promise<void>>();
+  const refreshStoreRef = useRef<() => Promise<void>>();
+
   useEffect(() => {
     const refreshMail = async () => {
       setMailLoading(true);
@@ -179,6 +183,8 @@ export default function DashboardPage() {
       setMailLoading(false);
     };
 
+    refreshMailRef.current = refreshMail;
+
     // initial load
     refreshMail();
 
@@ -187,18 +193,8 @@ export default function DashboardPage() {
     };
     window.addEventListener('mail:refresh', onRefresh as EventListener);
 
-    // Poll for new mail so external events (like admin balance additions)
-    // appear without a full page reload. Interval is intentionally short
-    // for near-real-time UX.
-    const mailInterval = setInterval(() => {
-      if (!unauthorizedRef.current) {
-        void refreshMail();
-      }
-    }, 15000); // 15 seconds
-
     return () => {
       window.removeEventListener('mail:refresh', onRefresh as EventListener);
-      clearInterval(mailInterval);
     };
   }, []);
 
@@ -270,15 +266,13 @@ export default function DashboardPage() {
         const data = (await response.json()) as { balance: number };
         setWalletBalance(Number(data.balance ?? 0));
       } else if (response.status === 401) {
-        // Kullanıcı oturumu sonlanmış, unauthorized yap
         setUnauthorized(true);
       }
-      // Diğer hatalar için sessizce geç
     } catch (error) {
-      // Network hatası durumunda sessizce geç (örneğin offline)
       console.warn('Wallet balance refresh failed:', error);
     }
   };
+  refreshWalletRef.current = refreshWalletBalance;
 
   useEffect(() => {
     const loadWallet = async () => {
@@ -287,23 +281,18 @@ export default function DashboardPage() {
     };
 
     loadWallet();
-
-    // Her 30 saniyede bir bakiye güncellemesi için interval
-    const balanceInterval = setInterval(() => {
-      if (!unauthorized) {
-        refreshWalletBalance();
-      }
-    }, 30000); // 30 saniye
-
-    return () => clearInterval(balanceInterval);
   }, [unauthorized]);
 
   useEffect(() => {
     const loadOverview = async () => {
-      const response = await fetch('/api/member/overview');
-      if (response.ok) {
-        const data = (await response.json()) as OverviewStats;
-        setOverviewStats(data);
+      try {
+        const response = await fetch('/api/member/overview');
+        if (response.ok) {
+          const data = (await response.json()) as OverviewStats;
+          setOverviewStats(data);
+        }
+      } catch (err) {
+        console.warn('Overview yüklenemedi:', err);
       }
       setOverviewLoading(false);
     };
@@ -328,6 +317,7 @@ export default function DashboardPage() {
         const data = await res.json();
         if (isMounted) setAdminOverview(data);
       } catch (err) {
+        console.warn('Admin overview yüklenemedi:', err);
         if (isMounted) setAdminOverview(null);
       }
       if (isMounted) setAdminOverviewLoading(false);
@@ -337,12 +327,17 @@ export default function DashboardPage() {
   }, [headerServer.guilds]);
 
   const refreshStoreItems = async () => {
-    const response = await fetch('/api/member/store');
-    if (response.ok) {
-      const data = (await response.json()) as { items: StoreItem[] };
-      setStoreItems(data.items ?? []);
+    try {
+      const response = await fetch('/api/member/store');
+      if (response.ok) {
+        const data = (await response.json()) as { items: StoreItem[] };
+        setStoreItems(data.items ?? []);
+      }
+    } catch (err) {
+      console.warn('Mağaza ürünleri yüklenemedi:', err);
     }
   };
+  refreshStoreRef.current = refreshStoreItems;
 
   useEffect(() => {
     const loadStoreItems = async () => {
@@ -351,32 +346,23 @@ export default function DashboardPage() {
     };
 
     loadStoreItems();
-
-    // Her 5 dakikada bir mağaza ürünleri güncellemesi
-    const storeInterval = setInterval(() => {
-      if (!unauthorized) {
-        refreshStoreItems();
-      }
-    }, 300000); // 5 dakika
-
-    return () => clearInterval(storeInterval);
   }, [unauthorized]);
 
   useEffect(() => {
+    if (unauthorized) return;
+    let isMounted = true;
+
     const loadServerData = async () => {
-      setHeaderServer(prev => ({ ...prev, loading: true }));
+      if (isMounted) setHeaderServer(prev => ({ ...prev, loading: true }));
       try {
-        // localStorage'dan admin sunucuları al
         const adminGuilds = localStorage.getItem('adminGuilds');
         if (!adminGuilds) {
-          console.log('Dashboard: No adminGuilds found in localStorage');
-          setHeaderServer(prev => ({ ...prev, loading: false }));
+          if (isMounted) setHeaderServer(prev => ({ ...prev, loading: false }));
           return;
         }
 
         try {
           const parsedGuilds = JSON.parse(adminGuilds);
-          console.log('Dashboard: Loaded adminGuilds from localStorage:', parsedGuilds);
           type GuildFromStorage = {
             id: string;
             name: string;
@@ -391,38 +377,50 @@ export default function DashboardPage() {
             isAdmin: guild.isAdmin || false,
             isSetup: guild.isSetup || false,
           }));
-          setHeaderServer(prev => ({
-            ...prev,
-            guilds,
-            loading: false,
-          }));
+          if (isMounted) setHeaderServer(prev => ({ ...prev, guilds, loading: false }));
         } catch (parseError) {
-          console.error('Dashboard: Failed to parse adminGuilds:', parseError);
-          setHeaderServer(prev => ({ ...prev, loading: false }));
+          console.warn('adminGuilds parse hatası:', parseError);
+          if (isMounted) setHeaderServer(prev => ({ ...prev, loading: false }));
         }
       } catch (error) {
-        console.error('Dashboard: Failed to load server data:', error);
-        setHeaderServer(prev => ({ ...prev, loading: false }));
+        console.warn('Server verisi yüklenemedi:', error);
+        if (isMounted) setHeaderServer(prev => ({ ...prev, loading: false }));
       }
     };
 
-    if (!unauthorized) {
-      loadServerData();
-    }
+    loadServerData();
+    return () => { isMounted = false; };
   }, [unauthorized]);
 
   useEffect(() => {
-    const loadSelectedServer = async () => {
-      const response = await fetch('/api/member/server-info');
-      if (response.ok) {
-        const data = (await response.json()) as { id: string; name: string; iconUrl: string | null };
-        setHeaderServer(prev => ({ ...prev, data }));
+    if (unauthorized) return;
+
+    const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
+    const loadSelectedServer = async (attempt = 1): Promise<void> => {
+      try {
+        const response = await fetch('/api/member/server-info');
+        if (response.ok) {
+          const data = (await response.json()) as { id: string; name: string; iconUrl: string | null };
+          setHeaderServer(prev => ({ ...prev, data }));
+          return;
+        }
+        // 401 → zaten unauthorized akışı hallediyor, tekrar deneme
+        if (response.status === 401) return;
+        // Diğer hatalar için 1 kez retry
+        if (attempt < 2) {
+          await sleep(1000);
+          return loadSelectedServer(attempt + 1);
+        }
+      } catch {
+        if (attempt < 2) {
+          await sleep(1000);
+          return loadSelectedServer(attempt + 1);
+        }
       }
     };
 
-    if (!unauthorized) {
-      loadSelectedServer();
-    }
+    void loadSelectedServer();
   }, [unauthorized]);
 
   // Supabase realtime subscriptions for live updates
@@ -470,6 +468,19 @@ export default function DashboardPage() {
       }
     };
   }, [unauthorized, headerServer.data?.id]);
+
+  // Birleşik polling: 15s tick, wallet her 2. tick (30s), store her 20. tick (300s)
+  useEffect(() => {
+    let tick = 0;
+    const interval = setInterval(() => {
+      if (unauthorizedRef.current) return;
+      tick += 1;
+      void refreshMailRef.current?.();
+      if (tick % 2 === 0) void refreshWalletRef.current?.();
+      if (tick % 20 === 0) void refreshStoreRef.current?.();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const loginUrl = useMemo(() => {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? '';
@@ -645,9 +656,8 @@ export default function DashboardPage() {
   const handleAddToCart = (_item: StoreItem) => {
     try {
       cart.addToCart(_item);
-      console.log('add to cart', _item.id);
     } catch (err) {
-      console.error('failed to add to cart', err);
+      console.error('Sepete eklenemedi:', err);
     }
   };
 
@@ -663,8 +673,8 @@ export default function DashboardPage() {
     setDiscountsModalOpen(true);
   };
 
-  const handleApplyPromoCode = async (code: string) => {
-    console.log('Promo code:', code);
+  const handleApplyPromoCode = async (_code: string) => {
+    // TODO: promo code API entegrasyonu
   };
 
   const handlePurchase = async (itemId: string) => {

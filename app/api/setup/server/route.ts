@@ -52,7 +52,7 @@ export async function GET(request: Request) {
 
   const { data: server, error } = await supabase
     .from('servers')
-    .select('discord_id, admin_role_id, verify_role_id, is_setup')
+    .select('discord_id, admin_role_id, verify_role_id, is_setup, earn_per_message, earn_per_voice_minute, message_earn_enabled, voice_earn_enabled, tag_bonus_message, tag_bonus_voice, booster_bonus_message, booster_bonus_voice')
     .eq('discord_id', guildId)
     .maybeSingle();
 
@@ -69,12 +69,20 @@ export async function GET(request: Request) {
     is_setup: !!server.is_setup,
     admin_role_id: server.admin_role_id || null,
     verify_role_id: server.verify_role_id || null,
+    earn_per_message: server.earn_per_message ?? 0,
+    earn_per_voice_minute: server.earn_per_voice_minute ?? 0,
+    message_earn_enabled: server.message_earn_enabled ?? false,
+    voice_earn_enabled: server.voice_earn_enabled ?? false,
+    tag_bonus_message: server.tag_bonus_message ?? 0,
+    tag_bonus_voice: server.tag_bonus_voice ?? 0,
+    booster_bonus_message: server.booster_bonus_message ?? 0,
+    booster_bonus_voice: server.booster_bonus_voice ?? 0,
   });
 }
 
 export async function POST(request: Request) {
   try {
-    const { guildId, adminRoleId, verifyRoleId } = await request.json();
+    const { guildId, adminRoleId, verifyRoleId, messageEarnEnabled, voiceEarnEnabled, earnPerMessage, earnPerVoiceMinute, tagBonusMessage, tagBonusVoice, boosterBonusMessage, boosterBonusVoice } = await request.json();
 
     if (!guildId || !adminRoleId || !verifyRoleId) {
       return NextResponse.json(
@@ -203,6 +211,14 @@ export async function POST(request: Request) {
           admin_role_id: adminRoleId,
           verify_role_id: verifyRoleId,
           is_setup: true,
+          message_earn_enabled: Boolean(messageEarnEnabled),
+          earn_per_message: Number(earnPerMessage ?? 0),
+          voice_earn_enabled: Boolean(voiceEarnEnabled),
+          earn_per_voice_minute: Number(earnPerVoiceMinute ?? 0),
+          tag_bonus_message: Number(tagBonusMessage ?? 0),
+          tag_bonus_voice: Number(tagBonusVoice ?? 0),
+          booster_bonus_message: Number(boosterBonusMessage ?? 0),
+          booster_bonus_voice: Number(boosterBonusVoice ?? 0),
         })
         .eq('discord_id', guildId)
         .select('id, discord_id, admin_role_id, verify_role_id')
@@ -229,6 +245,14 @@ export async function POST(request: Request) {
           admin_role_id: adminRoleId,
           verify_role_id: verifyRoleId,
           is_setup: true,
+          message_earn_enabled: Boolean(messageEarnEnabled),
+          earn_per_message: Number(earnPerMessage ?? 0),
+          voice_earn_enabled: Boolean(voiceEarnEnabled),
+          earn_per_voice_minute: Number(earnPerVoiceMinute ?? 0),
+          tag_bonus_message: Number(tagBonusMessage ?? 0),
+          tag_bonus_voice: Number(tagBonusVoice ?? 0),
+          booster_bonus_message: Number(boosterBonusMessage ?? 0),
+          booster_bonus_voice: Number(boosterBonusVoice ?? 0),
         })
         .select('id, discord_id, admin_role_id, verify_role_id')
         .single();
