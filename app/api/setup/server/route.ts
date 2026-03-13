@@ -82,7 +82,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { guildId, adminRoleId, verifyRoleId, messageEarnEnabled, voiceEarnEnabled, earnPerMessage, earnPerVoiceMinute, tagBonusMessage, tagBonusVoice, boosterBonusMessage, boosterBonusVoice } = await request.json();
+    const { guildId, adminRoleId, verifyRoleId, messageEarnEnabled, voiceEarnEnabled, earnPerMessage, earnPerVoiceMinute, tagBonusMessage, tagBonusVoice, boosterBonusMessage, boosterBonusVoice, approvalThreshold } = await request.json();
 
     if (!guildId || !adminRoleId || !verifyRoleId) {
       return NextResponse.json(
@@ -211,6 +211,7 @@ export async function POST(request: Request) {
           admin_role_id: adminRoleId,
           verify_role_id: verifyRoleId,
           is_setup: true,
+          tag_id: guildId,
           message_earn_enabled: Boolean(messageEarnEnabled),
           earn_per_message: Number(earnPerMessage ?? 0),
           voice_earn_enabled: Boolean(voiceEarnEnabled),
@@ -219,6 +220,7 @@ export async function POST(request: Request) {
           tag_bonus_voice: Number(tagBonusVoice ?? 0),
           booster_bonus_message: Number(boosterBonusMessage ?? 0),
           booster_bonus_voice: Number(boosterBonusVoice ?? 0),
+          approval_threshold: Math.min(100, Math.max(50, Number(approvalThreshold ?? 80))),
         })
         .eq('discord_id', guildId)
         .select('id, discord_id, admin_role_id, verify_role_id')
@@ -245,6 +247,7 @@ export async function POST(request: Request) {
           admin_role_id: adminRoleId,
           verify_role_id: verifyRoleId,
           is_setup: true,
+          tag_id: guildId,
           message_earn_enabled: Boolean(messageEarnEnabled),
           earn_per_message: Number(earnPerMessage ?? 0),
           voice_earn_enabled: Boolean(voiceEarnEnabled),
@@ -253,6 +256,7 @@ export async function POST(request: Request) {
           tag_bonus_voice: Number(tagBonusVoice ?? 0),
           booster_bonus_message: Number(boosterBonusMessage ?? 0),
           booster_bonus_voice: Number(boosterBonusVoice ?? 0),
+          approval_threshold: Math.min(100, Math.max(50, Number(approvalThreshold ?? 80))),
         })
         .select('id, discord_id, admin_role_id, verify_role_id')
         .single();
