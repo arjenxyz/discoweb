@@ -50,6 +50,8 @@ export default function DashboardPage() {
   const [storeItemsLoading, setStoreItemsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<Section>('overview');
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isDeveloperRole, setIsDeveloperRole] = useState(false);
   const [searchParams, setSearchParams] = useState<URLSearchParams | null>(null);
 
   useEffect(() => {
@@ -62,6 +64,21 @@ export default function DashboardPage() {
       }
     } catch {}
   }, []);
+  // Rol tespiti (panel switcher için)
+  useEffect(() => {
+    const checkRoles = async () => {
+      try {
+        const [adminRes, devRes] = await Promise.all([
+          fetch('/api/admin/profile', { credentials: 'include', cache: 'no-store' }),
+          fetch('/api/developer/check-access', { credentials: 'include', cache: 'no-store' }),
+        ]);
+        if (adminRes.ok) setIsAdmin(true);
+        if (devRes.ok) setIsDeveloperRole(true);
+      } catch { /* ignore */ }
+    };
+    checkRoles();
+  }, []);
+
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notificationsModalOpen, setNotificationsModalOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -751,7 +768,8 @@ export default function DashboardPage() {
           walletLoading={walletLoading}
           walletBalance={walletBalance}
           loginUrl={loginUrl}
-          isDeveloper={false}
+          isDeveloper={isDeveloperRole}
+          isAdmin={isAdmin}
           server={headerServer}
           navigation={{
             activeSection: effectiveSection,

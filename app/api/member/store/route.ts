@@ -1,13 +1,15 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { discordFetch } from '@/lib/discordRest';
-import { requireSessionUser } from '@/lib/auth';
+import { getSessionUserId, requireSessionUser } from '@/lib/auth';
+import { logWebEvent } from '@/lib/serverLogger';
+import { cleanupExpiredRolesForUser } from '@/lib/roleCleanup';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
-const getSupabase = () => {
+const getSupabase = (): SupabaseClient | null => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!supabaseUrl || !serviceRoleKey) {
@@ -15,6 +17,7 @@ const getSupabase = () => {
   }
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 };
+
 
 const getSelectedGuildId = async (): Promise<string> => {
   const cookieStore = await cookies();
@@ -35,6 +38,7 @@ export async function GET() {
   if (!supabase) {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
+  const supabaseClient = supabase as SupabaseClient;
 
   const selectedGuildId = await getSelectedGuildId();
 
@@ -47,6 +51,12 @@ export async function GET() {
 
   if (serverError || !server) {
     return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
+  }
+
+  // Clean up expired store roles for this user (if logged in) even if bot is offline.
+  const sessionUserId = await getSessionUserId();
+  if (sessionUserId) {
+    await cleanupExpiredRolesForUser(supabaseClient, server.id, selectedGuildId, sessionUserId, process.env.DISCORD_BOT_TOKEN);
   }
 
   const now = new Date().toISOString();
@@ -92,6 +102,7 @@ export async function POST(request: Request) {
   if (!supabase) {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
+  const supabaseClient = supabase as SupabaseClient;
 
   const session = await requireSessionUser(request);
   if (!session.ok) {
@@ -112,6 +123,9 @@ export async function POST(request: Request) {
   if (!server) {
     return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
   }
+
+  // Cleanup expired roles for this user (in case bot is offline)
+  await cleanupExpiredRolesForUser(supabaseClient, server.id, selectedGuildId, userId, process.env.DISCORD_BOT_TOKEN);
 
   console.log('Server found:', server.id);
 
@@ -225,13 +239,13 @@ export async function POST(request: Request) {
       duration_days: orderItems[0]?.duration_days,
       status: 'pending',
     })
-    .select('id')
+    .select('id, role_id, duration_days')
     .single();
 
-  if (orderError) {
+  if (orderError || !order) {
     console.error('Order creation failed:', orderError);
     // Return error details temporarily to help debugging schema/constraint issues
-    return NextResponse.json({ error: 'order_failed', details: orderError.message ?? orderError }, { status: 500 });
+    return NextResponse.json({ error: 'order_failed', details: orderError?.message ?? orderError ?? 'unknown' }, { status: 500 });
   }
 
   // --- ROLE ASSIGNMENT: directly attempt via Discord REST API (works even if bot is offline) ---
@@ -239,7 +253,7 @@ export async function POST(request: Request) {
   try {
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) {
-      await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'missing_bot_token' }).eq('id', order?.id);
+      await supabaseClient.from('store_orders').update({ status: 'failed', failure_reason: 'missing_bot_token' }).eq('id', order?.id);
       return NextResponse.json({ error: 'missing_bot_token' }, { status: 500 });
     }
 
@@ -256,7 +270,7 @@ export async function POST(request: Request) {
       if (!assignRes.ok) {
         const respText = await assignRes.text().catch(() => '');
         console.error('Role assign failed:', { status: assignRes.status, body: respText, roleId: it.role_id });
-        await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'role_assign_failed' }).eq('id', order?.id);
+        await supabaseClient.from('store_orders').update({ status: 'failed', failure_reason: 'role_assign_failed' }).eq('id', order?.id);
 
         // Send failure notification mail
         try {
@@ -266,7 +280,7 @@ export async function POST(request: Request) {
           const { refundButtonHtml } = await import('@/lib/mailHelpers');
           const buttonHtml = refundButtonHtml('role_assign_failed', refundUrl);
           const html = `<!doctype html><html><head><meta charset="utf-8"></head><body style="background:#0f1113;color:#e6eef8;font-family:Inter,system-ui,Arial;padding:20px"><div style="max-width:600px;margin:0 auto;background:#0b0c0d;padding:20px;border-radius:12px"><div style="display:flex;gap:12px;align-items:center"><div style="width:48px;height:48;border-radius:10px;background:linear-gradient(135deg,#5865F2,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff">FOX</div><div><div style="font-weight:800">Sistem Raporu: İşlem Kesintisi</div><div style="color:#b9bbbe;font-size:13px">DiscoWeb</div></div></div><div style="margin-top:12px;background:#111214;padding:14px;border-radius:10px;line-height:1.6"><p>Satın alma teslimatı sırasında bir hata oluştu. Ödeme düşülmeden önce rol verme işlemi başarısız oldu.</p><div style="font-family:Courier New,monospace;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;margin-top:12px">Durum: <strong>FAILED_TO_DELIVER</strong><br>HTTP: ${assignRes.status}</div><p style="margin-top:12px">Aşağıdaki butonu kullanarak iade talebini başlatabilirsin.</p><div style="margin-top:10px">${buttonHtml}</div><p style="margin-top:12px;color:#9aa0a6">Yaşanan aksaklık için üzgünüz.</p></div></div></body></html>`;
-          await supabase.from('system_mails').insert({ guild_id: selectedGuildId, user_id: userId, title: 'Sistem Raporu: İşlem Kesintisi', body: html, category: 'system', status: 'published', author_name: 'DiscoWeb Sistem', created_at: new Date().toISOString() });
+          await supabaseClient.from('system_mails').insert({ guild_id: selectedGuildId, user_id: userId, title: 'Sistem Raporu: İşlem Kesintisi', body: html, category: 'system', status: 'published', author_name: 'DiscoWeb Sistem', created_at: new Date().toISOString() });
         } catch (e) {
           console.warn('Failed to insert delivery-failure mail', e);
         }
@@ -278,7 +292,7 @@ export async function POST(request: Request) {
     }
   } catch (err) {
     console.error('Role assignment error:', err);
-    await supabase.from('store_orders').update({ status: 'failed', failure_reason: 'role_assign_error' }).eq('id', order?.id);
+    await supabaseClient.from('store_orders').update({ status: 'failed', failure_reason: 'role_assign_error' }).eq('id', order?.id);
     return NextResponse.json({ error: 'role_assign_error', message: 'Rol verme sırasında hata oluştu.' }, { status: 500 });
   }
 
@@ -307,12 +321,51 @@ export async function POST(request: Request) {
       console.warn('Failed to rollback roles after wallet failure', e);
     }
 
-    await supabase.from('store_orders').delete().eq('id', order?.id);
+    await supabaseClient.from('store_orders').delete().eq('id', order?.id);
     return NextResponse.json({ error: 'insufficient_balance', required: total, available: wallet.balance }, { status: 400 });
   }
 
-  // Mark order as paid
-  await supabase.from('store_orders').update({ status: 'paid', applied_at: new Date().toISOString() }).eq('id', order.id);
+  // Mark order as paid and calculate expires_at so the system can revoke role even if bot is offline
+  const nowIso = new Date().toISOString();
+
+  let expiresAt: string | null = null;
+  if (order.duration_days !== 0 && order.role_id) {
+    // If there is an existing permanent order, keep it permanent.
+    const { data: permanentOrder } = await supabase
+      .from('store_orders')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('role_id', order.role_id)
+      .eq('status', 'paid')
+      .is('revoked_at', null)
+      .is('expires_at', null)
+      .neq('id', order.id)
+      .limit(1);
+
+    if (permanentOrder?.length) {
+      expiresAt = null;
+    } else {
+      const { data: activeOrders } = await supabase
+        .from('store_orders')
+        .select('expires_at')
+        .eq('user_id', userId)
+        .eq('role_id', order.role_id)
+        .eq('status', 'paid')
+        .is('revoked_at', null)
+        .gt('expires_at', nowIso)
+        .neq('id', order.id)
+        .order('expires_at', { ascending: false })
+        .limit(1);
+
+      const baseIso = activeOrders?.length ? activeOrders[0].expires_at : nowIso;
+      expiresAt = new Date(Date.parse(baseIso) + order.duration_days * 60000).toISOString();
+    }
+  }
+
+  await supabase
+    .from('store_orders')
+    .update({ status: 'paid', applied_at: nowIso, expires_at: expiresAt })
+    .eq('id', order.id);
 
   // Fetch updated order for mail
   const { data: updatedOrder } = await supabase
@@ -327,7 +380,7 @@ export async function POST(request: Request) {
   }
 
   // Add wallet ledger entry
-  await supabase.from('wallet_ledger').insert({
+  await supabaseClient.from('wallet_ledger').insert({
     user_id: userId,
     guild_id: selectedGuildId,
     amount: -total,
@@ -341,11 +394,23 @@ export async function POST(request: Request) {
 
   // Mark discount as used if applied
   if (discountId) {
-    await supabase.from('discount_usages').insert({
+    await supabaseClient.from('discount_usages').insert({
       discount_id: discountId,
       user_id: userId,
       order_id: order.id,
     });
+    // used_count artır
+    const { data: discData } = await supabaseClient
+      .from('store_discounts')
+      .select('used_count')
+      .eq('id', discountId)
+      .single();
+    if (discData) {
+      await supabaseClient
+        .from('store_discounts')
+        .update({ used_count: ((discData as any).used_count ?? 0) + 1 })
+        .eq('id', discountId);
+    }
   }
 
   // Send professional receipt to notifications
@@ -399,7 +464,7 @@ export async function POST(request: Request) {
       purchase_date: updatedOrder.applied_at ?? updatedOrder.created_at,
     };
 
-    const { error: mailErr } = await supabase.from('system_mails').insert({
+    const { error: mailErr } = await supabaseClient.from('system_mails').insert({
       guild_id: selectedGuildId,
       user_id: userId,
       title: `Sipariş Onayı`,
@@ -421,6 +486,21 @@ export async function POST(request: Request) {
   } catch {
     console.error('Receipt notification failed');
   }
+
+  // Discord log kanalına bildir
+  await logWebEvent(request, {
+    event: 'store_purchase',
+    status: 'success',
+    userId,
+    guildId: selectedGuildId,
+    metadata: {
+      orderId: order.id,
+      itemCount: orderItems.length,
+      total: Number(total),
+      discount: Number(discountAmount ?? 0),
+      items: orderItems.map(it => ({ title: it.title, qty: it.qty, price: it.price })),
+    },
+  });
 
   return NextResponse.json({ success: true, orderId: order.id, newBalance: updatedWallet.balance, mailInserted, mailInsertError });
 }

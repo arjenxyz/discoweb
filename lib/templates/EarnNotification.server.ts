@@ -1,18 +1,17 @@
 // ============================================
-// SYSTEM NOTIFICATION TEMPLATES
-// Dark theme compatible — matches mail modal UI
+// EKONOMİ BİLDİRİM TEMPLATE'LERİ
+// Dark theme uyumlu — mail modal UI ile uyumlu
 // ============================================
 
 export type ChangeItem = {
-  type: 'narrative' | 'tech';
+  type: 'narrative' | 'tech' | 'toggle';
   text: string;
-  dir?: 'up' | 'down' | 'same'
+  dir?: 'up' | 'down' | 'same';
+  enabled?: boolean; // toggle tipi için
 };
 
-const escText = (s: string) => String(s).replace(/\r/g, '').replace(/\n/g, '\n');
-
 // ============================================
-// PLAIN TEXT (For Logs & Simple Clients)
+// PLAIN TEXT
 // ============================================
 
 export function renderEarnNotificationPlainText(
@@ -26,127 +25,160 @@ export function renderEarnNotificationPlainText(
   ];
 
   const lines: string[] = [];
-
   lines.push('EKONOMİ GÜNCELLEME RAPORU');
-  lines.push('==================================================');
+  lines.push('═'.repeat(50));
   lines.push(`Tarih: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}`);
-  lines.push('Durum: Tamamlandı');
   lines.push('');
 
   for (const cat of CATEGORY_META) {
     const items = changeGroups[cat.key] ?? [];
-    if (!items || items.length === 0) continue;
+    if (!items.length) continue;
 
     lines.push(`[ ${cat.label} ]`);
-    lines.push('-'.repeat(cat.label.length + 4));
+    lines.push('─'.repeat(cat.label.length + 4));
 
     for (let i = 0; i < items.length; i++) {
       const it = items[i];
       const next = items[i + 1];
 
-      if (it.type === 'narrative' && next && next.type === 'tech') {
-        const arrow = next.dir === 'up' ? '(+ Artış)' : next.dir === 'down' ? '(- Azalış)' : '(~ Değişim)';
-        lines.push(`* ${escText(it.text)}`);
-        lines.push(`  └─ ${escText(next.text)} ${arrow}`);
+      if (it.type === 'toggle') {
+        lines.push(`  ${it.enabled ? '✅ AKTİF' : '❌ DEVRE DIŞI'} — ${it.text}`);
+      } else if (it.type === 'narrative' && next?.type === 'tech') {
+        const arrow = next.dir === 'up' ? '▲ Artış' : next.dir === 'down' ? '▼ Azalış' : '● Sabit';
+        lines.push(`  ${it.text}`);
+        lines.push(`    └─ ${next.text} (${arrow})`);
         i++;
       } else if (it.type === 'narrative') {
-        lines.push(`* ${escText(it.text)}`);
+        lines.push(`  ${it.text}`);
       } else {
         const arrow = it.dir === 'up' ? '▲' : it.dir === 'down' ? '▼' : '●';
-        lines.push(`  ${arrow} ${escText(it.text)}`);
+        lines.push(`    ${arrow} ${it.text}`);
       }
     }
     lines.push('');
   }
 
-  lines.push('==================================================');
-  lines.push(reason || 'Sistem tarafından otomatik olarak oluşturuldu.');
-
+  lines.push('═'.repeat(50));
+  if (reason) lines.push(reason);
   return lines.join('\n');
 }
 
 
 // ============================================
-// HTML (Dark theme — matches mail modal)
+// HTML (Dark theme)
 // ============================================
 
 export function renderEarnNotificationHTML(
   changeGroups: Record<string, ChangeItem[]>,
   reason?: string
 ): string {
-  const CATEGORY_META: { key: string; label: string; color: string; icon: string }[] = [
-    { key: 'general', label: 'Genel Ekonomi', color: '#818cf8', icon: '📊' },
-    { key: 'tag', label: 'Tag Bonusları', color: '#34d399', icon: '🏷️' },
-    { key: 'boost', label: 'Boost Avantajları', color: '#a78bfa', icon: '🚀' },
+  const CATEGORY_META: { key: string; label: string; accent: string; icon: string; bg: string }[] = [
+    { key: 'general', label: 'Genel Ekonomi', accent: '#818cf8', icon: '📊', bg: 'rgba(129,140,248,0.08)' },
+    { key: 'tag', label: 'Tag Bonusları', accent: '#34d399', icon: '🏷️', bg: 'rgba(52,211,153,0.08)' },
+    { key: 'boost', label: 'Boost Avantajları', accent: '#a78bfa', icon: '🚀', bg: 'rgba(167,139,250,0.08)' },
   ];
 
-  const esc = (s: string) => String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  const esc = (s: string) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const p: string[] = [];
 
-  const parts: string[] = [];
+  p.push('<div style="font-family: inherit; line-height: 1.6;">');
 
-  // Container — no background/color, inherits from modal
-  parts.push('<div class="earn-notif">');
+  // Başlık açıklaması
+  p.push('<p style="margin: 0 0 20px; font-size: 13px; color: rgba(255,255,255,0.5);">Sunucu ekonomi ayarları güncellendi. Değişiklik detayları aşağıda.</p>');
 
-  // Intro text
-  parts.push('<p style="margin: 0 0 20px 0; font-size: 14px; opacity: 0.7;">Sunucu ekonomi ayarları güncellendi. Değişiklik detayları aşağıda listelenmiştir.</p>');
-
-  // Categories
   for (const cat of CATEGORY_META) {
     const items = changeGroups[cat.key] ?? [];
-    if (!items || items.length === 0) continue;
+    if (!items.length) continue;
 
-    // Category header
-    parts.push(`<div style="margin-bottom: 20px;">`);
-    parts.push(`<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">`);
-    parts.push(`<span style="font-size: 14px;">${cat.icon}</span>`);
-    parts.push(`<span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5;">${esc(cat.label)}</span>`);
-    parts.push(`</div>`);
+    // Kategori kartı
+    p.push(`<div style="margin-bottom: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">`);
 
-    // Items
+    // Kategori başlığı
+    p.push(`<div style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: ${cat.bg}; border-bottom: 1px solid rgba(255,255,255,0.04);">`);
+    p.push(`<span style="font-size: 18px; line-height: 1;">${cat.icon}</span>`);
+    p.push(`<span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: ${cat.accent};">${esc(cat.label)}</span>`);
+    p.push(`</div>`);
+
+    // İçerik
+    p.push(`<div style="padding: 12px 16px;">`);
+
     for (let i = 0; i < items.length; i++) {
       const it = items[i];
       const next = items[i + 1];
 
-      if (it.type === 'narrative' && next && next.type === 'tech') {
-        const dirColor = next.dir === 'up' ? '#34d399' : next.dir === 'down' ? '#f87171' : '#9ca3af';
-        const dirIcon = next.dir === 'up' ? '▲' : next.dir === 'down' ? '▼' : '●';
+      // Toggle (açma/kapama)
+      if (it.type === 'toggle') {
+        const statusColor = it.enabled ? '#34d399' : '#f87171';
+        const statusBg = it.enabled ? 'rgba(52,211,153,0.1)' : 'rgba(248,113,113,0.1)';
+        const statusBorder = it.enabled ? 'rgba(52,211,153,0.2)' : 'rgba(248,113,113,0.2)';
+        const statusText = it.enabled ? 'AKTİF' : 'DEVRE DIŞI';
+        const statusIcon = it.enabled ? '✅' : '❌';
 
-        parts.push(`<div style="margin-bottom: 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);">`);
-        parts.push(`<div style="font-size: 13px; font-weight: 500; margin-bottom: 6px;">${esc(it.text)}</div>`);
-        parts.push(`<div style="font-family: monospace; font-size: 12px; color: ${dirColor};">`);
-        parts.push(`<span style="margin-right: 6px;">${dirIcon}</span>${esc(next.text).replace(/->/g, '→')}`);
-        parts.push(`</div>`);
-        parts.push(`</div>`);
-        i++;
-      } else if (it.type === 'narrative') {
-        parts.push(`<div style="margin-bottom: 8px; font-size: 13px; padding-left: 4px;">• ${esc(it.text)}</div>`);
-      } else {
-        const dirColor = it.dir === 'up' ? '#34d399' : it.dir === 'down' ? '#f87171' : '#9ca3af';
-        const dirIcon = it.dir === 'up' ? '▲' : it.dir === 'down' ? '▼' : '●';
-        parts.push(`<div style="margin-bottom: 8px; font-family: monospace; font-size: 12px; color: ${dirColor}; padding-left: 4px;">`);
-        parts.push(`<span style="margin-right: 6px;">${dirIcon}</span>${esc(it.text).replace(/->/g, '→')}`);
-        parts.push(`</div>`);
+        p.push(`<div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; margin-bottom: 8px; border-radius: 10px; background: ${statusBg}; border: 1px solid ${statusBorder};">`);
+        p.push(`<span style="font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8);">${statusIcon} ${esc(it.text)}</span>`);
+        p.push(`<span style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: ${statusColor}; padding: 3px 10px; border-radius: 6px; background: ${statusBg};">${statusText}</span>`);
+        p.push(`</div>`);
+        continue;
+      }
+
+      // Değer değişikliği (narrative + tech çifti)
+      if (it.type === 'narrative' && next?.type === 'tech') {
+        const dirColor = next.dir === 'up' ? '#34d399' : next.dir === 'down' ? '#f87171' : '#6b7280';
+        const dirBg = next.dir === 'up' ? 'rgba(52,211,153,0.06)' : next.dir === 'down' ? 'rgba(248,113,113,0.06)' : 'rgba(107,114,128,0.06)';
+        const dirBorder = next.dir === 'up' ? 'rgba(52,211,153,0.12)' : next.dir === 'down' ? 'rgba(248,113,113,0.12)' : 'rgba(107,114,128,0.12)';
+        const dirIcon = next.dir === 'up' ? '↑' : next.dir === 'down' ? '↓' : '→';
+
+        // Değer bilgisini parse et: "Mesaj Kazancı: 1.00 -> 0.20 Papel"
+        const techText = next.text;
+        const parts = techText.match(/^(.+?):\s*([\d.]+)\s*->\s*([\d.]+)\s*(.+)$/);
+
+        p.push(`<div style="margin-bottom: 8px; border-radius: 10px; border: 1px solid ${dirBorder}; overflow: hidden;">`);
+
+        // Üst: Label + değişim yönü
+        p.push(`<div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: ${dirBg};">`);
+        p.push(`<span style="font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85);">${parts ? esc(parts[1]) : esc(it.text)}</span>`);
+        p.push(`<span style="font-size: 11px; font-weight: 700; color: ${dirColor};">${dirIcon} ${next.dir === 'up' ? 'Artış' : next.dir === 'down' ? 'Azalış' : 'Sabit'}</span>`);
+        p.push(`</div>`);
+
+        // Alt: Eski → Yeni değer
+        if (parts) {
+          p.push(`<div style="display: flex; align-items: center; gap: 8px; padding: 10px 14px;">`);
+          p.push(`<span style="font-family: ui-monospace, monospace; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.35); text-decoration: line-through;">${esc(parts[2])}</span>`);
+          p.push(`<span style="font-size: 14px; color: rgba(255,255,255,0.2);">→</span>`);
+          p.push(`<span style="font-family: ui-monospace, monospace; font-size: 15px; font-weight: 800; color: ${dirColor};">${esc(parts[3])}</span>`);
+          p.push(`<span style="font-size: 11px; color: rgba(255,255,255,0.3); margin-left: 2px;">${esc(parts[4])}</span>`);
+          p.push(`</div>`);
+        } else {
+          p.push(`<div style="padding: 10px 14px; font-family: ui-monospace, monospace; font-size: 12px; color: ${dirColor};">${esc(techText).replace(/->/g, '→')}</div>`);
+        }
+
+        p.push(`</div>`);
+        i++; // next'i atla
+        continue;
+      }
+
+      // Tek başına narrative
+      if (it.type === 'narrative') {
+        p.push(`<div style="padding: 6px 0; font-size: 13px; color: rgba(255,255,255,0.6);">• ${esc(it.text)}</div>`);
       }
     }
-    parts.push(`</div>`);
+
+    p.push(`</div>`); // padding div
+    p.push(`</div>`); // kategori kartı
   }
 
-  // Footer note
+  // Footer
   if (reason) {
-    parts.push(`<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 12px; opacity: 0.4;">`);
-    parts.push(`${esc(reason)}`);
-    parts.push(`</div>`);
+    p.push(`<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 11px; color: rgba(255,255,255,0.25);">`);
+    p.push(esc(reason));
+    p.push(`</div>`);
   }
 
-  parts.push('</div>');
-
-  return parts.join('\n');
+  p.push('</div>');
+  return p.join('\n');
 }
 
-// Backwards-compatible default export
+// Default export
 export function renderEarnNotification(changeGroups: Record<string, ChangeItem[]>, reason?: string) {
   return renderEarnNotificationHTML(changeGroups, reason);
 }

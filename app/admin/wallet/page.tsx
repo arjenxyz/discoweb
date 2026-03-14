@@ -276,11 +276,13 @@ export default function AdminWalletPage() {
       setSuccess('İşlem başarılı.');
     }
 
-    // Mail gönderme işlemi
-    if (scope === 'user') {
-      await sendWalletChangeMail(userId.trim(), mode, value, message.trim(), 'user');
-    } else if (scope === 'all') {
-      await sendWalletChangeMail(null, mode, value, message.trim(), 'all');
+    // Mail gönderme işlemi (sadece papel düşme için - ekleme API tarafından reward mail olarak gönderiliyor)
+    if (mode === 'remove') {
+      if (scope === 'user') {
+        await sendWalletChangeMail(userId.trim(), mode, value, message.trim(), 'user');
+      } else if (scope === 'all') {
+        await sendWalletChangeMail(null, mode, value, message.trim(), 'all');
+      }
     }
 
     setAmount('');

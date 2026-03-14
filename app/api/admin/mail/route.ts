@@ -125,20 +125,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'missing_required_fields' }, { status: 400 });
     }
 
-    // Hedef kullanıcının sunucuda olup olmadığını kontrol et (userId varsa)
-    if (userId) {
-      const { data: targetMemberData, error: targetMemberError } = await supabase
-        .from('guild_members')
-        .select('user_id')
-        .eq('guild_id', selectedGuildId)
-        .eq('user_id', userId)
-        .single();
-
-      if (targetMemberError || !targetMemberData) {
-        return NextResponse.json({ error: 'user_not_in_server' }, { status: 404 });
-      }
-    }
-
     // Mail gönder
     const { data, error } = await supabase
       .from('system_mails')

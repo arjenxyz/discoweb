@@ -218,38 +218,44 @@ export default function MailSection({
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none" />
 
       {/* HEADER */}
-      <div className="relative z-10 flex-shrink-0 flex items-center justify-between border-b border-white/10 px-4 py-3 md:px-8 md:py-5 bg-white/[0.02]">
+      <div className="relative z-10 flex-shrink-0 flex items-center justify-between border-b border-white/[0.06] px-3 py-2.5 md:px-8 md:py-4 bg-white/[0.02]">
         <div className="flex items-center gap-2 md:gap-4">
           {onBack && (
             <button
               type="button"
               onClick={onBack}
-              className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/70 transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
+              className="flex items-center justify-center w-8 h-8 md:w-auto md:h-auto md:gap-1.5 md:px-3 md:py-2 rounded-xl border border-white/[0.08] bg-white/[0.04] text-xs font-bold text-white/60 transition-all hover:border-white/[0.15] hover:bg-white/[0.08] hover:text-white"
             >
-              <LuChevronLeft className="w-4 h-4" /> <span className="hidden sm:inline">Geri</span>
+              <LuChevronLeft className="w-4 h-4" /> <span className="hidden md:inline">Geri</span>
             </button>
           )}
           {/* Mobile sidebar toggle */}
           <button
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10 transition-all"
+            className="md:hidden flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[11px] font-semibold text-white/60 hover:bg-white/[0.08] transition-all"
           >
-            <LuInbox className="w-4 h-4" /> Klasörler
+            <LuInbox className="w-3.5 h-3.5" /> Klasörler
           </button>
-          <div className="hidden md:block p-3 bg-gradient-to-br from-[#5865F2] to-indigo-600 rounded-2xl shadow-lg shadow-[#5865F2]/20">
-            <LuMail className="w-6 h-6 text-white" />
+          <div className="hidden md:block p-2.5 bg-gradient-to-br from-[#5865F2] to-indigo-600 rounded-xl shadow-lg shadow-[#5865F2]/20">
+            <LuMail className="w-5 h-5 text-white" />
           </div>
           <div className="hidden md:block">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#5865F2]">İletişim</p>
-            <h2 className="text-xl font-bold text-white tracking-tight">Posta Kutusu</h2>
+            <h2 className="text-lg font-bold text-white tracking-tight">Posta Kutusu</h2>
           </div>
+          {/* Mobile title */}
+          <span className="md:hidden text-sm font-bold text-white">Posta</span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs font-medium text-white/60">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            {countsTotal.all ?? 0} <span className="hidden sm:inline">Mesaj &middot;</span> {countsUnread.all ?? 0} <span className="hidden sm:inline">Okunmamış</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 rounded-lg border border-white/[0.06] bg-black/20 px-2 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-medium text-white/50">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>{countsTotal.all ?? 0}</span>
+            <span className="hidden sm:inline">Mesaj</span>
+            <span className="text-white/20">&middot;</span>
+            <span className="text-[#5865F2]">{countsUnread.all ?? 0}</span>
+            <span className="hidden sm:inline">Okunmamış</span>
           </div>
         </div>
       </div>
@@ -266,9 +272,9 @@ export default function MailSection({
         )}
         <div className={`${
           isMobile
-            ? `fixed top-0 left-0 h-full w-72 z-50 transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
-            : 'w-72'
-        } flex flex-col border-r border-white/10 bg-[#0b0d12] backdrop-blur-md min-h-0`}>
+            ? `fixed top-0 left-0 h-full w-64 z-50 transform transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
+            : 'w-64'
+        } flex flex-col border-r border-white/[0.06] bg-[#0b0d12]/98 backdrop-blur-2xl min-h-0`}>
           <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4 custom-scrollbar">
             <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-4 px-2">Klasörler</p>
             <div className="space-y-1">
@@ -343,12 +349,12 @@ export default function MailSection({
           </div>
 
           {/* Toolbar */}
-          <div className="flex-shrink-0 px-3 md:px-6 py-3 border-b border-white/5 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {/* Select All */}
+          <div className="flex-shrink-0 px-3 md:px-6 py-2 md:py-3 border-b border-white/[0.04] flex items-center justify-between">
+            <div className="flex items-center gap-1.5 md:gap-2">
+              {/* Select All - hidden on mobile */}
               <button
                 onClick={selectAll}
-                className="p-2 rounded-lg hover:bg-white/5 transition-colors"
+                className="hidden md:flex p-2 rounded-lg hover:bg-white/5 transition-colors"
                 title="Tümünü Seç"
               >
                 <div className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-all ${
@@ -368,16 +374,16 @@ export default function MailSection({
                   window.dispatchEvent(new CustomEvent('mail:refresh'));
                   showToast('Yenilendi', 'success');
                 }}
-                className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+                className="p-1.5 md:p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-white transition-colors"
                 title="Yenile"
               >
-                <LuRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                <LuRefreshCw className={`w-3.5 h-3.5 md:w-4 md:h-4 ${loading ? 'animate-spin' : ''}`} />
               </button>
 
               {/* Bulk actions when selected */}
               {selectedIds.size > 0 && (
                 <>
-                  <div className="w-px h-5 bg-white/10 mx-1" />
+                  <div className="w-px h-4 bg-white/10 mx-0.5" />
 
                   <button
                     onClick={async () => {
@@ -392,10 +398,10 @@ export default function MailSection({
                         showToast('Silme hatası', 'error');
                       }
                     }}
-                    className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-rose-400 transition-colors"
+                    className="p-1.5 md:p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-rose-400 transition-colors"
                     title="Sil"
                   >
-                    <LuTrash2 className="w-4 h-4" />
+                    <LuTrash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </button>
 
                   <button
@@ -411,31 +417,32 @@ export default function MailSection({
                         showToast('İşlem hatası', 'error');
                       }
                     }}
-                    className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-[#5865F2] transition-colors"
+                    className="p-1.5 md:p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-[#5865F2] transition-colors"
                     title="Okundu işaretle"
                   >
-                    <LuMailOpen className="w-4 h-4" />
+                    <LuMailOpen className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </button>
 
-                  <span className="text-[10px] font-bold text-[#5865F2] ml-1">{selectedIds.size} seçili</span>
+                  <span className="text-[10px] font-bold text-[#5865F2] ml-0.5">{selectedIds.size} seçili</span>
                 </>
               )}
             </div>
 
-            <div className="flex items-center gap-3 text-xs text-white/40">
-              <span>{filtered.length > 0 ? '1' : '0'}–{filtered.length} / {filtered.length}</span>
+            <div className="flex items-center gap-2 text-[10px] md:text-xs text-white/35">
+              <span className="hidden sm:inline">{filtered.length > 0 ? '1' : '0'}–{filtered.length} / {filtered.length}</span>
+              <span className="sm:hidden">{filtered.length}</span>
               <button
                 onClick={toggleSort}
                 title={sortOrder === 'desc' ? 'En yeni önce' : 'En eski önce'}
-                className="p-1.5 rounded-lg hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+                className="p-1 md:p-1.5 rounded-lg hover:bg-white/5 text-white/35 hover:text-white transition-colors"
               >
-                {sortOrder === 'desc' ? <LuChevronDown className="w-4 h-4" /> : <LuChevronUp className="w-4 h-4" />}
+                {sortOrder === 'desc' ? <LuChevronDown className="w-3.5 h-3.5" /> : <LuChevronUp className="w-3.5 h-3.5" />}
               </button>
             </div>
           </div>
 
           {/* Mail List */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-1.5 md:space-y-2 custom-scrollbar">
             {loading && (
               <div className="flex flex-col items-center justify-center h-64 text-white/50">
                 <LuRefreshCw className="w-8 h-8 animate-spin mb-3" />
@@ -466,7 +473,7 @@ export default function MailSection({
               return (
                 <div
                   key={mail.id}
-                  className={`group relative flex items-center gap-4 rounded-2xl border p-4 transition-all duration-300 cursor-pointer hover:-translate-y-0.5 ${
+                  className={`group relative rounded-2xl border transition-all duration-300 cursor-pointer hover:-translate-y-0.5 ${
                     isSelected
                       ? 'border-[#5865F2]/30 bg-[#5865F2]/10'
                       : mail.is_read
@@ -480,94 +487,134 @@ export default function MailSection({
                     try { router.push(`/dashboard/mail?id=${encodeURIComponent(String(mail.id))}`); } catch {}
                   }}
                 >
-                  {/* Checkbox */}
-                  <div className="mail-action-btn flex-shrink-0">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); toggleSelect(String(mail.id)); }}
-                      className="p-1 rounded-lg hover:bg-white/10 transition-colors"
-                    >
-                      <div className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-all ${
-                        isSelected ? 'bg-[#5865F2] border-[#5865F2]' : 'border-white/30'
-                      }`}>
-                        {isSelected && (
-                          <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
+                  {/* Desktop layout */}
+                  <div className="hidden md:flex items-center gap-4 p-4">
+                    {/* Checkbox */}
+                    <div className="mail-action-btn flex-shrink-0">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleSelect(String(mail.id)); }}
+                        className="p-1 rounded-lg hover:bg-white/10 transition-colors"
+                      >
+                        <div className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-all ${
+                          isSelected ? 'bg-[#5865F2] border-[#5865F2]' : 'border-white/30'
+                        }`}>
+                          {isSelected && (
+                            <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </button>
+                    </div>
+
+                    {/* Star */}
+                    <div className="mail-action-btn flex-shrink-0">
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try {
+                            const method = mail.is_starred ? 'DELETE' : 'POST';
+                            const res = await fetch('/api/mail/star', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
+                            if (!res.ok) { showToast('Yıldız işlemi başarısız', 'error'); return; }
+                            window.dispatchEvent(new CustomEvent('mail:refresh'));
+                          } catch {
+                            showToast('Yıldız işlemi başarısız', 'error');
+                          }
+                        }}
+                        className="p-1 rounded-lg hover:bg-white/10 transition-colors"
+                      >
+                        <LuStar className={`w-4 h-4 transition-colors ${mail.is_starred ? 'fill-yellow-400 text-yellow-400' : 'text-white/20 hover:text-yellow-400'}`} />
+                      </button>
+                    </div>
+
+                    {/* Read/Unread icon */}
+                    <div className={`flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-xl border transition-all ${
+                      mail.is_read
+                        ? 'border-white/5 bg-white/5 text-white/20'
+                        : 'border-[#5865F2]/30 bg-[#5865F2]/20 text-[#5865F2] shadow-[0_0_15px_rgba(88,101,242,0.3)]'
+                    }`}>
+                      {mail.is_read ? <LuMailOpen className="w-5 h-5" /> : <LuMail className="w-5 h-5" />}
+                    </div>
+
+                    {/* Category badge */}
+                    <div className="flex-shrink-0">
+                      <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${config.css}`}>
+                        <span className="text-sm">{config.icon}</span>
+                        <span>{config.label}</span>
+                      </span>
+                    </div>
+
+                    {/* Title & preview */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className={`text-sm truncate ${mail.is_read ? 'font-medium text-white/60' : 'font-bold text-white'}`}>
+                        {mail.title}
+                      </h4>
+                      <p className="mt-0.5 text-xs text-white/30 line-clamp-1 group-hover:text-white/50 transition-colors">
+                        {previewText(mail.body, 80)}
+                      </p>
+                    </div>
+
+                    {/* Date */}
+                    <div className="flex-shrink-0 text-[10px] font-medium text-white/30 whitespace-nowrap">
+                      {formatDate(mail.created_at)}
+                    </div>
+
+                    {/* Delete */}
+                    <div className="mail-action-btn flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try {
+                            const res = await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: [mail.id] }) });
+                            if (!res.ok) { showToast('Silme hatası', 'error'); return; }
+                            showToast('Mesaj silindi', 'success');
+                            window.dispatchEvent(new CustomEvent('mail:refresh'));
+                          } catch {
+                            showToast('Silme hatası', 'error');
+                          }
+                        }}
+                        className="p-2 rounded-lg bg-white/5 hover:bg-rose-500/20 text-white/30 hover:text-rose-400 transition-all"
+                      >
+                        <LuTrash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mobile layout - compact, text-focused */}
+                  <div className="flex md:hidden items-start gap-3 p-3">
+                    {/* Unread indicator dot */}
+                    <div className="flex-shrink-0 pt-1.5">
+                      {!mail.is_read ? (
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#5865F2] shadow-[0_0_8px_rgba(88,101,242,0.5)]" />
+                      ) : (
+                        <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${config.css}`}>
+                          {config.label}
+                        </span>
+                        <span className="text-[10px] text-white/25 ml-auto flex-shrink-0">
+                          {formatDate(mail.created_at)}
+                        </span>
                       </div>
-                    </button>
-                  </div>
+                      <h4 className={`text-[13px] leading-snug ${mail.is_read ? 'font-medium text-white/55' : 'font-bold text-white'}`}>
+                        {mail.title}
+                      </h4>
+                      <p className="mt-0.5 text-[12px] leading-relaxed text-white/30 line-clamp-2">
+                        {previewText(mail.body, 120)}
+                      </p>
+                    </div>
 
-                  {/* Star */}
-                  <div className="mail-action-btn flex-shrink-0">
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        try {
-                          const method = mail.is_starred ? 'DELETE' : 'POST';
-                          const res = await fetch('/api/mail/star', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(mail.id) }) });
-                          if (!res.ok) { showToast('Yıldız işlemi başarısız', 'error'); return; }
-                          window.dispatchEvent(new CustomEvent('mail:refresh'));
-                        } catch {
-                          showToast('Yıldız işlemi başarısız', 'error');
-                        }
-                      }}
-                      className="p-1 rounded-lg hover:bg-white/10 transition-colors"
-                    >
-                      <LuStar className={`w-4 h-4 transition-colors ${mail.is_starred ? 'fill-yellow-400 text-yellow-400' : 'text-white/20 hover:text-yellow-400'}`} />
-                    </button>
-                  </div>
-
-                  {/* Read/Unread icon */}
-                  <div className={`flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-xl border transition-all ${
-                    mail.is_read
-                      ? 'border-white/5 bg-white/5 text-white/20'
-                      : 'border-[#5865F2]/30 bg-[#5865F2]/20 text-[#5865F2] shadow-[0_0_15px_rgba(88,101,242,0.3)]'
-                  }`}>
-                    {mail.is_read ? <LuMailOpen className="w-5 h-5" /> : <LuMail className="w-5 h-5" />}
-                  </div>
-
-                  {/* Category badge */}
-                  <div className="flex-shrink-0">
-                    <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${config.css}`}>
-                      <span className="text-sm">{config.icon}</span>
-                      <span className="hidden sm:inline">{config.label}</span>
-                    </span>
-                  </div>
-
-                  {/* Title & preview */}
-                  <div className="flex-1 min-w-0">
-                    <h4 className={`text-sm truncate ${mail.is_read ? 'font-medium text-white/60' : 'font-bold text-white'}`}>
-                      {mail.title}
-                    </h4>
-                    <p className="mt-0.5 text-xs text-white/30 line-clamp-1 group-hover:text-white/50 transition-colors">
-                      {previewText(mail.body, 80)}
-                    </p>
-                  </div>
-
-                  {/* Date */}
-                  <div className="flex-shrink-0 text-[10px] font-medium text-white/30 whitespace-nowrap">
-                    {formatDate(mail.created_at)}
-                  </div>
-
-                  {/* Delete */}
-                  <div className="mail-action-btn flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        try {
-                          const res = await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: [mail.id] }) });
-                          if (!res.ok) { showToast('Silme hatası', 'error'); return; }
-                          showToast('Mesaj silindi', 'success');
-                          window.dispatchEvent(new CustomEvent('mail:refresh'));
-                        } catch {
-                          showToast('Silme hatası', 'error');
-                        }
-                      }}
-                      className="p-2 rounded-lg bg-white/5 hover:bg-rose-500/20 text-white/30 hover:text-rose-400 transition-all"
-                    >
-                      <LuTrash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {/* Star - only show if starred */}
+                    {mail.is_starred && (
+                      <div className="flex-shrink-0 pt-1">
+                        <LuStar className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -575,7 +622,7 @@ export default function MailSection({
           </div>
 
           {/* Footer actions */}
-          <div className="flex-shrink-0 border-t border-white/10 bg-[#0b0d12]/30 px-3 md:px-6 py-3 flex items-center justify-end gap-3 backdrop-blur-md">
+          <div className="flex-shrink-0 border-t border-white/[0.06] bg-[#0b0d12]/30 px-3 md:px-6 py-2.5 md:py-3 flex items-center justify-end gap-2 md:gap-3 backdrop-blur-md">
             <button
               type="button"
               onClick={async () => {
@@ -590,9 +637,9 @@ export default function MailSection({
                   showToast('İşlem başarısız', 'error');
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-bold text-white/70 hover:bg-white/10 hover:text-white transition-all"
+              className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.05] text-[11px] md:text-xs font-semibold text-white/60 hover:bg-white/[0.08] hover:text-white transition-all"
             >
-              <LuCheckCheck className="w-4 h-4" /> Tümünü Okundu Say
+              <LuCheckCheck className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden sm:inline">Tümünü</span> Okundu<span className="hidden sm:inline"> Say</span>
             </button>
 
             <button
@@ -601,17 +648,24 @@ export default function MailSection({
                 const ids = filtered.filter(m => m.category === 'reward' && !m.is_read).map(m => m.id);
                 if (ids.length === 0) return showToast('Talep edilecek ödül yok', 'error');
                 try {
-                  const res = await fetch('/api/mail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
-                  if (!res.ok) { showToast('Talep başarısız', 'error'); return; }
-                  showToast('Ödüller talep edildi', 'success');
+                  const res = await fetch('/api/mail/claim-rewards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+                  const data = await res.json().catch(() => ({}));
+                  if (!res.ok) {
+                    showToast(data.error === 'already_claimed' ? 'Ödüller zaten alındı' : 'Talep başarısız', 'error');
+                    return;
+                  }
+                  const claimed = data.claimed ?? 0;
+                  showToast(claimed > 0 ? `${claimed.toFixed(2)} Papel hesabınıza eklendi!` : 'Ödüller talep edildi', 'success');
                   window.dispatchEvent(new CustomEvent('mail:refresh'));
+                  // Bakiye güncelleme eventi
+                  window.dispatchEvent(new CustomEvent('wallet:refresh'));
                 } catch {
                   showToast('Talep başarısız', 'error');
                 }
               }}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-[#5865F2] to-indigo-600 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/20 hover:shadow-[#5865F2]/40 transition-all"
+              className="flex items-center gap-1.5 px-3.5 md:px-5 py-2 rounded-xl bg-gradient-to-r from-[#5865F2] to-indigo-600 text-[11px] md:text-xs font-bold text-white shadow-lg shadow-[#5865F2]/20 hover:shadow-[#5865F2]/40 transition-all"
             >
-              <LuGift className="w-4 h-4" /> Hepsini Al
+              <LuGift className="w-3.5 h-3.5 md:w-4 md:h-4" /> Hepsini Al
             </button>
           </div>
         </div>
@@ -635,6 +689,24 @@ export default function MailSection({
           onClose={() => {
             setSelectedMail(null);
             try { router.push('/dashboard/mail'); } catch {}
+          }}
+          onDelete={async (id) => {
+            try {
+              const res = await fetch('/api/mail', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: [id] }) });
+              if (!res.ok) { showToast('Silme hatası', 'error'); return; }
+              showToast('Mesaj silindi', 'success');
+              setSelectedMail(null);
+              try { router.push('/dashboard/mail'); } catch {}
+              window.dispatchEvent(new CustomEvent('mail:refresh'));
+            } catch { showToast('Silme hatası', 'error'); }
+          }}
+          onStar={async (id) => {
+            try {
+              const method = selectedMail?.is_starred ? 'DELETE' : 'POST';
+              const res = await fetch('/api/mail/star', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(id) }) });
+              if (!res.ok) { showToast('Yıldız işlemi başarısız', 'error'); return; }
+              window.dispatchEvent(new CustomEvent('mail:refresh'));
+            } catch { showToast('Yıldız işlemi başarısız', 'error'); }
           }}
         />
       )}

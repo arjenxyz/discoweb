@@ -53,7 +53,7 @@ export async function GET() {
   const nowIso = new Date().toISOString();
   const { data: discounts, error: discountsError } = await supabase
     .from('store_discounts')
-    .select('id,code,percent,max_uses,used_count,status,expires_at,is_welcome,is_special')
+    .select('id,code,percent,max_uses,used_count,status,expires_at,is_welcome,is_special,per_user_limit')
     .eq('server_id', serverId)
     .eq('status', 'active')
     .or(`expires_at.is.null,expires_at.gt.${nowIso}`);
@@ -67,23 +67,10 @@ export async function GET() {
   // Filter out discounts that reached their max uses
   filtered = filtered.filter((d: any) => !d.max_uses || d.used_count < d.max_uses);
 
-  // If we have a user id, filter out discounts the user already used
-  if (userId && filtered.length > 0) {
-    const ids = filtered.map((d: any) => d.id);
-    const { data: usages } = await supabase
-      .from('discount_usages')
-      .select('discount_id')
-      .in('discount_id', ids)
-      .eq('user_id', userId);
-
-    const usedIds = new Set((usages ?? []).map((u: any) => u.discount_id));
-    filtered = filtered.filter((d: any) => !usedIds.has(d.id));
-  }
-
-  // Calculate per-user usage for each discount
+  // Kullanıcı bazlı kullanım sayılarını hesapla ve limiti dolmuş olanları filtrele
   const mapped = await Promise.all((filtered as any[]).map(async (d) => {
     let userUsageCount = 0;
-    let perUserLimit = 1; // Each user can use a coupon only once due to unique constraint
+    const perUserLimit = d.per_user_limit ?? 1;
 
     if (userId) {
       const { data: userUsages } = await supabase
@@ -109,5 +96,8 @@ export async function GET() {
     };
   }));
 
-  return NextResponse.json(mapped);
+  // Kullanıcının limiti dolmuş kuponları filtrele (userUsageCount >= perUserLimit ise kaldır)
+  const result = mapped.filter((d) => d.userUsageCount < d.perUserLimit);
+
+  return NextResponse.json(result);
 }

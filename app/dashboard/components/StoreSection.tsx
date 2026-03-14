@@ -86,10 +86,10 @@ export default function StoreSection({
 
             <span className="text-xs sm:text-sm font-bold">Sepetim</span>
 
-            {/* Bildirim Balonu (Kırmızı) */}
+            {/* Bildirim Balonu (Kırmızı) - toplam adet */}
             {cart?.items.length > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm border-[3px] border-[#0b0d12]">
-                {cart.items.length}
+              <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm border-[3px] border-[#0b0d12] px-0.5">
+                {cart.items.reduce((s, i) => s + i.qty, 0)}
               </span>
             )}
           </button>
@@ -189,10 +189,7 @@ export default function StoreSection({
                           return (
                             <button
                               type="button"
-                              onClick={() => {
-                                if (cart) cart.addToCart(item);
-                                onAddToCart(item);
-                              }}
+                              onClick={() => onAddToCart(item)}
                               title={isInCart ? "Sepette Var" : "Sepete Ekle"}
                               className={`flex items-center justify-center w-10 h-10 rounded-xl border backdrop-blur-md transition-all active:scale-95 ${
                                 isInCart
@@ -289,10 +286,7 @@ export default function StoreSection({
                           <div className="flex items-center gap-2 mt-2.5">
                             <button
                               type="button"
-                              onClick={() => {
-                                if (cart) cart.addToCart(item);
-                                onAddToCart(item);
-                              }}
+                              onClick={() => onAddToCart(item)}
                               className={`flex items-center justify-center w-8 h-8 rounded-lg border transition-all active:scale-90 ${
                                 isInCart
                                   ? 'border-emerald-500/30 bg-emerald-500/20 text-emerald-400'

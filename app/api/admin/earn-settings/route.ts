@@ -2,11 +2,8 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
-import { renderEarnNotification } from '@/lib/templates/EarnNotification.server';
+import { renderEarnNotification, type ChangeItem } from '@/lib/templates/EarnNotification.server';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
-
-// --- GÖRSEL BİLDİRİM ŞABLONU (KUTULU YAPI) ---
-type ChangeItem = { type: 'narrative' | 'tech'; text: string; dir?: 'up' | 'down' | 'same' };
 
 // render moved to React component (src/lib/templates/EarnNotification.tsx)
 
@@ -130,53 +127,51 @@ export async function PUT(request: Request) {
 
   // --- BİLDİRİM MANTIĞI ---
   const changeGroups: Record<string, ChangeItem[]> = { general: [], tag: [], boost: [] };
-  const templates: Record<'general'|'tag'|'boost', Record<'up'|'down'|'same', string>> = {
-    general: { up: "📈 Müjde: Kazanç oranlarını artırdık!", down: "⚖️ Dengeleme: Ekonomi için küçük bir düzenleme yapıldı.", same: "💎 Sabit: Bu oran değişmedi." },
-    tag: { up: "🏷️ Sancaktarlara Destek: Tag bonusu arttı!", down: "🏷️ Tag Düzenlemesi: Bonuslar güncellendi.", same: "🏷️ Tag Durumu: Değişiklik yok." },
-    boost: { up: "🚀 Boost Güçlendirmesi: Ödüller arttı!", down: "🚀 Boost Güncellemesi: Düzenleme yapıldı.", same: "🚀 Boost Sabit: Aynı kaldı." }
+
+  // Boolean toggle kontrolü (açma/kapama)
+  const checkToggle = (key: keyof ServerUpdate, label: string, group: 'general' | 'tag' | 'boost') => {
+    const oldV = Boolean(oldData?.[key as string]);
+    const newV = Boolean(updateObj[key]);
+    if (oldV !== newV) {
+      changeGroups[group].push({ type: 'toggle', text: label, enabled: newV });
+    }
   };
 
-  const numericKeys: Array<keyof ServerUpdate> = [
-    'earn_per_message',
-    'earn_per_voice_minute',
-    'tag_bonus_message',
-    'tag_bonus_voice',
-    'booster_bonus_message',
-    'booster_bonus_voice'
-  ];
-
-  const check = (key: keyof ServerUpdate, label: string, group: 'general' | 'tag' | 'boost') => {
+  // Sayısal değer kontrolü
+  const checkValue = (key: keyof ServerUpdate, label: string, group: 'general' | 'tag' | 'boost') => {
     const oldV = Number(oldData?.[key as string] ?? 0);
-    let newV = 0;
-    if (numericKeys.includes(key)) {
-      newV = Number(updateObj[key] as number ?? 0);
-    }
+    const newV = Number(updateObj[key] as number ?? 0);
     if (oldV !== newV) {
       const dir: 'up' | 'down' = newV > oldV ? 'up' : 'down';
-      changeGroups[group].push({ type: 'narrative', text: templates[group][dir], dir });
+      changeGroups[group].push({ type: 'narrative', text: label, dir });
       changeGroups[group].push({ type: 'tech', text: `${label}: ${oldV.toFixed(2)} -> ${newV.toFixed(2)} Papel`, dir });
     }
   };
 
-  check('earn_per_message', 'Mesaj Kazancı', 'general');
-  check('earn_per_voice_minute', 'Ses Kazancı', 'general');
-  check('tag_bonus_message', 'Tag Bonusu (Mesaj)', 'tag');
-  check('tag_bonus_voice', 'Tag Bonusu (Ses)', 'tag');
-  check('booster_bonus_message', 'Boost Bonusu (Mesaj)', 'boost');
-  check('booster_bonus_voice', 'Boost Bonusu (Ses)', 'boost');
+  // Toggle'lar (açma/kapama)
+  checkToggle('message_earn_enabled', 'Mesaj Kazancı', 'general');
+  checkToggle('voice_earn_enabled', 'Ses Kazancı', 'general');
+  checkToggle('tag_required', 'Tag Bonusu Sistemi', 'tag');
+
+  // Değer değişiklikleri
+  checkValue('earn_per_message', 'Mesaj Kazancı', 'general');
+  checkValue('earn_per_voice_minute', 'Ses Kazancı', 'general');
+  checkValue('tag_bonus_message', 'Tag Bonusu (Mesaj)', 'tag');
+  checkValue('tag_bonus_voice', 'Tag Bonusu (Ses)', 'tag');
+  checkValue('booster_bonus_message', 'Boost Bonusu (Mesaj)', 'boost');
+  checkValue('booster_bonus_voice', 'Boost Bonusu (Ses)', 'boost');
 
   if (Object.values(changeGroups).some((g) => g.length > 0)) {
-    const bodyHtml = renderEarnNotification(changeGroups, 'Ekonomi güncellemesi uygulandı. Detaylar için lütfen bildirimi inceleyin.');
+    const bodyHtml = renderEarnNotification(changeGroups, 'Bu güncelleme yönetici tarafından uygulandı.');
 
     await supabase.from('system_mails').insert({
       guild_id: guildId,
       title: 'Ekonomi Güncellemesi',
       body: bodyHtml,
-      category: 'system',
+      category: 'update',
       status: 'published',
-      // Hardcoded system sender so frontend shows proper header/avatar
       author_name: 'Sistem Yönetimi',
-      author_avatar_url: 'https://cdn.discordapp.com/embed/avatars/0.png',
+      author_avatar_url: null,
     });
   }
 

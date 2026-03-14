@@ -67,17 +67,9 @@ export default function CartDrawer() {
   const welcomeCoupon = userCoupons.find((c: Coupon) => c.is_welcome);
   const specialCoupons = userCoupons.filter((c: Coupon) => c.is_special);
 
-  // Kupon limiti dolduysa sepetten otomatik atma kontrolü
-  useEffect(() => {
-    if (!appliedCoupon) return;
-    const limit = (appliedCoupon as Coupon).perUserLimit ?? 0;
-    const used = (appliedCoupon as Coupon).userUsageCount ?? 0;
-    if (limit > 0 && used >= limit) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMessage({ text: 'Bu indirim kodunun kullanım hakkı doldu', type: 'error' });
-      removeCoupon();
-    }
-  }, [appliedCoupon, removeCoupon]);
+  // Kupon uygulandıktan sonra kullanım bilgisini göster
+  // NOT: Kupon limiti dolana kadar (userUsageCount >= perUserLimit) listede kalır
+  // Limit tam dolduğunda backend /api/member/coupons listeden kaldırır
 
   // Eğer sepette ürün ekleme/çıkarma yapıldıysa kupon girişini kapat (kullanıcı gizlediyse açılmasın)
   useEffect(() => {
@@ -396,13 +388,16 @@ export default function CartDrawer() {
                   <>
                     {/* Hoşgeldin Kuponu */}
                     {welcomeCoupon && !appliedCoupon && (() => {
+                      const wUsage = (welcomeCoupon as any).userUsageCount ?? 0;
+                      const wLimit = (welcomeCoupon as any).perUserLimit ?? 1;
                       return (
                         <div className="mt-3 p-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-lg">
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="text-xs font-bold text-indigo-300">Hoşgeldin İndirimi</p>
                               <p className="text-[10px] text-white/60">
-                                {welcomeCoupon.percent + "% indirim kazan"}
+                                {welcomeCoupon.percent}% indirim
+                                {wLimit > 1 && <span className="ml-1.5 text-white/40">• {wUsage}/{wLimit} kullanıldı</span>}
                               </p>
                             </div>
                             <button onClick={() => handleApply((welcomeCoupon as Coupon).code)} disabled={applying} className="px-3 py-1 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold rounded-lg transition-colors">
@@ -417,17 +412,16 @@ export default function CartDrawer() {
                     {!appliedCoupon && specialCoupons.length > 0 && (
                       <div className="mt-3 max-h-44 overflow-y-auto space-y-2 pr-2">
                         {specialCoupons.map((coupon) => {
-                          const couponMinSpend = Number((coupon as Coupon).minSpend || (coupon as Coupon).min_spend || 0);
-                          const userUsageCount = (coupon as any).user_usage_count ?? (coupon as any).userUsageCount ?? 0;
-                          const perUserLimit = (coupon as any).per_user_limit ?? (coupon as any).perUserLimit ?? 1;
-                          const id = String(coupon.id);
+                          const userUsageCount = (coupon as any).userUsageCount ?? 0;
+                          const perUserLimit = (coupon as any).perUserLimit ?? 1;
                           return (
                             <div key={coupon.id} className="p-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-lg">
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <p className="text-xs font-bold text-emerald-300">Özel İndirim</p>
+                                  <p className="text-xs font-bold text-emerald-300">{coupon.code}</p>
                                   <p className="text-[10px] text-white/60">
-                                    {coupon.percent + "% indirim"}
+                                    {coupon.percent}% indirim
+                                    {perUserLimit > 1 && <span className="ml-1.5 text-white/40">• {userUsageCount}/{perUserLimit} kullanıldı</span>}
                                   </p>
                                 </div>
                                 <button onClick={() => handleApply(coupon.code)} disabled={applying} className="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold rounded-lg transition-colors">

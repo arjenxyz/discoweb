@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { LuHouse, LuMail, LuShield, LuStore, LuLogOut, LuSettings, LuChevronRight, LuArrowLeft, LuChartBar } from 'react-icons/lu';
 import Image from 'next/image';
 import DiscordAgreementButton from '@/components/DiscordAgreementButton';
+import { LuCode } from 'react-icons/lu';
 import type { Notification, Section } from '../types';
 import type { JSX, RefObject } from 'react';
 
@@ -16,6 +17,7 @@ type DashboardHeaderProps = {
   walletBalance: number;
   loginUrl: string;
   isDeveloper: boolean;
+  isAdmin: boolean;
   navigation: {
     activeSection: Section;
     onNavigate: (section: Section) => void;
@@ -102,6 +104,7 @@ export default function DashboardHeader({
   walletBalance,
   loginUrl,
   isDeveloper,
+  isAdmin,
   navigation,
   onOpenLeaderboard,
   profile,
@@ -317,6 +320,8 @@ export default function DashboardHeader({
                 </div>
               </div>
             </div>
+
+            {/* Panel geçişi profil dropdown'unda */}
         </div>
 
         {/* --- ORTA MENÜ --- */}
@@ -490,8 +495,8 @@ export default function DashboardHeader({
                                         <LuChevronRight className="text-white/40" />
                                     </button>
 
-                                    <button 
-                                        onClick={settings.onOpenSettings} 
+                                    <button
+                                        onClick={settings.onOpenSettings}
                                         className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group"
                                     >
                                         <div className="flex items-center gap-3">
@@ -560,14 +565,37 @@ export default function DashboardHeader({
 
                             </div>
 
-                            {/* Footer (Çıkış) */}
-                            <div className="bg-black/20 p-3 border-t border-white/5 mt-auto flex gap-2">
+                            {/* Footer */}
+                            <div className="bg-black/20 p-3 border-t border-white/5 mt-auto space-y-2">
+                                {/* Panel Geçişleri - kompakt */}
+                                {(isAdmin || isDeveloper) && (
+                                  <div className="flex gap-1.5">
+                                    {isAdmin && (
+                                      <button
+                                        onClick={() => { setIsProfileOpen(false); window.location.href = '/admin'; }}
+                                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#5865F2]/10 hover:bg-[#5865F2]/25 text-[11px] font-medium text-[#7289DA] hover:text-[#99AAF5] transition-colors"
+                                      >
+                                        <LuShield className="w-3.5 h-3.5" />
+                                        Yönetici
+                                      </button>
+                                    )}
+                                    {isDeveloper && (
+                                      <button
+                                        onClick={() => { setIsProfileOpen(false); window.location.href = '/developer'; }}
+                                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/25 text-[11px] font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+                                      >
+                                        <LuCode className="w-3.5 h-3.5" />
+                                        Geliştirici
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
                                 <button
                                   onClick={handleLogout}
-                                  className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-red-500/10 hover:bg-red-500 text-xs font-bold text-red-400 hover:text-white transition-all border border-red-500/20 hover:border-transparent group"
+                                  className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-500/10 hover:bg-red-500 text-xs font-bold text-red-400 hover:text-white transition-all border border-red-500/20 hover:border-transparent group"
                                 >
-                                  <LuLogOut className="w-4 h-4 group-hover:scale-110 transition-transform" /> 
-                                  Hesaptan Çıkış Yap
+                                  <LuLogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                  Çıkış Yap
                                 </button>
                             </div>
 
@@ -681,6 +709,36 @@ export default function DashboardHeader({
                   </button>
                 ))}
             </nav>
+
+            {/* Mobil Panel Geçişleri */}
+            {(isAdmin || isDeveloper) && (
+              <div className="px-4 pb-3 space-y-1">
+                <div className="mx-0 my-1 border-t border-white/[0.06]" />
+                <p className="px-4 pt-1 pb-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-white/25">Panel Geçişi</p>
+                {isAdmin && (
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); window.location.href = '/admin'; }}
+                    className="flex w-full items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-white/60 hover:text-white hover:bg-white/5 border border-transparent transition-all"
+                  >
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-[#5865F2]/15 text-[#5865F2]">
+                      <LuShield className="w-4 h-4" />
+                    </div>
+                    Yönetici Paneli
+                  </button>
+                )}
+                {isDeveloper && (
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); window.location.href = '/developer'; }}
+                    className="flex w-full items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-white/60 hover:text-white hover:bg-white/5 border border-transparent transition-all"
+                  >
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-emerald-500/15 text-emerald-400">
+                      <LuCode className="w-4 h-4" />
+                    </div>
+                    Geliştirici Paneli
+                  </button>
+                )}
+              </div>
+            )}
 
           </div>
         </div>

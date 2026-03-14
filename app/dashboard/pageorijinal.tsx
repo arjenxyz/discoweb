@@ -641,6 +641,7 @@ export default function DashboardPage() {
           walletBalance={walletBalance}
           loginUrl={loginUrl}
           isDeveloper={false}
+          isAdmin={false}
           server={headerServer}
           navigation={{
             activeSection: effectiveSection,

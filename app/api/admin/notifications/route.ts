@@ -167,6 +167,36 @@ export async function POST(request: Request) {
     );
   }
 
+  // Duyuru ise system_mails tablosuna da ekle (Mail Duyurular kategorisi)
+  // Mail ise hedef kullanıcıya system_mails olarak gönder
+  if (payload.type === 'announcement') {
+    await supabase.from('system_mails').insert({
+      guild_id: selectedGuildId,
+      user_id: null, // herkese broadcast
+      title: payload.title,
+      body: payload.body,
+      category: 'announcement',
+      status: 'published',
+      author_name: adminProfile.name,
+      author_avatar_url: adminProfile.avatarUrl,
+      image_url: payload.imageUrl ?? null,
+      details_url: payload.detailsUrl ?? null,
+    });
+  } else if (payload.type === 'mail' && payload.targetUserId) {
+    await supabase.from('system_mails').insert({
+      guild_id: selectedGuildId,
+      user_id: payload.targetUserId,
+      title: payload.title,
+      body: payload.body,
+      category: 'system',
+      status: 'published',
+      author_name: adminProfile.name,
+      author_avatar_url: adminProfile.avatarUrl,
+      image_url: payload.imageUrl ?? null,
+      details_url: payload.detailsUrl ?? null,
+    });
+  }
+
   await logWebEvent(request, {
     event: 'admin_notification_create',
     status: 'success',

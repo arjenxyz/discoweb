@@ -220,11 +220,13 @@ export async function POST() {
       })));
     }
 
-    const botToken = process.env.DISCORD_TOKEN;
+    // Web tarafında DISCORD_BOT_TOKEN kullanılmalı (botun ortam değişkeni)
+    // Bazı deploylarda DISCORD_TOKEN olarak da geçiyor olabilir, bu yüzden ikisini de kontrol ediyoruz.
+    const botToken = process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_TOKEN;
     const discordCleanupResults: { channelsDeleted: number; webhooksDeleted: number; errors: string[] } = { channelsDeleted: 0, webhooksDeleted: 0, errors: [] };
 
     if (botToken) {
-      console.log('🗑️ Cleaning up Discord channels and webhooks...');
+      console.log('🗑️ Cleaning up Discord channels and webhooks... (using bot token)');
 
       // Delete Discord channels (from bot_log_channels)
       for (const config of botLogChannels || []) {

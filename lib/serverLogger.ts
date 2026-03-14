@@ -564,11 +564,22 @@ const getDbWebhookTargets = async (
 ): Promise<Partial<Record<LogChannelKey, WebhookTarget>>> => {
   if (!supabase || !guildId) return {};
   const client = supabase as ReturnType<typeof createClient>;
-  const { data } = await client
+  // log_channel_configs (web) veya bot_log_channels (bot) tablosunu dene
+  let data: LogChannelConfigRow[] | null = null;
+  const { data: d1 } = await client
     .from('log_channel_configs')
     .select('channel_type, webhook_url, is_active')
     .eq('guild_id', guildId)
     .eq('is_active', true);
+  data = d1 as LogChannelConfigRow[] | null;
+  if (!data || data.length === 0) {
+    const { data: d2 } = await client
+      .from('bot_log_channels')
+      .select('channel_type, webhook_url, is_active')
+      .eq('guild_id', guildId)
+      .eq('is_active', true);
+    data = d2 as LogChannelConfigRow[] | null;
+  }
   if (!data) return {};
   return (data as LogChannelConfigRow[]).reduce<Partial<Record<LogChannelKey, WebhookTarget>>>(
     (acc, row) => {
@@ -636,9 +647,13 @@ export const logWebEvent = async (request: Request, payload: LogPayload) => {
       const controller = new AbortController();
       const timeoutId  = setTimeout(() => controller.abort(), 5000);
 
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      const botApiKey = process.env.BOT_API_KEY;
+      if (botApiKey) headers['Authorization'] = `Bearer ${botApiKey}`;
+
       const response = await fetch(`${botApiUrl}/api/log`, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body:    JSON.stringify({ guildId: payload.guildId, channelType, embed, components }),
         signal:  controller.signal,
       });

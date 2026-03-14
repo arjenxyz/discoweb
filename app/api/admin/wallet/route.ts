@@ -288,18 +288,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
     }
 
-    // Use the discord guild id (selectedGuildId) as guild identifier in wallets/ledger
-    await upsertWallet(supabase, targetUserId, Number(next.toFixed(2)), selectedGuildId);
-    await insertLedger(supabase, targetUserId, amount, Number(next.toFixed(2)), selectedGuildId, {
-      mode: payload.mode,
-      scope: payload.scope,
-      adminId,
-    });
+    if (payload.mode === 'add') {
+      // Papel ekleme: direkt hesaba yatırma, reward mail gönder
+      // Kullanıcı "Hepsini Al" tıklayınca bakiye yatırılacak
+      const mailTitle = `${amount.toFixed(2)} Papel Ödülü`;
+      const mailBody = formatMessage(message);
 
-    const title = payload.mode === 'add' ? 'Papel eklendi' : 'Papel düşüldü';
-    const content = payload.mode === 'add'
-      ? formatMessage(message)
-      : `Yetkili tarafından ${amount} papel bakiyenizden düşüldü.`;
+      await supabase.from('system_mails').insert({
+        guild_id: selectedGuildId,
+        user_id: targetUserId,
+        title: mailTitle,
+        body: mailBody,
+        category: 'reward',
+        status: 'published',
+        author_name: adminProfile.name,
+        author_avatar_url: adminProfile.avatarUrl,
+        image_url: imageUrl,
+        details_url: null,
+        metadata: { reward_amount: amount },
+      });
+    } else {
+      // Papel düşme: direkt hesaptan düş (geri çekme anında olmalı)
+      await upsertWallet(supabase, targetUserId, Number(next.toFixed(2)), selectedGuildId);
+      await insertLedger(supabase, targetUserId, -amount, Number(next.toFixed(2)), selectedGuildId, {
+        mode: payload.mode,
+        scope: payload.scope,
+        adminId,
+      });
+    }
 
     await logWebEvent(request, {
       event: 'admin_wallet_adjust',
@@ -317,7 +333,7 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ status: 'ok', balance: Number(next.toFixed(2)) });
+    return NextResponse.json({ status: 'ok', mode: payload.mode });
   }
 
   const approvedIds = await getApprovedMemberIds();
@@ -348,23 +364,39 @@ export async function POST(request: Request) {
 
   const targets = wallets ?? [];
 
-  for (const userId of approvedIds) {
-    const wallet = targets.find((entry) => entry.user_id === userId);
-    const current = Number(wallet?.balance ?? 0);
-    const next = payload.mode === 'add' ? current + amount : current - amount;
+  if (payload.mode === 'add') {
+    // Toplu papel ekleme: herkese reward mail gönder
+    const mailTitle = `${amount.toFixed(2)} Papel Ödülü`;
+    const mailBody = formatMessage(message);
 
-    // Use selectedGuildId (discord id string) when updating wallets/ledger
-    await upsertWallet(supabase, userId, Number(next.toFixed(2)), selectedGuildId);
-    await insertLedger(supabase, userId, amount, Number(next.toFixed(2)), selectedGuildId, {
-      mode: payload.mode,
-      scope: payload.scope,
-      adminId,
+    // Broadcast reward mail (user_id = null, herkese)
+    await supabase.from('system_mails').insert({
+      guild_id: selectedGuildId,
+      user_id: null,
+      title: mailTitle,
+      body: mailBody,
+      category: 'reward',
+      status: 'published',
+      author_name: adminProfile.name,
+      author_avatar_url: adminProfile.avatarUrl,
+      image_url: imageUrl,
+      details_url: null,
+      metadata: { reward_amount: amount },
     });
+  } else {
+    // Toplu papel düşme: direkt hesaplardan düş
+    for (const userId of approvedIds) {
+      const wallet = targets.find((entry) => entry.user_id === userId);
+      const current = Number(wallet?.balance ?? 0);
+      const next = current - amount;
 
-    const title = payload.mode === 'add' ? 'Papel eklendi' : 'Papel düşüldü';
-    const content = payload.mode === 'add'
-      ? formatMessage(message)
-      : `Yetkili tarafından ${amount} papel bakiyenizden düşüldü.`;
+      await upsertWallet(supabase, userId, Number(next.toFixed(2)), selectedGuildId);
+      await insertLedger(supabase, userId, -amount, Number(next.toFixed(2)), selectedGuildId, {
+        mode: payload.mode,
+        scope: payload.scope,
+        adminId,
+      });
+    }
   }
 
   await logWebEvent(request, {
