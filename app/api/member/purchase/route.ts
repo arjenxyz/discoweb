@@ -353,11 +353,50 @@ export async function POST(request: Request) {
     metadata: { orderId: order?.id, itemId: item.id, discountCode: appliedDiscount?.code },
   });
 
+  // Calculate expires_at for timed roles
+  const nowIso = new Date().toISOString();
+  let expiresAt: string | null = null;
+  if (item.duration_days !== 0 && item.role_id) {
+    // Kalıcı sipariş varsa süresiz bırak
+    const { data: permanentOrder } = await supabase
+      .from('store_orders')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('role_id', item.role_id)
+      .eq('status', 'paid')
+      .is('revoked_at', null)
+      .is('expires_at', null)
+      .neq('id', order!.id)
+      .limit(1);
+
+    if (permanentOrder?.length) {
+      expiresAt = null;
+    } else {
+      // Aktif siparişlerin en geç bitiş tarihine ekle
+      const { data: activeOrders } = await supabase
+        .from('store_orders')
+        .select('expires_at')
+        .eq('user_id', userId)
+        .eq('role_id', item.role_id)
+        .eq('status', 'paid')
+        .is('revoked_at', null)
+        .gt('expires_at', nowIso)
+        .neq('id', order!.id)
+        .order('expires_at', { ascending: false })
+        .limit(1);
+
+      const baseIso = activeOrders?.length ? activeOrders[0].expires_at : nowIso;
+      // duration_days dakika cinsinden saklanıyor
+      expiresAt = new Date(Date.parse(baseIso) + item.duration_days * 60000).toISOString();
+    }
+  }
+
   // Update order with items/subtotal/discount and mark as paid
   try {
     await supabase.from('store_orders').update({
       status: 'paid',
-      applied_at: new Date().toISOString(),
+      applied_at: nowIso,
+      expires_at: expiresAt,
       items: [
         {
           item_id: item.id,

@@ -144,8 +144,27 @@ export const assertSameOrigin = (request: Request) => {
   return null;
 };
 
+/**
+ * Request'ten Bearer token ile userId çıkarır.
+ * Activity iframe'i cookie gönderemediği için Authorization header kullanır.
+ */
+export const getSessionUserIdFromRequest = (request: Request): string | null => {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) return null;
+  const token = authHeader.slice(7);
+  const payload = verifySessionToken(token);
+  return payload?.sub ?? null;
+};
+
 export const requireSessionUser = async (request?: Request) => {
+  // Bearer token varsa önce onu dene (Activity iframe desteği)
   if (request) {
+    const bearerUserId = getSessionUserIdFromRequest(request);
+    if (bearerUserId) {
+      // Bearer token geçerliyse origin kontrolü atla (token zaten yetki kanıtı)
+      return { ok: true as const, userId: bearerUserId };
+    }
+
     const originError = assertSameOrigin(request);
     if (originError) {
       return { ok: false as const, response: originError };

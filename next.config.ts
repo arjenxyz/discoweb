@@ -5,6 +5,24 @@ const nextConfig: NextConfig = {
   experimental: {
     webpackBuildWorker: true,
   },
+  // Activity sayfalarının Discord iframe'inde çalışmasına izin ver
+  async headers() {
+    return [
+      {
+        source: '/activity/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://discord.com https://*.discordsays.com",
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOW-FROM https://discord.com',
+          },
+        ],
+      },
+    ];
+  },
   // Tell Next to treat these packages as server externals (avoid bundling into ESM chunks)
   serverExternalPackages: [
     'discord.js',

@@ -238,6 +238,11 @@ export async function middleware(request: NextRequest) {
 		// Maintenance kontrolü başarısız olursa devam et
 	}
 
+	// Activity sayfalarını atla (Discord Embedded App SDK kendi auth'unu kullanır)
+	if (pathname.startsWith('/activity')) {
+		return NextResponse.next();
+	}
+
 	// Ana sayfa ve public sayfaları atla
 	if (pathname === '/' || pathname.startsWith('/maintenance') || pathname.startsWith('/server-left')) {
 		return NextResponse.next();
