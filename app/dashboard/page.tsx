@@ -258,21 +258,36 @@ export default function DashboardPage() {
   }, [settingsOpen]);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      const response = await fetch('/api/member/profile');
-      if (response.status === 401) {
-        setUnauthorized(true);
+    const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
+    const loadProfile = async (attempt = 1): Promise<void> => {
+      try {
+        const response = await fetch('/api/member/profile');
+        if (response.status === 401) {
+          setUnauthorized(true);
+          setProfileLoading(false);
+          return;
+        }
+        if (!response.ok) {
+          if (attempt < 3) {
+            await sleep(1000 * attempt);
+            return loadProfile(attempt + 1);
+          }
+          setProfileError('Profil bilgileri alınamadı.');
+          setProfileLoading(false);
+          return;
+        }
+        const data = (await response.json()) as MemberProfile;
+        setProfile(data);
         setProfileLoading(false);
-        return;
-      }
-      if (!response.ok) {
+      } catch {
+        if (attempt < 3) {
+          await sleep(1000 * attempt);
+          return loadProfile(attempt + 1);
+        }
         setProfileError('Profil bilgileri alınamadı.');
         setProfileLoading(false);
-        return;
       }
-      const data = (await response.json()) as MemberProfile;
-      setProfile(data);
-      setProfileLoading(false);
     };
 
     loadProfile();
@@ -303,15 +318,24 @@ export default function DashboardPage() {
   }, [unauthorized]);
 
   useEffect(() => {
-    const loadOverview = async () => {
+    const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
+    const loadOverview = async (attempt = 1): Promise<void> => {
       try {
         const response = await fetch('/api/member/overview');
         if (response.ok) {
           const data = (await response.json()) as OverviewStats;
           setOverviewStats(data);
+        } else if (attempt < 3) {
+          await sleep(1000 * attempt);
+          return loadOverview(attempt + 1);
         }
-      } catch (err) {
-        console.warn('Overview yüklenemedi:', err);
+      } catch {
+        if (attempt < 3) {
+          await sleep(1000 * attempt);
+          return loadOverview(attempt + 1);
+        }
+        console.warn('Overview yüklenemedi (tüm denemeler başarısız)');
       }
       setOverviewLoading(false);
     };

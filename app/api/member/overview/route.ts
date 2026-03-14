@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { getSessionUserId } from '@/lib/auth';
+import { cleanupExpiredRolesForUser } from '@/lib/roleCleanup';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -316,6 +317,11 @@ export async function GET(request: NextRequest) {
         boosterSince = profileRow.booster_since ?? boosterSince;
       }
     }
+  }
+
+  // Süresi dolmuş rolleri arka planda temizle (bot çevrimdışı olsa bile)
+  if (serverRow?.id) {
+    cleanupExpiredRolesForUser(supabase as any, serverRow.id, selectedGuildId, userId, botToken).catch(() => {});
   }
 
   return NextResponse.json({

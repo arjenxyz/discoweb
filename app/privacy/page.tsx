@@ -1,326 +1,389 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { LuShield, LuDatabase, LuEye, LuShare2, LuClock, LuLock, LuSettings, LuMessageCircle, LuChevronRight, LuArrowLeft } from 'react-icons/lu';
 
 export default function PrivacyPage() {
-  const LAST_UPDATED = '2 Şubat 2026';
-  const AUTHOR = {
-    name: 'DiscoWeb Ekibi',
-    role: 'Veri Koruma ve Güvenlik',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=DiscoWeb',
-    timeAgo: 'Son güncelleme'
-  };
+  const LAST_UPDATED = '14 Mart 2026';
+  const [activeSection, setActiveSection] = useState('intro');
 
   useEffect(() => {
     document.title = 'Gizlilik Politikası - DiscoWeb';
+
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('section[id]');
+      let current = 'intro';
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 120) current = section.id;
+      }
+      setActiveSection(current);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Top Navigation Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
-        <div className="px-6 py-3">
-          <div className="flex justify-between items-center">
-            {/* Left: Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-black rounded-lg"></div>
-              <span className="font-bold text-lg text-gray-900">DiscoWeb</span>
-            </div>
+  const NAV_ITEMS = [
+    { id: 'intro', label: 'Giriş', icon: LuShield },
+    { id: 'about', label: 'Platform Hakkında', icon: LuEye },
+    { id: 'what', label: 'Toplanan Veriler', icon: LuDatabase },
+    { id: 'how-we-use', label: 'Verilerin Kullanımı', icon: LuSettings },
+    { id: 'sharing', label: 'Üçüncü Taraflar', icon: LuShare2 },
+    { id: 'retention', label: 'Saklama Süresi', icon: LuClock },
+    { id: 'protection', label: 'Güvenlik', icon: LuLock },
+    { id: 'control', label: 'Haklarınız', icon: LuSettings },
+    { id: 'contact', label: 'İletişim', icon: LuMessageCircle },
+  ];
 
-            {/* Right: Actions */}
-            <div className="flex justify-end">
-              <button
-                onClick={() => window.history.back()}
-                className="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-900"
-              >
-                Geri Dön
-              </button>
-            </div>
+  return (
+    <div className="min-h-screen bg-[#0b0d12] text-white">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0b0d12]/80 backdrop-blur-xl border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/gif/cat.gif" alt="DiscoWeb" className="w-8 h-8 rounded-lg" />
+            <span className="font-bold text-base text-white">DiscoWeb</span>
+            <span className="text-[11px] text-white/30 font-medium tracking-wide hidden sm:inline">GİZLİLİK POLİTİKASI</span>
           </div>
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white/70 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg transition-colors"
+          >
+            <LuArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Geri Dön</span>
+          </button>
         </div>
       </header>
 
-      {/* Main Layout - Two Columns like Discord */}
-      <div className="flex mt-14">
-        {/* Left Sidebar - Navigation */}
-        <aside className="hidden md:block w-80 min-h-screen bg-gray-50 border-r border-gray-200 fixed top-14 left-0 z-40">
-          <nav className="p-6">
-            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-              Gizlilik Politikası
-            </h2>
-            <ul className="space-y-2">
-              <li>
-                <a href="#intro" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  Giriş
-                </a>
-              </li>
-              <li>
-                <a href="#about" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  DiscoWeb Hakkında
-                </a>
-              </li>
-              <li>
-                <a href="#what" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  Topladığımız Bilgiler
-                </a>
-              </li>
-              <li>
-                <a href="#how-we-use" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  Bilgilerimizi Nasıl Kullanıyoruz
-                </a>
-              </li>
-              <li>
-                <a href="#sharing" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  Bilgilerin Paylaşımı
-                </a>
-              </li>
-              <li>
-                <a href="#retention" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  Veri Saklama
-                </a>
-              </li>
-              <li>
-                <a href="#protection" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  Bilgilerin Korunması
-                </a>
-              </li>
-              <li>
-                <a href="#control" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  Gizliliğinizi Kontrol Etme
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className="block text-sm text-gray-600 hover:text-gray-900 py-1">
-                  İletişim
-                </a>
-              </li>
+      <div className="flex max-w-7xl mx-auto mt-[60px]">
+        {/* Sidebar */}
+        <aside className="hidden lg:block w-72 min-h-screen fixed top-[60px] left-0 lg:left-auto z-40 border-r border-white/[0.04]">
+          <nav className="p-6 pt-8">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4 px-3">İçindekiler</p>
+            <ul className="space-y-0.5">
+              {NAV_ITEMS.map(item => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={`#${item.id}`}
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                        isActive
+                          ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                          : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03] border border-transparent'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                      {item.label}
+                      {isActive && <LuChevronRight className="w-3 h-3 ml-auto" />}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 min-w-0 md:ml-80">
-          {/* Article Content */}
-          <article className="max-w-4xl px-6 md:px-12 py-6 md:py-12">
-            {/* Article Header */}
-            <header className="mb-16">
-              <h1 className="text-4xl font-bold text-gray-900 mb-6">
+        {/* Main */}
+        <main className="flex-1 min-w-0 lg:ml-72">
+          <article className="max-w-3xl px-5 sm:px-10 py-8 sm:py-14">
+            {/* Hero */}
+            <header className="mb-14">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
+                <LuShield className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-[11px] font-semibold text-indigo-400 tracking-wide">GİZLİLİK & VERİ GÜVENLİĞİ</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-5 leading-tight">
                 Gizlilik Politikası
               </h1>
-
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                DiscoWeb olarak, Discord sunucu yönetim platformumuzda kullanıcı gizliliğini ve veri güvenliğini en üst düzeyde tutmayı taahhüt ederiz.
-                Bu politika, hangi verileri topladığımızı, nasıl kullandığımızı ve koruduğumuzu açıklamaktadır.
+              <p className="text-[15px] text-white/50 leading-relaxed mb-6">
+                DiscoWeb olarak kullanıcılarımızın gizliliğine saygı duyar ve verilerinizi korumayı öncelikli tutarız.
+                Bu politika, platformumuzu kullanırken hangi verilerin toplandığını, nasıl işlendiğini ve haklarınızı açıklar.
               </p>
-
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={AUTHOR.avatar}
-                    alt={AUTHOR.name}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                  />
-                  <span className="font-medium text-gray-900">{AUTHOR.name}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs sm:text-sm">
-                  <span className="text-gray-500">•</span>
-                  <span>{AUTHOR.role}</span>
-                  <span className="text-gray-500">•</span>
-                  <span>Son güncelleme: {LAST_UPDATED}</span>
-                </div>
+              <div className="flex items-center gap-3 text-xs text-white/30">
+                <span>Son güncelleme: {LAST_UPDATED}</span>
               </div>
             </header>
 
-            {/* Article Sections */}
-            <div className="space-y-16">
-              {/* Introduction */}
+            <div className="space-y-14">
+              {/* Giriş */}
               <section id="intro" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Giriş
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Bu Gizlilik Politikası, kişisel bilgilerinizi hizmetlerimiz aracılığıyla nasıl topladığımızı, kullandığımızı, sakladığımızı, koruduğumuzu ve paylaştığımızı açıklamaktadır.
-                  Avrupa Ekonomik Alanı&apos;nda (&quot;EEA&quot;) ikamet ediyorsanız DiscoWeb, hizmetler aracılığıyla toplanan kişisel bilgilerinizin &quot;veri denetleyicisidir&quot;.
-                  Diğer herkes için DiscoWeb veri denetleyicisidir. Bu politikanın tamamını okumanız önemlidir ancak şu özetle başlayabilirsiniz:
-                </p>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-2 mb-6">
-                  <li>Gizliliğinize çok önem veriyoruz</li>
-                  <li>Kişisel bilgilerinizi satmayız</li>
-                  <li>Gerekli bilgilerin kapsamını sınırlı tutuyoruz</li>
-                  <li>Bilgilerinizi korumak için çaba harcıyoruz</li>
-                </ul>
+                <SectionTitle>Giriş</SectionTitle>
+                <P>
+                  Bu Gizlilik Politikası, DiscoWeb platformunu (web sitesi ve Discord botu dahil) kullanırken
+                  kişisel verilerinizin nasıl toplandığını, işlendiğini ve korunduğunu açıklar.
+                  Platformumuzu kullanarak bu politikayı kabul etmiş sayılırsınız.
+                </P>
+                <InfoCard items={[
+                  'Kişisel bilgilerinizi üçüncü taraflara satmayız',
+                  'Yalnızca hizmet için gerekli verileri toplarız',
+                  'Discord OAuth2 dışında herhangi bir şifre veya hassas kimlik bilgisi saklamayız',
+                  'Verilerinizin silinmesini istediğiniz an talep edebilirsiniz',
+                ]} />
               </section>
 
-              {/* About DiscoWeb */}
+              {/* Platform Hakkında */}
               <section id="about" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  DiscoWeb Hakkında
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  DiscoWeb, Discord sunucu yönetimini kolaylaştıran bir web platformudur. Kullanıcıların Discord sunucularını daha etkili yönetmelerine,
-                  gelir elde etmelerine ve topluluklarını büyütmelerine yardımcı olur.
-                </p>
-                <p className="text-base text-gray-700 leading-relaxed">
-                  Platformumuz Discord API&#39;sini kullanarak sunucu yönetimi, rol yönetimi, webhook yönetimi ve diğer yönetim özelliklerini sağlar.
-                </p>
+                <SectionTitle>Platform Hakkında</SectionTitle>
+                <P>
+                  DiscoWeb, Discord sunucuları için web tabanlı bir yönetim panelidir. Platform aşağıdaki hizmetleri sunar:
+                </P>
+                <ul className="space-y-2 mt-4">
+                  {[
+                    'Sunucu üyelerinin aktivitelerini (mesaj sayısı, ses süresi) takip etme',
+                    'Sunucu içi sanal ekonomi sistemi (Papel) ile mağaza ve rol satışı',
+                    'Sunucu yöneticileri için admin paneli ve istatistik görüntüleme',
+                    'Discord botu aracılığıyla otomatik rol yönetimi ve bildirimler',
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-3 text-[14px] text-white/60 leading-relaxed">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400/60 flex-shrink-0" />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
               </section>
 
-              {/* What Information We Collect */}
+              {/* Toplanan Veriler */}
               <section id="what" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Topladığımız Bilgiler
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  DiscoWeb&#39;i kullanırken aşağıdaki bilgileri toplayabiliriz:
-                </p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Hesap Bilgileri</h3>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-1 mb-4">
-                  <li>Discord kullanıcı kimliğiniz</li>
-                  <li>Kullanıcı adınız ve profil resminiz</li>
-                  <li>E-posta adresiniz (Discord üzerinden)</li>
-                </ul>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Sunucu Bilgileri</h3>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-1 mb-4">
-                  <li>Yönettiğiniz Discord sunucularının bilgileri</li>
-                  <li>Rol ve izin bilgileri</li>
-                  <li>Kanal ve webhook bilgileri</li>
-                </ul>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Kullanım Bilgileri</h3>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-1">
-                  <li>Platform kullanım istatistikleri</li>
-                  <li>Hata raporları ve performans verileri</li>
-                  <li>IP adresi ve coğrafi konum bilgileri</li>
-                </ul>
+                <SectionTitle>Toplanan Veriler</SectionTitle>
+                <P>
+                  Platformumuzu kullanırken aşağıdaki veriler toplanır veya işlenir:
+                </P>
+
+                <DataCategory title="Discord Hesap Bilgileri" description="Discord OAuth2 ile giriş yaptığınızda alınır">
+                  {['Discord kullanıcı kimliğiniz (User ID)', 'Kullanıcı adınız ve profil fotoğrafınız', 'Üyesi olduğunuz sunucu listesi (botun bulunduğu sunucular)']}
+                </DataCategory>
+
+                <DataCategory title="Sunucu İçi Aktivite Verileri" description="Discord botu tarafından toplanır">
+                  {['Mesaj sayısı (mesaj içerikleri saklanmaz)', 'Ses kanalında geçirilen süre', 'Sunucuya katılım tarihi ve rol bilgileri']}
+                </DataCategory>
+
+                <DataCategory title="Platform Kullanım Verileri" description="Web paneli kullanımı sırasında oluşur">
+                  {['Mağaza satın alım geçmişi ve bakiye hareketleri', 'Posta kutusu bildirimleri', 'Denetim günlükleri (audit log) — IP adresi ve tarayıcı bilgisi dahil']}
+                </DataCategory>
+
+                <div className="mt-5 p-4 rounded-xl bg-amber-500/[0.06] border border-amber-500/15">
+                  <p className="text-[13px] text-amber-300/80 leading-relaxed">
+                    <strong className="text-amber-300">Önemli:</strong> Discord mesaj içeriklerinizi, özel mesajlarınızı veya ses kayıtlarınızı
+                    hiçbir koşulda saklamayız. Yalnızca mesaj ve ses aktivite sayıları/süreleri işlenir.
+                  </p>
+                </div>
               </section>
 
-              {/* How We Use Information */}
+              {/* Kullanım */}
               <section id="how-we-use" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Bilgilerimizi Nasıl Kullanıyoruz
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Topladığımız bilgileri aşağıdaki amaçlar için kullanırız:
-                </p>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-2">
-                  <li>Hizmetlerimizi sunmak ve geliştirmek</li>
-                  <li>Kullanıcı hesaplarını yönetmek ve güvenliği sağlamak</li>
-                  <li>Discord sunucu yönetim özelliklerini sağlamak</li>
-                  <li>Müşteri desteği sunmak</li>
-                  <li>Yasal yükümlülükleri yerine getirmek</li>
-                  <li>Dolandırıcılık ve kötüye kullanımı önlemek</li>
+                <SectionTitle>Verilerin Kullanımı</SectionTitle>
+                <P>Toplanan veriler yalnızca aşağıdaki amaçlarla kullanılır:</P>
+                <ul className="space-y-2 mt-4">
+                  {[
+                    'Kullanıcı kimliğini doğrulamak ve oturum yönetimi sağlamak',
+                    'Sunucu istatistiklerini hesaplamak ve liderlik tablosunu oluşturmak',
+                    'Sanal ekonomi (Papel) işlemlerini gerçekleştirmek',
+                    'Mağaza siparişlerini işlemek ve satın alınan rolleri atamak',
+                    'Yönetici panelindeki özet ve raporları sunmak',
+                    'Platformun güvenliğini ve bütünlüğünü korumak',
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-3 text-[14px] text-white/60 leading-relaxed">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400/60 flex-shrink-0" />
+                      {text}
+                    </li>
+                  ))}
                 </ul>
               </section>
 
-              {/* Information Sharing */}
+              {/* Üçüncü Taraflar */}
               <section id="sharing" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Bilgilerin Paylaşımı
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Kişisel bilgilerinizi aşağıdaki durumlarda paylaşabiliriz:
-                </p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Hizmet Sağlayıcıları</h3>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Güvenilir üçüncü taraf hizmet sağlayıcıları ile (barındırma, veritabanı, analitik vb.) sınırlı ve gerekli bilgiler paylaşılır.
-                </p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Yasal Zorunluluklar</h3>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Yasal zorunluluklar veya mahkeme emirleri durumunda bilgilerinizi paylaşabiliriz.
-                </p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Güvenlik</h3>
-                <p className="text-base text-gray-700 leading-relaxed">
-                  Hesap güvenliğini korumak veya diğer kullanıcıları korumak için gerekli durumlarda bilgilerinizi paylaşabiliriz.
-                </p>
+                <SectionTitle>Üçüncü Taraf Hizmetler</SectionTitle>
+                <P>
+                  Platformumuz çalışmak için aşağıdaki üçüncü taraf hizmetleri kullanır.
+                  Bu hizmetlere yalnızca işlevsellik için gerekli olan minimum düzeyde veri aktarılır:
+                </P>
+
+                <div className="mt-5 space-y-3">
+                  <ThirdPartyCard name="Discord API" purpose="Kullanıcı kimlik doğrulama, rol yönetimi, sunucu bilgileri" />
+                  <ThirdPartyCard name="Supabase" purpose="Veritabanı barındırma (kullanıcı verileri, siparişler, bakiyeler)" />
+                  <ThirdPartyCard name="Vercel" purpose="Web uygulaması barındırma ve dağıtımı" />
+                </div>
+
+                <div className="mt-5 p-4 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/15">
+                  <p className="text-[13px] text-emerald-300/80 leading-relaxed">
+                    Kişisel verilerinizi reklam, pazarlama veya profilleme amacıyla üçüncü taraflarla <strong className="text-emerald-300">asla paylaşmayız ve satmayız</strong>.
+                  </p>
+                </div>
               </section>
 
-              {/* Data Retention */}
+              {/* Saklama Süresi */}
               <section id="retention" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Veri Saklama
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Kişisel bilgilerinizi aşağıdaki süreler boyunca saklarız:
-                </p>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-2">
-                  <li>Hesap aktif olduğu sürece</li>
-                  <li>Yasal yükümlülükler gerektirdiği sürece</li>
-                  <li>Güvenlik ve dolandırıcılık önleme amaçları için gerekli olduğu sürece</li>
+                <SectionTitle>Veri Saklama Süresi</SectionTitle>
+                <P>Verileriniz aşağıdaki koşullarla saklanır:</P>
+                <ul className="space-y-2 mt-4">
+                  {[
+                    'Hesap verileri — hesabınız aktif olduğu sürece saklanır',
+                    'Aktivite istatistikleri — sunucu yöneticisi verileri sıfırlamadıkça saklanır',
+                    'Sipariş ve işlem geçmişi — hesap silinene kadar saklanır',
+                    'Denetim günlükleri — güvenlik amacıyla 90 güne kadar saklanabilir',
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-3 text-[14px] text-white/60 leading-relaxed">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400/60 flex-shrink-0" />
+                      {text}
+                    </li>
+                  ))}
                 </ul>
-                <p className="text-base text-gray-700 leading-relaxed">
-                  Hesabınızı sildiğinizde, bilgileriniz makul bir süre içinde silinir.
-                </p>
+                <P className="mt-4">
+                  Hesabınızı silmek istediğinizde, Discord sunucumuzdaki destek kanalı üzerinden talepte bulunabilirsiniz.
+                  Silme işlemi tüm kişisel verilerinizi ve ilişkili kayıtları kapsar.
+                </P>
               </section>
 
-              {/* Data Protection */}
+              {/* Güvenlik */}
               <section id="protection" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Bilgilerin Korunması
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Kişisel bilgilerinizi korumak için aşağıdaki önlemleri alırız:
-                </p>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-2">
-                  <li>Şifreleme teknolojileri kullanırız</li>
-                  <li>Güvenli sunucu altyapısı kullanırız</li>
-                  <li>Erişim kontrolleri uygularız</li>
-                  <li>Düzenli güvenlik denetimleri yaparız</li>
-                  <li>Çalışanlarımıza gizlilik eğitimi veririz</li>
+                <SectionTitle>Güvenlik Önlemleri</SectionTitle>
+                <P>Verilerinizin güvenliği için aldığımız teknik önlemler:</P>
+                <ul className="space-y-2 mt-4">
+                  {[
+                    'Tüm veri aktarımları HTTPS/TLS şifrelemesi ile korunur',
+                    'Veritabanı erişimi service role key ile sınırlandırılmıştır',
+                    'Discord OAuth2 token\'ları güvenli httpOnly çerezlerde saklanır',
+                    'Admin ve geliştirici panellerine yalnızca yetkili kullanıcılar erişebilir',
+                    'Hassas işlemler (bakiye değişikliği, rol atama vb.) denetim günlüğüne kaydedilir',
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-3 text-[14px] text-white/60 leading-relaxed">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400/60 flex-shrink-0" />
+                      {text}
+                    </li>
+                  ))}
                 </ul>
               </section>
 
-              {/* Your Privacy Controls */}
+              {/* Haklarınız */}
               <section id="control" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Gizliliğinizi Kontrol Etme
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Gizliliğinizi kontrol etmek için aşağıdaki haklara sahipsiniz:
-                </p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Hesap Yönetimi</h3>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-1 mb-4">
-                  <li>Hesabınızı istediğiniz zaman silebilirsiniz</li>
-                  <li>Bilgilerinizi güncelleyebilirsiniz</li>
-                  <li>Veri kullanım tercihlerinizi değiştirebilirsiniz</li>
-                </ul>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Veri Hakları</h3>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-1">
-                  <li>Topladığımız verilere erişim talep edebilirsiniz</li>
-                  <li>Verilerinizi düzeltme veya silme talep edebilirsiniz</li>
-                  <li>Veri taşınabilirliği talep edebilirsiniz</li>
-                </ul>
+                <SectionTitle>Haklarınız</SectionTitle>
+                <P>Kullanıcı olarak aşağıdaki haklara sahipsiniz:</P>
+
+                <div className="mt-5 grid gap-3">
+                  <RightCard title="Erişim Hakkı" desc="Hakkınızda saklanan verilerin bir kopyasını talep edebilirsiniz." />
+                  <RightCard title="Düzeltme Hakkı" desc="Yanlış veya eksik bilgilerin düzeltilmesini isteyebilirsiniz." />
+                  <RightCard title="Silme Hakkı" desc="Hesabınızın ve tüm verilerinizin kalıcı olarak silinmesini talep edebilirsiniz." />
+                  <RightCard title="İtiraz Hakkı" desc="Verilerinizin işlenmesine herhangi bir zamanda itiraz edebilirsiniz." />
+                </div>
+
+                <P className="mt-4">
+                  Bu haklarınızı kullanmak için aşağıdaki iletişim kanallarından bize ulaşabilirsiniz.
+                  Talepler en geç 30 gün içinde yanıtlanır.
+                </P>
               </section>
 
-              {/* Contact Us */}
+              {/* İletişim */}
               <section id="contact" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  İletişim
-                </h2>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
-                  Bu gizlilik politikası hakkında sorularınız varsa, aşağıdaki kanallardan bize ulaşabilirsiniz:
-                </p>
-                <ul className="list-disc list-inside text-base text-gray-700 leading-relaxed space-y-2">
-                  <li>E-posta: privacy@discoweb.com</li>
-                  <li>Discord sunucumuz: discord.gg/discoweb</li>
-                  <li>Web sitemiz: discoweb.com/support</li>
-                </ul>
-                <p className="text-base text-gray-700 leading-relaxed mt-4">
-                  Bu politika zaman zaman güncellenebilir. Önemli değişiklikler durumunda kullanıcılarımızı bilgilendiririz.
-                </p>
+                <SectionTitle>İletişim</SectionTitle>
+                <P>
+                  Bu gizlilik politikası veya verileriniz hakkında sorularınız için:
+                </P>
+                <div className="mt-5 space-y-3">
+                  <ContactCard icon="💬" label="Discord Sunucusu" value="Destek kanalı üzerinden bize ulaşabilirsiniz" />
+                  <ContactCard icon="🌐" label="Web Sitesi" value="discoweb.tr iletişim sayfası" />
+                </div>
+
+                <div className="mt-8 p-5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                  <p className="text-[13px] text-white/40 leading-relaxed">
+                    Bu politika zaman zaman güncellenebilir. Önemli değişiklikler yapıldığında platform içi bildirim
+                    ve/veya Discord sunucumuz üzerinden duyuru yapılır. Güncel politikayı bu sayfadan takip edebilirsiniz.
+                  </p>
+                </div>
               </section>
             </div>
 
-            {/* Article Footer */}
-            <footer className="mt-16 pt-8 border-t border-gray-300">
-              <div className="text-center">
-                <p className="text-sm text-gray-600">
-                  Son güncelleme: {LAST_UPDATED}
-                </p>
-              </div>
+            {/* Footer */}
+            <footer className="mt-16 pt-8 border-t border-white/[0.06] text-center">
+              <p className="text-xs text-white/25">
+                DiscoWeb Gizlilik Politikası — Son güncelleme: {LAST_UPDATED}
+              </p>
             </footer>
           </article>
         </main>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Yardımcı bileşenler ─── */
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+      {children}
+    </h2>
+  );
+}
+
+function P({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <p className={`text-[14px] text-white/55 leading-relaxed ${className}`}>{children}</p>;
+}
+
+function InfoCard({ items }: { items: string[] }) {
+  return (
+    <div className="mt-5 p-5 rounded-xl bg-indigo-500/[0.04] border border-indigo-500/10">
+      <ul className="space-y-2.5">
+        {items.map((item, i) => (
+          <li key={i} className="flex items-start gap-3 text-[13px] text-indigo-300/80 leading-relaxed">
+            <span className="mt-1 text-indigo-400">✓</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function DataCategory({ title, description, children }: { title: string; description: string; children: string[] }) {
+  return (
+    <div className="mt-5 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+      <h3 className="text-[14px] font-semibold text-white/90 mb-1">{title}</h3>
+      <p className="text-[12px] text-white/30 mb-3">{description}</p>
+      <ul className="space-y-1.5">
+        {children.map((item, i) => (
+          <li key={i} className="flex items-start gap-2.5 text-[13px] text-white/55 leading-relaxed">
+            <span className="mt-1 w-1 h-1 rounded-full bg-white/20 flex-shrink-0" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ThirdPartyCard({ name, purpose }: { name: string; purpose: string }) {
+  return (
+    <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+      <div className="w-9 h-9 rounded-lg bg-white/[0.04] flex items-center justify-center flex-shrink-0">
+        <LuShare2 className="w-4 h-4 text-white/40" />
+      </div>
+      <div>
+        <p className="text-[13px] font-semibold text-white/80">{name}</p>
+        <p className="text-[12px] text-white/40 mt-0.5">{purpose}</p>
+      </div>
+    </div>
+  );
+}
+
+function RightCard({ title, desc }: { title: string; desc: string }) {
+  return (
+    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+      <h4 className="text-[13px] font-semibold text-white/80 mb-1">{title}</h4>
+      <p className="text-[12px] text-white/40">{desc}</p>
+    </div>
+  );
+}
+
+function ContactCard({ icon, label, value }: { icon: string; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+      <span className="text-xl">{icon}</span>
+      <div>
+        <p className="text-[13px] font-semibold text-white/80">{label}</p>
+        <p className="text-[12px] text-white/40">{value}</p>
       </div>
     </div>
   );
