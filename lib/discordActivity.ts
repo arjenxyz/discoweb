@@ -1,14 +1,14 @@
-import { DiscordSDK } from '@discord/embedded-app-sdk';
+// Dynamic import — SDK sadece Discord iframe içinde yüklenecek
+let discordSdk: any = null;
 
-let discordSdk: DiscordSDK | null = null;
-
-/** Discord Activity SDK singleton */
-export function getDiscordSdk(): DiscordSDK {
+/** Discord Activity SDK singleton (lazy load) */
+async function getDiscordSdk() {
   if (!discordSdk) {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
     if (!clientId) {
       throw new Error('NEXT_PUBLIC_DISCORD_CLIENT_ID tanımlı değil');
     }
+    const { DiscordSDK } = await import('@discord/embedded-app-sdk');
     discordSdk = new DiscordSDK(clientId);
   }
   return discordSdk;
@@ -30,7 +30,7 @@ export type ActivityAuth = {
  * 3. Sunucuya code gönder → session token al
  */
 export async function initializeActivity(): Promise<ActivityAuth> {
-  const sdk = getDiscordSdk();
+  const sdk = await getDiscordSdk();
 
   // SDK hazır olana kadar bekle
   await sdk.ready();

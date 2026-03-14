@@ -33,7 +33,13 @@ export default function ActivityLayout({ children }: { children: React.ReactNode
       } catch (err) {
         if (!cancelled) {
           console.error('Activity başlatma hatası:', err);
-          setError(err instanceof Error ? err.message : 'Bağlantı kurulamadı');
+          const msg = err instanceof Error ? err.message : String(err);
+          // Discord iframe dışında açılınca anlamlı bir mesaj göster
+          if (msg.includes('postMessage') || msg.includes('iframe') || msg.includes('origin') || msg.includes('ready')) {
+            setError('Bu sayfa sadece Discord Activity olarak çalışır. Lütfen Discord üzerinden açın.');
+          } else {
+            setError(msg || 'Bağlantı kurulamadı');
+          }
         }
       }
     };
