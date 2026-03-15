@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 const SESSION_COOKIE = 'discord_session';
@@ -93,18 +93,48 @@ export const clearSessionCookies = (response: NextResponse) => {
 };
 
 export const getSessionUserId = async () => {
+  // Önce Bearer token kontrol et (Activity iframe desteği)
+  try {
+    const headerStore = await headers();
+    const authHeader = headerStore.get('authorization');
+    if (authHeader?.startsWith('Bearer ')) {
+      const payload = verifySessionToken(authHeader.slice(7));
+      if (payload?.sub) return payload.sub;
+    }
+  } catch {
+    // headers() erişilemezse (edge case) cookie'ye devam et
+  }
+
+  // Cookie'den oku
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) {
-    const allCookies = cookieStore.getAll().map(c => c.name);
-    console.log('[auth] No discord_session cookie found. Available cookies:', allCookies);
     return null;
   }
   const payload = verifySessionToken(token);
-  if (!payload) {
-    console.log('[auth] discord_session cookie exists but verification failed (expired or invalid signature)');
-  }
   return payload?.sub ?? null;
+};
+
+const DEFAULT_GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
+
+/**
+ * Guild ID'yi context'ten çeker.
+ * Activity: X-Guild-Id header'dan, Normal: selected_guild_id cookie'den.
+ */
+export const getSelectedGuildIdFromContext = async (): Promise<string> => {
+  // Önce X-Guild-Id header kontrol et (Activity desteği)
+  try {
+    const headerStore = await headers();
+    const guildFromHeader = headerStore.get('x-guild-id');
+    if (guildFromHeader) return guildFromHeader;
+  } catch {
+    // ignore
+  }
+
+  // Cookie'den oku
+  const cookieStore = await cookies();
+  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
+  return selectedGuildId || DEFAULT_GUILD_ID;
 };
 
 export const assertSameOrigin = (request: Request) => {

@@ -243,6 +243,21 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.next();
 	}
 
+	// Discord Activity iframe'inden açılınca /activity'ye yönlendir
+	// Discord, Activity'yi açarken frame_id ve instance_id query param'larını ekler
+	if (pathname === '/') {
+		const frameId = request.nextUrl.searchParams.get('frame_id');
+		const instanceId = request.nextUrl.searchParams.get('instance_id');
+		if (frameId || instanceId) {
+			const activityUrl = new URL('/activity', request.url);
+			// Query param'ları koru (SDK bunlara ihtiyaç duyar)
+			request.nextUrl.searchParams.forEach((value, key) => {
+				activityUrl.searchParams.set(key, value);
+			});
+			return NextResponse.redirect(activityUrl);
+		}
+	}
+
 	// Ana sayfa ve public sayfaları atla
 	if (pathname === '/' || pathname.startsWith('/maintenance') || pathname.startsWith('/server-left')) {
 		return NextResponse.next();

@@ -3,7 +3,7 @@ import { createSessionToken } from '@/lib/auth';
 
 /**
  * Discord Activity SDK'dan gelen authorization code'u exchange eder.
- * Cookie yerine JSON body'de session token döndürür (iframe uyumu).
+ * Cookie yerine JSON body'de session token + access_token döndürür.
  */
 export async function POST(request: Request) {
   try {
@@ -13,26 +13,19 @@ export async function POST(request: Request) {
     const clientSecret = process.env.DISCORD_CLIENT_SECRET;
 
     if (!code || !clientId || !clientSecret) {
+      console.error('Activity auth: eksik parametreler', { code: !!code, clientId: !!clientId, clientSecret: !!clientSecret });
       return NextResponse.json(
         { status: 'error', reason: 'missing_env_or_code' },
         { status: 400 },
       );
     }
 
-    // Discord Activity SDK authorize() özel redirect_uri kullanmaz,
-    // ancak token exchange için boş string veya uygulama URL'i gerekebilir.
-    // Embedded App SDK code exchange'inde redirect_uri olarak
-    // uygulamanın Activity URL'i kullanılır.
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? '';
-
+    // Token exchange
     const body = new URLSearchParams({
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'authorization_code',
       code,
-      // Activity SDK authorize() tarafından üretilen code için redirect_uri gerekli değil
-      // ama Discord API bunu zorunlu kılıyor — boş bırakılamaz.
-      // Activity proxy URL'ini kullanıyoruz.
     });
 
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
@@ -43,9 +36,9 @@ export async function POST(request: Request) {
 
     if (!tokenResponse.ok) {
       const discordBody = await tokenResponse.json().catch(() => null);
-      console.error('Activity auth: token exchange failed', discordBody);
+      console.error('Activity auth: token exchange failed', tokenResponse.status, discordBody);
       return NextResponse.json(
-        { status: 'error', reason: 'token_exchange_failed', discordBody },
+        { status: 'error', reason: 'token_exchange_failed', discordStatus: tokenResponse.status, discordBody },
         { status: 401 },
       );
     }
@@ -53,6 +46,8 @@ export async function POST(request: Request) {
     const tokenData = (await tokenResponse.json()) as {
       access_token: string;
       token_type: string;
+      refresh_token?: string;
+      expires_in?: number;
     };
 
     // Kullanıcı bilgilerini al
@@ -61,6 +56,7 @@ export async function POST(request: Request) {
     });
 
     if (!userResponse.ok) {
+      console.error('Activity auth: user fetch failed', userResponse.status);
       return NextResponse.json(
         { status: 'error', reason: 'user_fetch_failed' },
         { status: 401 },
@@ -73,12 +69,17 @@ export async function POST(request: Request) {
       avatar: string | null;
     };
 
-    // Session token oluştur (cookie yerine body'de döndür)
+    // Session token oluştur
     const sessionToken = createSessionToken(user.id);
+
+    console.log('Activity auth: başarılı, user:', user.id, user.username);
 
     return NextResponse.json({
       status: 'ok',
       sessionToken,
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token ?? null,
+      expiresIn: tokenData.expires_in ?? null,
       user: {
         id: user.id,
         username: user.username,

@@ -51,14 +51,14 @@ export default function ActivityLayout({ children }: { children: React.ReactNode
   // Hata durumu
   if (error) {
     return (
-      <div className="h-screen bg-[#0d0d1a] flex items-center justify-center p-4">
+      <div className="h-screen bg-[#313338] flex items-center justify-center p-4">
         <div className="text-center max-w-sm">
-          <div className="text-4xl mb-4">😿</div>
-          <h2 className="text-white text-lg font-bold mb-2">Bağlantı Hatası</h2>
-          <p className="text-[#99AAB5] text-sm mb-4">{error}</p>
+          <div className="text-3xl mb-3">😿</div>
+          <h2 className="text-[#f2f3f5] text-base font-semibold mb-1.5">Bağlantı Hatası</h2>
+          <p className="text-[#b5bac1] text-xs mb-3">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-[#5865F2] text-white text-sm rounded-lg hover:bg-[#4752C4] transition-colors"
+            className="px-3 py-1.5 bg-[#5865F2] text-white text-xs rounded hover:bg-[#4752C4] transition-colors"
           >
             Tekrar Dene
           </button>
@@ -70,17 +70,17 @@ export default function ActivityLayout({ children }: { children: React.ReactNode
   // Yükleme durumu
   if (!auth) {
     return (
-      <div className="h-screen bg-[#0d0d1a] flex items-center justify-center">
+      <div className="h-screen bg-[#313338] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-extrabold text-white mb-6">DiscoWeb</h1>
-          <div className="w-48 h-1.5 bg-white/20 rounded-full overflow-hidden mb-3">
+          <h1 className="text-lg font-bold text-[#f2f3f5] mb-4">DiscoWeb</h1>
+          <div className="w-40 h-1 bg-[#4e5058] rounded-full overflow-hidden mb-2">
             <div
-              className="h-full bg-gradient-to-r from-[#5865F2] to-[#7289DA] rounded-full transition-all duration-300"
+              className="h-full bg-[#5865F2] rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-[#99AAB5] text-xs animate-pulse">
-            Discord&apos;a bağlanılıyor... {progress}%
+          <p className="text-[#949ba4] text-[11px]">
+            Bağlanıyor... {progress}%
           </p>
         </div>
       </div>
@@ -98,7 +98,7 @@ export default function ActivityLayout({ children }: { children: React.ReactNode
       channelId={auth.channelId}
     >
       <CartProvider>
-        <div className="h-screen bg-[#0d0d1a] text-white overflow-hidden flex flex-col">
+        <div className="min-h-screen h-full w-screen min-w-0 bg-[#2b2d31] text-[#dbdee1] overflow-auto flex flex-col">
           {children}
         </div>
       </CartProvider>
