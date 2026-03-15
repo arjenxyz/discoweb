@@ -4,15 +4,9 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { logWebEvent } from '@/lib/serverLogger';
 import { discordFetch } from '@/lib/discordRest';
-import { requireSessionUser } from '@/lib/auth';
+import { requireSessionUser, getSelectedGuildIdFromContext } from '@/lib/auth';
 
-const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
-
-const getSelectedGuildId = async (): Promise<string> => {
-  const cookieStore = await cookies();
-  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || GUILD_ID; // Fallback to default
-};
+const getSelectedGuildId = getSelectedGuildIdFromContext;
 
 const getSupabase = (): SupabaseClient | null => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;

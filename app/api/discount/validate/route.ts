@@ -1,13 +1,9 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { requireSessionUser } from '@/lib/auth';
+import { requireSessionUser, getSelectedGuildIdFromContext } from '@/lib/auth';
 
-const getSelectedGuildId = async (): Promise<string> => {
-  const cookieStore = await cookies();
-  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || process.env.DISCORD_GUILD_ID || '1465698764453838882';
-};
+const getSelectedGuildId = getSelectedGuildIdFromContext;
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;

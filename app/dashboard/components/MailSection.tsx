@@ -71,6 +71,7 @@ type MailSectionProps = {
   items: MailItem[];
   onOpenMail?: (mail: MailItem) => void;
   onBack?: () => void;
+  disableRouting?: boolean; // Activity içinde /dashboard yönlendirmelerini engellemek için
 };
 
 export default function MailSection({
@@ -79,6 +80,7 @@ export default function MailSection({
   items,
   onOpenMail,
   onBack,
+  disableRouting,
 }: MailSectionProps) {
   const [activeCategory, setActiveCategory] = useState<'all' | string>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -211,7 +213,7 @@ export default function MailSection({
   ];
 
   return (
-    <section className="relative w-full h-screen overflow-hidden bg-[#0b0d12] flex flex-col">
+    <section className="relative w-full h-full min-h-0 overflow-hidden bg-[#0b0d12] flex flex-col">
 
       {/* Background decorations */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-[#5865F2]/10 rounded-full blur-[100px] pointer-events-none" />
@@ -484,7 +486,9 @@ export default function MailSection({
                     if ((e.target as HTMLElement).closest('.mail-action-btn')) return;
                     setSelectedMail(mail);
                     if (onOpenMail) onOpenMail(mail);
-                    try { router.push(`/dashboard/mail?id=${encodeURIComponent(String(mail.id))}`); } catch {}
+                    if (!disableRouting) {
+                      try { router.push(`/dashboard/mail?id=${encodeURIComponent(String(mail.id))}`); } catch {}
+                    }
                   }}
                 >
                   {/* Desktop layout */}
@@ -688,7 +692,9 @@ export default function MailSection({
           mail={selectedMail}
           onClose={() => {
             setSelectedMail(null);
-            try { router.push('/dashboard/mail'); } catch {}
+            if (!disableRouting) {
+              try { router.push('/dashboard/mail'); } catch {}
+            }
           }}
           onDelete={async (id) => {
             try {
@@ -696,7 +702,9 @@ export default function MailSection({
               if (!res.ok) { showToast('Silme hatası', 'error'); return; }
               showToast('Mesaj silindi', 'success');
               setSelectedMail(null);
-              try { router.push('/dashboard/mail'); } catch {}
+              if (!disableRouting) {
+                try { router.push('/dashboard/mail'); } catch {}
+              }
               window.dispatchEvent(new CustomEvent('mail:refresh'));
             } catch { showToast('Silme hatası', 'error'); }
           }}

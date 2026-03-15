@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { discordFetch } from '@/lib/discordRest';
-import { getSessionUserId, requireSessionUser } from '@/lib/auth';
+import { getSessionUserId, requireSessionUser, getSelectedGuildIdFromContext } from '@/lib/auth';
 import { logWebEvent } from '@/lib/serverLogger';
 import { cleanupExpiredRolesForUser } from '@/lib/roleCleanup';
 
@@ -19,11 +19,7 @@ const getSupabase = (): SupabaseClient | null => {
 };
 
 
-const getSelectedGuildId = async (): Promise<string> => {
-  const cookieStore = await cookies();
-  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || GUILD_ID;
-};
+const getSelectedGuildId = getSelectedGuildIdFromContext;
 
 export async function GET() {
   const maintenance = await checkMaintenance(['site', 'store']);

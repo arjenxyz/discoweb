@@ -2,16 +2,12 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
-import { getSessionUserId } from '@/lib/auth';
+import { getSessionUserId, getSelectedGuildIdFromContext } from '@/lib/auth';
 import { cleanupExpiredRolesForUser } from '@/lib/roleCleanup';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
-const getSelectedGuildId = async (): Promise<string> => {
-  const cookieStore = await cookies();
-  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || process.env.DISCORD_GUILD_ID || '1465698764453838882';
-};
+const getSelectedGuildId = getSelectedGuildIdFromContext;
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;

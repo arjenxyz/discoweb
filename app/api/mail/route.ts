@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { getSessionUserId, requireSessionUser } from '@/lib/auth';
+import { getSessionUserId, requireSessionUser, getSelectedGuildIdFromContext } from '@/lib/auth';
 
 type Database = {
   public: {
@@ -67,11 +67,7 @@ type Database = {
   };
 };
 
-const getSelectedGuildId = async (): Promise<string> => {
-  const cookieStore = await cookies();
-  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || '1465698764453838882';
-};
+const getSelectedGuildId = getSelectedGuildIdFromContext;
 
 const getSupabase = (): SupabaseClient<Database> | null => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;

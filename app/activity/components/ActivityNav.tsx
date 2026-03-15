@@ -1,8 +1,8 @@
 'use client';
 
-import { LuHouse, LuStore, LuLayoutDashboard } from 'react-icons/lu';
+import { LuStore, LuLayoutDashboard, LuMail } from 'react-icons/lu';
 
-export type ActivityTab = 'home' | 'store' | 'dashboard';
+export type ActivityTab = 'store' | 'dashboard' | 'mail';
 
 type ActivityNavProps = {
   activeTab: ActivityTab;
@@ -10,23 +10,23 @@ type ActivityNavProps = {
 };
 
 const tabs: { id: ActivityTab; label: string; icon: React.ReactNode }[] = [
-  { id: 'home', label: 'Ana Sayfa', icon: <LuHouse size={18} /> },
-  { id: 'store', label: 'Mağaza', icon: <LuStore size={18} /> },
-  { id: 'dashboard', label: 'Dashboard', icon: <LuLayoutDashboard size={18} /> },
+  { id: 'store', label: 'Mağaza', icon: <LuStore size={16} /> },
+  { id: 'dashboard', label: 'Dashboard', icon: <LuLayoutDashboard size={16} /> },
+  { id: 'mail', label: 'Mail', icon: <LuMail size={16} /> },
 ];
 
 export default function ActivityNav({ activeTab, onTabChange }: ActivityNavProps) {
   return (
-    <nav className="flex items-center justify-center gap-1 bg-[#1a1a2e]/80 backdrop-blur-md border-b border-white/10 px-2 py-1.5">
+    <nav className="flex items-center gap-1 bg-[#1e1f22] border-b border-[#3f4147] px-3 py-1">
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={`
-            flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
+            flex items-center gap-1.5 px-3 py-1 rounded text-xs font-medium transition-all
             ${activeTab === tab.id
-              ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25'
-              : 'text-[#99AAB5] hover:text-white hover:bg-white/5'
+              ? 'bg-[#5865F2] text-white'
+              : 'text-[#b5bac1] hover:text-[#dbdee1] hover:bg-[#3f4147]'
             }
           `}
         >
