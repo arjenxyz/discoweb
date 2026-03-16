@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 
 const ubuntu = Ubuntu({ subsets: ["latin"], weight: ["400", "700"] });
 
-
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);

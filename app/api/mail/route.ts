@@ -59,6 +59,21 @@ type Database = {
         Update: { mail_id?: string; user_id?: string; read_at?: string | null; deleted_at?: string | null };
         Relationships: [];
       };
+      users: {
+        Row: {
+          discord_id: string;
+          created_at: string;
+        };
+        Insert: {
+          discord_id: string;
+          created_at: string;
+        };
+        Update: {
+          discord_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -99,13 +114,31 @@ export async function GET() {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
+  // If a user has just been created, don't show them system mails that were sent before they existed.
+  // This prevents "global" mails (user_id=null) from showing up for new accounts retroactively.
+  let sinceDate = ninetyDaysAgo;
+  if (userId) {
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('created_at')
+      .eq('discord_id', userId)
+      .maybeSingle();
+
+    if (userRecord?.created_at) {
+      const userCreatedAt = new Date(userRecord.created_at);
+      if (userCreatedAt > sinceDate) {
+        sinceDate = userCreatedAt;
+      }
+    }
+  }
+
   const { data, error } = await supabase
     .from('system_mails')
     .select('id,title,body,metadata,category,status,created_at,user_id,author_name,author_avatar_url,image_url,details_url')
     .eq('guild_id', selectedGuildId)
     .eq('status', 'published')
     .or(`user_id.is.null,user_id.eq.${userId}`)
-    .gte('created_at', ninetyDaysAgo.toISOString())
+    .gte('created_at', sinceDate.toISOString())
     .order('created_at', { ascending: false });
 
   if (error) {

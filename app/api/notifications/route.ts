@@ -69,16 +69,32 @@ export async function GET() {
     return NextResponse.json({ error: 'verify_required' }, { status: 403 });
   }
 
-  // Get notifications from the last 30 days
+  // Get notifications from the last 30 days (or since the user was created, whichever is later).
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  let sinceDate = thirtyDaysAgo;
+  if (userId) {
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('created_at')
+      .eq('discord_id', userId)
+      .maybeSingle();
+
+    if (userRecord?.created_at) {
+      const userCreatedAt = new Date(userRecord.created_at);
+      if (userCreatedAt > sinceDate) {
+        sinceDate = userCreatedAt;
+      }
+    }
+  }
 
   const { data, error } = await supabase
     .from('notifications')
     .select('id,title,body,type,created_at,author_name,author_avatar_url,details_url,image_url')
     .eq('guild_id', selectedGuildId)
     .eq('status', 'published')
-    .gte('created_at', thirtyDaysAgo.toISOString())
+    .gte('created_at', sinceDate.toISOString())
     .or(userId ? `target_user_id.is.null,target_user_id.eq.${userId}` : 'target_user_id.is.null')
     .order('created_at', { ascending: false });
 
