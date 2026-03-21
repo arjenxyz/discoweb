@@ -175,16 +175,24 @@ export async function POST(request: Request) {
           .maybeSingle();
 
         if (server) {
-          await supabase.rpc('add_papel', {
+          const { error: rpcError } = await supabase.rpc('add_papel', {
             p_user_id: winner.user_id,
             p_server_id: server.id,
             p_amount: raffle.prize_papel_amount,
-          }).catch(() => {
-            // Fallback: direct upsert
-            return supabase
-              .from('member_wallets')
-              .upsert({ user_id: winner.user_id, server_id: server.id, guild_id: guildId, balance: raffle.prize_papel_amount }, { onConflict: 'user_id,server_id', ignoreDuplicates: false });
           });
+          if (rpcError) {
+            // Fallback: direct upsert
+            const { data: wallet } = await supabase
+              .from('member_wallets')
+              .select('balance')
+              .eq('user_id', winner.user_id)
+              .eq('server_id', server.id)
+              .maybeSingle();
+            const newBalance = (Number(wallet?.balance ?? 0)) + Number(raffle.prize_papel_amount);
+            await supabase
+              .from('member_wallets')
+              .upsert({ user_id: winner.user_id, server_id: server.id, guild_id: guildId, balance: newBalance }, { onConflict: 'user_id,server_id' });
+          }
         }
 
         await supabase.from('system_mails').insert({
