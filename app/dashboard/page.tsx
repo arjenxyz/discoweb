@@ -11,6 +11,7 @@ import OverviewSection from './components/OverviewSection';
 import LeaderboardDrawer from './components/LeaderboardDrawer';
 import ProfileSection from './components/ProfileSection';
 import StoreSection from './components/StoreSection';
+import RaffleSection from './components/RaffleSection';
 import SettingsSection from './components/SettingsSection';
 import MailSection from './components/MailSection';
 import NotificationDetailModal from './components/NotificationDetailModal';
@@ -48,6 +49,7 @@ export default function DashboardPage() {
   const [overviewLoading, setOverviewLoading] = useState(true);
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [storeItemsLoading, setStoreItemsLoading] = useState(true);
+  const [ownedRoleIds, setOwnedRoleIds] = useState<string[]>([]);
   const [activeSection, setActiveSection] = useState<Section>('overview');
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -373,8 +375,9 @@ export default function DashboardPage() {
     try {
       const response = await fetch('/api/member/store');
       if (response.ok) {
-        const data = (await response.json()) as { items: StoreItem[] };
+        const data = (await response.json()) as { items: StoreItem[]; ownedRoleIds?: string[] };
         setStoreItems(data.items ?? []);
+        setOwnedRoleIds(data.ownedRoleIds ?? []);
       }
     } catch (err) {
       console.warn('Mağaza ürünleri yüklenemedi:', err);
@@ -772,14 +775,16 @@ export default function DashboardPage() {
     await refreshStoreItems();
   };
 
-  const mainWrapperClass = effectiveSection === 'mail'
+  const isFullWidthSection = effectiveSection === 'mail';
+  const isWideSection = effectiveSection === 'store' || effectiveSection === 'raffle';
+  const mainWrapperClass = isFullWidthSection
     ? 'mx-0 w-full max-w-full px-0'
-    : effectiveSection === 'store'
+    : isWideSection
       ? 'mx-auto max-w-6xl px-0 sm:px-6'
       : 'mx-auto max-w-6xl px-3 sm:px-6';
-  const mainSpacingClass = effectiveSection === 'mail'
+  const mainSpacingClass = isFullWidthSection
     ? 'py-0 gap-0'
-    : effectiveSection === 'store'
+    : isWideSection
       ? 'pt-20 sm:pt-24 pb-0 sm:pb-10 gap-0 sm:gap-6'
       : 'pt-24 pb-10 gap-6';
 
@@ -931,7 +936,12 @@ export default function DashboardPage() {
                 onPurchase={handlePurchase}
                 onAddToCart={handleAddToCart}
                 renderPapelAmount={renderPapelAmount}
+                ownedRoleIds={ownedRoleIds}
               />
+            )}
+
+            {effectiveSection === 'raffle' && !isSiteMaintenance && (
+              <RaffleSection renderPapelAmount={renderPapelAmount} />
             )}
 
             {effectiveSection === 'settings' && !isSiteMaintenance && isPromotionsMaintenance && (

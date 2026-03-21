@@ -1,5 +1,26 @@
 // Ortak Section tipi
-export type Section = 'overview' | 'store' | 'notifications' | 'profile' | 'settings' | 'mail' | 'transactions' | 'tracking' | 'leaderboard';
+export type Section = 'overview' | 'store' | 'notifications' | 'profile' | 'settings' | 'mail' | 'transactions' | 'tracking' | 'leaderboard' | 'raffle';
+
+export type Raffle = {
+  id: string;
+  guild_id: string;
+  title: string;
+  description: string | null;
+  prizes: string[] | null;
+  start_date: string | null;
+  end_date: string | null;
+  min_tag_days: number;
+  is_active: boolean;
+  winner_count: number;
+  prize_type: 'papel' | 'role' | 'custom';
+  prize_papel_amount: number | null;
+  prize_role_id: string | null;
+  drawn_at: string | null;
+  created_at: string;
+  // member-facing extras
+  entry_count?: number;
+  user_entered?: boolean;
+};
 export type Notification = {
   id: string;
   title: string;

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { LuHouse, LuMail, LuShield, LuStore, LuLogOut, LuSettings, LuChevronRight, LuArrowLeft, LuChartBar } from 'react-icons/lu';
+import { LuHouse, LuMail, LuShield, LuStore, LuLogOut, LuSettings, LuChevronRight, LuArrowLeft, LuChartBar, LuTrophy } from 'react-icons/lu';
 import Image from 'next/image';
 import DiscordAgreementButton from '@/components/DiscordAgreementButton';
 import { LuCode } from 'react-icons/lu';
@@ -202,6 +202,7 @@ export default function DashboardHeader({
   const navItems: Array<{ key: Section; label: string; requiresAuth?: boolean; requiresDeveloper?: boolean; icon: JSX.Element }> = [
     { key: 'overview', label: 'Genel', icon: <LuHouse className="h-4 w-4" /> },
     { key: 'store', label: 'Mağaza', icon: <LuStore className="h-4 w-4" /> },
+    { key: 'raffle', label: 'Çekilişler', icon: <LuTrophy className="h-4 w-4" /> },
     { key: 'mail', label: 'Mail', requiresAuth: true, icon: <LuMail className="h-4 w-4" /> },
     { key: 'leaderboard', label: 'Sıralama', requiresAuth: true, icon: <LuChartBar className="h-4 w-4" /> },
   ];

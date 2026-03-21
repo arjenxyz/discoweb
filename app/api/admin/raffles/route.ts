@@ -52,6 +52,10 @@ export async function POST(request: Request) {
     end_date?: string | null;
     min_tag_days?: number;
     is_active?: boolean;
+    winner_count?: number;
+    prize_type?: 'papel' | 'role' | 'custom';
+    prize_papel_amount?: number | null;
+    prize_role_id?: string | null;
   };
 
   if (!payload.title?.trim()) {
@@ -70,6 +74,10 @@ export async function POST(request: Request) {
     end_date: payload.end_date ?? null,
     min_tag_days: payload.min_tag_days ?? 1,
     is_active: payload.is_active ?? true,
+    winner_count: payload.winner_count ?? 1,
+    prize_type: payload.prize_type ?? 'custom',
+    prize_papel_amount: payload.prize_papel_amount ?? null,
+    prize_role_id: payload.prize_role_id ?? null,
   });
 
   if (error) return NextResponse.json({ error: 'save_failed' }, { status: 500 });
@@ -92,6 +100,10 @@ export async function PUT(request: Request) {
     end_date?: string | null;
     min_tag_days?: number;
     is_active?: boolean;
+    winner_count?: number;
+    prize_type?: 'papel' | 'role' | 'custom';
+    prize_papel_amount?: number | null;
+    prize_role_id?: string | null;
   };
 
   if (!payload.id) return NextResponse.json({ error: 'invalid_payload', message: 'id zorunludur' }, { status: 400 });
@@ -107,6 +119,10 @@ export async function PUT(request: Request) {
   if (payload.end_date !== undefined) update.end_date = payload.end_date;
   if (payload.min_tag_days !== undefined) update.min_tag_days = payload.min_tag_days;
   if (payload.is_active !== undefined) update.is_active = payload.is_active;
+  if (payload.winner_count !== undefined) update.winner_count = payload.winner_count;
+  if (payload.prize_type !== undefined) update.prize_type = payload.prize_type;
+  if (payload.prize_papel_amount !== undefined) update.prize_papel_amount = payload.prize_papel_amount;
+  if (payload.prize_role_id !== undefined) update.prize_role_id = payload.prize_role_id;
 
   const { error } = await supabase.from('raffles').update(update).eq('id', payload.id);
   if (error) return NextResponse.json({ error: 'update_failed' }, { status: 500 });
