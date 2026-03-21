@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { LuTicket, LuLoader, LuClock, LuUsers, LuTrophy, LuCoins, LuShield, LuGift, LuCheckCircle, LuAlertCircle, LuCalendar } from 'react-icons/lu';
+import { LuTicket, LuLoader, LuClock, LuUsers, LuTrophy, LuCoins, LuShield, LuGift, LuCheck, LuCircleAlert, LuCalendar } from 'react-icons/lu';
 import type { Raffle } from '../types';
 
 type RaffleSectionProps = {
@@ -163,7 +163,7 @@ function RaffleCard({
               ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300'
               : 'bg-rose-500/10 border border-rose-500/20 text-rose-300'
           }`}>
-            {feedback.ok ? <LuCheckCircle className="w-4 h-4 flex-shrink-0" /> : <LuAlertCircle className="w-4 h-4 flex-shrink-0" />}
+            {feedback.ok ? <LuCheck className="w-4 h-4 flex-shrink-0" /> : <LuCircleAlert className="w-4 h-4 flex-shrink-0" />}
             {feedback.message}
           </div>
         )}
@@ -182,7 +182,7 @@ function RaffleCard({
             </div>
           ) : raffle.user_entered ? (
             <div className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-300 font-bold">
-              <LuCheckCircle className="w-4 h-4" />
+              <LuCheck className="w-4 h-4" />
               Katıldınız
             </div>
           ) : (
