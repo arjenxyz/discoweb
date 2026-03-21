@@ -276,6 +276,7 @@ export async function POST(request: Request) {
     await logNewServer({
       guildId,
       guildName: guild.name ?? guildId,
+      guildIcon: guild.icon ?? null,
       ownerId: guild.owner_id ?? userId,
       registeredBy: userId,
       isSetup: true,
