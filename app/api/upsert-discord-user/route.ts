@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireSessionUser } from '@/lib/auth';
+import { logNewUser } from '@/lib/activityLogger';
 
 export async function POST(req: Request) {
   try {
@@ -23,6 +24,14 @@ export async function POST(req: Request) {
 
     const supabase = createClient(supabaseUrl, serviceKey);
     try {
+      // Yeni kullanıcı tespiti için upsert öncesi kontrol
+      const { data: existingUser } = await supabase
+        .from('users')
+        .select('discord_id')
+        .eq('discord_id', body.id)
+        .maybeSingle();
+      const isNewUser = !existingUser;
+
       const { data, error } = await supabase
         .from('users')
         .upsert(
@@ -41,6 +50,21 @@ export async function POST(req: Request) {
         // Log full error for debugging (avoid logging secrets)
         console.error('[upsert-discord-user] Supabase upsert error', errPayload, { raw: error });
         return NextResponse.json({ error: errPayload }, { status: 500 });
+      }
+
+      if (isNewUser) {
+        const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+          ?? req.headers.get('x-real-ip') ?? null;
+        const ua = req.headers.get('user-agent') ?? null;
+        await logNewUser({
+          userId: body.id,
+          username: body.username ?? 'bilinmiyor',
+          avatar: body.avatar ?? null,
+          guildId: null,
+          guildName: null,
+          ip,
+          userAgent: ua,
+        });
       }
 
       return NextResponse.json({ data });
