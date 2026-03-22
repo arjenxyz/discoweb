@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuSkipForward, LuGauge, LuChevronDown } from 'react-icons/lu';
+import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuSkipForward, LuGauge, LuChevronDown, LuTrendingUp, LuCoins, LuExternalLink, LuTriangleAlert } from 'react-icons/lu';
 
 interface DiscordRole {
   id: string;
@@ -21,11 +21,12 @@ interface DiscordUser {
 }
 
 const STEPS = [
-  { id: 'roles', title: 'Roller', icon: LuShield, description: 'Yönetim ve doğrulama rollerini belirleyin', required: true },
-  { id: 'economy', title: 'Ekonomi', icon: LuSettings, description: 'Papel kazanç sistemini yapılandırın', required: false },
-  { id: 'bonuses', title: 'Bonuslar', icon: LuZap, description: 'Tag ve Booster bonus oranlarını ayarlayın', required: false },
-  { id: 'advanced', title: 'Gelişmiş', icon: LuGauge, description: 'Topluluk onay eşiği ve ek ayarlar', required: false },
-  { id: 'confirm', title: 'Kurulum', icon: LuCheck, description: 'Ayarları kontrol edin ve kurulumu başlatın', required: true },
+  { id: 'roles',   title: 'Roller',           icon: LuShield,      description: 'Yönetim ve doğrulama rollerini belirleyin',     required: true },
+  { id: 'tier',    title: 'Ekonomi Sistemi',   icon: LuTrendingUp,  description: 'Sunucunuz için ekonomi modelini seçin',          required: true },
+  { id: 'economy', title: 'Kazanç',            icon: LuSettings,    description: 'Papel kazanç sistemini yapılandırın',            required: false },
+  { id: 'bonuses', title: 'Bonuslar',          icon: LuZap,         description: 'Tag ve Booster bonus oranlarını ayarlayın',      required: false },
+  { id: 'advanced',title: 'Gelişmiş',          icon: LuGauge,       description: 'Topluluk onay eşiği ve ek ayarlar',             required: false },
+  { id: 'confirm', title: 'Kurulum',           icon: LuCheck,       description: 'Ayarları kontrol edin ve kurulumu başlatın',    required: true },
 ];
 
 export default function SetupPage() {
@@ -79,6 +80,7 @@ export default function SetupPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [setupMode, setSetupMode] = useState<'select' | 'quick' | 'custom'>('select');
   const [approvalThreshold, setApprovalThreshold] = useState('80');
+  const [selectedTier, setSelectedTier] = useState<'basic' | 'advanced' | null>(null);
 
   const getRoleNameById = useCallback(
     (roleId: string) => roles.find((role) => role.id === roleId)?.name ?? 'Bilinmeyen Rol',
@@ -236,6 +238,7 @@ export default function SetupPage() {
           boosterBonusMessage: Number(boosterBonusMessage),
           boosterBonusVoice: Number(boosterBonusVoice),
           approvalThreshold: Number(approvalThreshold),
+          economyTier: selectedTier ?? 'basic',
         }),
       });
 
@@ -311,6 +314,7 @@ export default function SetupPage() {
 
   const canGoNext = () => {
     if (currentStep === 0) return !!selectedAdminRole && !!selectedVerifyRole;
+    if (currentStep === 1) return !!selectedTier;
     return true;
   };
 
@@ -678,8 +682,108 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Step 1: Economy */}
+            {/* Step 1: Tier Selection */}
             {currentStep === 1 && (
+              <div className="space-y-4 animate-[slideUp_0.3s_ease-out]">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {/* Basit Ekonomi */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTier('basic')}
+                    className={`relative rounded-2xl border p-6 text-left transition-all ${
+                      selectedTier === 'basic'
+                        ? 'border-emerald-500/40 bg-emerald-500/[0.06] shadow-[0_0_30px_rgba(16,185,129,0.08)]'
+                        : 'border-white/8 bg-white/[0.02] hover:border-emerald-500/20 hover:bg-emerald-500/[0.03]'
+                    }`}
+                  >
+                    {selectedTier === 'basic' && (
+                      <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                        <LuCheck className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
+                      <LuCoins className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-1">Basit Ekonomi</h3>
+                    <p className="text-sm text-white/50 mb-4">
+                      Aktivite ile Papel kazan, mağazada harca. Sade ve etkili.
+                    </p>
+                    <div className="space-y-1.5 text-xs text-white/40 mb-4">
+                      <div className="flex items-center gap-2"><LuCheck className="w-3 h-3 text-emerald-400" /> Mesaj & ses kazanımı</div>
+                      <div className="flex items-center gap-2"><LuCheck className="w-3 h-3 text-emerald-400" /> Mağaza & çekilişler</div>
+                      <div className="flex items-center gap-2"><LuCheck className="w-3 h-3 text-emerald-400" /> Kullanıcılar arası transfer</div>
+                      <div className="flex items-center gap-2"><span className="w-3 h-3 text-white/20 text-center">×</span> Hazine, borsa, referral yok</div>
+                    </div>
+                    <a
+                      href="/economy/basic"
+                      target="_blank"
+                      onClick={e => e.stopPropagation()}
+                      className="inline-flex items-center gap-1.5 text-[11px] text-emerald-400/70 hover:text-emerald-300 transition-colors"
+                    >
+                      <LuExternalLink className="w-3 h-3" /> Detaylı incele
+                    </a>
+                  </button>
+
+                  {/* Yüksek Ekonomi */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTier('advanced')}
+                    className={`relative rounded-2xl border p-6 text-left transition-all ${
+                      selectedTier === 'advanced'
+                        ? 'border-indigo-500/40 bg-indigo-500/[0.06] shadow-[0_0_30px_rgba(99,102,241,0.08)]'
+                        : 'border-white/8 bg-white/[0.02] hover:border-indigo-500/20 hover:bg-indigo-500/[0.03]'
+                    }`}
+                  >
+                    {selectedTier === 'advanced' && (
+                      <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center">
+                        <LuCheck className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                    <div className="w-12 h-12 rounded-xl bg-indigo-500/15 flex items-center justify-center mb-4">
+                      <LuTrendingUp className="w-6 h-6 text-indigo-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-1">Yüksek Ekonomi</h3>
+                    <p className="text-sm text-white/50 mb-4">
+                      Hazine, yakma, referral ve yatırım borsası. Developer onayı gerektirir.
+                    </p>
+                    <div className="space-y-1.5 text-xs text-white/40 mb-4">
+                      <div className="flex items-center gap-2"><LuCheck className="w-3 h-3 text-indigo-400" /> Basit Ekonomi'nin tüm özellikleri</div>
+                      <div className="flex items-center gap-2"><LuCheck className="w-3 h-3 text-indigo-400" /> Sunucu hazinesi & yakma</div>
+                      <div className="flex items-center gap-2"><LuCheck className="w-3 h-3 text-indigo-400" /> Referral pasif gelir</div>
+                      <div className="flex items-center gap-2"><LuCheck className="w-3 h-3 text-indigo-400" /> Yatırım borsası (IPO)</div>
+                    </div>
+                    <a
+                      href="/economy/advanced"
+                      target="_blank"
+                      onClick={e => e.stopPropagation()}
+                      className="inline-flex items-center gap-1.5 text-[11px] text-indigo-400/70 hover:text-indigo-300 transition-colors"
+                    >
+                      <LuExternalLink className="w-3 h-3" /> Detaylı incele
+                    </a>
+                  </button>
+                </div>
+
+                {selectedTier === 'advanced' && (
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/15 text-[12px] text-amber-300/80">
+                    <LuTriangleAlert className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p><strong className="text-amber-300">Önemli:</strong> Yüksek Ekonomi başvurusu developer onayına tabidir.</p>
+                      <p>Onay sonrası tüm üye bakiyeleri sıfırlanır ve geri dönüş yoktur.</p>
+                      <p>Kurulum tamamlandıktan sonra admin panelinden başvurunuzu yapabilirsiniz.</p>
+                    </div>
+                  </div>
+                )}
+
+                {!selectedTier && (
+                  <div className="rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3">
+                    <p className="text-[11px] text-white/30">Devam edebilmek için bir ekonomi sistemi seçmelisiniz. Daha sonra <strong className="text-white/50">Basit → Yüksek</strong> geçişi yapılabilir fakat geri dönüş yoktur.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step 2: Earn Settings */}
+            {currentStep === 2 && (
               <div className="space-y-4 animate-[slideUp_0.3s_ease-out]">
                 <div className="grid gap-4 sm:grid-cols-2">
                   {/* Message Earning */}
@@ -755,8 +859,8 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Step 2: Bonuses */}
-            {currentStep === 2 && (
+            {/* Step 3: Bonuses */}
+            {currentStep === 3 && (
               <div className="space-y-4 animate-[slideUp_0.3s_ease-out]">
                 {/* Tag Bonuses */}
                 <div className="rounded-2xl border border-purple-500/15 bg-purple-500/[0.02] p-6 backdrop-blur-sm">
@@ -826,8 +930,8 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Step 3: Advanced */}
-            {currentStep === 3 && (
+            {/* Step 4: Advanced */}
+            {currentStep === 4 && (
               <div className="space-y-4 animate-[slideUp_0.3s_ease-out]">
                 <div className="rounded-2xl border border-amber-500/15 bg-amber-500/[0.02] p-6 backdrop-blur-sm">
                   <div className="flex items-center gap-3 mb-5">
@@ -862,8 +966,8 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Step 4: Confirmation */}
-            {currentStep === 4 && (
+            {/* Step 5: Confirmation */}
+            {currentStep === 5 && (
               <div className="space-y-4 animate-[slideUp_0.3s_ease-out]">
                 <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-6 backdrop-blur-sm">
                   <div className="flex items-center gap-3 mb-6">
@@ -894,9 +998,25 @@ export default function SetupPage() {
                       </div>
                     </div>
 
+                    {/* Tier summary */}
+                    <div className="rounded-xl bg-white/[0.03] border border-white/5 p-4">
+                      <p className="text-[10px] uppercase tracking-wide text-white/40 mb-2">Ekonomi Sistemi</p>
+                      <div className="flex items-center gap-2 text-sm">
+                        {selectedTier === 'advanced'
+                          ? <LuTrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+                          : <LuCoins className="w-3.5 h-3.5 text-emerald-400" />}
+                        <span className="text-white font-medium">
+                          {selectedTier === 'advanced' ? 'Yüksek Ekonomi' : 'Basit Ekonomi'}
+                        </span>
+                        {selectedTier === 'advanced' && (
+                          <span className="text-[10px] text-amber-400/70 ml-1">(developer onayı gerektirir)</span>
+                        )}
+                      </div>
+                    </div>
+
                     {/* Economy summary */}
                     <div className="rounded-xl bg-white/[0.03] border border-white/5 p-4">
-                      <p className="text-[10px] uppercase tracking-wide text-white/40 mb-2">Ekonomi</p>
+                      <p className="text-[10px] uppercase tracking-wide text-white/40 mb-2">Kazanç Ayarları</p>
                       <div className="grid gap-2 sm:grid-cols-2 text-sm">
                         <div className="flex items-center gap-2">
                           <LuMessageSquare className={`w-3.5 h-3.5 ${messageEarnEnabled ? 'text-emerald-400' : 'text-white/20'}`} />
@@ -984,8 +1104,8 @@ export default function SetupPage() {
                 {currentStep < STEPS.length - 1 ? (
                   <button
                     onClick={() => {
-                      if (setupMode === 'quick' && currentStep === 0 && canGoNext()) {
-                        // Hızlı kurulumda roller seçildikten sonra direkt son adıma atla
+                      if (setupMode === 'quick' && currentStep === 1 && canGoNext()) {
+                        // Hızlı kurulumda tier seçildikten sonra direkt son adıma atla
                         setCurrentStep(STEPS.length - 1);
                       } else {
                         setCurrentStep(s => Math.min(STEPS.length - 1, s + 1));
@@ -998,7 +1118,7 @@ export default function SetupPage() {
                         : 'bg-white/5 text-white/30 cursor-not-allowed'
                     }`}
                   >
-                    {setupMode === 'quick' && currentStep === 0 ? 'Kuruluma Geç' : 'Devam'}
+                    {setupMode === 'quick' && currentStep === 1 ? 'Kuruluma Geç' : 'Devam'}
                     <LuChevronRight className="w-4 h-4" />
                   </button>
                 ) : (

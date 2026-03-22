@@ -83,7 +83,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { guildId, adminRoleId, verifyRoleId, messageEarnEnabled, voiceEarnEnabled, earnPerMessage, earnPerVoiceMinute, tagBonusMessage, tagBonusVoice, boosterBonusMessage, boosterBonusVoice, approvalThreshold } = await request.json();
+    const { guildId, adminRoleId, verifyRoleId, messageEarnEnabled, voiceEarnEnabled, earnPerMessage, earnPerVoiceMinute, tagBonusMessage, tagBonusVoice, boosterBonusMessage, boosterBonusVoice, approvalThreshold, economyTier } = await request.json();
 
     if (!guildId || !adminRoleId || !verifyRoleId) {
       return NextResponse.json(
@@ -222,6 +222,7 @@ export async function POST(request: Request) {
           booster_bonus_message: Number(boosterBonusMessage ?? 0),
           booster_bonus_voice: Number(boosterBonusVoice ?? 0),
           approval_threshold: Math.min(100, Math.max(50, Number(approvalThreshold ?? 80))),
+          economy_tier: economyTier ?? 'basic',
         })
         .eq('discord_id', guildId)
         .select('id, discord_id, admin_role_id, verify_role_id')
@@ -258,6 +259,7 @@ export async function POST(request: Request) {
           booster_bonus_message: Number(boosterBonusMessage ?? 0),
           booster_bonus_voice: Number(boosterBonusVoice ?? 0),
           approval_threshold: Math.min(100, Math.max(50, Number(approvalThreshold ?? 80))),
+          economy_tier: economyTier ?? 'basic',
         })
         .select('id, discord_id, admin_role_id, verify_role_id')
         .single();
