@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 import { requireSessionUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
@@ -78,8 +78,8 @@ export async function POST(request: NextRequest) {
     const { guildId } = body;
     if (!guildId) return NextResponse.json({ error: 'missing_guild_id' }, { status: 400 });
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) return NextResponse.json({ error: 'missing_gemini_key' }, { status: 500 });
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return NextResponse.json({ error: 'missing_groq_key' }, { status: 500 });
 
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
@@ -167,22 +167,19 @@ export async function POST(request: NextRequest) {
       is_weekend: dayOfWeek === 0 || dayOfWeek === 6,
     };
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash',
-      systemInstruction: SYSTEM_PROMPT,
-    });
+    const groq = new Groq({ apiKey });
 
     let aiResult: { reasoning: string; mood: string; schedule: Array<{ hour: number; price_impact: number; title: string; description: string }> };
     try {
-      const response = await model.generateContent({
-        contents: [{
-          role: 'user',
-          parts: [{ text: `Sunucu verileri:\n${JSON.stringify(marketData, null, 2)}\n\nRastgele piyasa bağlamı:\n${JSON.stringify(randomContext, null, 2)}\n\nBugün (${today}, ${dayName}) için saat saat plan oluştur.` }],
-        }],
-        generationConfig: { responseMimeType: 'application/json' },
+      const completion = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: `Sunucu verileri:\n${JSON.stringify(marketData, null, 2)}\n\nRastgele piyasa bağlamı:\n${JSON.stringify(randomContext, null, 2)}\n\nBugün (${today}, ${dayName}) için saat saat plan oluştur.` },
+        ],
       });
-      aiResult = JSON.parse(response.response.text());
+      aiResult = JSON.parse(completion.choices[0].message.content ?? '{}');
     } catch (e) {
       return NextResponse.json({ error: 'ai_failed', detail: String(e) }, { status: 500 });
     }
