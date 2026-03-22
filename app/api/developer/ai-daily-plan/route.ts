@@ -42,24 +42,53 @@ const DAY_NAMES = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cu
 
 const SYSTEM_PROMPT = `Sen DiscoWeb borsa sisteminin AI piyasa yapıcısısın. Bir sunucu için bugünün saat saat fiyat hareket planını oluşturuyorsun.
 
-Kurallar:
-- Gün boyunca toplam fiyat etkisi -20% ile +20% arasında olmalı
-- Saatlerin yaklaşık %55-65'i nötr olabilir (price_impact: 0, title ve description boş string)
-- Saat 9-10: açılış genellikle aktif (boğa/ayı yönünde açılış)
-- Saat 12-14: öğlen sakinliği veya ani hareket
+SADECE TÜRKÇE kullan. Başka dil kesinlikle yasak.
+
+price_impact KURALLARI (ÇOK ÖNEMLİ):
+- price_impact DEĞERLERİ ONDALIK sayı olmalı. YÜZDE değil, ONDALIK!
+- +%5 etkisi için 0.05 yaz (5 YAZMA)
+- -%8 etkisi için -0.08 yaz (-8 YAZMA)
+- +%10 etkisi için 0.10 yaz (10 YAZMA)
+- Maksimum değer: 0.15 (yani +%15). Daha büyük değer YASAK.
+- Minimum değer: -0.15 (yani -%15). Daha küçük değer YASAK.
+- Nötr saatler için tam olarak 0 yaz.
+- Gün boyunca tüm price_impact değerlerinin toplamı -0.20 ile +0.20 arasında olmalı.
+
+Diğer kurallar:
+- Saatlerin yaklaşık %60'ı nötr (price_impact: 0, title ve description boş string "")
+- Saat 9-10: açılış aktif
+- Saat 12-14: öğlen sakinliği
 - Saat 17-20: kapanış hareketliliği
-- Dramatik hareketler (>%10) için mutlaka açıklama yaz
-- Piyasa ruh haline (mood) ve katalizöre (catalyst) uygun içerik üret
-- Başlıklar ve açıklamalar Türkçe olmalı
+- Piyasa ruh haline (mood) ve katalizöre (catalyst) uygun Türkçe içerik üret
 
 JSON formatı (başka hiçbir şey yazma):
 {
-  "reasoning": "Bugünkü piyasa stratejisi (2-3 cümle Türkçe)",
+  "reasoning": "Bugünkü piyasa stratejisi (2-3 cümle, SADECE Türkçe)",
   "mood": "bullish|bearish|volatile|stable",
   "schedule": [
     {"hour": 0, "price_impact": 0, "title": "", "description": ""},
     {"hour": 1, "price_impact": 0, "title": "", "description": ""},
-    ...tüm 24 saat için...
+    {"hour": 2, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 3, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 4, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 5, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 6, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 7, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 8, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 9, "price_impact": 0.05, "title": "Örnek Başlık", "description": "Örnek açıklama"},
+    {"hour": 10, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 11, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 12, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 13, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 14, "price_impact": -0.03, "title": "Örnek Başlık", "description": "Örnek açıklama"},
+    {"hour": 15, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 16, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 17, "price_impact": 0.04, "title": "Örnek Başlık", "description": "Örnek açıklama"},
+    {"hour": 18, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 19, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 20, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 21, "price_impact": 0, "title": "", "description": ""},
+    {"hour": 22, "price_impact": 0, "title": "", "description": ""},
     {"hour": 23, "price_impact": 0, "title": "", "description": ""}
   ]
 }
@@ -83,14 +112,21 @@ export async function POST(request: NextRequest) {
 
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
-    // Idempotent: eğer bugün için plan zaten varsa döndür
-    const { data: existing } = await supabase
-      .from('market_daily_plans')
-      .select('*')
-      .eq('guild_id', guildId)
-      .eq('plan_date', today)
-      .maybeSingle();
-    if (existing) return NextResponse.json({ plan: existing, cached: true });
+    const { force } = body; // force=true → mevcut planı sil, yeniden oluştur
+
+    // Bot çağrısında (force değil) zaten plan varsa döndür
+    if (!force) {
+      const { data: existing } = await supabase
+        .from('market_daily_plans')
+        .select('*')
+        .eq('guild_id', guildId)
+        .eq('plan_date', today)
+        .maybeSingle();
+      if (existing) return NextResponse.json({ plan: existing, cached: true });
+    } else {
+      // force=true: mevcut planı sil
+      await supabase.from('market_daily_plans').delete().eq('guild_id', guildId).eq('plan_date', today);
+    }
 
     // Supabase'den kapsamlı piyasa verisi çek
     const now = new Date();

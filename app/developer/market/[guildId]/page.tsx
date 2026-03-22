@@ -78,12 +78,12 @@ export default function DeveloperGuildDetailPage() {
     } catch { /* ignore */ } finally { setPlanLoading(false); }
   };
 
-  const generatePlan = async () => {
+  const generatePlan = async (force = false) => {
     setPlanLoading(true);
     try {
       const res = await fetch('/api/developer/ai-daily-plan', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
-        body: JSON.stringify({ guildId }),
+        body: JSON.stringify({ guildId, force }),
       });
       const d = await res.json();
       setDailyPlan(d.plan ?? null);
@@ -708,7 +708,7 @@ export default function DeveloperGuildDetailPage() {
               </div>
               <button
                 type="button"
-                onClick={dailyPlan ? generatePlan : generatePlan}
+                onClick={() => generatePlan(!!dailyPlan)}
                 disabled={planLoading}
                 className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500/15 border border-indigo-500/25 text-indigo-300 text-xs font-semibold hover:bg-indigo-500/25 transition disabled:opacity-50"
               >
