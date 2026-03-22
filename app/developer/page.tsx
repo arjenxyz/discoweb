@@ -17,6 +17,8 @@ import {
   LuZap,
   LuShield,
   LuGlobe,
+  LuTrendingUp,
+  LuClipboardList,
 } from 'react-icons/lu';
 
 type SystemStats = {
@@ -91,6 +93,8 @@ export default function DeveloperPage() {
     { label: 'Sunucular & Üyeler', desc: 'Toplu görünüm ve analiz', href: '/developer/all-servers', icon: LuGlobe, color: 'bg-sky-500/15 text-sky-300 ring-sky-400/20' },
     { label: 'Bakım Yönetimi', desc: 'Modül bakım durumları', href: '/developer/maintenance', icon: LuWrench, color: 'bg-amber-500/15 text-amber-300 ring-amber-400/20' },
     { label: 'API Test', desc: 'Endpoint test aracı', href: '/developer/api-test', icon: LuZap, color: 'bg-pink-500/15 text-pink-300 ring-pink-400/20' },
+    { label: 'Borsa Yönetimi', desc: 'Listeler, AI analiz, aksiyonlar', href: '/developer/market', icon: LuTrendingUp, color: 'bg-emerald-500/15 text-emerald-300 ring-emerald-400/20' },
+    { label: 'Başvurular', desc: 'Ekonomi ve IPO başvuruları', href: '/developer/applications', icon: LuClipboardList, color: 'bg-orange-500/15 text-orange-300 ring-orange-400/20' },
   ];
 
   return (
