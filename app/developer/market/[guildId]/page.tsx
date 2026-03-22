@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import {
   LuArrowLeft, LuBrainCircuit, LuSend, LuZap, LuCircleCheck, LuCircleX,
   LuLoader, LuTrendingUp, LuTrendingDown, LuShield, LuTriangleAlert,
-  LuDatabase, LuFlame, LuSettings,
+  LuDatabase, LuFlame, LuSettings, LuCalendarDays, LuRefreshCw,
 } from 'react-icons/lu';
 
 const VIDEO_URL = process.env.NEXT_PUBLIC_WELCOME_VIDEO_URL ?? '';
@@ -22,7 +22,10 @@ interface Listing {
 }
 interface AppliedAction { type: string; label: string; at: Date; }
 
-type ActiveTab = 'ai' | 'detail' | 'actions';
+type ActiveTab = 'ai' | 'detail' | 'actions' | 'plan';
+
+interface PlanEntry { hour: number; price_impact: number; title: string; description: string; executed: boolean; }
+interface DailyPlan { id: string; guild_id: string; plan_date: string; hourly_schedule: PlanEntry[]; ai_reasoning: string; mood: string; }
 
 const QUICK_PROMPTS = [
   'Bu sunucunun genel durumu nasıl?',
@@ -62,6 +65,31 @@ export default function DeveloperGuildDetailPage() {
   const [listing, setListing] = useState<Listing | null>(null);
   const [listingLoading, setListingLoading] = useState(true);
 
+  // Daily plan state
+  const [dailyPlan, setDailyPlan] = useState<DailyPlan | null>(null);
+  const [planLoading, setPlanLoading] = useState(false);
+
+  const loadPlan = async () => {
+    setPlanLoading(true);
+    try {
+      const res = await fetch(`/api/developer/ai-daily-plan?guildId=${guildId}`, { credentials: 'include' });
+      const d = await res.json();
+      setDailyPlan(d.plan ?? null);
+    } catch { /* ignore */ } finally { setPlanLoading(false); }
+  };
+
+  const generatePlan = async () => {
+    setPlanLoading(true);
+    try {
+      const res = await fetch('/api/developer/ai-daily-plan', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify({ guildId }),
+      });
+      const d = await res.json();
+      setDailyPlan(d.plan ?? null);
+    } catch { /* ignore */ } finally { setPlanLoading(false); }
+  };
+
   // Direct action forms
   const [eventForm, setEventForm] = useState({ type: 'news' as typeof EVENT_TYPES[number], title: '', description: '', price_impact: 0, expires_in: 1 });
   const [penaltyForm, setPenaltyForm] = useState({ type: 'warning' as typeof PENALTY_TYPES[number], reason: '', fine_amount: '' });
@@ -71,6 +99,7 @@ export default function DeveloperGuildDetailPage() {
 
   useEffect(() => { setTimeout(() => setVisible(true), 60); }, []);
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, aiLoading]);
+  useEffect(() => { if (activeTab === 'plan' && !dailyPlan && !planLoading) { void loadPlan(); } }, [activeTab]);
 
   // Load listing
   useEffect(() => {
@@ -174,6 +203,7 @@ export default function DeveloperGuildDetailPage() {
     { id: 'ai', label: 'AI Analiz', icon: LuBrainCircuit },
     { id: 'detail', label: 'Sunucu Detayı', icon: LuDatabase },
     { id: 'actions', label: 'Aksiyonlar', icon: LuZap },
+    { id: 'plan', label: 'Günlük Plan', icon: LuCalendarDays },
   ];
 
   return (
@@ -667,6 +697,118 @@ export default function DeveloperGuildDetailPage() {
             </div>
           </div>
         )}
+        {/* Tab: Günlük Plan */}
+        {activeTab === 'plan' && (
+          <div className="space-y-4">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white">Bugünün Piyasa Planı</h3>
+                <p className="text-[11px] text-white/35 mt-0.5">AI tarafından oluşturulan saat saat fiyat hareket planı</p>
+              </div>
+              <button
+                type="button"
+                onClick={dailyPlan ? generatePlan : generatePlan}
+                disabled={planLoading}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500/15 border border-indigo-500/25 text-indigo-300 text-xs font-semibold hover:bg-indigo-500/25 transition disabled:opacity-50"
+              >
+                {planLoading ? <LuLoader className="w-3.5 h-3.5 animate-spin" /> : <LuRefreshCw className="w-3.5 h-3.5" />}
+                {dailyPlan ? 'Yenile' : 'Plan Oluştur'}
+              </button>
+            </div>
+
+            {planLoading && !dailyPlan && (
+              <div className="flex items-center justify-center gap-3 py-16 text-white/40">
+                <LuLoader className="w-5 h-5 animate-spin" />
+                <span className="text-sm">AI plan oluşturuyor...</span>
+              </div>
+            )}
+
+            {!planLoading && !dailyPlan && (
+              <div className="flex flex-col items-center justify-center gap-3 py-16 text-white/30">
+                <LuCalendarDays className="w-8 h-8" />
+                <p className="text-sm">Bugün için henüz plan yok</p>
+                <p className="text-[11px]">Gece 00:00'da otomatik oluşur veya butona bas</p>
+              </div>
+            )}
+
+            {dailyPlan && (
+              <>
+                {/* Mood + Reasoning */}
+                <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4 flex items-start gap-3">
+                  <span className="text-2xl">
+                    {dailyPlan.mood === 'bullish' ? '📈' : dailyPlan.mood === 'bearish' ? '📉' : dailyPlan.mood === 'volatile' ? '⚡' : '😴'}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-xs font-bold uppercase tracking-wider ${
+                        dailyPlan.mood === 'bullish' ? 'text-emerald-400' :
+                        dailyPlan.mood === 'bearish' ? 'text-rose-400' :
+                        dailyPlan.mood === 'volatile' ? 'text-yellow-400' : 'text-white/50'
+                      }`}>
+                        {dailyPlan.mood === 'bullish' ? 'Boğa Piyasası' : dailyPlan.mood === 'bearish' ? 'Ayı Piyasası' : dailyPlan.mood === 'volatile' ? 'Volatil' : 'Sakin'}
+                      </span>
+                      <span className="text-[10px] text-white/25">{dailyPlan.plan_date}</span>
+                    </div>
+                    <p className="text-[12px] text-white/60 leading-relaxed">{dailyPlan.ai_reasoning}</p>
+                  </div>
+                </div>
+
+                {/* Saatlik Timeline */}
+                <div className="rounded-2xl border border-white/8 bg-white/[0.02] overflow-hidden">
+                  <div className="px-4 py-3 border-b border-white/[0.06] flex items-center gap-2">
+                    <LuCalendarDays className="w-3.5 h-3.5 text-white/40" />
+                    <span className="text-[11px] text-white/40 uppercase tracking-wider font-semibold">Saatlik Çizelge</span>
+                  </div>
+                  <div className="divide-y divide-white/[0.04]">
+                    {(dailyPlan.hourly_schedule ?? []).map((entry) => {
+                      const currentHour = new Date().getHours();
+                      const isNow = entry.hour === currentHour;
+                      const isPast = entry.hour < currentHour;
+                      const hasAction = entry.price_impact !== 0;
+                      return (
+                        <div key={entry.hour}
+                          className={`flex items-center gap-3 px-4 py-2.5 transition-colors ${isNow ? 'bg-indigo-500/8 border-l-2 border-indigo-500/60' : ''}`}
+                        >
+                          <span className={`w-10 text-right text-[11px] font-mono font-semibold shrink-0 ${isNow ? 'text-indigo-300' : isPast ? 'text-white/20' : 'text-white/40'}`}>
+                            {String(entry.hour).padStart(2, '0')}:00
+                          </span>
+                          <span className={`w-5 text-center text-[13px] shrink-0 ${
+                            entry.price_impact > 0 ? 'text-emerald-400' :
+                            entry.price_impact < 0 ? 'text-rose-400' : 'text-white/15'
+                          }`}>
+                            {entry.price_impact > 0 ? '▲' : entry.price_impact < 0 ? '▼' : '—'}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            {hasAction ? (
+                              <>
+                                <p className={`text-xs font-semibold truncate ${isPast ? 'text-white/30' : 'text-white/80'}`}>{entry.title}</p>
+                                {entry.description && <p className="text-[10px] text-white/30 truncate">{entry.description}</p>}
+                              </>
+                            ) : (
+                              <p className="text-[11px] text-white/15">Nötr</p>
+                            )}
+                          </div>
+                          {hasAction && (
+                            <span className={`text-[11px] font-bold font-mono shrink-0 ${
+                              entry.price_impact > 0 ? 'text-emerald-400' : 'text-rose-400'
+                            }`}>
+                              {entry.price_impact > 0 ? '+' : ''}{(entry.price_impact * 100).toFixed(1)}%
+                            </span>
+                          )}
+                          {entry.executed && (
+                            <LuCircleCheck className="w-3.5 h-3.5 text-emerald-400/60 shrink-0" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   );
