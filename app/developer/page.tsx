@@ -85,10 +85,10 @@ export default function DeveloperPage() {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ guildId, prompt: p }),
       });
-      const data: AnalysisResult & { error?: string; remaining?: number } = await res.json();
+      const data: AnalysisResult & { error?: string; detail?: string; remaining?: number } = await res.json();
       const assistantMsg: ChatMessage = {
         id: ++msgId.current, role: 'assistant', guildId,
-        content: data.analysis ?? `Hata: ${data.error}`,
+        content: data.analysis ?? `Hata: ${data.error}${data.detail ? ` — ${data.detail}` : ''}`,
         actions: data.suggested_actions, timestamp: new Date(),
       };
       setMessages(prev => [...prev, assistantMsg]);

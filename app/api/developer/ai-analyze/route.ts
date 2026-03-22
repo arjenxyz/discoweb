@@ -110,16 +110,16 @@ export async function POST(request: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-pro',
+      model: 'gemini-2.0-flash',
       systemInstruction: SYSTEM_PROMPT,
-      generationConfig: { responseMimeType: 'application/json' },
     });
 
     let result;
     try {
-      const response = await model.generateContent(
-        `Sunucu verileri:\n${JSON.stringify(marketData, null, 2)}\n\nDeveloper sorusu: ${prompt}`
-      );
+      const response = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: `Sunucu verileri:\n${JSON.stringify(marketData, null, 2)}\n\nDeveloper sorusu: ${prompt}` }] }],
+        generationConfig: { responseMimeType: 'application/json' },
+      });
       const text = response.response.text();
       result = JSON.parse(text);
     } catch (e) {
