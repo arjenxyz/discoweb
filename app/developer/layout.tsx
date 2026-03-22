@@ -22,6 +22,8 @@ import {
   LuMenu,
   LuX,
   LuGlobe,
+  LuTrendingUp,
+  LuClipboardList,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -45,6 +47,8 @@ const NAV_ITEMS = [
   { href: '/developer/config-view', label: 'Ayarlar', icon: LuSettings, color: 'text-orange-400' },
   { href: '/developer/api-test', label: 'API Test', icon: LuFlaskConical, color: 'text-pink-400' },
   { href: '/developer/clear-data', label: 'Veri Temizleme', icon: LuTrash2, color: 'text-rose-400' },
+  { href: '/developer/market', label: 'Borsa Yönetimi', icon: LuTrendingUp, color: 'text-emerald-400' },
+  { href: '/developer/applications', label: 'Başvurular', icon: LuClipboardList, color: 'text-orange-400' },
 ];
 
 export default function DeveloperLayout({ children }: { children: React.ReactNode }) {

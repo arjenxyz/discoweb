@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuTrendingUp, LuTriangleAlert, LuZap } from 'react-icons/lu';
+import { LuTrendingUp, LuTriangleAlert, LuZap, LuRefreshCw, LuBrainCircuit } from 'react-icons/lu';
+
+const VIDEO_URL = process.env.NEXT_PUBLIC_WELCOME_VIDEO_URL ?? '';
 
 interface Listing {
   guild_id: string;
@@ -16,79 +18,165 @@ export default function DeveloperMarketPage() {
   const router = useRouter();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true);
     fetch('/api/admin/market-listings', { credentials: 'include' })
       .then(r => r.json())
       .then(d => setListings(d.listings ?? []))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    setTimeout(() => setVisible(true), 60);
+    load();
   }, []);
 
-  return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Borsa Listeleri</h1>
-          <p className="text-sm text-white/40 mt-1">Tüm listelenen sunucular</p>
-        </div>
-        <LuTrendingUp className="w-6 h-6 text-emerald-400" />
-      </div>
+  const active = listings.filter(l => l.status === 'approved').length;
+  const suspended = listings.filter(l => l.status === 'suspended').length;
 
-      <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-white/40">Yükleniyor...</div>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-white/8 text-white/40 text-xs uppercase tracking-wider">
-                <th className="px-6 py-4 text-left">Guild ID</th>
-                <th className="px-6 py-4 text-left">Durum</th>
-                <th className="px-6 py-4 text-right">Piyasa Fiyatı</th>
-                <th className="px-6 py-4 text-right">IPO Fiyatı</th>
-                <th className="px-6 py-4 text-center">Ceza</th>
-                <th className="px-6 py-4 text-right">İşlem</th>
-              </tr>
-            </thead>
-            <tbody>
-              {listings.map(l => (
-                <tr key={l.guild_id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="px-6 py-4 font-mono text-xs text-white/70">{l.guild_id}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                        l.status === 'approved' ? 'bg-emerald-500/15 text-emerald-300' :
-                        l.status === 'suspended' ? 'bg-amber-500/15 text-amber-300' :
-                        l.status === 'delisted' ? 'bg-rose-500/15 text-rose-300' :
-                        'bg-white/10 text-white/50'
-                      }`}>{l.status}</span>
-                      {l.circuit_breaker_until && new Date(l.circuit_breaker_until) > new Date() && (
-                        <LuZap className="w-3.5 h-3.5 text-orange-400" title="Circuit Breaker aktif" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right text-white/80">{l.market_price?.toLocaleString('tr-TR')} P</td>
-                  <td className="px-6 py-4 text-right text-white/50">{l.ipo_price?.toLocaleString('tr-TR')} P</td>
-                  <td className="px-6 py-4 text-center">
-                    {l.server_penalties?.some(p => p.is_active) ? (
-                      <LuTriangleAlert className="w-4 h-4 text-amber-400 mx-auto" />
-                    ) : <span className="text-white/20">—</span>}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => router.push(`/developer/market/${l.guild_id}`)}
-                      className="text-xs text-[#5865F2] hover:text-[#7289DA] font-medium transition-colors"
-                    >
-                      AI Analiz →
-                    </button>
-                  </td>
-                </tr>
+  const shimmerStyle: React.CSSProperties = {
+    backgroundImage: 'linear-gradient(105deg, #fff 0%, #fff 35%, rgba(255,255,255,0.95) 45%, #fff 55%, #fff 100%)',
+    backgroundSize: '300% 100%',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    animation: 'titleShine 4s ease-in-out infinite',
+  };
+  const shimmerBlue: React.CSSProperties = {
+    backgroundImage: 'linear-gradient(105deg, #5865F2 0%, #5865F2 35%, #a5b4ff 45%, #5865F2 55%, #5865F2 100%)',
+    backgroundSize: '300% 100%',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    animation: 'titleShine 4s ease-in-out infinite',
+  };
+
+  return (
+    <div className="relative min-h-screen -m-4 md:-m-6 lg:-m-8 overflow-hidden">
+      <style>{`@keyframes titleShine{0%,60%{background-position:100% 0}100%{background-position:-100% 0}}`}</style>
+
+      {/* Video Background */}
+      {VIDEO_URL && (
+        <video autoPlay loop muted playsInline disablePictureInPicture
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20" src={VIDEO_URL} />
+      )}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-[#0a0a0c]/85 to-[#0a0a0c]/60" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#5865F2]/10 via-transparent to-emerald-500/5" />
+
+      {/* Glow Orbs */}
+      <div className="pointer-events-none absolute -top-32 left-1/4 w-96 h-96 bg-[#5865F2]/20 rounded-full blur-[140px] animate-pulse" />
+      <div className="pointer-events-none absolute bottom-1/4 right-1/4 w-72 h-72 bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" />
+
+      {/* Content */}
+      <div className="relative z-10 p-4 md:p-6 lg:p-8 max-w-6xl mx-auto"
+        style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(16px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+
+        {/* Header */}
+        <div className="flex items-start justify-between mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">Borsa Komuta Merkezi</span>
+            </div>
+            <h1 className="text-3xl font-black tracking-tight">
+              <span style={shimmerStyle}>Piyasa</span>
+              <span style={shimmerBlue}> Yönetimi</span>
+            </h1>
+            <p className="text-sm text-white/30 mt-1">Tüm listelenen sunucular ve anlık durum</p>
+          </div>
+          <button onClick={load} disabled={loading}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/50 hover:text-white hover:bg-white/8 transition-all backdrop-blur-md">
+            <LuRefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            Yenile
+          </button>
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          {[
+            { label: 'Toplam Liste', value: listings.length, color: 'from-[#5865F2]/20 to-[#5865F2]/5', border: 'border-[#5865F2]/20', glow: 'bg-[#5865F2]/30' },
+            { label: 'Aktif', value: active, color: 'from-emerald-500/20 to-emerald-500/5', border: 'border-emerald-500/20', glow: 'bg-emerald-500/30' },
+            { label: 'Askıya Alındı', value: suspended, color: 'from-amber-500/20 to-amber-500/5', border: 'border-amber-500/20', glow: 'bg-amber-500/30' },
+          ].map(s => (
+            <div key={s.label} className={`relative overflow-hidden rounded-2xl border ${s.border} bg-gradient-to-br ${s.color} backdrop-blur-xl p-5`}>
+              <div className={`absolute -top-4 -right-4 w-16 h-16 rounded-full ${s.glow} blur-2xl`} />
+              <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-2">{s.label}</p>
+              <p className="text-3xl font-black text-white">
+                {loading ? <span className="inline-block w-8 h-8 bg-white/10 rounded animate-pulse" /> : s.value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Table */}
+        <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+          {loading ? (
+            <div className="p-12 space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-14 bg-white/5 rounded-2xl animate-pulse" />
               ))}
-              {listings.length === 0 && (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-white/30">Henüz listelenen sunucu yok</td></tr>
-              )}
-            </tbody>
-          </table>
-        )}
+            </div>
+          ) : listings.length === 0 ? (
+            <div className="py-20 flex flex-col items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                <LuTrendingUp className="w-7 h-7 text-white/20" />
+              </div>
+              <p className="text-white/30 text-sm">Henüz listelenen sunucu yok</p>
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/8">
+                  {['Guild ID', 'Durum', 'Piyasa Fiyatı', 'IPO Fiyatı', 'Ceza', ''].map(h => (
+                    <th key={h} className="px-6 py-4 text-left text-[10px] uppercase tracking-[0.18em] text-white/30 font-semibold">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {listings.map(l => {
+                  const hasPenalty = l.server_penalties?.some(p => p.is_active);
+                  const cbActive = l.circuit_breaker_until && new Date(l.circuit_breaker_until) > new Date();
+                  const leftColor = l.status === 'approved' ? '#10b981' : l.status === 'suspended' ? '#f59e0b' : l.status === 'delisted' ? '#ef4444' : '#ffffff33';
+                  return (
+                    <tr key={l.guild_id} className="border-b border-white/5 hover:bg-white/[0.03] transition-all group"
+                      style={{ borderLeft: `2px solid ${leftColor}30` }}>
+                      <td className="px-6 py-4 font-mono text-xs text-white/60 group-hover:text-white/90 transition-colors">{l.guild_id}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span className={`px-3 py-1 rounded-full text-[11px] font-semibold ${
+                            l.status === 'approved' ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' :
+                            l.status === 'suspended' ? 'bg-amber-500/15 text-amber-300 border border-amber-500/20' :
+                            l.status === 'delisted' ? 'bg-rose-500/15 text-rose-300 border border-rose-500/20' :
+                            'bg-white/10 text-white/40 border border-white/10'
+                          }`}>{l.status}</span>
+                          {cbActive && <LuZap className="w-3.5 h-3.5 text-orange-400 animate-pulse" title="Circuit Breaker" />}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-white font-semibold">{l.market_price?.toLocaleString('tr-TR')}</span>
+                        <span className="text-white/30 text-xs ml-1">P</span>
+                      </td>
+                      <td className="px-6 py-4 text-white/40 text-xs">{l.ipo_price?.toLocaleString('tr-TR')} P</td>
+                      <td className="px-6 py-4">
+                        {hasPenalty ? <LuTriangleAlert className="w-4 h-4 text-amber-400" /> : <span className="text-white/15">—</span>}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button onClick={() => router.push(`/developer/market/${l.guild_id}`)}
+                          className="group/btn relative overflow-hidden flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#5865F2]/15 border border-[#5865F2]/25 text-[#7289DA] text-xs font-semibold hover:bg-[#5865F2]/25 transition-all">
+                          <span className="pointer-events-none absolute inset-0 -translate-x-full skew-x-12 bg-white/10 transition-transform duration-500 group-hover/btn:translate-x-full" />
+                          <LuBrainCircuit className="w-3.5 h-3.5 relative" />
+                          <span className="relative">AI Analiz</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </div>
   );
