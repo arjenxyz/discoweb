@@ -29,7 +29,7 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('servers')
-      .select('admin_role_id,verify_role_id,approval_threshold,is_setup,discord_id')
+      .select('admin_role_id,verify_role_id,approval_threshold,is_setup,discord_id,referral_reward')
       .eq('discord_id', guildId)
       .maybeSingle();
 
@@ -57,6 +57,7 @@ export async function GET() {
       admin_role_id: data?.admin_role_id ?? null,
       verify_role_id: data?.verify_role_id ?? null,
       approval_threshold: data?.approval_threshold ?? 80,
+      referral_reward: data?.referral_reward ?? 500,
       is_setup: data?.is_setup ?? false,
       _roles: roles,
     });
@@ -83,6 +84,10 @@ export async function POST(request: Request) {
     if (payload.admin_role_id !== undefined) updateObj.admin_role_id = payload.admin_role_id || null;
     if (payload.verify_role_id !== undefined) updateObj.verify_role_id = payload.verify_role_id || null;
     if (payload.approval_threshold !== undefined) updateObj.approval_threshold = Number(payload.approval_threshold);
+    if (payload.referral_reward !== undefined) {
+      const r = Math.max(0, Math.min(100_000, Math.round(Number(payload.referral_reward))));
+      updateObj.referral_reward = r;
+    }
 
     if (Object.keys(updateObj).length === 0) {
       return NextResponse.json({ error: 'no_changes' }, { status: 400 });

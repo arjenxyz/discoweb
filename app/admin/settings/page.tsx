@@ -10,6 +10,7 @@ import {
   LuChevronDown,
   LuSearch,
   LuServer,
+  LuGift,
 } from 'react-icons/lu';
 
 type DiscordRole = {
@@ -22,6 +23,7 @@ type ServerSettings = {
   admin_role_id: string | null;
   verify_role_id: string | null;
   approval_threshold: number;
+  referral_reward: number;
   is_setup: boolean;
   _roles: DiscordRole[];
 };
@@ -181,7 +183,8 @@ export default function AdminSettingsPage() {
     settings && initial
       ? settings.admin_role_id !== initial.admin_role_id ||
         settings.verify_role_id !== initial.verify_role_id ||
-        settings.approval_threshold !== initial.approval_threshold
+        settings.approval_threshold !== initial.approval_threshold ||
+        settings.referral_reward !== initial.referral_reward
       : false;
 
   const handleSave = async () => {
@@ -198,6 +201,7 @@ export default function AdminSettingsPage() {
           admin_role_id: settings.admin_role_id,
           verify_role_id: settings.verify_role_id,
           approval_threshold: settings.approval_threshold,
+          referral_reward: settings.referral_reward,
         }),
       });
       if (!res.ok) throw new Error('Kaydetme başarısız');
@@ -285,26 +289,78 @@ export default function AdminSettingsPage() {
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
           Genel Ayarlar
         </p>
-        <div className="rounded-2xl border border-white/10 bg-[#0f1116] p-5">
-          <h3 className="text-sm font-semibold text-white">Yetkili Uygunluk Eşiği</h3>
-          <p className="mt-0.5 text-xs text-white/40">
-            Admin işlemlerinde onay yüzdesini belirler. (50-100%)
-          </p>
-          <div className="mt-3 flex items-center gap-3">
-            <input
-              type="range"
-              min={50}
-              max={100}
-              step={5}
-              value={settings.approval_threshold}
-              onChange={(e) =>
-                setSettings({ ...settings, approval_threshold: Number(e.target.value) })
-              }
-              className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-white/10 accent-indigo-500 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-indigo-400"
-            />
-            <span className="w-12 rounded-lg border border-white/10 bg-[#0b0d12] px-2 py-1.5 text-center text-sm font-semibold text-white">
-              {settings.approval_threshold}%
-            </span>
+        <div className="space-y-3">
+          <div className="rounded-2xl border border-white/10 bg-[#0f1116] p-5">
+            <h3 className="text-sm font-semibold text-white">Yetkili Uygunluk Eşiği</h3>
+            <p className="mt-0.5 text-xs text-white/40">
+              Admin işlemlerinde onay yüzdesini belirler. (50-100%)
+            </p>
+            <div className="mt-3 flex items-center gap-3">
+              <input
+                type="range"
+                min={50}
+                max={100}
+                step={5}
+                value={settings.approval_threshold}
+                onChange={(e) =>
+                  setSettings({ ...settings, approval_threshold: Number(e.target.value) })
+                }
+                className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-white/10 accent-indigo-500 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-indigo-400"
+              />
+              <span className="w-12 rounded-lg border border-white/10 bg-[#0b0d12] px-2 py-1.5 text-center text-sm font-semibold text-white">
+                {settings.approval_threshold}%
+              </span>
+            </div>
+          </div>
+
+          {/* Referral Reward */}
+          <div className="rounded-2xl border border-white/10 bg-[#0f1116] p-5">
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300">
+                <LuGift className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-white">Referral Ödülü</h3>
+                <p className="mt-0.5 text-xs text-white/40">
+                  Bir kullanıcı davet linki ile katıldığında hem davet eden hem davet edilen bu kadar
+                  Papel kazanır. (0 — 100.000 Papel)
+                </p>
+                <div className="mt-3 flex items-center gap-3">
+                  <input
+                    type="number"
+                    min={0}
+                    max={100000}
+                    step={50}
+                    value={settings.referral_reward}
+                    onChange={(e) => {
+                      const v = Math.max(0, Math.min(100000, Math.round(Number(e.target.value) || 0)));
+                      setSettings({ ...settings, referral_reward: v });
+                    }}
+                    className="w-36 rounded-xl border border-white/10 bg-[#0b0d12] px-4 py-2.5 text-sm font-semibold text-white outline-none focus:border-emerald-500/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  />
+                  <span className="text-sm text-white/40">Papel</span>
+                  <span className="ml-auto rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+                    ×2 toplam ({(settings.referral_reward * 2).toLocaleString('tr-TR')} Papel)
+                  </span>
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  {[0, 100, 250, 500, 1000, 2500].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setSettings({ ...settings, referral_reward: preset })}
+                      className={`rounded-lg border px-2.5 py-1 text-xs font-semibold transition ${
+                        settings.referral_reward === preset
+                          ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
+                          : 'border-white/10 bg-white/5 text-white/40 hover:text-white/70'
+                      }`}
+                    >
+                      {preset === 0 ? 'Kapalı' : preset.toLocaleString('tr-TR')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
