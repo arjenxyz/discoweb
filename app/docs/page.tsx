@@ -12,7 +12,7 @@ import {
   LuInfo,
   LuArrowLeft,
   LuChevronRight,
-  LuAlertTriangle,
+  LuTriangleAlert,
 } from "react-icons/lu";
 
 export default function DocsPage() {
@@ -45,7 +45,7 @@ export default function DocsPage() {
     { id: "economy", label: "Ekonomi Rehberi", icon: LuCoins },
     { id: "paths", label: "Geçiş Yolları", icon: LuArrowLeft },
     { id: "faq", label: "SSS", icon: LuListChecks },
-    { id: "error-codes", label: "Hata Kodları", icon: LuAlertTriangle },
+    { id: "error-codes", label: "Hata Kodları", icon: LuTriangleAlert },
   ];
 
   return (
@@ -162,7 +162,7 @@ export default function DocsPage() {
                   title="Hata Kodları"
                   href="/docs/errors"
                   description="Activity kullanırken aldığın DW-XXXX hata kodlarının açıklamaları, olası nedenleri ve çözüm adımları."
-                  icon={<LuAlertTriangle className="w-4 h-4" />}
+                  icon={<LuTriangleAlert className="w-4 h-4" />}
                 />
               </div>
             </section>
@@ -303,7 +303,7 @@ export default function DocsPage() {
                 href="/docs/errors"
                 className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-xl border border-red-500/20 bg-red-500/10 text-sm font-semibold text-red-300 hover:bg-red-500/20 hover:border-red-500/30 transition-all"
               >
-                <LuAlertTriangle className="w-4 h-4" />
+                <LuTriangleAlert className="w-4 h-4" />
                 Hata Kodları Rehberini Aç
                 <LuChevronRight className="w-4 h-4 ml-auto group-hover:translate-x-0.5 transition-transform" />
               </Link>

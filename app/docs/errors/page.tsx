@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   LuArrowLeft,
   LuChevronRight,
-  LuAlertTriangle,
+  LuTriangleAlert,
   LuShieldAlert,
   LuUser,
   LuCoins,
@@ -127,7 +127,7 @@ const CATEGORIES: ErrorCategory[] = [
     color: "text-orange-400",
     bgColor: "bg-orange-500/10",
     borderColor: "border-orange-500/20",
-    icon: <LuAlertTriangle className="w-4 h-4" />,
+    icon: <LuTriangleAlert className="w-4 h-4" />,
     description: "Discord sunucusunun DiscoWeb sistemine kayıt ve kurulum sorunları. Genellikle yönetici müdahalesi gerekir.",
     errors: [
       {
