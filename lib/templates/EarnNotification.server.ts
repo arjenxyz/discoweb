@@ -18,6 +18,10 @@ export function renderEarnNotificationPlainText(
   changeGroups: Record<string, ChangeItem[]>,
   reason?: string
 ): string {
+  const safeRepeat = (value: string, count: number) => {
+    if (!Number.isFinite(count) || count <= 0) return '';
+    return value.repeat(count);
+  };
   const CATEGORY_META = [
     { key: 'general', label: 'GENEL EKONOMİ PARAMETRELERİ' },
     { key: 'tag', label: 'ETİKET (TAG) ÇARPANLARI' },
@@ -26,7 +30,7 @@ export function renderEarnNotificationPlainText(
 
   const lines: string[] = [];
   lines.push('EKONOMİ GÜNCELLEME RAPORU');
-  lines.push('═'.repeat(50));
+  lines.push(safeRepeat('═', 50));
   lines.push(`Tarih: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}`);
   lines.push('');
 
@@ -35,7 +39,7 @@ export function renderEarnNotificationPlainText(
     if (!items.length) continue;
 
     lines.push(`[ ${cat.label} ]`);
-    lines.push('─'.repeat(cat.label.length + 4));
+    lines.push(safeRepeat('─', cat.label.length + 4));
 
     for (let i = 0; i < items.length; i++) {
       const it = items[i];
@@ -58,7 +62,7 @@ export function renderEarnNotificationPlainText(
     lines.push('');
   }
 
-  lines.push('═'.repeat(50));
+  lines.push(safeRepeat('═', 50));
   if (reason) lines.push(reason);
   return lines.join('\n');
 }
