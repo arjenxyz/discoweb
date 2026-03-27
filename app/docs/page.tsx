@@ -12,6 +12,7 @@ import {
   LuInfo,
   LuArrowLeft,
   LuChevronRight,
+  LuAlertTriangle,
 } from "react-icons/lu";
 
 export default function DocsPage() {
@@ -44,6 +45,7 @@ export default function DocsPage() {
     { id: "economy", label: "Ekonomi Rehberi", icon: LuCoins },
     { id: "paths", label: "Geçiş Yolları", icon: LuArrowLeft },
     { id: "faq", label: "SSS", icon: LuListChecks },
+    { id: "error-codes", label: "Hata Kodları", icon: LuAlertTriangle },
   ];
 
   return (
@@ -155,6 +157,12 @@ export default function DocsPage() {
                   href="/economy/advanced"
                   description="İleri düzey kullanıcılar için tasarlanmış; hazne sistemi, yakma mekaniği, referral programı, halka arz (IPO) ve temettü dağıtımı içeren gelişmiş ekonomi modeli."
                   icon={<LuZap className="w-4 h-4" />}
+                />
+                <DocsCard
+                  title="Hata Kodları"
+                  href="/docs/errors"
+                  description="Activity kullanırken aldığın DW-XXXX hata kodlarının açıklamaları, olası nedenleri ve çözüm adımları."
+                  icon={<LuAlertTriangle className="w-4 h-4" />}
                 />
               </div>
             </section>
@@ -284,6 +292,21 @@ export default function DocsPage() {
                 question="Yüksek Ekonomi'ye geçtikten sonra eski sisteme geri dönebilir miyim?"
                 answer="Hayır, Yüksek Ekonomi'ye geçiş kalıcıdır. Bu nedenle geçiş kararı vermeden önce her iki modun özelliklerini, getirilerini ve olası etkilerini dikkatlice değerlendirmeniz önemlidir. Geçiş sonrasında tüm kullanıcı verileri sıfırlanacağından, yedekleme ve duyuru süreçlerini eksiksiz tamamlamanızı tavsiye ederiz."
               />
+            </section>
+
+            <section id="error-codes" className="scroll-mt-24 mb-14">
+              <SectionTitle>Hata Kodları</SectionTitle>
+              <p className="text-[14px] text-white/60 leading-relaxed mb-4">
+                Activity kullanırken karşılaştığın <strong className="text-white/70">DW-XXXX</strong> formatındaki hata kodlarının ne anlama geldiğini, neden oluştuğunu ve nasıl çözebileceğini ayrıntılı olarak öğrenebilirsin.
+              </p>
+              <Link
+                href="/docs/errors"
+                className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-xl border border-red-500/20 bg-red-500/10 text-sm font-semibold text-red-300 hover:bg-red-500/20 hover:border-red-500/30 transition-all"
+              >
+                <LuAlertTriangle className="w-4 h-4" />
+                Hata Kodları Rehberini Aç
+                <LuChevronRight className="w-4 h-4 ml-auto group-hover:translate-x-0.5 transition-transform" />
+              </Link>
             </section>
 
             <footer className="mt-16 pt-8 border-t border-white/[0.06] text-center">
