@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import {
   LuCalculator,
   LuRefreshCw,
-  LuTrendingUp,
   LuTriangleAlert,
   LuCircleCheck,
   LuInfo,
@@ -90,7 +89,10 @@ export default function EconomySettingsPage() {
   };
 
   useEffect(() => {
-    fetchSimulation(days);
+    const loadSimulation = async () => {
+      await fetchSimulation(days);
+    };
+    void loadSimulation();
   }, [days]);
 
   if (loading) {

@@ -1,23 +1,22 @@
 'use client';
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { LuLoader } from 'react-icons/lu';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { LuArrowRight, LuLoader, LuShield } from 'react-icons/lu';
 
 const RULES = [
-  'Sunucu kurallarına ve topluluk standartlarına saygı gösterin.',
-  'Panel ve bot işlemlerinde kötüye kullanım yapmayın.',
-  'Kişisel ve gizli verileri (token, kod, panel erişimi) paylaşmayın.',
-  'Topluluk üyelerine karşı taciz veya nefret içerikli davranışlarda bulunmayın.',
-  'Web paneli ve bot üzerinden yapılan işlemler kayıt altındadır.',
+  'Topluluk içinde saygılı dil kullanın; hakaret ve taciz kabul edilmez.',
+  'Hesap bilgileri, token ve özel erişim verilerini paylaşmayın.',
+  'Mağaza, cüzdan ve transfer araçlarını kötüye kullanmayın.',
+  'Çoklu hesap, otomasyon ve manipülasyon denemeleri yaptırıma tabidir.',
+  'Sunucu yönetiminin kararları web erişiminizi de etkileyebilir.',
 ];
 
-const INFO_POINTS = [
-  'Kuralları onayladıktan sonra rolünüz otomatik olarak aktif edilir.',
-  'Rol atanması birkaç dakika sürebilir; gecikmelerde sayfayı yenileyin.',
-  'Aktivasyon tamamlanınca üye paneline yönlendirilirsiniz.',
-  'Transfer limitleri ve vergiler sunucu ayarlarına göre uygulanır.',
+const QUICK_FLOW = [
+  'Kuralları onayla',
+  'Sistem giriş rolünü versin',
+  'Paneli kullanmaya başla',
 ];
 
 function RulesPageContent() {
@@ -34,118 +33,134 @@ function RulesPageContent() {
     setError(null);
 
     try {
-      // Seçilen sunucuyu cookie'ye kaydet
       if (pendingGuildId) {
         document.cookie = `selected_guild_id=${pendingGuildId}; path=/; max-age=86400; samesite=lax`;
       }
 
       const response = await fetch('/api/discord/assign-role', { method: 'POST' });
       if (response.status === 401) {
-        setError('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+        setError('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
         setLoading(false);
         return;
       }
 
       if (!response.ok) {
-        setError('Rol atanamadı. Lütfen tekrar deneyin.');
+        setError('Giriş rolü verilemedi. Birkaç saniye sonra tekrar deneyin.');
         setLoading(false);
         return;
       }
 
-      const verifyResponse = await fetch('/api/admin/verify');
-      if (verifyResponse.ok) {
-        const data = (await verifyResponse.json()) as { isAdmin: boolean };
-        // Rol verildi, şimdi sunucu seçtirmeye git
-        router.replace('/auth/select-server');
-        return;
-      }
-
-      router.replace('/auth/select-server');
+      router.replace('/dashboard');
     } catch {
-      setError('Bir hata oluştu. Lütfen tekrar deneyin.');
+      setError('Beklenmeyen bir hata oluştu. Lütfen yeniden deneyin.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-[#0b0d12] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-[#060914] text-white">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full bg-indigo-500/15 blur-[160px]" />
-        <div className="absolute bottom-0 right-[-120px] h-[420px] w-[420px] rounded-full bg-sky-500/15 blur-[180px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.06),_transparent_55%)]" />
+        <div className="absolute -left-20 -top-16 h-72 w-72 rounded-full bg-[#5865F2]/20 blur-[120px]" />
+        <div className="absolute -bottom-20 -right-8 h-80 w-80 rounded-full bg-sky-400/15 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.07),_transparent_45%)]" />
       </div>
 
-      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-20">
-        <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-10 shadow-[0_24px_60px_rgba(15,23,42,0.45)]">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Kurallar</p>
-          <h1 className="mt-4 text-2xl font-semibold">Rol aktivasyonu için kuralları onaylayın</h1>
-          <p className="mt-2 text-sm text-white/60">
-            Rolünüzün aktif edilmesi için aşağıdaki kuralları kabul etmeniz gerekiyor.
+      <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-4 py-8 sm:px-6">
+        <section className="w-full rounded-3xl border border-white/10 bg-white/[0.05] p-6 shadow-[0_24px_70px_rgba(4,8,20,0.55)] backdrop-blur-xl sm:p-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#cfd7ff]">
+            <LuShield className="h-3.5 w-3.5" />
+            Üyelik Onayı
+          </div>
+
+          <h1 className="mt-4 text-2xl font-bold leading-tight text-white sm:text-3xl">
+            Hızlı kurallar onayı
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-white/70">
+            Sayfayı uzatmadan, kısa bir özetle ilerleyelim. Onaydan sonra giriş rolünüz otomatik verilir.
           </p>
 
-          <ul className="mt-6 space-y-3 text-sm text-white/70">
+          <ul className="mt-5 space-y-2.5">
             {RULES.map((rule) => (
-              <li key={rule} className="flex gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-400" />
+              <li key={rule} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/80">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8ea0ff]" />
                 <span>{rule}</span>
               </li>
             ))}
           </ul>
 
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Bilgilendirme</p>
-            <p className="mt-2 text-sm text-white/60">
-              Devam etmeden önce aşağıdaki akışları bilmenizi isteriz.
+          <details className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-white/85">
+              Daha fazla bilgi (opsiyonel)
+            </summary>
+            <p className="mt-2 text-xs leading-6 text-white/65">
+              Güvenlik, rol ve işlem kayıtları hizmet kalitesi için tutulabilir. İhlal durumunda uyarı, rol iptali,
+              işlem kısıtı veya erişim kapatma uygulanabilir.
             </p>
-            <ul className="mt-4 space-y-3 text-sm text-white/70">
-              {INFO_POINTS.map((point) => (
-                <li key={point} className="flex gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400" />
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
+          </details>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {QUICK_FLOW.map((item) => (
+              <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-white/75">
+                {item}
+              </span>
+            ))}
           </div>
 
-          <div className="mt-6 flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
-            <input
-              id="rules-accept"
-              type="checkbox"
-              checked={accepted}
-              onChange={(event) => setAccepted(event.target.checked)}
-              className="mt-1 h-4 w-4 accent-indigo-400"
-            />
-            <label htmlFor="rules-accept" className="text-sm text-white/70">
-              Kuralları okudum, anladım ve kabul ediyorum. Kabul etmeden rolünüz aktif edilemez.
+          <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <label htmlFor="rules-accept" className="flex cursor-pointer items-start gap-3">
+              <input
+                id="rules-accept"
+                type="checkbox"
+                checked={accepted}
+                onChange={(event) => setAccepted(event.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-white/20 bg-transparent accent-[#5865F2]"
+              />
+              <span className="text-sm leading-6 text-white/78">
+                Kuralları okudum, kabul ediyorum.
+              </span>
             </label>
+            <p className="mt-2 text-xs text-white/55">
+              Detaylar için{' '}
+              <Link href="/privacy" className="text-[#9eb0ff] hover:text-white">
+                Gizlilik
+              </Link>{' '}
+              ve{' '}
+              <Link href="/terms" className="text-[#9eb0ff] hover:text-white">
+                Kullanım Koşulları
+              </Link>{' '}
+              sayfalarını inceleyebilirsiniz.
+            </p>
           </div>
 
           {error && <p className="mt-4 text-sm text-rose-300">{error}</p>}
 
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
             <Link
-              href="/"
-              className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
+              href="/auth/select-server"
+              className="inline-flex flex-1 items-center justify-center rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
             >
-              Vazgeç
+              Geri dön
             </Link>
             <button
               type="button"
               onClick={handleAccept}
               disabled={loading || !accepted}
-              className="rounded-full bg-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(99,102,241,0.45)] transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#5865F2] to-[#7289DA] px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
-                <span className="flex items-center gap-2">
+                <>
                   <LuLoader className="h-4 w-4 animate-spin" />
-                  Rol etkinleştiriliyor...
-                </span>
+                  Rol veriliyor...
+                </>
               ) : (
-                'Kuralları onayla'
+                <>
+                  Kabul et ve devam et
+                  <LuArrowRight className="h-4 w-4" />
+                </>
               )}
             </button>
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );
@@ -153,14 +168,16 @@ function RulesPageContent() {
 
 export default function DiscordRulesPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0d12] text-white">
-        <div className="text-center">
-          <LuLoader className="mx-auto mb-4 h-8 w-8 animate-spin text-indigo-400" />
-          <p className="text-sm text-white/70">Kurallar yükleniyor...</p>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#060914] text-white">
+          <div className="text-center">
+            <LuLoader className="mx-auto mb-3 h-7 w-7 animate-spin text-[#8ea0ff]" />
+            <p className="text-sm text-white/70">Kurallar yükleniyor...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <RulesPageContent />
     </Suspense>
   );

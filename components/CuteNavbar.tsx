@@ -286,6 +286,38 @@ export default function CuteNavbar() {
               )}
             </div>
 
+            {/* --- STATUS --- */}
+            <div 
+              className="relative group"
+              onMouseEnter={() => setOpenMenu('status')}
+              onMouseLeave={() => setOpenMenu(null)}
+            >
+              <button 
+                className={`flex items-center px-5 py-2.5 font-medium transition-all duration-200 rounded-full ${
+                  openMenu === 'status' 
+                    ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105' 
+                    : 'text-white/80 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                📊 Status
+                <ChevronIcon isOpen={openMenu === 'status'} />
+              </button>
+              {openMenu === 'status' && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72 animate-slideUp origin-top z-50">
+                  <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
+                    <div className="relative z-20 space-y-1">
+                      <DropdownLink href="/status">🟢 Sistem Durumu</DropdownLink>
+                      <DropdownLink href="/status#incidents">⚠️ Olaylar</DropdownLink>
+                      <DropdownLink href="/status#history">📈 Geçmiş</DropdownLink>
+                    </div>
+                    <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
+                      <img src="/gif/asılıpengu.gif" alt="Status GIF" className="w-full h-full object-contain" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* --- KEŞFET --- */}
             <div 
               className="relative group"
@@ -394,6 +426,17 @@ export default function CuteNavbar() {
                   <div className="grid grid-cols-1 gap-2 pl-4 animate-fadeIn">
                     <Link href="#" className="text-white/60 p-2">Genel Bakış</Link>
                     <Link href="#" className="text-white/60 p-2">Özellikler</Link>
+                  </div>
+                 )}
+                 <button onClick={() => toggleMobileSubmenu('status')} className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl text-white font-semibold">
+                  <span>📊 Status</span>
+                  <span className={`transition-transform ${mobileSubmenu === 'status' ? 'rotate-180' : ''}`}>▼</span>
+                 </button>
+                 {mobileSubmenu === 'status' && (
+                  <div className="grid grid-cols-1 gap-2 pl-4 animate-fadeIn">
+                    <Link href="/status" className="text-white/60 p-2">🟢 Sistem Durumu</Link>
+                    <Link href="/status#incidents" className="text-white/60 p-2">⚠️ Olaylar</Link>
+                    <Link href="/status#history" className="text-white/60 p-2">📈 Geçmiş</Link>
                   </div>
                  )}
                  {/* MOBIL GİRİŞ / DEVAM ET BUTONU */}

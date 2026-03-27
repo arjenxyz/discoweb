@@ -25,6 +25,7 @@ const MAINTENANCE_KEYS = [
   'promotions',
   'discounts',
   'transfers',
+  'activity',
 ] as const;
 
 type MaintenanceKey = (typeof MAINTENANCE_KEYS)[number];

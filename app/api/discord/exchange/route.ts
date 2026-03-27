@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { logWebEvent } from '@/lib/serverLogger';
 import { createClient } from '@supabase/supabase-js';
 import { setSessionCookies } from '@/lib/auth';
@@ -54,6 +54,29 @@ export async function POST(request: Request) {
         status: 'missing_env_or_code',
       });
       return NextResponse.json({ status: 'error', reason: 'missing_env_or_code' }, { status: 400 });
+    }
+
+    // Bot token yanlışsa "no_guilds" yerine açık bir hata dönelim.
+    const botSelfResponse = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bot ${botToken}` },
+    });
+    if (!botSelfResponse.ok) {
+      let discordBody: unknown = null;
+      try {
+        discordBody = await botSelfResponse.json();
+      } catch {
+        try {
+          discordBody = await botSelfResponse.text();
+        } catch {
+          discordBody = null;
+        }
+      }
+      await logWebEvent(request, {
+        event: 'discord_exchange_failed',
+        status: 'bot_token_invalid',
+        metadata: { discordStatus: botSelfResponse.status, discordBody },
+      });
+      return NextResponse.json({ status: 'error', reason: 'bot_token_invalid' }, { status: 500 });
     }
 
     const body = new URLSearchParams({
@@ -142,7 +165,7 @@ export async function POST(request: Request) {
       email?: string | null;
     };
 
-    // Kullanıcının bulunduğu tüm sunucuları al
+    // KullanÄ±cÄ±nÄ±n bulunduÄŸu tÃ¼m sunucularÄ± al
     let guildsResponse: Response;
     try {
       guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
@@ -205,7 +228,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // OAuth ile gelen sunucuları sakla (kullanıcı izin verdiyse)
+    // OAuth ile gelen sunucularÄ± sakla (kullanÄ±cÄ± izin verdiyse)
     if (supabase && guilds.length > 0) {
       await (supabase.from('user_guilds') as unknown as {
         upsert: (values: Array<Record<string, unknown>>, options?: { onConflict?: string }) => Promise<unknown>;
@@ -221,25 +244,73 @@ export async function POST(request: Request) {
       );
     }
 
-    // Kullanıcının erişebildiği ve botun bulunduğu sunucuları döndür
+    // KullanÄ±cÄ±nÄ±n eriÅŸebildiÄŸi ve botun bulunduÄŸu sunucularÄ± dÃ¶ndÃ¼r
     const adminGuilds: Guild[] = [];
 
-    if (supabase) {
-      // Supabase'den bilinen sunucuları çek (setup şartı yok)
-      const { data: knownServers } = await supabase
+    let knownServers: Array<{
+      discord_id: string;
+      name: string | null;
+      admin_role_id: string | null;
+      verify_role_id: string | null;
+      is_setup: boolean | null;
+    }> = [];
+
+    if (supabase && guilds.length > 0) {
+      const { data } = await supabase
         .from('servers')
         .select('discord_id, name, admin_role_id, verify_role_id, is_setup')
         .in('discord_id', guilds.map((g) => g.id));
+      knownServers = data ?? [];
+    }
 
-      const serverByGuildId = new Map((knownServers ?? []).map((server) => [server.discord_id, server]));
+    const serverByGuildId = new Map(knownServers.map((server) => [server.discord_id, server]));
 
-      for (const userGuild of guilds) {
-        const server = serverByGuildId.get(userGuild.id);
+    // Botun bulunduğu sunucuları tek çağrıda çekerek yanlış negatifleri azalt.
+    let botGuildIdSet = new Set<string>();
+    let hasBotGuildList = false;
+    try {
+      const botGuildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
+        headers: { Authorization: `Bot ${botToken}` },
+      });
+      if (botGuildsResponse.ok) {
+        const botGuilds = (await botGuildsResponse.json()) as Array<{ id: string }>;
+        botGuildIdSet = new Set(botGuilds.map((guild) => guild.id));
+        hasBotGuildList = true;
+        console.log(`Bot guild list fetched: ${botGuildIdSet.size}`);
+      } else {
+        console.log(`Bot guild list fetch failed, status=${botGuildsResponse.status}`);
+      }
+    } catch (error) {
+      console.log('Bot guild list fetch exception:', error);
+    }
 
-        // Daha detaylı loglama ekle
-        console.log(`Admin kontrolü başlatıldı: Sunucu=${userGuild.name}, Kullanıcı=${user.id}`);
+    for (const userGuild of guilds) {
+      const server = serverByGuildId.get(userGuild.id);
+      console.log(`Guild kontrolü: Sunucu=${userGuild.name}, Kullanıcı=${user.id}`);
 
-        try {
+      try {
+        // Bot gerçekten bu sunucuda mı?
+        if (hasBotGuildList) {
+          if (!botGuildIdSet.has(userGuild.id)) {
+            continue;
+          }
+        } else {
+          // Guild listesi alınamadıysa önceki yönteme geri dön.
+          const botGuildResponse = await fetch(`https://discord.com/api/guilds/${userGuild.id}`, {
+            headers: { Authorization: `Bot ${botToken}` },
+          });
+
+          if (!botGuildResponse.ok) {
+            console.log(`Bot erişimi yok: Sunucu=${userGuild.name}, Status=${botGuildResponse.status}`);
+            continue;
+          }
+        }
+
+        // Admin kontrolü mümkünse member endpoint ile yapılır.
+        let isAdmin = false;
+        const adminRoleId = server?.admin_role_id ?? null;
+
+        if (adminRoleId) {
           const memberResponse = await fetch(
             `https://discord.com/api/guilds/${userGuild.id}/members/${user.id}`,
             {
@@ -249,22 +320,9 @@ export async function POST(request: Request) {
 
           if (memberResponse.ok) {
             const member = (await memberResponse.json()) as { roles: string[] };
-            const adminRoleId = server?.admin_role_id ?? null;
-            const isAdmin = adminRoleId ? member.roles.includes(adminRoleId) : false;
-
-            console.log(`Sunucu ${userGuild.name}: admin_role_id=${adminRoleId}, user_roles=${member.roles}, isAdmin=${isAdmin}`);
-
-            adminGuilds.push({
-              id: userGuild.id,
-              name: server?.name ?? userGuild.name,
-              isAdmin: isAdmin,
-              isSetup: Boolean(server?.is_setup),
-              verifyRoleId: server?.verify_role_id ?? null,
-              isOwner: Boolean(userGuild.owner)
-            });
+            isAdmin = member.roles.includes(adminRoleId);
+            console.log(`Sunucu ${userGuild.name}: admin_role_id=${adminRoleId}, isAdmin=${isAdmin}`);
           } else {
-            // Bot bu sunucuda değilse veya kullanıcı bilgisi alınamıyorsa listeye ekleme
-            console.log(`Discord API isteği başarısız: Sunucu=${userGuild.name}, Kullanıcı=${user.id}, Status=${memberResponse.status}`);
             let memberBody = null;
             try { memberBody = await memberResponse.json(); } catch { try { memberBody = await memberResponse.text(); } catch {} }
             await logWebEvent(request, {
@@ -275,9 +333,18 @@ export async function POST(request: Request) {
               metadata: { status: memberResponse.status, body: memberBody },
             });
           }
-        } catch (error) {
-          console.log(`Sunucu ${userGuild.name} kontrol edilemedi:`, error);
         }
+
+        adminGuilds.push({
+          id: userGuild.id,
+          name: server?.name ?? userGuild.name,
+          isAdmin,
+          isSetup: Boolean(server?.is_setup),
+          verifyRoleId: server?.verify_role_id ?? null,
+          isOwner: Boolean(userGuild.owner),
+        });
+      } catch (error) {
+        console.log(`Sunucu ${userGuild.name} kontrol edilemedi:`, error);
       }
     }
 
@@ -308,7 +375,7 @@ export async function POST(request: Request) {
       const member = (await mainGuildMemberResponse.json()) as { roles: string[] };
       hasRole = member.roles.includes(REQUIRED_ROLE_ID);
       
-      // Supabase'den admin_role_id'yi çek
+      // Supabase'den admin_role_id'yi Ã§ek
       let adminRoleId = ADMIN_ROLE_ID; // fallback
       if (supabase) {
         const { data: serverData } = await supabase
@@ -323,7 +390,7 @@ export async function POST(request: Request) {
       
       isAdmin = adminRoleId ? member.roles.includes(adminRoleId) : false;
 
-      console.log(`Ana sunucu kontrolü: user_roles=${member.roles}, required_role=${REQUIRED_ROLE_ID}, hasRole=${hasRole}, admin_role=${adminRoleId}, isAdmin=${isAdmin}`);
+      console.log(`Ana sunucu kontrolÃ¼: user_roles=${member.roles}, required_role=${REQUIRED_ROLE_ID}, hasRole=${hasRole}, admin_role=${adminRoleId}, isAdmin=${isAdmin}`);
     }
 
     // Status'u belirle
@@ -335,10 +402,10 @@ export async function POST(request: Request) {
       if (hasAdminGuild) {
         status = 'ok';
       } else {
-        // Admin olmayan ama verify rolü olan sunucu varsa, rules gerekli
+        // Admin olmayan ama verify rolÃ¼ olan sunucu varsa, rules gerekli
         // const needsRules = adminGuilds.some(g => g.verifyRoleId);
         // status = needsRules ? 'needs_rules' : 'ok';
-        // Kurallar adımını atla - direkt dashboard'a git
+        // Kurallar adÄ±mÄ±nÄ± atla - direkt dashboard'a git
         status = 'ok';
       }
     }
@@ -407,3 +474,4 @@ export async function POST(request: Request) {
     return NextResponse.json(responseBody, { status: 500 });
   }
 }
+

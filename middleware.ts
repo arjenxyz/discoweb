@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Cache için basit bir map (production'da Redis kullan)
+// Cache iÃ§in basit bir map (production'da Redis kullan)
 const roleCheckCache = new Map<string, { roles: string[]; expires: number }>();
 const CACHE_DURATION = 2 * 60 * 1000; // 2 dakika
-const CACHE_GRACE_DURATION = 30 * 1000; // 30 saniye ekstra (geçici hata durumlarında stale cache kullanmak için)
+const CACHE_GRACE_DURATION = 30 * 1000; // 30 saniye ekstra (geÃ§ici hata durumlarÄ±nda stale cache kullanmak iÃ§in)
 const DEFAULT_DEVELOPER_GUILD_ID = '1465698764453838882';
 const DEFAULT_DEVELOPER_ROLE_ID = '1467580199481639013';
 const SESSION_COOKIE = 'discord_session';
@@ -89,9 +89,9 @@ const getSessionUserId = async (request: NextRequest) => {
 };
 
 async function checkUserRoles(userId: string, guildId: string): Promise<string[] | null> {
-  // Cache kontrolü
+  // Cache kontrolÃ¼
   const cacheKey = `${userId}-${guildId}`;
-  let cached = roleCheckCache.get(cacheKey);
+  const cached = roleCheckCache.get(cacheKey);
   const now = Date.now();
 
   try {
@@ -105,7 +105,7 @@ async function checkUserRoles(userId: string, guildId: string): Promise<string[]
       return cached.roles;
     }
 
-    // Discord API'den üyenin rollerini al
+    // Discord API'den Ã¼yenin rollerini al
     const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
       headers: { Authorization: `Bot ${botToken}` },
     });
@@ -113,18 +113,18 @@ async function checkUserRoles(userId: string, guildId: string): Promise<string[]
     if (!memberResponse.ok) {
       console.error(`Middleware: Failed to fetch member roles: ${memberResponse.status}`);
 
-      // Eğer geçmişte cache'lenmiş roller varsa ve bu süre grace içindeyse, stale cache kullan
+      // EÄŸer geÃ§miÅŸte cache'lenmiÅŸ roller varsa ve bu sÃ¼re grace iÃ§indeyse, stale cache kullan
       if (cached && now < cached.expires + CACHE_GRACE_DURATION) {
         console.warn('Middleware: Using stale cached roles due to transient fetch failure');
         return cached.roles;
       }
 
-      // 404 -> üye sunucuda değil
+      // 404 -> Ã¼ye sunucuda deÄŸil
       if (memberResponse.status === 404) {
         return [];
       }
 
-      // 429 veya 5xx gibi geçici hatalar için null döndür
+      // 429 veya 5xx gibi geÃ§ici hatalar iÃ§in null dÃ¶ndÃ¼r
       return null;
     }
 
@@ -140,7 +140,7 @@ async function checkUserRoles(userId: string, guildId: string): Promise<string[]
   } catch (error) {
     console.error('Middleware: Error checking user roles:', error);
 
-    // Geçici hata durumunda cache varsa kullan
+    // GeÃ§ici hata durumunda cache varsa kullan
     if (cached) {
       console.warn('Middleware: Using stale cached roles due to error');
       return cached.roles;
@@ -150,42 +150,40 @@ async function checkUserRoles(userId: string, guildId: string): Promise<string[]
   }
 }
 
-async function getServerAdminRole(guildId: string): Promise<string | null> {
+type ServerRoleConfig = {
+  adminRoleId: string | null;
+  verifyRoleId: string | null;
+};
+
+async function getServerRoleConfig(guildId: string): Promise<ServerRoleConfig> {
   try {
     const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       console.warn('Middleware: Supabase credentials not available, skipping role check');
-      return null;
+      return { adminRoleId: null, verifyRoleId: null };
     }
 
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
-    // Sunucunun admin rolünü veritabanından al
     const { data: server } = await supabase
       .from('servers')
-      .select('admin_role_id')
+      .select('admin_role_id, verify_role_id')
       .eq('discord_id', guildId)
       .maybeSingle();
 
     console.log('Middleware: Server data from DB:', server);
-
-    if (!server?.admin_role_id) {
-      console.log('Middleware: No admin role ID configured for server');
-      return null;
-    }
-
-    console.log('Middleware: Admin role ID found:', server.admin_role_id);
-    return server.admin_role_id;
-
+    return {
+      adminRoleId: server?.admin_role_id ?? null,
+      verifyRoleId: server?.verify_role_id ?? null,
+    };
   } catch (error) {
-    console.error('Middleware: Error in getServerAdminRole:', error);
-    return null;
+    console.error('Middleware: Error in getServerRoleConfig:', error);
+    return { adminRoleId: null, verifyRoleId: null };
   }
 }
-
 async function isDeveloper(userId: string): Promise<boolean> {
 	const roleId = process.env.DEVELOPER_ROLE_ID ?? DEFAULT_DEVELOPER_ROLE_ID;
 	const guildId = process.env.DEVELOPER_GUILD_ID ?? process.env.DISCORD_GUILD_ID ?? DEFAULT_DEVELOPER_GUILD_ID;
@@ -208,12 +206,12 @@ const IGNORED_PATHS = ['/favicon.ico', '/robots.txt', '/sitemap.xml', '/sw.js', 
 export async function middleware(request: NextRequest) {
 	const { pathname, origin } = request.nextUrl;
 
-	// Static dosyaları ve API'leri atla
+	// Static dosyalarÄ± ve API'leri atla
 	if (IGNORED_PREFIXES.some((prefix) => pathname.startsWith(prefix)) || IGNORED_PATHS.includes(pathname)) {
 		return NextResponse.next();
 	}
 
-	// Maintenance kontrolü
+	// Maintenance kontrolÃ¼
 	try {
 		const response = await fetch(new URL('/api/maintenance', origin), { cache: 'no-store' });
 		if (response.ok) {
@@ -228,125 +226,161 @@ export async function middleware(request: NextRequest) {
 						}
 					}
 				} catch {
-					// Developer kontrolü başarısız olursa normal bakım yönlendirmesi uygulanır
+					// Developer kontrolÃ¼ baÅŸarÄ±sÄ±z olursa normal bakÄ±m yÃ¶nlendirmesi uygulanÄ±r
 				}
 
 				return NextResponse.redirect(new URL('/maintenance', request.url));
 			}
 		}
 	} catch {
-		// Maintenance kontrolü başarısız olursa devam et
+		// Maintenance kontrolÃ¼ baÅŸarÄ±sÄ±z olursa devam et
 	}
 
-	// Activity sayfalarını atla (Discord Embedded App SDK kendi auth'unu kullanır)
+	// Activity sayfalarÄ±nÄ± atla (Discord Embedded App SDK kendi auth'unu kullanÄ±r)
 	if (pathname.startsWith('/activity')) {
 		return NextResponse.next();
 	}
 
-	// Ana sayfa ve public sayfaları atla
+	// Ana sayfa ve public sayfalarÄ± atla
 	if (pathname === '/' || pathname.startsWith('/maintenance') || pathname.startsWith('/server-left')) {
 		return NextResponse.next();
 	}
 
-	// Auth callback ve error sayfalarını atla
+	// Auth callback ve error sayfalarÄ±nÄ± atla
 	if (pathname.includes('/auth/')) {
 		return NextResponse.next();
 	}
 
-	// Developer sayfaları için üyelik kontrolünü atla (yetki kontrolü sayfa içinde yapılır)
+	// Developer sayfalarÄ± iÃ§in Ã¼yelik kontrolÃ¼nÃ¼ atla (yetki kontrolÃ¼ sayfa iÃ§inde yapÄ±lÄ±r)
 	if (pathname.startsWith('/developer')) {
 		return NextResponse.next();
 	}
 
-	// Kullanıcının giriş yapmış olup olmadığını ve sunucuda üye olup olmadığını kontrol et
+	// KullanÄ±cÄ±nÄ±n giriÅŸ yapmÄ±ÅŸ olup olmadÄ±ÄŸÄ±nÄ± ve sunucuda Ã¼ye olup olmadÄ±ÄŸÄ±nÄ± kontrol et
 	try {
 		const userId = await getSessionUserId(request);
 		const selectedGuildId = request.cookies.get('selected_guild_id')?.value;
 
 		if (userId && selectedGuildId) {
-			console.log('🔍 Middleware: Checking server membership for user:', userId, 'guild:', selectedGuildId);
+			console.log('ğŸ” Middleware: Checking server membership for user:', userId, 'guild:', selectedGuildId);
 
-			// Kullanıcının sunucuda üye olup olmadığını kontrol et
+			// KullanÄ±cÄ±nÄ±n sunucuda Ã¼ye olup olmadÄ±ÄŸÄ±nÄ± kontrol et
 			const userRoles = await checkUserRoles(userId, selectedGuildId);
 
 			if (userRoles === null) {
-				console.warn('🚧 Middleware: Could not verify server membership (transient error), allowing access for now');
+				console.warn('ğŸš§ Middleware: Could not verify server membership (transient error), allowing access for now');
 			} else if (userRoles.length === 0) {
-				console.log('🚪 Middleware: User is not a member of the selected server, redirecting to /server-left');
-				// Kullanıcı sunucudan ayrılmış, server-left sayfasına yönlendir
+				console.log('ğŸšª Middleware: User is not a member of the selected server, redirecting to /server-left');
+				// KullanÄ±cÄ± sunucudan ayrÄ±lmÄ±ÅŸ, server-left sayfasÄ±na yÃ¶nlendir
 				return NextResponse.redirect(new URL('/server-left', request.url));
 			} else {
-				console.log('✅ Middleware: User is a member of the server');
+				console.log('âœ… Middleware: User is a member of the server');
 			}
 		}
 	} catch (error) {
-		console.error('🔍 Middleware: Error checking server membership:', error);
+		console.error('ğŸ” Middleware: Error checking server membership:', error);
 		// Hata durumunda devam et (fail-safe)
 	}
 
-	// Admin sayfaları için rol kontrolü
+	// Dashboard/Admin sayfaları için verify rol zorunluluğu.
+	if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
+		try {
+			const userId = await getSessionUserId(request);
+			const selectedGuildId = request.cookies.get('selected_guild_id')?.value;
+
+			if (!userId || !selectedGuildId) {
+				return NextResponse.redirect(new URL('/auth/select-server', request.url));
+			}
+
+			const userRoles = await checkUserRoles(userId, selectedGuildId);
+			if (userRoles === null) {
+				return NextResponse.redirect(new URL('/auth/select-server', request.url));
+			}
+
+			if (userRoles.length === 0) {
+				return NextResponse.redirect(new URL('/server-left', request.url));
+			}
+
+			const roleConfig = await getServerRoleConfig(selectedGuildId);
+			const hasVerifyRole = roleConfig.verifyRoleId
+				? userRoles.includes(roleConfig.verifyRoleId)
+				: true;
+			const developer = await isDeveloper(userId);
+
+			if (!hasVerifyRole && !developer) {
+				const rulesUrl = new URL('/auth/rules', request.url);
+				rulesUrl.searchParams.set('pendingGuildId', selectedGuildId);
+				return NextResponse.redirect(rulesUrl);
+			}
+		} catch (error) {
+			console.error('Middleware: verify role gate error:', error);
+			return NextResponse.redirect(new URL('/auth/select-server', request.url));
+		}
+	}
+
 	if (pathname.startsWith('/admin')) {
-		console.log('🔐 Middleware: Admin page access detected:', pathname);
+		console.log('ğŸ” Middleware: Admin page access detected:', pathname);
 		try {
 			// Cookie'lerden gerekli bilgileri al
 			const userId = await getSessionUserId(request);
 			const selectedGuildId = request.cookies.get('selected_guild_id')?.value;
 
-			console.log('🔐 Middleware: Cookies - userId:', userId, 'guildId:', selectedGuildId);
+			console.log('ğŸ” Middleware: Cookies - userId:', userId, 'guildId:', selectedGuildId);
 
 			if (!userId || !selectedGuildId) {
-				console.log('🔐 Middleware: Missing user or guild ID, redirecting to home');
-				// Session yok, ana sayfaya yönlendir
+				console.log('ğŸ” Middleware: Missing user or guild ID, redirecting to home');
+				// Session yok, ana sayfaya yÃ¶nlendir
 				return NextResponse.redirect(new URL('/', request.url));
 			}
 
-			// Kullanıcının rollerini kontrol et
+			// KullanÄ±cÄ±nÄ±n rollerini kontrol et
 			const userRoles = await checkUserRoles(userId, selectedGuildId);
-			console.log('🔐 Middleware: User roles fetched:', userRoles);
+			console.log('ğŸ” Middleware: User roles fetched:', userRoles);
 
 			if (userRoles === null) {
-				console.warn('🔐 Middleware: Could not fetch user roles (transient error), redirecting to home without logging out');
+				console.warn('ğŸ” Middleware: Could not fetch user roles (transient error), redirecting to home without logging out');
 				return NextResponse.redirect(new URL('/', request.url));
 			}
 
 			if (userRoles.length === 0) {
-				console.log('🔐 Middleware: User is not a member of the selected server, redirecting to /server-left');
+				console.log('ğŸ” Middleware: User is not a member of the selected server, redirecting to /server-left');
 				return NextResponse.redirect(new URL('/server-left', request.url));
 			}
 
 			// Sunucunun admin rolünü al
-			const adminRoleId = await getServerAdminRole(selectedGuildId);
-			console.log('🔐 Middleware: Admin role ID for server:', adminRoleId);
+			const roleConfig = await getServerRoleConfig(selectedGuildId);
+			const adminRoleId = roleConfig.adminRoleId;
+			console.log('Middleware: Admin role ID for server:', adminRoleId);
 
 			if (!adminRoleId) {
-				console.log('🔐 Middleware: No admin role configured for server, allowing access');
-				// Admin rolü ayarlanmamış, erişime izin ver
+				console.log('ğŸ” Middleware: No admin role configured for server, allowing access');
+				// Admin rolÃ¼ ayarlanmamÄ±ÅŸ, eriÅŸime izin ver
 				return NextResponse.next();
 			}
 
-			// Kullanıcı admin rolüne sahip mi kontrol et
+			// KullanÄ±cÄ± admin rolÃ¼ne sahip mi kontrol et
 			const hasAdminRole = userRoles.includes(adminRoleId);
-			console.log('🔐 Middleware: User has admin role:', hasAdminRole, 'Role ID:', adminRoleId, 'User roles:', userRoles);
+			console.log('ğŸ” Middleware: User has admin role:', hasAdminRole, 'Role ID:', adminRoleId, 'User roles:', userRoles);
 
 			if (!hasAdminRole) {
-				// Developer ise erişime izin ver
+				// Developer ise eriÅŸime izin ver
 				const developer = await isDeveloper(userId);
 				if (developer) {
-					console.log('🔐 Middleware: User is a developer, granting admin access');
+					console.log('ğŸ” Middleware: User is a developer, granting admin access');
 					return NextResponse.next();
 				}
 
-				console.log(`🔐 Middleware: User ${userId} no longer has admin role ${adminRoleId}, redirecting to home`);
+				console.log(`ğŸ” Middleware: User ${userId} no longer has admin role ${adminRoleId}, redirecting to home`);
 
-				// Admin rolü yok, erişimi engelle (ama oturumu silme)
+				// Admin rolÃ¼ yok, eriÅŸimi engelle (ama oturumu silme)
 				roleCheckCache.delete(`${userId}-${selectedGuildId}`);
 				return NextResponse.redirect(new URL('/', request.url));
 			}
 
-			console.log('🔐 Middleware: Access granted for admin page');
+			console.log('ğŸ” Middleware: Access granted for admin page');
 		} catch (error) {
-			console.error('🔐 Middleware: Unexpected error:', error);
-			// Hata durumunda güvenli tarafta kal, çıkış yap
+			console.error('ğŸ” Middleware: Unexpected error:', error);
+			// Hata durumunda gÃ¼venli tarafta kal, Ã§Ä±kÄ±ÅŸ yap
 			const response = NextResponse.redirect(new URL('/', request.url));
 			response.cookies.set('discord_session', '', { maxAge: 0, path: '/' });
 			response.cookies.set('csrf_token', '', { maxAge: 0, path: '/' });
@@ -361,3 +395,4 @@ export async function middleware(request: NextRequest) {
 export const config = {
 	matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
+

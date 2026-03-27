@@ -26,6 +26,7 @@ const LABELS: Record<string, string> = {
   discounts: 'İndirim Kodu',
   transfers: 'Papel Gönder',
   bot: 'Discord Bot',
+  activity: 'Activity',
 };
 
 const DESCRIPTION: Record<string, string> = {
@@ -37,6 +38,7 @@ const DESCRIPTION: Record<string, string> = {
   discounts: 'İndirim kodu kullanımı.',
   transfers: 'Papel gönderme işlemleri.',
   bot: 'Discord botunun durumunu değiştirir.',
+  activity: 'Activity API ve veri güncelleme akışını kontrol eder.',
 };
 
 export default function AdminMaintenancePage() {
