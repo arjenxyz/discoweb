@@ -80,7 +80,10 @@ export async function POST(request: Request) {
     prize_role_id: payload.prize_role_id ?? null,
   });
 
-  if (error) return NextResponse.json({ error: 'save_failed' }, { status: 500 });
+  if (error) {
+    console.error('Raffle insert error:', error);
+    return NextResponse.json({ error: 'save_failed', detail: error.message, code: error.code }, { status: 500 });
+  }
   return NextResponse.json({ status: 'ok' });
 }
 
@@ -125,7 +128,10 @@ export async function PUT(request: Request) {
   if (payload.prize_role_id !== undefined) update.prize_role_id = payload.prize_role_id;
 
   const { error } = await supabase.from('raffles').update(update).eq('id', payload.id);
-  if (error) return NextResponse.json({ error: 'update_failed' }, { status: 500 });
+  if (error) {
+    console.error('Raffle update error:', error);
+    return NextResponse.json({ error: 'update_failed', detail: error.message, code: error.code }, { status: 500 });
+  }
   return NextResponse.json({ status: 'ok' });
 }
 
@@ -140,6 +146,9 @@ export async function DELETE(request: Request) {
   if (!id) return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
 
   const { error } = await supabase.from('raffles').delete().eq('id', id);
-  if (error) return NextResponse.json({ error: 'delete_failed' }, { status: 500 });
+  if (error) {
+    console.error('Raffle delete error:', error);
+    return NextResponse.json({ error: 'delete_failed', detail: error.message, code: error.code }, { status: 500 });
+  }
   return NextResponse.json({ status: 'ok' });
 }
