@@ -360,6 +360,32 @@ export default function AdminRafflesPage() {
             <div>
               <label className={label}>Bitiş Tarihi</label>
               <input type="datetime-local" className={input} value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} />
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {[
+                  { label: '15d', minutes: 15 },
+                  { label: '30d', minutes: 30 },
+                  { label: '1s', minutes: 60 },
+                  { label: '3s', minutes: 180 },
+                  { label: '6s', minutes: 360 },
+                  { label: '1g', minutes: 1440 },
+                  { label: '3g', minutes: 4320 },
+                  { label: '7g', minutes: 10080 },
+                ].map(({ label: lbl, minutes }) => (
+                  <button
+                    key={lbl}
+                    type="button"
+                    onClick={() => {
+                      const base = form.start_date ? new Date(form.start_date) : new Date();
+                      const end = new Date(base.getTime() + minutes * 60 * 1000);
+                      const pad = (n: number) => String(n).padStart(2, '0');
+                      setForm({ ...form, end_date: `${end.getFullYear()}-${pad(end.getMonth()+1)}-${pad(end.getDate())}T${pad(end.getHours())}:${pad(end.getMinutes())}` });
+                    }}
+                    className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/40 hover:text-white hover:border-white/30 transition"
+                  >
+                    +{lbl}
+                  </button>
+                ))}
+              </div>
             </div>
             <div>
               <label className={label}>Kazanan Sayısı</label>
