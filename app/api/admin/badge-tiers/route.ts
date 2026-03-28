@@ -51,6 +51,11 @@ export async function POST(request: Request) {
     color?: string | null;
     description?: string | null;
     sort_order?: number;
+    reward_papel?: number | null;
+    reward_earn_multiplier?: number | null;
+    reward_message?: string | null;
+    role_id?: string | null;
+    background_image?: string | null;
   };
 
   if (!payload.name?.trim()) {
@@ -68,6 +73,11 @@ export async function POST(request: Request) {
     color: payload.color ?? null,
     description: payload.description ?? null,
     sort_order: payload.sort_order ?? 0,
+    reward_papel: payload.reward_papel ?? 0,
+    reward_earn_multiplier: payload.reward_earn_multiplier ?? 1.0,
+    reward_message: payload.reward_message ?? null,
+    role_id: payload.role_id ?? null,
+    background_image: payload.background_image ?? null,
   });
 
   if (error) {
@@ -94,6 +104,11 @@ export async function PUT(request: Request) {
     color?: string | null;
     description?: string | null;
     sort_order?: number;
+    reward_papel?: number | null;
+    reward_earn_multiplier?: number | null;
+    reward_message?: string | null;
+    role_id?: string | null;
+    background_image?: string | null;
   };
 
   if (!payload.id) {
@@ -112,6 +127,11 @@ export async function PUT(request: Request) {
   if (payload.color !== undefined) update.color = payload.color;
   if (payload.description !== undefined) update.description = payload.description;
   if (payload.sort_order !== undefined) update.sort_order = payload.sort_order;
+  if (payload.reward_papel !== undefined) update.reward_papel = payload.reward_papel ?? 0;
+  if (payload.reward_earn_multiplier !== undefined) update.reward_earn_multiplier = payload.reward_earn_multiplier ?? 1.0;
+  if (payload.reward_message !== undefined) update.reward_message = payload.reward_message;
+  if (payload.role_id !== undefined) update.role_id = payload.role_id;
+  if (payload.background_image !== undefined) update.background_image = payload.background_image;
 
   const { error } = await supabase.from('badge_tiers').update(update).eq('id', payload.id);
   if (error) {
