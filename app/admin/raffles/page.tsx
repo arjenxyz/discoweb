@@ -21,7 +21,6 @@ type Raffle = {
   prize_multiplier_value: number | null;
   prize_multiplier_days: number | null;
   prize_mari_amount: number | null;
-  prize_lot_count: number | null;
   eligibility_type: string;
   required_badge_tier_id: string | null;
   drawn_at: string | null;
@@ -43,7 +42,6 @@ type FormState = {
   prize_multiplier_value: string;
   prize_multiplier_days: string;
   prize_mari_amount: string;
-  prize_lot_count: string;
   eligibility_type: string;
   required_badge_tier_id: string;
 };
@@ -63,7 +61,6 @@ const emptyForm = (): FormState => ({
   prize_multiplier_value: '',
   prize_multiplier_days: '',
   prize_mari_amount: '',
-  prize_lot_count: '',
   eligibility_type: 'tag',
   required_badge_tier_id: '',
 });
@@ -87,7 +84,6 @@ const PRIZE_LABELS: Record<string, string> = {
   role: 'Rol',
   timed_multiplier: 'Geçici Çarpan',
   mari: 'Mari',
-  lot: 'Lot',
 };
 
 const input = 'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-indigo-500';
@@ -136,7 +132,6 @@ export default function AdminRafflesPage() {
       prize_multiplier_value: r.prize_multiplier_value ? String(r.prize_multiplier_value) : '',
       prize_multiplier_days: r.prize_multiplier_days ? String(r.prize_multiplier_days) : '',
       prize_mari_amount: r.prize_mari_amount ? String(r.prize_mari_amount) : '',
-      prize_lot_count: r.prize_lot_count ? String(r.prize_lot_count) : '',
       eligibility_type: r.eligibility_type ?? 'tag',
       required_badge_tier_id: r.required_badge_tier_id ?? '',
     });
@@ -169,7 +164,6 @@ export default function AdminRafflesPage() {
       prize_multiplier_value: form.prize_multiplier_value ? parseFloat(form.prize_multiplier_value) : null,
       prize_multiplier_days: form.prize_multiplier_days ? parseInt(form.prize_multiplier_days, 10) : null,
       prize_mari_amount: form.prize_mari_amount ? parseFloat(form.prize_mari_amount) : null,
-      prize_lot_count: form.prize_lot_count ? parseInt(form.prize_lot_count, 10) : null,
       eligibility_type: form.eligibility_type,
       required_badge_tier_id: form.required_badge_tier_id || null,
       ...(editingId ? { id: editingId } : {}),
@@ -294,18 +288,18 @@ export default function AdminRafflesPage() {
             <div className="sm:col-span-2">
               <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-white/40">Ödül Türü</p>
               <div className="flex flex-wrap gap-2">
-                {(['custom', 'papel', 'role', 'timed_multiplier', 'mari', 'lot'] as const).map((t) => (
+                {(['custom', 'papel', 'role', 'timed_multiplier', 'mari'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setForm({ ...form, prize_type: t })}
                     className={`rounded-full px-3 py-1 text-xs font-semibold border transition ${form.prize_type === t ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300' : 'border-white/10 text-white/40 hover:text-white'}`}
                   >
-                    {t === 'custom' ? '🎁 Özel' : t === 'papel' ? '💰 Papel' : t === 'role' ? '🛡️ Rol' : t === 'timed_multiplier' ? '⚡ Geçici Çarpan' : t === 'mari' ? '💎 Mari' : '📈 Lot'}
+                    {t === 'custom' ? '🎁 Özel' : t === 'papel' ? '💰 Papel' : t === 'role' ? '🛡️ Rol' : t === 'timed_multiplier' ? '⚡ Geçici Çarpan' : '💎 Mari'}
                   </button>
                 ))}
               </div>
-              {(form.prize_type === 'mari' || form.prize_type === 'lot') && (
+              {form.prize_type === 'mari' && (
                 <p className="mt-1 text-[11px] text-amber-400/60">⚠️ Yüksek Ekonomi özelliği — ödül sunucu kasasından çıkar.</p>
               )}
             </div>
@@ -339,12 +333,6 @@ export default function AdminRafflesPage() {
               <div>
                 <label className={label}>Mari Miktarı</label>
                 <input type="number" min={0.000001} step={0.0001} className={input} value={form.prize_mari_amount} onChange={(e) => setForm({ ...form, prize_mari_amount: e.target.value })} placeholder="10.0000" />
-              </div>
-            )}
-            {form.prize_type === 'lot' && (
-              <div>
-                <label className={label}>Lot Sayısı</label>
-                <input type="number" min={1} step={1} className={input} value={form.prize_lot_count} onChange={(e) => setForm({ ...form, prize_lot_count: e.target.value })} placeholder="100" />
               </div>
             )}
 
@@ -431,7 +419,6 @@ export default function AdminRafflesPage() {
                         {r.prize_papel_amount && <span>{r.prize_papel_amount} papel</span>}
                         {r.prize_multiplier_value && <span>×{r.prize_multiplier_value} / {r.prize_multiplier_days}g</span>}
                         {r.prize_mari_amount && <span>{r.prize_mari_amount} mari</span>}
-                        {r.prize_lot_count && <span>{r.prize_lot_count} lot</span>}
                         {r.winner_count > 1 && <span>{r.winner_count} kazanan</span>}
                         {r.end_date && <span>Bitiş: {formatDate(r.end_date)}</span>}
                       </div>
