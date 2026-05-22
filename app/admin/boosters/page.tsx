@@ -3,12 +3,12 @@
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 
-type BadgeTier = {
+type BoosterTier = {
   id: string;
   guild_id: string;
   name: string;
   emoji: string | null;
-  days_required: number;
+  months_required: number;
   color: string | null;
   description: string | null;
   sort_order: number;
@@ -39,7 +39,7 @@ type GuildEmoji = {
 type FormState = {
   name: string;
   emoji: string;
-  days_required: string;
+  months_required: string;
   color: string;
   description: string;
   sort_order: string;
@@ -53,8 +53,8 @@ type FormState = {
 const emptyForm = (): FormState => ({
   name: '',
   emoji: '',
-  days_required: '',
-  color: '#5865F2',
+  months_required: '',
+  color: '#f472b6',
   description: '',
   sort_order: '0',
   reward_papel: '0',
@@ -65,7 +65,7 @@ const emptyForm = (): FormState => ({
 });
 
 function colorToHex(color: number): string {
-  if (!color) return '#5865F2';
+  if (!color) return '#f472b6';
   return '#' + color.toString(16).padStart(6, '0');
 }
 
@@ -76,8 +76,8 @@ function getRoleIconUrl(role: DiscordRole): string | null {
   return null;
 }
 
-export default function AdminBadgesPage() {
-  const [tiers, setTiers] = useState<BadgeTier[]>([]);
+export default function AdminBoostersPage() {
+  const [tiers, setTiers] = useState<BoosterTier[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormState>(emptyForm());
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -101,8 +101,8 @@ export default function AdminBadgesPage() {
   const emojiPickerRef = useRef<HTMLDivElement>(null);
 
   const load = async () => {
-    const res = await fetch('/api/admin/badge-tiers');
-    if (res.ok) setTiers((await res.json()) as BadgeTier[]);
+    const res = await fetch('/api/admin/boosters');
+    if (res.ok) setTiers((await res.json()) as BoosterTier[]);
     setLoading(false);
   };
 
@@ -110,8 +110,6 @@ export default function AdminBadgesPage() {
     if (roles.length > 0) return;
     setRolesLoading(true);
     try {
-      // Use the guild roles endpoint that returns icon/unicode_emoji fields
-      const botToken = ''; // roles fetched server-side via admin API
       const res = await fetch('/api/admin/roles?limit=100');
       if (res.ok) {
         const data = (await res.json()) as DiscordRole[];
@@ -159,12 +157,12 @@ export default function AdminBadgesPage() {
     setRoleSearch('');
   };
 
-  const startEdit = (tier: BadgeTier) => {
+  const startEdit = (tier: BoosterTier) => {
     setForm({
       name: tier.name,
       emoji: tier.emoji ?? '',
-      days_required: String(tier.days_required),
-      color: tier.color ?? '#5865F2',
+      months_required: String(tier.months_required),
+      color: tier.color ?? '#f472b6',
       description: tier.description ?? '',
       sort_order: String(tier.sort_order),
       reward_papel: String(tier.reward_papel ?? 0),
@@ -183,15 +181,15 @@ export default function AdminBadgesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const days = parseInt(form.days_required, 10);
+    const months = parseInt(form.months_required, 10);
     if (!form.name.trim()) return setError('İsim zorunludur.');
-    if (!Number.isInteger(days) || days < 1) return setError('Gün gereksinimi en az 1 olmalı.');
+    if (!Number.isInteger(months) || months < 1) return setError('Ay gereksinimi en az 1 olmalı.');
     setSaving(true);
 
     const body = {
       name: form.name.trim(),
       emoji: form.emoji || null,
-      days_required: days,
+      months_required: months,
       color: form.color || null,
       description: form.description.trim() || null,
       sort_order: parseInt(form.sort_order, 10) || 0,
@@ -203,7 +201,7 @@ export default function AdminBadgesPage() {
       ...(editingId ? { id: editingId } : {}),
     };
 
-    const res = await fetch('/api/admin/badge-tiers', {
+    const res = await fetch('/api/admin/boosters', {
       method: editingId ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -219,7 +217,7 @@ export default function AdminBadgesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const res = await fetch('/api/admin/badge-tiers', {
+    const res = await fetch('/api/admin/boosters', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -236,7 +234,7 @@ export default function AdminBadgesPage() {
     (e) => !emojiSearch || e.name.toLowerCase().includes(emojiSearch.toLowerCase()),
   );
 
-  const inputCls = 'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-indigo-500 transition';
+  const inputCls = 'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-pink-500 transition';
   const labelCls = 'mb-1 block text-xs text-white/50';
 
   return (
@@ -244,10 +242,10 @@ export default function AdminBadgesPage() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Topluluk</p>
-          <h1 className="mt-2 text-2xl font-semibold">Tag Ayarları</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-pink-400">Topluluk</p>
+          <h1 className="mt-2 text-2xl font-semibold">Booster Kademeleri</h1>
           <p className="mt-1 text-sm text-white/50">
-            Sunucu tag'ini isminde taşıyan üyeler için gün bazlı otomatik rol ve ayrıcalık tanımlamalarını buradan yönetebilirsiniz.
+            Sunucuya takviye basan üyeleriniz için aylar süren takviyelere özel otomatik kademe, rol ve ödüller tanımlayın.
           </p>
         </div>
         <button
@@ -275,7 +273,7 @@ export default function AdminBadgesPage() {
               <div>
                 <label className={labelCls}>İsim *</label>
                 <input className={inputCls} maxLength={32} value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Bronz" />
+                  onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="1. Ay Booster" />
               </div>
 
               {/* Emoji picker */}
@@ -289,7 +287,7 @@ export default function AdminBadgesPage() {
                     className={`${inputCls} flex-1`}
                     value={form.emoji}
                     onChange={(e) => setForm({ ...form, emoji: e.target.value })}
-                    placeholder="🥉 veya tıkla →"
+                    placeholder="🚀 veya tıkla →"
                   />
                   <button
                     type="button"
@@ -303,7 +301,7 @@ export default function AdminBadgesPage() {
                   <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-xl border border-white/10 bg-[#161925] shadow-2xl">
                     <div className="p-2">
                       <input
-                        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs outline-none focus:border-indigo-500"
+                        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs outline-none focus:border-pink-500"
                         placeholder="Emoji ara..."
                         value={emojiSearch}
                         onChange={(e) => setEmojiSearch(e.target.value)}
@@ -332,9 +330,10 @@ export default function AdminBadgesPage() {
               </div>
 
               <div>
-                <label className={labelCls}>Gün Gereksinimi *</label>
-                <input type="number" min={1} step={1} className={inputCls} value={form.days_required}
-                  onChange={(e) => setForm({ ...form, days_required: e.target.value })} placeholder="7" />
+                <label className={labelCls}>Ay Gereksinimi *</label>
+                <input type="number" min={1} step={1} className={inputCls} value={form.months_required}
+                  onChange={(e) => setForm({ ...form, months_required: e.target.value })} placeholder="3" />
+                <p className="mt-1 text-[10px] text-white/40">Örn: 3 yazarsanız, üye ardışık olarak 3 aydır boost basıyorsa bu kademeye ulaşır.</p>
               </div>
 
               <div>
@@ -343,7 +342,7 @@ export default function AdminBadgesPage() {
                   <input type="color" className="h-9 w-12 cursor-pointer rounded-lg border border-white/10 bg-white/5 p-1"
                     value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />
                   <input className={`${inputCls} flex-1`} value={form.color}
-                    onChange={(e) => setForm({ ...form, color: e.target.value })} placeholder="#CD7F32" />
+                    onChange={(e) => setForm({ ...form, color: e.target.value })} placeholder="#f472b6" />
                 </div>
               </div>
 
@@ -357,7 +356,7 @@ export default function AdminBadgesPage() {
                 <label className={labelCls}>Açıklama</label>
                 <textarea className={inputCls} maxLength={200} rows={2} value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Üyeler tag'i 7 gün taşıyarak bu rozeti kazanır." />
+                  placeholder="Üyeler sunucuyu 3 ay kesintisiz boostlayarak bu rozeti kazanır." />
               </div>
             </div>
           </div>
@@ -367,9 +366,10 @@ export default function AdminBadgesPage() {
             <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/30">Ödüller</p>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className={labelCls}>Papel Ödülü (tek seferlik)</label>
+                <label className={labelCls}>Aylık Papel Ödülü</label>
                 <input type="number" min={0} step={1} className={inputCls} value={form.reward_papel}
                   onChange={(e) => setForm({ ...form, reward_papel: e.target.value })} placeholder="0" />
+                <p className="mt-1 text-[10px] text-white/40">Bu kademedeki bir Booster'a her ay verilecek papel miktarı.</p>
               </div>
               <div>
                 <label className={labelCls}>Kazanç Çarpanı (örn: 1.5)</label>
@@ -380,7 +380,7 @@ export default function AdminBadgesPage() {
                 <label className={labelCls}>Ödül Mesajı (kullanıcıya gösterilir)</label>
                 <input className={inputCls} maxLength={200} value={form.reward_message}
                   onChange={(e) => setForm({ ...form, reward_message: e.target.value })}
-                  placeholder="Tebrikler! Bu rozeti kazandın." />
+                  placeholder="3 Aylık Kesintisiz Takviye! Bu rozeti kazandın." />
               </div>
             </div>
           </div>
@@ -416,7 +416,7 @@ export default function AdminBadgesPage() {
                     ) : (
                       <span
                         className="h-4 w-4 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: selectedRole.color ? colorToHex(selectedRole.color) : '#5865F2' }}
+                        style={{ backgroundColor: selectedRole.color ? colorToHex(selectedRole.color) : '#f472b6' }}
                       />
                     )}
                     <span className="flex-1 text-white/80">{selectedRole.name}</span>
@@ -436,7 +436,7 @@ export default function AdminBadgesPage() {
                 <div className="absolute left-0 top-full z-50 mt-1 w-full rounded-xl border border-white/10 bg-[#161925] shadow-2xl">
                   <div className="p-2">
                     <input
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs outline-none focus:border-indigo-500"
+                      className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs outline-none focus:border-pink-500"
                       placeholder="Rol adı veya ID ara..."
                       value={roleSearch}
                       onChange={(e) => { setRoleSearch(e.target.value); if (!roles.length) void loadRoles(); }}
@@ -473,7 +473,7 @@ export default function AdminBadgesPage() {
                           ) : (
                             <span
                               className="h-4 w-4 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: role.color ? colorToHex(role.color) : '#5865F2' }}
+                              style={{ backgroundColor: role.color ? colorToHex(role.color) : '#f472b6' }}
                             />
                           )}
                           <span className="flex-1 text-left text-white/80">{role.name}</span>
@@ -485,7 +485,7 @@ export default function AdminBadgesPage() {
                     <div className="border-t border-white/5 p-2">
                       <p className="mb-1.5 text-[10px] text-white/30">Veya ID ile gir:</p>
                       <input
-                        className="w-full rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-xs outline-none focus:border-indigo-500"
+                        className="w-full rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-xs outline-none focus:border-pink-500"
                         placeholder="Role ID..."
                         value={form.role_id}
                         onChange={(e) => setForm({ ...form, role_id: e.target.value })}
@@ -499,7 +499,7 @@ export default function AdminBadgesPage() {
 
           {/* ── Arkaplan Görseli ── */}
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/30">Tag Yolu Arkaplanı</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/30">Kapak Görseli</p>
             <div>
               <label className={labelCls}>Arkaplan Görseli URL</label>
               <input
@@ -543,7 +543,7 @@ export default function AdminBadgesPage() {
 
       {/* Tier List */}
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <p className="mb-1 text-xs text-white/30">Üyeler tag&apos;i belirlediğiniz süre boyunca taşırlarsa ilgili kademeye erişirler.</p>
+        <p className="mb-1 text-xs text-white/30">Üyeler aralıksız boost bastıkları ay süresine göre kademe atlarlar.</p>
         {loading ? (
           <div className="mt-4 space-y-2">
             {[1, 2, 3].map((i) => (
@@ -551,7 +551,7 @@ export default function AdminBadgesPage() {
             ))}
           </div>
         ) : tiers.length === 0 ? (
-          <p className="mt-4 text-sm text-white/30">Henüz rozet kademesi oluşturulmadı.</p>
+          <p className="mt-4 text-sm text-white/30">Henüz booster kademesi oluşturulmadı.</p>
         ) : (
           <div className="mt-4 space-y-2">
             {tiers.map((tier) => (
@@ -563,23 +563,23 @@ export default function AdminBadgesPage() {
                 {tier.background_image ? (
                   <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
                     <Image src={tier.background_image} alt="bg" fill className="object-cover" unoptimized />
-                    <div className="absolute inset-0 flex items-center justify-center text-lg">{tier.emoji ?? '🏅'}</div>
+                    <div className="absolute inset-0 flex items-center justify-center text-lg">{tier.emoji ?? '🚀'}</div>
                   </div>
                 ) : (
                   <div
                     className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-lg"
-                    style={{ background: (tier.color ?? '#5865F2') + '22', border: `1px solid ${tier.color ?? '#5865F2'}44` }}
+                    style={{ background: (tier.color ?? '#f472b6') + '22', border: `1px solid ${tier.color ?? '#f472b6'}44` }}
                   >
-                    {tier.emoji ?? '🏅'}
+                    {tier.emoji ?? '🚀'}
                   </div>
                 )}
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm text-white/80">{tier.name}</span>
-                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-white/40">{tier.days_required}g</span>
+                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-white/40">{tier.months_required} Ay</span>
                     {tier.role_id && (
-                      <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[10px] text-indigo-300">
+                      <span className="rounded-full border border-pink-500/30 bg-pink-500/10 px-2 py-0.5 text-[10px] text-pink-300">
                         Rol ✓
                       </span>
                     )}
@@ -597,7 +597,7 @@ export default function AdminBadgesPage() {
                 </div>
 
                 <div className="flex-shrink-0 flex gap-2">
-                  <button onClick={() => startEdit(tier)} className="text-xs text-indigo-400 hover:text-indigo-300 transition">
+                  <button onClick={() => startEdit(tier)} className="text-xs text-pink-400 hover:text-pink-300 transition">
                     Düzenle
                   </button>
                   <button onClick={() => setConfirmDelete(tier.id)} className="text-xs text-red-400/70 hover:text-red-400 transition">
@@ -614,12 +614,12 @@ export default function AdminBadgesPage() {
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="rounded-2xl border border-white/10 bg-[#0f111a] p-6 shadow-xl w-80">
-            <h3 className="text-base font-semibold">Ayarı Sil</h3>
-            <p className="mt-2 text-sm text-white/50">Bu tag kademesini silmek istediğinizden emin misiniz?</p>
+            <h3 className="text-base font-semibold">Kademe Sil</h3>
+            <p className="mt-2 text-sm text-white/50">Bu booster kademesini silmek istediğinizden emin misiniz?</p>
             <div className="mt-4 flex gap-2">
               <button onClick={() => void handleDelete(confirmDelete)}
                 className="flex-1 rounded-full bg-red-600 py-2 text-xs font-semibold text-white hover:bg-red-500 transition">
-                Sil
+                 Sil
               </button>
               <button onClick={() => setConfirmDelete(null)}
                 className="flex-1 rounded-full border border-white/10 py-2 text-xs text-white/60 hover:text-white transition">

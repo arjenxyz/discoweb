@@ -1,0 +1,158 @@
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { isAdminOrDeveloper } from '@/lib/adminAuth';
+
+const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
+
+const getSelectedGuildId = async (): Promise<string> => {
+  const cookieStore = await cookies();
+  return cookieStore.get('selected_guild_id')?.value || GUILD_ID;
+};
+
+const getSupabase = () => {
+  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) return null;
+  return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+};
+
+export async function GET() {
+  if (!(await isAdminOrDeveloper())) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
+
+  const guildId = await getSelectedGuildId();
+  const { data, error } = await supabase
+    .from('booster_tiers')
+    .select('*')
+    .eq('guild_id', guildId)
+    .order('sort_order', { ascending: true });
+
+  if (error) return NextResponse.json({ error: 'fetch_failed' }, { status: 500 });
+  return NextResponse.json(data ?? []);
+}
+
+export async function POST(request: Request) {
+  if (!(await isAdminOrDeveloper())) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
+
+  const guildId = await getSelectedGuildId();
+  const payload = (await request.json()) as {
+    name?: string;
+    emoji?: string | null;
+    months_required?: number;
+    color?: string | null;
+    description?: string | null;
+    sort_order?: number;
+    reward_papel?: number | null;
+    reward_earn_multiplier?: number | null;
+    reward_message?: string | null;
+    role_id?: string | null;
+    background_image?: string | null;
+  };
+
+  if (!payload.name?.trim()) {
+    return NextResponse.json({ error: 'invalid_payload', message: 'İsim zorunludur' }, { status: 400 });
+  }
+  if (!Number.isInteger(payload.months_required) || (payload.months_required ?? 0) < 1) {
+    return NextResponse.json({ error: 'invalid_payload', message: 'Ay gereksinimi en az 1 olmalı' }, { status: 400 });
+  }
+
+  const { error } = await supabase.from('booster_tiers').insert({
+    guild_id: guildId,
+    name: payload.name.trim(),
+    emoji: payload.emoji ?? null,
+    months_required: payload.months_required,
+    color: payload.color ?? null,
+    description: payload.description ?? null,
+    sort_order: payload.sort_order ?? 0,
+    reward_papel: payload.reward_papel ?? 0,
+    reward_earn_multiplier: payload.reward_earn_multiplier ?? 1.0,
+    reward_message: payload.reward_message ?? null,
+    role_id: payload.role_id ?? null,
+    background_image: payload.background_image ?? null,
+  });
+
+  if (error) {
+    if (error.code === '23505') {
+      return NextResponse.json({ error: 'duplicate_months', message: 'Bu aya ait kademe zaten mevcut' }, { status: 409 });
+    }
+    return NextResponse.json({ error: 'save_failed' }, { status: 500 });
+  }
+  return NextResponse.json({ status: 'ok' });
+}
+
+export async function PUT(request: Request) {
+  if (!(await isAdminOrDeveloper())) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
+
+  const payload = (await request.json()) as {
+    id?: string;
+    name?: string;
+    emoji?: string | null;
+    months_required?: number;
+    color?: string | null;
+    description?: string | null;
+    sort_order?: number;
+    reward_papel?: number | null;
+    reward_earn_multiplier?: number | null;
+    reward_message?: string | null;
+    role_id?: string | null;
+    background_image?: string | null;
+  };
+
+  if (!payload.id) {
+    return NextResponse.json({ error: 'invalid_payload', message: 'id zorunludur' }, { status: 400 });
+  }
+
+  const update: Record<string, unknown> = {};
+  if (payload.name !== undefined) update.name = payload.name.trim();
+  if (payload.emoji !== undefined) update.emoji = payload.emoji;
+  if (payload.months_required !== undefined) {
+    if (!Number.isInteger(payload.months_required) || payload.months_required < 1) {
+      return NextResponse.json({ error: 'invalid_payload', message: 'Ay gereksinimi en az 1 olmalı' }, { status: 400 });
+    }
+    update.months_required = payload.months_required;
+  }
+  if (payload.color !== undefined) update.color = payload.color;
+  if (payload.description !== undefined) update.description = payload.description;
+  if (payload.sort_order !== undefined) update.sort_order = payload.sort_order;
+  if (payload.reward_papel !== undefined) update.reward_papel = payload.reward_papel ?? 0;
+  if (payload.reward_earn_multiplier !== undefined) update.reward_earn_multiplier = payload.reward_earn_multiplier ?? 1.0;
+  if (payload.reward_message !== undefined) update.reward_message = payload.reward_message;
+  if (payload.role_id !== undefined) update.role_id = payload.role_id;
+  if (payload.background_image !== undefined) update.background_image = payload.background_image;
+
+  const { error } = await supabase.from('booster_tiers').update(update).eq('id', payload.id);
+  if (error) {
+    if (error.code === '23505') {
+      return NextResponse.json({ error: 'duplicate_months', message: 'Bu aya ait kademe zaten mevcut' }, { status: 409 });
+    }
+    return NextResponse.json({ error: 'update_failed' }, { status: 500 });
+  }
+  return NextResponse.json({ status: 'ok' });
+}
+
+export async function DELETE(request: Request) {
+  if (!(await isAdminOrDeveloper())) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
+
+  const { id } = (await request.json()) as { id?: string };
+  if (!id) return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
+
+  const { error } = await supabase.from('booster_tiers').delete().eq('id', id);
+  if (error) return NextResponse.json({ error: 'delete_failed' }, { status: 500 });
+  return NextResponse.json({ status: 'ok' });
+}

@@ -25,6 +25,7 @@ import {
   LuShield,
   LuAward,
   LuGift,
+  LuZap,
 } from 'react-icons/lu';
 import { LuCode, LuLayoutDashboard } from 'react-icons/lu';
 
@@ -55,11 +56,11 @@ const MENU_GROUPS = [
     title: 'Topluluk',
     items: [
       {
-        label: 'Rozet & Çekiliş',
+        label: 'Tag & Booster',
         icon: <LuAward className="h-5 w-5" />,
         children: [
-          { href: '/admin/badges', label: 'Rozet Kademeleri', group: 'Tag Rozeti', icon: <LuAward className="h-4 w-4" /> },
-          { href: '/admin/raffles', label: 'Çekilişler', group: 'Tag Rozeti', icon: <LuGift className="h-4 w-4" /> },
+          { href: '/admin/badges', label: 'Tag Ayarları', group: 'Tag Rozeti', icon: <LuAward className="h-4 w-4" /> },
+          { href: '/admin/boosters', label: 'Booster Ayarları', group: 'Tag Rozeti', icon: <LuZap className="h-4 w-4" /> },
         ],
       },
     ],
