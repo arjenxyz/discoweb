@@ -11,9 +11,15 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('discoweb_loaded')) {
+      setIsLoading(false);
+      return;
+    }
+
     const progressTimer = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
+          sessionStorage.setItem('discoweb_loaded', 'true');
           setIsLoading(false);
           return 100;
         }
