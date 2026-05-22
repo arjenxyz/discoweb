@@ -58,16 +58,6 @@ const DOCS_SECTIONS = [
     ],
   },
   {
-    id: 'siparis',
-    title: 'Sipariş Yönetimi',
-    description: 'Bekleyen ve sorunlu siparişlerin kontrolü.',
-    bullets: [
-      'Bekleyen siparişler manuel onay/ret akışına sahiptir.',
-      'Sorunlu siparişler rol atanmamış onaylı işlemleri gösterir.',
-      'Bot offline kaldığında sorunlu sipariş listesi artabilir.',
-    ],
-  },
-  {
     id: 'bildirim',
     title: 'Bildirimler',
     description: 'Duyuru gönderimi ve geçmiş kayıtları.',

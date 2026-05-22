@@ -17,21 +17,6 @@ const QUICK_LINKS = [
     description: 'Yüzde indirim ve kampanya süresi ayarlayın.',
   },
   {
-    href: '/admin/store/orders/pending',
-    title: 'Bekleyen İşlemler',
-    description: 'Onay bekleyen mağaza işlemlerini kontrol edin.',
-  },
-  {
-    href: '/admin/store/orders/failed',
-    title: 'Başarısız İşlemler',
-    description: 'Sistem hatalarından dolayı başarısız olan işlemleri görün.',
-  },
-  {
-    href: '/admin/store/orders/stuck',
-    title: 'Sorunlu İşlemler',
-    description: 'Rol atanmamış onaylı işlemleri takip edin.',
-  },
-  {
     href: '/admin/store/products',
     title: 'Ürün Listesi',
     description: 'Mevcut ürünleri düzenleyin ve silin.',

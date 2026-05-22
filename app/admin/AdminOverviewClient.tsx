@@ -245,14 +245,6 @@ export default function AdminOverviewClient({
                 color="bg-pink-500"
                 href="/admin/store/products"
               />
-              <StatCard
-                icon={<LuClock className="h-5 w-5" />}
-                label="Bekleyen Sipariş"
-                value={stats.pendingOrders}
-                sub={stats.pendingOrders > 0 ? 'İşlem bekliyor' : 'Bekleyen yok'}
-                color="bg-orange-500"
-                href="/admin/store/orders/pending"
-              />
             </div>
           </div>
         </>
