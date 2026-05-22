@@ -171,8 +171,10 @@ export default function SelectServerPage() {
           }),
         );
 
-        console.log('Filtered guilds (user is still member):', withSetupStatus);
-        setGuilds(withSetupStatus);
+        // Sadece Admin veya Sahip olunan sunucuları filtrele (Developer yetkisi zaten altta bypass ediliyor)
+        const adminOnlyGuilds = withSetupStatus.filter((g) => g.isAdmin || g.isOwner);
+        console.log('Filtered admin guilds:', adminOnlyGuilds);
+        setGuilds(adminOnlyGuilds);
 
         try {
           console.log('Checking developer access for auto-redirect...');
@@ -263,30 +265,8 @@ export default function SelectServerPage() {
       return;
     }
 
-    if (verifyRoleId) {
-      try {
-        const response = await fetch('/api/member/check-role', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ guildId }),
-        });
-
-        if (response.ok) {
-          const data = (await response.json()) as { hasRole: boolean };
-          if (data.hasRole) {
-            router.replace('/dashboard');
-            return;
-          }
-        }
-      } catch (error) {
-        console.error('Rol kontrolü hatası:', error);
-      }
-
-      router.replace(`/auth/rules?pendingGuildId=${guildId}`);
-      return;
-    }
-
-    router.replace('/dashboard');
+    // Artık herkes admin/developer olduğu için direkt admin paneline yönlendir
+    router.replace('/admin');
   };
 
   if (loading) {
@@ -330,7 +310,7 @@ export default function SelectServerPage() {
             </div>
           </div>
           <button
-            onClick={() => router.replace('/dashboard')}
+            onClick={() => router.replace('/')}
             className="text-xs text-white/50 transition-colors hover:text-white/70"
           >
             Ana sayfaya dön
