@@ -48,6 +48,7 @@ type Props = {
   selectedGuildId: string;
 };
 
+// Use Turkish formatting for overview numeric values.
 const fmt = new Intl.NumberFormat('tr-TR');
 
 function StatCard({
