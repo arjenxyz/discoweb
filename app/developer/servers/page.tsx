@@ -18,6 +18,7 @@ export default function DeveloperServersPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [loadingInvites, setLoadingInvites] = useState<Record<string, boolean>>({});
+  const [leavingGuilds, setLeavingGuilds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -50,6 +51,34 @@ export default function DeveloperServersPage() {
       alert('Bir hata oluştu.');
     } finally {
       setLoadingInvites(prev => ({ ...prev, [guildId]: false }));
+    }
+  };
+
+  const handleLeaveGuild = async (guildId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (leavingGuilds[guildId]) return;
+
+    if (!window.confirm('Botu bu sunucudan çıkarmak istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+      return;
+    }
+
+    setLeavingGuilds(prev => ({ ...prev, [guildId]: true }));
+    try {
+      const res = await fetch('/api/developer/leave', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guild_id: guildId })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Bot sunucudan çıkarılamadı.');
+        return;
+      }
+      alert('Bot sunucudan başarıyla çıkarıldı!');
+    } catch (err) {
+      alert('Bir hata oluştu.');
+    } finally {
+      setLeavingGuilds(prev => ({ ...prev, [guildId]: false }));
     }
   };
 
@@ -106,19 +135,34 @@ export default function DeveloperServersPage() {
               <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {server.discord_id && (
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => handleCreateInvite(server.discord_id!, e)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') handleCreateInvite(server.discord_id!, e as any) }}
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border transition ${
-                        loadingInvites[server.discord_id!] 
-                          ? 'bg-[#5865F2]/10 text-[#5865F2]/50 border-[#5865F2]/10 cursor-wait'
-                          : 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20 hover:bg-[#5865F2]/25 cursor-pointer'
-                      }`}
-                    >
-                      {loadingInvites[server.discord_id!] ? 'Alınıyor...' : 'Davet Linki Al'}
-                    </div>
+                    <>
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => handleLeaveGuild(server.discord_id!, e)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleLeaveGuild(server.discord_id!, e as any) }}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border transition ${
+                          leavingGuilds[server.discord_id!] 
+                            ? 'bg-rose-500/10 text-rose-500/50 border-rose-500/10 cursor-wait'
+                            : 'bg-rose-500/15 text-rose-500 border-rose-500/20 hover:bg-rose-500/25 cursor-pointer'
+                        }`}
+                      >
+                        {leavingGuilds[server.discord_id!] ? 'Çıkarılıyor...' : 'Çıkar'}
+                      </div>
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => handleCreateInvite(server.discord_id!, e)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleCreateInvite(server.discord_id!, e as any) }}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border transition ${
+                          loadingInvites[server.discord_id!] 
+                            ? 'bg-[#5865F2]/10 text-[#5865F2]/50 border-[#5865F2]/10 cursor-wait'
+                            : 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20 hover:bg-[#5865F2]/25 cursor-pointer'
+                        }`}
+                      >
+                        {loadingInvites[server.discord_id!] ? 'Alınıyor...' : 'Davet Linki Al'}
+                      </div>
+                    </>
                   )}
                   <span className="text-[11px] text-white/30">Slug: {server.slug}</span>
                 </div>
