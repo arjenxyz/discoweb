@@ -22,6 +22,8 @@ import {
   LuMenu,
   LuX,
   LuGlobe,
+  LuBell,
+  LuFileText,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -78,6 +80,8 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [notificationMenuOpen, setNotificationMenuOpen] = useState(false);
+  const notificationMenuRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -139,6 +143,17 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
       document.body.style.overflow = '';
     }
   }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (!notificationMenuOpen) return undefined;
+    const h = (e: MouseEvent) => {
+      if (notificationMenuRef.current && !notificationMenuRef.current.contains(e.target as Node)) {
+        setNotificationMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, [notificationMenuOpen]);
 
   const handleLogout = async () => {
     try {
@@ -460,8 +475,48 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
       <main
         className={`transition-all duration-300 ${
           sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-60'
-        } pt-[60px] lg:pt-0 min-h-screen bg-[#080a0f]`}
+        } pt-[60px] lg:pt-0 min-h-screen bg-[#080a0f] relative`}
       >
+        {/* Top Right Actions */}
+        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex items-center gap-2" ref={notificationMenuRef}>
+          <button
+            type="button"
+            onClick={() => setNotificationMenuOpen((p) => !p)}
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border text-sm transition-all ${
+              pathname.startsWith('/developer/notifications')
+                ? 'border-[#5865F2]/30 bg-[#5865F2]/10 text-white'
+                : 'border-white/[0.08] bg-white/[0.02] text-white/50 hover:border-white/[0.15] hover:bg-white/[0.06] hover:text-white'
+            }`}
+          >
+            <LuBell className="h-5 w-5" />
+          </button>
+          
+          {notificationMenuOpen && (
+            <div className="absolute right-0 top-[calc(100%+8px)] w-56 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0f14]/95 backdrop-blur-xl shadow-2xl">
+              <div className="border-b border-white/[0.06] px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Bildirimler</p>
+              </div>
+              <div className="p-2 space-y-1">
+                <Link
+                  href="/developer/notifications/send"
+                  onClick={() => setNotificationMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white"
+                >
+                  <LuBell className="h-4 w-4 text-white/40" />
+                  Bildirim Gönder
+                </Link>
+                <Link
+                  href="/developer/notifications/history"
+                  onClick={() => setNotificationMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white"
+                >
+                  <LuFileText className="h-4 w-4 text-white/40" />
+                  Bildirim Geçmişi
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="p-4 md:p-6 lg:p-8 min-h-screen">
           {children}
         </div>

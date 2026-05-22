@@ -13,7 +13,7 @@ export default function AdminNotificationsPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <Link
-          href="/admin/notifications/send"
+          href="/developer/notifications/send"
           className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30 hover:bg-white/10"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Bildirim Gönder</p>
@@ -27,7 +27,7 @@ export default function AdminNotificationsPage() {
         </Link>
 
         <Link
-          href="/admin/notifications/history"
+          href="/developer/notifications/history"
           className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30 hover:bg-white/10"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Bildirim Geçmişi</p>

@@ -82,13 +82,11 @@ const HEADER_LINKS = [
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
-  const [notificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [storeMenuOpen, setStoreMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileStoreOpen, setMobileStoreOpen] = useState(false);
   const [isDeveloper, setIsDeveloper] = useState(false);
-  const notificationMenuRef = useRef<HTMLDivElement | null>(null);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const [profile, setProfile] = useState<{
     username: string;
@@ -157,12 +155,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     checkAccess();
   }, []);
 
-  useEffect(() => {
-    if (!notificationMenuOpen) return undefined;
-    const h = (e: MouseEvent) => { if (notificationMenuRef.current && !notificationMenuRef.current.contains(e.target as Node)) setNotificationMenuOpen(false); };
-    document.addEventListener('mousedown', h);
-    return () => document.removeEventListener('mousedown', h);
-  }, [notificationMenuOpen]);
 
   useEffect(() => {
     if (!accountMenuOpen) return undefined;
@@ -471,44 +463,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
             {/* Sağ — İkonlar + Hesap */}
             <div className="flex items-center gap-2">
-              <div className="relative" ref={notificationMenuRef}>
-                <button
-                  type="button"
-                  onClick={() => setNotificationMenuOpen((p) => !p)}
-                  className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm transition-all ${
-                    pathname.startsWith('/admin/notifications')
-                      ? 'border-white/20 bg-white/10'
-                      : 'border-transparent hover:border-white/10 hover:bg-white/5 text-white/70 hover:text-white'
-                  }`}
-                >
-                  <LuBell className="h-4 w-4" />
-                </button>
-                {notificationMenuOpen && (
-                  <div className="absolute right-0 lg:left-1/2 lg:-translate-x-1/2 top-[calc(100%+6px)] z-[60] w-52 overflow-hidden rounded-xl border border-white/10 bg-[#0f1116] shadow-2xl">
-                    <div className="border-b border-white/[0.06] px-3.5 py-2.5">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40">Bildirimler</p>
-                    </div>
-                    <div className="p-1.5 space-y-0.5">
-                      <Link
-                        href="/admin/notifications/send"
-                        onClick={() => setNotificationMenuOpen(false)}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/5 hover:text-white"
-                      >
-                        <LuBell className="h-3.5 w-3.5 text-white/40" />
-                        Bildirim Gönder
-                      </Link>
-                      <Link
-                        href="/admin/notifications/history"
-                        onClick={() => setNotificationMenuOpen(false)}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/5 hover:text-white"
-                      >
-                        <LuFileText className="h-3.5 w-3.5 text-white/40" />
-                        Bildirim Geçmişi
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
 
               {HEADER_LINKS.map((item) => (
                 <Link
