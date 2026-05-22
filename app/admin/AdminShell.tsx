@@ -26,6 +26,7 @@ import {
   LuAward,
   LuGift,
   LuZap,
+  LuLayoutGrid,
 } from 'react-icons/lu';
 import { LuCode, LuLayoutDashboard } from 'react-icons/lu';
 
@@ -33,14 +34,14 @@ import { LuCode, LuLayoutDashboard } from 'react-icons/lu';
 const MENU_GROUPS = [
   {
     title: 'Genel',
-    items: [{ href: '/admin', label: 'Genel Bakış', icon: <LuChartBar className="h-5 w-5" /> }],
+    items: [{ href: '/admin', label: 'Genel Bakış', icon: <LuChartBar className="h-4 w-4" /> }],
   },
   {
     title: 'Mağaza',
     items: [
       {
         label: 'Mağaza',
-        icon: <LuStore className="h-5 w-5" />,
+        icon: <LuStore className="h-4 w-4" />,
         children: [
           { href: '/admin/store/products/new', label: 'Yeni Ürün Oluştur', group: 'Oluştur', icon: <LuPackage className="h-4 w-4" /> },
           { href: '/admin/store/promos/new', label: 'Promosyon Kodu Oluştur', group: 'Oluştur', icon: <LuTag className="h-4 w-4" /> },
@@ -57,7 +58,7 @@ const MENU_GROUPS = [
     items: [
       {
         label: 'Tag & Booster',
-        icon: <LuAward className="h-5 w-5" />,
+        icon: <LuAward className="h-4 w-4" />,
         children: [
           { href: '/admin/badges', label: 'Tag Ayarları', group: 'Tag Rozeti', icon: <LuAward className="h-4 w-4" /> },
           { href: '/admin/boosters', label: 'Booster Ayarları', group: 'Tag Rozeti', icon: <LuZap className="h-4 w-4" /> },
@@ -68,10 +69,10 @@ const MENU_GROUPS = [
   {
     title: 'Yönetim',
     items: [
-      { href: '/admin/settings', label: 'Sunucu Ayarları', icon: <LuSettings className="h-5 w-5" /> },
-      { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-5 w-5" /> },
-      { href: '/admin/earn-settings', label: 'Kazanç Ayarları', icon: <LuChartBar className="h-5 w-5" /> },
-      { href: '/admin/log-channels', label: 'Log Kanalları', icon: <LuClipboardList className="h-5 w-5" /> },
+      { href: '/admin/settings', label: 'Sunucu Ayarları', icon: <LuSettings className="h-4 w-4" /> },
+      { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-4 w-4" /> },
+      { href: '/admin/earn-settings', label: 'Kazanç Ayarları', icon: <LuChartBar className="h-4 w-4" /> },
+      { href: '/admin/log-channels', label: 'Log Kanalları', icon: <LuClipboardList className="h-4 w-4" /> },
     ],
   },
 ];
@@ -79,46 +80,6 @@ const MENU_GROUPS = [
 const HEADER_LINKS = [
   { href: '/admin/guide', label: 'Kullanım Kılavuzu', icon: <LuFileText className="h-4 w-4" /> },
 ];
-
-/* ─── DESKTOP NAV STİLLERİ ─── */
-const navItemClass = (active: boolean, collapsed: boolean) =>
-  `group flex w-full items-center text-[13px] font-medium transition-all duration-200 ${
-    collapsed
-      ? `justify-center rounded-xl px-2 py-2.5 ${
-          active
-            ? 'bg-white/[0.08] text-white shadow-[0_0_12px_rgba(255,255,255,0.02)]'
-            : 'text-white/50 hover:bg-white/[0.04] hover:text-white'
-        }`
-      : `gap-3 rounded-xl px-3 py-2.5 ${
-          active
-            ? 'bg-white/[0.04] text-white border border-white/[0.08]'
-            : 'text-white/50 hover:bg-white/[0.04] hover:text-white border border-transparent'
-        }`
-  }`;
-
-const navIconClass = (active: boolean, collapsed: boolean) =>
-  `flex items-center justify-center transition-all duration-200 ${
-    collapsed ? 'h-10 w-10 rounded-xl' : 'h-8 w-8 rounded-lg'
-  } ${
-    active
-      ? 'bg-white/[0.1] text-white shadow-md shadow-black/20 border border-white/[0.1]'
-      : `bg-white/[0.02] border border-white/[0.05] ${collapsed ? 'text-white/60 group-hover:text-white group-hover:bg-white/[0.05]' : 'text-white/40 group-hover:text-white/70 group-hover:bg-white/[0.05]'}`
-  }`;
-
-/* ─── MOBİL NAV STİLLERİ ─── */
-const mobileNavClass = (active: boolean) =>
-  `flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200 ${
-    active
-      ? 'bg-white/[0.04] text-white border border-white/[0.08]'
-      : 'text-white/50 hover:bg-white/[0.04] hover:text-white border border-transparent'
-  }`;
-
-const mobileNavIconClass = (active: boolean) =>
-  `flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 ${
-    active
-      ? 'bg-white/[0.1] text-white shadow-md shadow-black/20 border border-white/[0.1]'
-      : 'bg-white/[0.02] border border-white/[0.05] text-white/40'
-  }`;
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -237,17 +198,36 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     }
   };
 
+  const logoWhiteStyle: React.CSSProperties = {
+    backgroundImage: 'linear-gradient(105deg, #fff 0%, #fff 35%, rgba(255,255,255,0.95) 45%, #fff 55%, #fff 100%)',
+    backgroundSize: '300% 100%',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    animation: 'titleShine 4s ease-in-out infinite',
+  };
+  const logoBlueStyle: React.CSSProperties = {
+    backgroundImage: 'linear-gradient(105deg, #5865F2 0%, #5865F2 35%, #a5b4ff 45%, #5865F2 55%, #5865F2 100%)',
+    backgroundSize: '300% 100%',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    animation: 'titleShine 4s ease-in-out infinite',
+  };
+
   /* ── Sidebar Nav Renderer ── */
   const renderSidebarNav = (isMobile: boolean) => (
-    <nav className={isMobile ? 'space-y-0.5' : 'space-y-3'}>
+    <nav className="space-y-4">
       {MENU_GROUPS.map((group) => (
-        <div key={group.title} className={isMobile ? 'space-y-0.5' : 'space-y-1'}>
+        <div key={group.title} className="space-y-0.5">
           {(!collapsed || isMobile) && (
-            <p className={`px-3 text-[10px] uppercase tracking-[0.25em] text-white/25 font-semibold ${isMobile ? 'pt-3 pb-1' : 'pt-1'}`}>{group.title}</p>
+            <p className="mb-2 px-3 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/25">
+              {group.title}
+            </p>
           )}
           {group.items.map((item) => {
             if ('children' in item && item.children) {
-              const isActive = pathname.startsWith('/admin/store');
+              const isActive = pathname.startsWith('/admin/store') || pathname.startsWith('/admin/badges') || pathname.startsWith('/admin/boosters');
               const isOpen = isMobile ? mobileStoreOpen : (storeMenuOpen && !collapsed);
               const toggleOpen = () => isMobile ? setMobileStoreOpen(p => !p) : setStoreMenuOpen(p => !p);
               const groupedChildren = item.children.reduce((acc, child) => {
@@ -257,82 +237,67 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 return acc;
               }, {} as Record<string, typeof item.children>);
 
-              if (isMobile) {
-                return (
-                  <div key={item.label} className="space-y-0.5">
-                    <button type="button" onClick={toggleOpen} className={mobileNavClass(isActive)}>
-                      <span className={mobileNavIconClass(isActive)}>{item.icon}</span>
-                      <span className="flex-1 text-left">{item.label}</span>
-                      <LuChevronDown className={`h-3.5 w-3.5 text-white/30 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                      <div className="ml-4 space-y-2.5 pt-1.5 pb-2">
-                        {Object.entries(groupedChildren).map(([groupTitle, children]) => (
-                          <div key={groupTitle} className="space-y-0.5">
-                            <p className="px-3 text-[9px] font-bold uppercase tracking-[0.25em] text-white/20">{groupTitle}</p>
-                            <div className="space-y-0.5 border-l border-white/[0.08] pl-2.5 ml-1.5">
-                              {children.map((child) => (
-                                <Link
-                                  key={child.href}
-                                  href={child.href}
-                                  className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] transition-all duration-200 ${
-                                    pathname === child.href
-                                      ? 'bg-white/[0.06] text-white font-semibold border border-white/[0.08]'
-                                      : 'text-white/45 hover:bg-white/[0.04] hover:text-white border border-transparent'
-                                  }`}
-                                >
-                                  <span className={`flex h-6 w-6 items-center justify-center rounded-md transition-all border ${
-                                    pathname === child.href
-                                      ? 'bg-white/[0.1] text-white shadow-sm border-white/[0.1]'
-                                      : 'bg-white/[0.02] border-white/[0.05] text-white/35'
-                                  }`}>{child.icon}</span>
-                                  {child.label}
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
               return (
-                <div key={item.label} className="space-y-1">
-                  <button type="button" onClick={toggleOpen} className={navItemClass(isActive, collapsed)}>
-                    <span className={navIconClass(isActive, collapsed)}>{item.icon}</span>
-                    {!collapsed && (
-                      <div className="flex flex-1 items-center justify-between">
-                        <span>{item.label}</span>
-                        <LuChevronDown className={`h-3.5 w-3.5 text-white/30 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-                      </div>
+                <div key={item.label} className="space-y-0.5">
+                  <button
+                    type="button"
+                    onClick={toggleOpen}
+                    className={`group relative flex w-full items-center overflow-hidden rounded-xl transition-all duration-150 ${
+                      collapsed && !isMobile ? 'h-10 w-10 justify-center mx-auto' : 'gap-3 px-3 py-2.5'
+                    } ${isActive || isOpen ? 'text-white' : 'text-white/45 hover:text-white/80'}`}
+                  >
+                    <div className={`pointer-events-none absolute inset-0 rounded-xl transition-all duration-150 ${
+                      isActive || isOpen ? 'bg-white/10' : 'group-hover:bg-white/[0.06]'
+                    }`} />
+                    <span className={`relative flex shrink-0 items-center justify-center rounded-lg transition-all ${
+                      collapsed && !isMobile ? 'h-10 w-10' : 'h-7 w-7'
+                    } ${isActive || isOpen ? 'text-white' : 'text-white/45 group-hover:text-white/70'}`}>
+                      {item.icon}
+                    </span>
+                    {(!collapsed || isMobile) && (
+                      <span className={`relative flex-1 text-left text-sm font-medium leading-none ${isActive || isOpen ? 'text-white' : ''}`}>
+                        {item.label}
+                      </span>
+                    )}
+                    {(!collapsed || isMobile) && (
+                      <LuChevronDown className={`relative h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180 text-white' : 'text-white/30'}`} />
                     )}
                   </button>
                   <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="ml-5 space-y-3 pt-1">
+                    <div className="ml-4 space-y-2.5 pt-1.5 pb-2">
                       {Object.entries(groupedChildren).map(([groupTitle, children]) => (
-                        <div key={groupTitle} className="space-y-1">
-                          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/20 px-1">{groupTitle}</p>
-                          <div className="space-y-1 border-l border-white/[0.08] pl-3 ml-1">
-                            {children.map((child) => (
-                              <Link
-                                key={child.href}
-                                href={child.href}
-                                className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-all duration-200 ${
-                                  pathname === child.href
-                                    ? 'bg-white/[0.06] text-white border border-white/[0.08] font-medium'
-                                    : 'text-white/45 hover:bg-white/[0.04] hover:text-white border border-transparent'
-                                }`}
-                              >
-                                <span className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all border ${
-                                  pathname === child.href
-                                    ? 'bg-white/[0.1] text-white shadow-md border-white/[0.1]'
-                                    : 'bg-white/[0.02] border-white/[0.05] text-white/35 group-hover:text-white/60 group-hover:bg-white/[0.05]'
-                                }`}>{child.icon}</span>
-                                <span>{child.label}</span>
-                              </Link>
-                            ))}
+                        <div key={groupTitle} className="space-y-0.5">
+                          {(!collapsed || isMobile) && <p className="px-3 text-[9px] font-bold uppercase tracking-[0.25em] text-white/20">{groupTitle}</p>}
+                          <div className={`space-y-0.5 ${!collapsed || isMobile ? 'border-l border-white/[0.06] pl-2.5 ml-1.5' : ''}`}>
+                            {children.map((child) => {
+                              const isChildActive = pathname === child.href;
+                              return (
+                                <Link
+                                  key={child.href}
+                                  href={child.href}
+                                  className={`group relative flex w-full items-center overflow-hidden rounded-xl transition-all duration-150 ${
+                                    collapsed && !isMobile ? 'h-10 w-10 justify-center mx-auto' : 'gap-3 px-3 py-2.5'
+                                  } ${isChildActive ? 'text-white' : 'text-white/45 hover:text-white/80'}`}
+                                >
+                                  <div className={`pointer-events-none absolute inset-0 rounded-xl transition-all duration-150 ${
+                                    isChildActive ? 'bg-white/10' : 'group-hover:bg-white/[0.06]'
+                                  }`} />
+                                  <span className={`relative flex shrink-0 items-center justify-center rounded-lg transition-all ${
+                                    collapsed && !isMobile ? 'h-10 w-10' : 'h-7 w-7'
+                                  } ${isChildActive ? 'text-white' : 'text-white/45 group-hover:text-white/70'}`}>
+                                    {child.icon}
+                                  </span>
+                                  {(!collapsed || isMobile) && (
+                                    <span className={`relative text-sm font-medium leading-none ${isChildActive ? 'text-white' : ''}`}>
+                                      {child.label}
+                                    </span>
+                                  )}
+                                  {(!collapsed || isMobile) && isChildActive && (
+                                    <span className="relative ml-auto h-1.5 w-1.5 rounded-full bg-white/60" />
+                                  )}
+                                </Link>
+                              );
+                            })}
                           </div>
                         </div>
                       ))}
@@ -344,18 +309,31 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
             if ('href' in item) {
               const active = pathname === item.href;
-              if (isMobile) {
-                return (
-                  <Link key={`${item.href}-${item.label}`} href={item.href} className={mobileNavClass(active)}>
-                    <span className={mobileNavIconClass(active)}>{item.icon}</span>
-                    {item.label}
-                  </Link>
-                );
-              }
               return (
-                <Link key={`${item.href}-${item.label}`} href={item.href} className={navItemClass(active, collapsed)}>
-                  <span className={navIconClass(active, collapsed)}>{item.icon}</span>
-                  {!collapsed && <span>{item.label}</span>}
+                <Link
+                  key={`${item.href}-${item.label}`}
+                  href={item.href}
+                  className={`group relative flex w-full items-center overflow-hidden rounded-xl transition-all duration-150 ${
+                    collapsed && !isMobile ? 'h-10 w-10 justify-center mx-auto' : 'gap-3 px-3 py-2.5'
+                  } ${active ? 'text-white' : 'text-white/45 hover:text-white/80'}`}
+                  title={collapsed && !isMobile ? item.label : undefined}
+                >
+                  <div className={`pointer-events-none absolute inset-0 rounded-xl transition-all duration-150 ${
+                    active ? 'bg-white/10' : 'group-hover:bg-white/[0.06]'
+                  }`} />
+                  <span className={`relative flex shrink-0 items-center justify-center rounded-lg transition-all ${
+                    collapsed && !isMobile ? 'h-10 w-10' : 'h-7 w-7'
+                  } ${active ? 'text-white' : 'text-white/45 group-hover:text-white/70'}`}>
+                    {item.icon}
+                  </span>
+                  {(!collapsed || isMobile) && (
+                    <span className={`relative text-sm font-medium leading-none ${active ? 'text-white' : ''}`}>
+                      {item.label}
+                    </span>
+                  )}
+                  {(!collapsed || isMobile) && active && (
+                    <span className="relative ml-auto h-1.5 w-1.5 rounded-full bg-white/60" />
+                  )}
                 </Link>
               );
             }
@@ -367,87 +345,78 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   );
 
   return (
-    <div className="h-screen overflow-hidden bg-[#0a0a0c] text-white">
+    <div className="h-screen overflow-hidden bg-[#0b0d12] text-white">
       <div className="flex h-full">
+        <style>{`@keyframes titleShine{0%,60%{background-position:100% 0}100%{background-position:-100% 0}}`}</style>
 
         {/* ═══════ DESKTOP SIDEBAR ═══════ */}
-        <aside className={`sticky top-0 hidden lg:flex h-screen flex-col border-r border-white/[0.06] bg-[#0a0a0c] transition-all duration-300 ${
-          collapsed ? 'w-[80px]' : 'w-[280px]'
+        <aside className={`sticky top-0 hidden lg:flex h-screen flex-col border-r border-white/[0.06] bg-[#0b0d12] transition-all duration-300 ${
+          collapsed ? 'w-[72px]' : 'w-[240px]'
         }`}>
-          {/* Dekoratif blur */}
-          <div className="absolute top-0 left-0 w-40 h-40 bg-indigo-500/[0.02] rounded-full blur-[80px] pointer-events-none" />
-
-          {/* Sidebar Header */}
-          <div className={`relative flex h-14 items-center ${collapsed ? 'justify-center' : 'justify-between'} px-3 border-b border-white/[0.04] mb-3`}>
-            {!collapsed && (
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-white/[0.05] border border-white/[0.1] flex items-center justify-center">
-                  <LuShield className="h-3.5 w-3.5 text-white/80" />
-                </div>
-                <span className="text-[13px] font-bold text-white/90 tracking-wide">Admin Panel</span>
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => setCollapsed((p) => !p)}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/40 transition hover:bg-white/[0.06] hover:text-white"
-              aria-label={collapsed ? 'Menüyü Aç' : 'Menüyü Kapat'}
-            >
-              <LuChevronRight className={`h-3.5 w-3.5 transition-transform duration-200 ${collapsed ? '' : 'rotate-180'}`} />
-            </button>
-          </div>
-
-          {/* Sunucu kartı */}
-          {!collapsed && (
-            <div className="px-3 pb-2">
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5">
-                <div className="flex items-center gap-2.5">
+          {/* Sidebar Header (Sunucu Bilgisi) */}
+          <div className={`flex h-16 shrink-0 items-center ${collapsed ? 'justify-center px-3' : 'gap-3 px-4'}`}>
+            {collapsed ? (
+              <button
+                type="button"
+                onClick={() => setCollapsed(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/60 transition hover:bg-white/10 hover:text-white"
+              >
+                <LuChevronRight className="h-4 w-4" />
+              </button>
+            ) : (
+              <>
+                <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-white/5">
                   {profile?.guildIcon ? (
-                    <Image src={profile.guildIcon} alt="guild" width={28} height={28} unoptimized className="h-7 w-7 rounded-lg object-cover border border-white/10" />
+                    <Image src={profile.guildIcon} alt="guild" width={32} height={32} unoptimized className="h-full w-full object-cover" />
                   ) : (
-                    <div className="h-7 w-7 rounded-lg bg-white/[0.05] border border-white/[0.1] flex items-center justify-center text-[10px] font-bold text-white/50">
+                    <div className="flex h-full w-full items-center justify-center text-xs font-bold text-white/40">
                       {profile?.guildName?.charAt(0) ?? '#'}
                     </div>
                   )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-white/90 truncate">{profile?.guildName ?? 'Veri Merkezi'}</p>
-                  </div>
-                  <div className="w-2 h-2 rounded-full bg-emerald-400/80 shadow-[0_0_6px_rgba(52,211,153,0.3)] animate-pulse" />
                 </div>
-              </div>
-            </div>
-          )}
-
-          {collapsed && (
-            <div className="flex justify-center px-2 pb-2">
-              <div className="w-10 h-10 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-emerald-400/80 animate-pulse" />
-              </div>
-            </div>
-          )}
-
-          {/* Nav */}
-          <div className="flex-1 overflow-y-auto px-2 pb-4 custom-scrollbar">
-            {renderSidebarNav(false)}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-white leading-tight">
+                    {profile?.guildName ?? 'Veri Merkezi'}
+                  </p>
+                  <p className="text-[10px] text-white/35">Yönetim Paneli</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCollapsed(true)}
+                  className="shrink-0 rounded-lg p-1.5 text-white/30 transition hover:bg-white/5 hover:text-white/60"
+                >
+                  <LuChevronRight className="h-3.5 w-3.5 rotate-180" />
+                </button>
+              </>
+            )}
           </div>
 
-          {/* Panel Geçişleri - sidebar alt */}
+          <div className="mx-3 border-t border-white/[0.06]" />
+
+          {/* Nav */}
+          <div className="flex-1 overflow-y-auto mt-4 px-3 pb-6 custom-scrollbar">
+            {renderSidebarNav(false)}
+          </div>
+          
+          <div className="mx-3 border-t border-white/[0.06]" />
+
+          {/* Bottom Panel (Dashboard / Developer) */}
           {!collapsed && (
-            <div className="px-3 pb-3 border-t border-white/[0.04] pt-3 flex gap-1.5">
+            <div className="px-3 pb-4 pt-3 flex flex-col gap-1.5">
               <Link
                 href="/dashboard"
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.06] text-[11px] font-medium text-white/60 hover:text-white transition-all"
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-white/45 transition hover:bg-white/5 hover:text-white"
               >
-                <LuLayoutDashboard className="w-3.5 h-3.5" />
-                Üye
+                <LuLayoutDashboard className="h-4 w-4" />
+                <span className="text-sm font-medium">Üye Paneli</span>
               </Link>
               {isDeveloper && (
                 <Link
                   href="/developer"
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-[11px] font-medium text-emerald-400/80 hover:text-emerald-300 transition-all"
+                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-emerald-400/70 transition hover:bg-white/5 hover:text-emerald-400"
                 >
-                  <LuCode className="w-3.5 h-3.5" />
-                  Dev
+                  <LuCode className="h-4 w-4" />
+                  <span className="text-sm font-medium">Geliştirici Paneli</span>
                 </Link>
               )}
             </div>
@@ -455,43 +424,76 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </aside>
 
         {/* ═══════ ANA İÇERİK ═══════ */}
-        <div className="flex-1 min-w-0 flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col relative z-0">
+          
+          {/* Mobil Menü Arkaplan Overlay (Modalların altında) */}
+          <div
+            onClick={() => { setMobileMenuOpen(false); setAccountMenuOpen(false); }}
+            className={`lg:hidden fixed inset-0 z-[35] bg-black/60 backdrop-blur-sm transition-all duration-300 ${
+              (mobileMenuOpen || accountMenuOpen) ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+            }`}
+          />
 
           {/* ═══════ HEADER ═══════ */}
-          <header className="relative z-20 flex h-14 items-center justify-between border-b border-white/[0.06] bg-[#0a0a0c]/60 backdrop-blur-md px-3 lg:px-5 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              {/* Mobil hamburger */}
+          <header className={`md:fixed inset-x-0 top-0 flex items-center bg-[#0e1018]/95 backdrop-blur-xl border-b border-white/[0.06] px-4 sm:px-6 transition-all duration-200 h-16 ${
+            accountMenuOpen ? 'z-[9991]' : 'z-30'
+          } lg:relative lg:inset-auto`}>
+            
+            {/* Mobil hamburger */}
+            <div className="lg:hidden flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
-                className="lg:hidden flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 transition hover:bg-white/[0.06] hover:text-white"
               >
                 <LuMenu className="h-4.5 w-4.5" />
               </button>
+            </div>
 
-              {/* Bildirim */}
+            {/* Sol — logo (desktop) */}
+            <div className="hidden lg:flex items-center gap-1.5 min-w-fit ml-2">
+              <div className="flex flex-col gap-0.5">
+                <span className="font-black text-xl sm:text-2xl tracking-tight leading-none" style={logoWhiteStyle}>
+                  Disco<span style={logoBlueStyle}>Web</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Orta — Mobil Logo */}
+            <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center gap-1 pointer-events-none">
+              <div className="flex flex-col gap-0.5 items-center">
+                <span className="font-black text-xl tracking-tight leading-none" style={logoWhiteStyle}>
+                  Disco<span style={logoBlueStyle}>Web</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="flex-1" />
+
+            {/* Sağ — İkonlar + Hesap */}
+            <div className="flex items-center gap-2">
               <div className="relative" ref={notificationMenuRef}>
                 <button
                   type="button"
                   onClick={() => setNotificationMenuOpen((p) => !p)}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm transition-all ${
+                  className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm transition-all ${
                     pathname.startsWith('/admin/notifications')
-                      ? 'border-white/[0.15] bg-white/[0.08] text-white'
-                      : 'border-white/[0.08] bg-white/[0.03] text-white/50 hover:bg-white/[0.06] hover:text-white'
+                      ? 'border-white/20 bg-white/10'
+                      : 'border-transparent hover:border-white/10 hover:bg-white/5 text-white/70 hover:text-white'
                   }`}
                 >
                   <LuBell className="h-4 w-4" />
                 </button>
                 {notificationMenuOpen && (
-                  <div className="absolute left-0 top-[calc(100%+6px)] z-[60] w-52 overflow-hidden rounded-xl border border-white/[0.08] bg-[#111114]/95 backdrop-blur-xl shadow-xl shadow-black/40">
+                  <div className="absolute right-0 lg:left-1/2 lg:-translate-x-1/2 top-[calc(100%+6px)] z-[60] w-52 overflow-hidden rounded-xl border border-white/10 bg-[#0f1116] shadow-2xl">
                     <div className="border-b border-white/[0.06] px-3.5 py-2.5">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/60">Bildirimler</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40">Bildirimler</p>
                     </div>
                     <div className="p-1.5 space-y-0.5">
                       <Link
                         href="/admin/notifications/send"
                         onClick={() => setNotificationMenuOpen(false)}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/60 transition-colors hover:bg-white/[0.06] hover:text-white"
+                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/5 hover:text-white"
                       >
                         <LuBell className="h-3.5 w-3.5 text-white/40" />
                         Bildirim Gönder
@@ -499,7 +501,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                       <Link
                         href="/admin/notifications/history"
                         onClick={() => setNotificationMenuOpen(false)}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/60 transition-colors hover:bg-white/[0.06] hover:text-white"
+                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/5 hover:text-white"
                       >
                         <LuFileText className="h-3.5 w-3.5 text-white/40" />
                         Bildirim Geçmişi
@@ -509,93 +511,84 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 )}
               </div>
 
-              {/* Kılavuz */}
               {HEADER_LINKS.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`hidden sm:flex h-9 w-9 items-center justify-center rounded-xl border text-sm transition-all ${
+                  className={`hidden sm:flex h-9 w-9 items-center justify-center rounded-full border text-sm transition-all ${
                     pathname === item.href
-                      ? 'border-white/[0.15] bg-white/[0.08] text-white'
-                      : 'border-white/[0.08] bg-white/[0.03] text-white/50 hover:bg-white/[0.06] hover:text-white'
+                      ? 'border-white/20 bg-white/10'
+                      : 'border-transparent hover:border-white/10 hover:bg-white/5 text-white/70 hover:text-white'
                   }`}
                 >
                   {item.icon}
                 </Link>
               ))}
-            </div>
 
-            {/* Sağ: Hesap */}
-            <div className="flex items-center gap-2">
               <div className="relative" ref={accountMenuRef}>
                 <button
                   type="button"
                   onClick={() => setAccountMenuOpen((p) => !p)}
-                  className={`flex items-center gap-2 rounded-full border px-2 py-1.5 transition-all ${
+                  className={`flex items-center gap-2 rounded-full border p-1 pr-3 transition-all ${
                     accountMenuOpen
-                      ? 'border-white/[0.15] bg-white/[0.06] text-white'
-                      : 'border-white/[0.08] bg-white/[0.02] text-white/60 hover:bg-white/[0.06] hover:text-white'
+                      ? 'border-white/20 bg-white/10'
+                      : 'border-transparent hover:border-white/10 hover:bg-white/5'
                   }`}
                 >
-                  <div className="h-6 w-6 overflow-hidden rounded-full border border-white/10">
+                  <div className="h-8 w-8 overflow-hidden rounded-full border border-white/10">
                     {profile ? (
-                      <Image src={profile.avatarUrl} alt="avatar" width={24} height={24} unoptimized className="h-full w-full object-cover" />
+                      <Image src={profile.avatarUrl} alt="avatar" width={32} height={32} unoptimized className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-white/5 text-[10px] text-white/40">?</div>
                     )}
                   </div>
-                  <span className="hidden md:inline text-[13px] font-medium max-w-[100px] truncate">{profile?.nickname ?? profile?.username ?? 'Yetkili'}</span>
-                  <LuChevronDown className={`h-3 w-3 text-white/30 transition-transform duration-200 ${accountMenuOpen ? 'rotate-180' : ''}`} />
+                  <div className="hidden md:block text-left">
+                    <p className="text-sm font-semibold text-white leading-tight max-w-[100px] truncate">{profile?.nickname ?? profile?.username ?? 'Yetkili'}</p>
+                    <p className="text-[10px] text-white/40 leading-tight">Admin</p>
+                  </div>
                 </button>
                 {accountMenuOpen && (
-                  <div className="absolute right-0 top-[calc(100%+6px)] z-[60] w-52 overflow-hidden rounded-xl border border-white/[0.08] bg-[#111114]/95 backdrop-blur-xl shadow-xl shadow-black/40">
-                    {/* Kullanıcı bilgisi */}
-                    <div className="border-b border-white/[0.06] px-3.5 py-2.5 bg-white/[0.02]">
-                      <p className="text-[13px] font-semibold text-white truncate">{profile?.nickname ?? profile?.username ?? 'Yetkili'}</p>
-                      <p className="text-[11px] text-white/40 flex items-center gap-1 mt-0.5">
-                        <LuShield className="h-3 w-3 text-indigo-400" />
-                        Admin Yetkisi
-                      </p>
+                  <div className="absolute right-0 top-[calc(100%+6px)] z-[60] w-[320px] overflow-hidden rounded-2xl border border-white/10 bg-[#0f1116] shadow-2xl origin-top-right">
+                    <div className="relative h-20 overflow-hidden bg-[#5865F2]/15">
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0f1116] via-[#0f1116]/40 to-transparent" />
+                      <div className="absolute bottom-3 left-4">
+                        <p className="text-lg font-black text-white">Yönetici, {profile?.username ?? ''}</p>
+                      </div>
                     </div>
-                    {/* Menü */}
-                    <div className="p-1.5 space-y-0.5">
-                      <Link
-                        href="/admin/settings"
-                        onClick={() => setAccountMenuOpen(false)}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/60 transition-colors hover:bg-white/[0.06] hover:text-white"
+                    
+                    <div className="p-3 space-y-1.5">
+                      <button
+                        type="button"
+                        onClick={() => { setAccountMenuOpen(false); window.location.href='/admin/settings'; }}
+                        className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-white/70 transition hover:bg-white/5 hover:text-white"
                       >
-                        <LuSettings className="h-3.5 w-3.5 text-white/40" />
-                        Ayarlar
-                      </Link>
-                      {/* Panel Geçişleri */}
-                      <div className="flex gap-1 px-1 py-1">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/8">
+                            <LuSettings className="h-3.5 w-3.5" />
+                          </div>
+                          <span className="text-sm font-medium">Panel Ayarları</span>
+                        </div>
+                        <LuChevronRight className="h-3.5 w-3.5 text-white/30" />
+                      </button>
+
+                      <div className="grid gap-1.5 pt-1 grid-cols-2">
                         <Link
                           href="/dashboard"
                           onClick={() => setAccountMenuOpen(false)}
-                          className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.08] text-[11px] font-medium text-white/50 hover:text-white/80 transition-colors"
+                          className="flex flex-col items-center gap-1 rounded-xl border border-white/[0.06] bg-white/[0.03] py-2.5 text-xs text-white/60 transition hover:bg-white/[0.07] hover:text-white"
                         >
-                          <LuLayoutDashboard className="w-3 h-3" />
-                          Üye
+                          <LuLayoutDashboard className="h-3.5 w-3.5" />
+                          Üye Paneli
                         </Link>
-                        {isDeveloper && (
-                          <Link
-                            href="/developer"
-                            onClick={() => setAccountMenuOpen(false)}
-                            className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md border border-emerald-500/10 bg-emerald-500/5 hover:bg-emerald-500/20 text-[11px] font-medium text-emerald-400/70 hover:text-emerald-300 transition-colors"
-                          >
-                            <LuCode className="w-3 h-3" />
-                            Dev
-                          </Link>
-                        )}
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className="flex flex-col items-center gap-1 rounded-xl border border-rose-500/20 bg-rose-500/[0.08] py-2.5 text-xs text-rose-400 transition hover:bg-rose-500/15"
+                        >
+                          <LuLogOut className="h-3.5 w-3.5" />
+                          Çıkış Yap
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-white/60 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
-                      >
-                        <LuLogOut className="h-3.5 w-3.5 text-rose-400/50" />
-                        Çıkış Yap
-                      </button>
                     </div>
                   </div>
                 )}
@@ -604,103 +597,49 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </header>
 
           {/* ═══════ MAIN ═══════ */}
-          <main className="flex-1 overflow-y-auto px-4 py-6 lg:px-8 lg:py-8 2xl:px-12 custom-scrollbar relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-32 bg-indigo-500/[0.02] rounded-full blur-[100px] pointer-events-none" />
+          <main className="flex-1 overflow-y-auto px-4 py-6 lg:px-8 lg:py-8 2xl:px-12 custom-scrollbar lg:h-[calc(100vh-64px)] md:pt-24 lg:pt-8">
             {children}
           </main>
         </div>
       </div>
 
-      {/* ═══════ MOBİL MENÜ ═══════ */}
+      {/* ═══════ MOBİL MENÜ DRAWER ═══════ */}
       <div className={`lg:hidden fixed inset-0 z-[9999] transition-all duration-300 ${mobileMenuOpen ? 'visible' : 'invisible pointer-events-none'}`}>
         <div
-          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}
-          onClick={() => setMobileMenuOpen(false)}
-        />
-
-        <div className={`absolute top-0 left-0 bottom-0 w-[280px] bg-[#0a0a0c]/98 backdrop-blur-2xl border-r border-white/[0.06] shadow-[20px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out flex flex-col ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}>
-          {/* Dekoratif */}
-          <div className="absolute top-0 left-0 w-32 h-32 bg-indigo-500/[0.02] rounded-full blur-[60px] pointer-events-none" />
-
+          className={`absolute top-0 left-0 bottom-0 w-[280px] bg-[#0b0d12]/98 backdrop-blur-2xl border-r border-white/[0.06] shadow-[20px_0_60px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out flex flex-col ${
+            mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
           {/* Header */}
-          <div className="relative flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-white/[0.05] border border-white/[0.1] flex items-center justify-center">
-                <LuShield className="h-3.5 w-3.5 text-white/80" />
-              </div>
-              <span className="text-[13px] font-bold text-white tracking-wide">Admin Panel</span>
+          <div className="flex h-16 shrink-0 items-center gap-3 px-4 border-b border-white/[0.06]">
+            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-white/5">
+              {profile?.guildIcon ? (
+                <Image src={profile.guildIcon} alt="guild" width={32} height={32} unoptimized className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-xs font-bold text-white/40">
+                  {profile?.guildName?.charAt(0) ?? '#'}
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-white leading-tight">
+                {profile?.guildName ?? 'Veri Merkezi'}
+              </p>
+              <p className="text-[10px] text-white/35">Yönetim Paneli</p>
             </div>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
-              className="h-8 w-8 flex items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.03] text-white/50 hover:text-white transition"
+              className="shrink-0 rounded-lg p-1.5 text-white/30 transition hover:bg-white/5 hover:text-white/60"
             >
               <LuX className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Sunucu */}
-          <div className="relative px-3 pt-3 pb-2">
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 flex items-center gap-2.5">
-              {profile?.guildIcon ? (
-                <Image src={profile.guildIcon} alt="guild" width={24} height={24} unoptimized className="h-6 w-6 rounded-lg object-cover border border-white/10" />
-              ) : (
-                <div className="h-6 w-6 rounded-lg bg-white/[0.05] border border-white/[0.1] flex items-center justify-center text-[9px] font-bold text-white/50">
-                  {profile?.guildName?.charAt(0) ?? '#'}
-                </div>
-              )}
-              <p className="text-xs font-medium text-white/80 truncate flex-1">{profile?.guildName ?? 'Veri Merkezi'}</p>
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
-            </div>
-          </div>
-
-          {/* Panel Geçişleri */}
-          <div className="px-3 pt-1 pb-2 flex gap-1.5">
-            <Link
-              href="/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.06] text-[11px] font-medium text-white/60 hover:text-white transition-colors"
-            >
-              <LuLayoutDashboard className="w-3.5 h-3.5" />
-              Üye Paneli
-            </Link>
-            {isDeveloper && (
-              <Link
-                href="/developer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-[11px] font-medium text-emerald-400/80 hover:text-emerald-300 transition-colors"
-              >
-                <LuCode className="w-3.5 h-3.5" />
-                Geliştirici
-              </Link>
-            )}
-          </div>
-
           {/* Nav */}
-          <div className="flex-1 overflow-y-auto px-2 pb-4 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto mt-4 px-3 pb-6 custom-scrollbar">
             {renderSidebarNav(true)}
           </div>
-
-          {/* Footer */}
-          <div className="px-3 pb-3 border-t border-white/[0.04] pt-3">
-            <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl border border-white/[0.04] bg-white/[0.02]">
-              <div className="h-7 w-7 overflow-hidden rounded-lg border border-white/10 flex-shrink-0">
-                {profile ? (
-                  <Image src={profile.avatarUrl} alt="avatar" width={28} height={28} unoptimized className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-white/5 text-[9px] text-white/40">?</div>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white/90 truncate">{profile?.nickname ?? profile?.username ?? 'Yetkili'}</p>
-                <p className="text-[10px] text-white/40">Admin</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="h-[env(safe-area-inset-bottom,0px)]" />
         </div>
       </div>
     </div>
