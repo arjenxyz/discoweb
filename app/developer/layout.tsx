@@ -31,6 +31,8 @@ import {
   LuTriangleAlert,
   LuBug,
   LuScrollText,
+  LuLineChart,
+  LuCpu,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -91,6 +93,13 @@ const NAV_GROUPS: NavGroup[] = [
       { href: '/developer/config-view', label: 'Ayarlar', icon: LuSettings },
       { href: '/developer/api-test', label: 'API Test', icon: LuFlaskConical },
       { href: '/developer/clear-data', label: 'Veri Temizleme', icon: LuTrash2 },
+    ],
+  },
+  {
+    category: 'BOT KONTROL MERKEZİ',
+    items: [
+      { href: '/developer/bot/analytics', label: 'Sistem Analizi', icon: LuLineChart },
+      { href: '/developer/bot/identity', label: 'Kimlik Yönetimi', icon: LuCpu },
     ],
   },
 ];
