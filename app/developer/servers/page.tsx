@@ -17,6 +17,7 @@ export default function DeveloperServersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [loadingInvites, setLoadingInvites] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -31,6 +32,26 @@ export default function DeveloperServersPage() {
     };
     load();
   }, []);
+
+  const handleCreateInvite = async (guildId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (loadingInvites[guildId]) return;
+
+    setLoadingInvites(prev => ({ ...prev, [guildId]: true }));
+    try {
+      const res = await fetch(`/api/developer/invite?guild_id=${guildId}`);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Davet oluşturulamadı.');
+        return;
+      }
+      window.open(data.invite_url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      alert('Bir hata oluştu.');
+    } finally {
+      setLoadingInvites(prev => ({ ...prev, [guildId]: false }));
+    }
+  };
 
   const filtered = servers.filter(s =>
     !search || s.name?.toLowerCase().includes(search.toLowerCase()) || s.discord_id?.includes(search) || s.slug?.toLowerCase().includes(search.toLowerCase())
@@ -66,7 +87,7 @@ export default function DeveloperServersPage() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((server) => (
-            <div key={server.id} className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-5 hover:border-white/15 transition-all group">
+            <div key={server.id} className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-5 hover:border-white/15 transition-all flex flex-col justify-between">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-violet-500/15 flex items-center justify-center flex-shrink-0">
                   <LuDatabase className="w-5 h-5 text-violet-400" />
@@ -82,8 +103,25 @@ export default function DeveloperServersPage() {
                   {server.is_setup ? 'Kurulu' : 'Bekliyor'}
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
-                <span className="text-[11px] text-white/30">Slug: {server.slug}</span>
+              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {server.discord_id && (
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => handleCreateInvite(server.discord_id!, e)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleCreateInvite(server.discord_id!, e as any) }}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border transition ${
+                        loadingInvites[server.discord_id!] 
+                          ? 'bg-[#5865F2]/10 text-[#5865F2]/50 border-[#5865F2]/10 cursor-wait'
+                          : 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20 hover:bg-[#5865F2]/25 cursor-pointer'
+                      }`}
+                    >
+                      {loadingInvites[server.discord_id!] ? 'Alınıyor...' : 'Davet Linki Al'}
+                    </div>
+                  )}
+                  <span className="text-[11px] text-white/30">Slug: {server.slug}</span>
+                </div>
                 <span className="text-[11px] text-white/30">{new Date(server.created_at).toLocaleDateString('tr-TR')}</span>
               </div>
             </div>

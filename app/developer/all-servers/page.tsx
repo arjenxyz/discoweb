@@ -20,6 +20,7 @@ export default function DeveloperAllServersPage() {
   const [error, setError] = useState<string | null>(null);
   const [expandedServer, setExpandedServer] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [loadingInvites, setLoadingInvites] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -34,6 +35,26 @@ export default function DeveloperAllServersPage() {
     };
     load();
   }, []);
+
+  const handleCreateInvite = async (guildId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (loadingInvites[guildId]) return;
+
+    setLoadingInvites(prev => ({ ...prev, [guildId]: true }));
+    try {
+      const res = await fetch(`/api/developer/invite?guild_id=${guildId}`);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Davet oluşturulamadı.');
+        return;
+      }
+      window.open(data.invite_url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      alert('Bir hata oluştu.');
+    } finally {
+      setLoadingInvites(prev => ({ ...prev, [guildId]: false }));
+    }
+  };
 
   const filtered = servers.filter(s =>
     !search || s.name?.toLowerCase().includes(search.toLowerCase()) || s.discord_id?.includes(search)
@@ -85,6 +106,21 @@ export default function DeveloperAllServersPage() {
                   <p className="text-[11px] text-white/30 font-mono">{server.discord_id ?? 'N/A'}</p>
                 </div>
                 <div className="flex items-center gap-3">
+                  {server.discord_id && (
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => handleCreateInvite(server.discord_id!, e)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleCreateInvite(server.discord_id!, e as any) }}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border transition ${
+                        loadingInvites[server.discord_id!] 
+                          ? 'bg-[#5865F2]/10 text-[#5865F2]/50 border-[#5865F2]/10 cursor-wait'
+                          : 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20 hover:bg-[#5865F2]/25 cursor-pointer'
+                      }`}
+                    >
+                      {loadingInvites[server.discord_id!] ? 'Alınıyor...' : 'Davet Linki Al'}
+                    </div>
+                  )}
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
                     <LuUsers className="w-3.5 h-3.5 text-white/40" />
                     <span className="text-xs font-semibold text-white/70">{server.member_count}</span>
