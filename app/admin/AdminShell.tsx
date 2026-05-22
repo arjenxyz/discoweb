@@ -69,7 +69,6 @@ const MENU_GROUPS = [
   {
     title: 'Yönetim',
     items: [
-      { href: '/admin/settings', label: 'Sunucu Ayarları', icon: <LuSettings className="h-4 w-4" /> },
       { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-4 w-4" /> },
       { href: '/admin/earn-settings', label: 'Kazanç Ayarları', icon: <LuChartBar className="h-4 w-4" /> },
       { href: '/admin/log-channels', label: 'Log Kanalları', icon: <LuClipboardList className="h-4 w-4" /> },

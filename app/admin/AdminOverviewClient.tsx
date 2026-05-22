@@ -220,34 +220,7 @@ export default function AdminOverviewClient({
             </div>
           </div>
 
-          {/* Economy & Store */}
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Ekonomi & Mağaza</p>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard
-                icon={<LuCoins className="h-5 w-5" />}
-                label="Dolaşımdaki Papel"
-                value={`${fmt.format(stats.totalCirculation)} P`}
-                sub={`Ortalama: ${fmt.format(stats.avgBalance)} papel/üye`}
-                color="bg-emerald-500"
-                href="/admin/wallet"
-              />
-              <StatCard
-                icon={<LuTrendingUp className="h-5 w-5" />}
-                label="En Yüksek Bakiye"
-                value={`${fmt.format(stats.highestBalance)} P`}
-                color="bg-amber-500"
-              />
-              <StatCard
-                icon={<LuPackage className="h-5 w-5" />}
-                label="Aktif Ürün"
-                value={stats.activeStoreItems}
-                sub={`${fmt.format(stats.paidOrders)} tamamlanan sipariş`}
-                color="bg-pink-500"
-                href="/admin/store/products"
-              />
-            </div>
-          </div>
+
         </>
       ) : (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/50">
@@ -282,18 +255,6 @@ export default function AdminOverviewClient({
         </div>
       </div>
 
-      {/* Danger Zone */}
-      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-base font-semibold text-red-400">Tehlikeli Bölge</h2>
-            <p className="mt-1 text-sm text-white/50">
-              Bu işlemler geri alınamaz. Dikkatli kullanın.
-            </p>
-          </div>
-          <RemoveSetupButton />
-        </div>
-      </div>
     </div>
   );
 }

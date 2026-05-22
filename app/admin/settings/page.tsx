@@ -12,6 +12,7 @@ import {
   LuServer,
   LuGift,
 } from 'react-icons/lu';
+import RemoveSetupButton from '../RemoveSetupButton';
 
 type DiscordRole = {
   id: string;
@@ -362,6 +363,19 @@ export default function AdminSettingsPage() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-red-400">Tehlikeli Bölge</h2>
+            <p className="mt-1 text-sm text-white/50">
+              Bu işlemler geri alınamaz. Dikkatli kullanın.
+            </p>
+          </div>
+          <RemoveSetupButton />
         </div>
       </div>
 
