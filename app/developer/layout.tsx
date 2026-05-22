@@ -22,8 +22,6 @@ import {
   LuMenu,
   LuX,
   LuGlobe,
-  LuTrendingUp,
-  LuClipboardList,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -56,13 +54,6 @@ const NAV_GROUPS: NavGroup[] = [
       { href: '/developer/users', label: 'Kullanıcılar', icon: LuUsers },
       { href: '/developer/servers', label: 'Sunucular', icon: LuDatabase },
       { href: '/developer/all-servers', label: 'Sunucular & Üyeler', icon: LuGlobe },
-    ],
-  },
-  {
-    category: 'BORSA',
-    items: [
-      { href: '/developer/market', label: 'Borsa Yönetimi', icon: LuTrendingUp },
-      { href: '/developer/applications', label: 'Başvurular', icon: LuClipboardList },
     ],
   },
   {

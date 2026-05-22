@@ -4,8 +4,7 @@ import { useRouter } from 'next/navigation';
 import {
   LuUsers, LuDatabase, LuSearch, LuWrench, LuShoppingBag, LuBell,
   LuTriangleAlert, LuMail, LuRefreshCw, LuArrowRight, LuActivity,
-  LuZap, LuShield, LuGlobe, LuTrendingUp, LuClipboardList,
-  LuBrainCircuit, LuSend, LuLoader,
+  LuZap, LuShield, LuGlobe,
 } from 'react-icons/lu';
 
 const VIDEO_URL = process.env.NEXT_PUBLIC_WELCOME_VIDEO_URL ?? '';
@@ -16,20 +15,6 @@ type SystemStats = {
   maintenanceActive: boolean; maintenanceModules: number; activeMaintenanceCount: number;
 };
 
-interface SuggestedAction { type: string; label: string; payload: Record<string, unknown>; }
-interface AnalysisResult { analysis: string; suggested_actions: SuggestedAction[]; }
-interface ChatMessage {
-  id: number; role: 'user' | 'assistant'; guildId: string;
-  content: string; actions?: SuggestedAction[]; timestamp: Date;
-}
-
-const QUICK_PROMPTS = [
-  'Piyasaya genel bakış yap',
-  'Fiyat düşüyor, ne yapmalıyım?',
-  'Ceza verilmeli mi?',
-  'Circuit breaker gerekli mi?',
-  'Ekonomi sağlıklı mı?',
-];
 
 export default function DeveloperPage() {
   const router = useRouter();
@@ -38,17 +23,6 @@ export default function DeveloperPage() {
   const [syncLoading, setSyncLoading] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
-
-  // AI State
-  const [guildId, setGuildId] = useState('');
-  const [prompt, setPrompt] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [remaining, setRemaining] = useState<number | null>(null);
-  const [applying, setApplying] = useState<string | null>(null);
-  const [applyResults, setApplyResults] = useState<Record<string, boolean>>({});
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const msgId = useRef(0);
 
   const shimmerStyle: React.CSSProperties = {
     backgroundImage: 'linear-gradient(105deg, #fff 0%, #fff 35%, rgba(255,255,255,0.95) 45%, #fff 55%, #fff 100%)',
@@ -70,48 +44,6 @@ export default function DeveloperPage() {
   };
 
   useEffect(() => { setTimeout(() => setVisible(true), 60); loadStats(); }, []);
-
-  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, aiLoading]);
-
-  const analyze = async (overridePrompt?: string) => {
-    const p = overridePrompt ?? prompt;
-    if (!p.trim() || !guildId.trim() || aiLoading) return;
-    const userMsg: ChatMessage = { id: ++msgId.current, role: 'user', guildId, content: p, timestamp: new Date() };
-    setMessages(prev => [...prev, userMsg]);
-    setPrompt('');
-    setAiLoading(true);
-    try {
-      const res = await fetch('/api/developer/ai-analyze', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
-        body: JSON.stringify({ guildId, prompt: p }),
-      });
-      const data: AnalysisResult & { error?: string; detail?: string; remaining?: number } = await res.json();
-      const assistantMsg: ChatMessage = {
-        id: ++msgId.current, role: 'assistant', guildId,
-        content: data.analysis ?? `Hata: ${data.error}${data.detail ? ` — ${data.detail}` : ''}`,
-        actions: data.suggested_actions, timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, assistantMsg]);
-      if (data.remaining !== undefined) setRemaining(data.remaining);
-    } catch {
-      setMessages(prev => [...prev, { id: ++msgId.current, role: 'assistant', guildId, content: 'İstek başarısız oldu.', timestamp: new Date() }]);
-    } finally { setAiLoading(false); }
-  };
-
-  const applyAction = async (messageId: number, actionIdx: number, action: SuggestedAction) => {
-    const key = `${messageId}-${actionIdx}`;
-    setApplying(key);
-    try {
-      const res = await fetch('/api/developer/apply-action', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
-        body: JSON.stringify({ type: action.type, payload: action.payload }),
-      });
-      const data: { error?: string; remaining?: number } = await res.json();
-      setApplyResults(prev => ({ ...prev, [key]: !data.error }));
-      if (data.remaining !== undefined) setRemaining(data.remaining);
-    } catch { setApplyResults(prev => ({ ...prev, [key]: false })); }
-    finally { setApplying(null); }
-  };
 
   const handleSync = async () => {
     setSyncLoading(true); setSyncMessage(null);
@@ -137,16 +69,8 @@ export default function DeveloperPage() {
     { label: 'Kullanıcı Sorgula', desc: 'Tekil arama', href: '/developer/user-lookup', icon: LuSearch, color: 'bg-indigo-500/15 text-indigo-300 ring-indigo-400/20' },
     { label: 'Sunucular', desc: 'Toplu görünüm', href: '/developer/all-servers', icon: LuGlobe, color: 'bg-sky-500/15 text-sky-300 ring-sky-400/20' },
     { label: 'Bakım', desc: 'Modül durumları', href: '/developer/maintenance', icon: LuWrench, color: 'bg-amber-500/15 text-amber-300 ring-amber-400/20' },
-    { label: 'Borsa', desc: 'Piyasa yönetimi', href: '/developer/market', icon: LuTrendingUp, color: 'bg-emerald-500/15 text-emerald-300 ring-emerald-400/20' },
-    { label: 'Başvurular', desc: 'Ekonomi & IPO', href: '/developer/applications', icon: LuClipboardList, color: 'bg-orange-500/15 text-orange-300 ring-orange-400/20' },
     { label: 'API Test', desc: 'Endpoint testi', href: '/developer/api-test', icon: LuZap, color: 'bg-pink-500/15 text-pink-300 ring-pink-400/20' },
   ];
-
-  const typeColors: Record<string, string> = {
-    market_event: 'bg-blue-500/15 text-blue-300 border-blue-500/20',
-    market_penalty: 'bg-rose-500/15 text-rose-300 border-rose-500/20',
-    listing_update: 'bg-purple-500/15 text-purple-300 border-purple-500/20',
-  };
 
   return (
     <div className="relative min-h-screen -m-4 md:-m-6 lg:-m-8 overflow-hidden">
@@ -272,159 +196,32 @@ export default function DeveloperPage() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN — AI ASSISTANT */}
+          {/* RIGHT COLUMN — Developer Notes */}
           <div className="lg:sticky lg:top-8">
-            <div className="relative rounded-3xl border border-[#5865F2]/20 bg-[#5865F2]/5 backdrop-blur-xl overflow-hidden flex flex-col"
-              style={{ height: 'calc(100vh - 140px)', minHeight: '500px' }}>
-              {/* Glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-[#5865F2]/15 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-
-              {/* AI Header */}
-              <div className="relative flex items-center justify-between p-5 border-b border-white/8">
-                <div className="flex items-center gap-3">
-                  <div className="relative w-9 h-9 rounded-2xl bg-[#5865F2]/25 flex items-center justify-center">
-                    <LuBrainCircuit className="w-5 h-5 text-[#5865F2]" />
-                    {aiLoading && <div className="absolute inset-0 rounded-2xl border-2 border-[#5865F2]/50 animate-ping" />}
+            <div className="rounded-3xl border border-white/10 bg-[#0f1116]/80 backdrop-blur-xl p-6 min-h-[500px] flex flex-col justify-between">
+              <div>
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-[#5865F2]/10 text-[#5865F2]">
+                    <LuShield className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-white">AI Piyasa Asistanı</p>
-                    <p className="text-[10px] text-white/30">Gemini 2.5 Pro · {aiLoading ? <span className="text-[#5865F2]">Düşünüyor...</span> : 'Hazır'}</p>
+                    <h2 className="text-lg font-semibold text-white">Developer Panel Güncellemesi</h2>
+                    <p className="text-sm text-white/40">Ekonomi ve borsa yönetimine ait araçlar kaldırıldı.</p>
                   </div>
                 </div>
-                {remaining !== null && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-                    <LuZap className="w-3 h-3 text-amber-400" />
-                    <span className="text-[10px] text-white/50">{remaining}/5</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Guild ID Input */}
-              <div className="relative px-4 pt-4">
-                <div className="flex items-center gap-2 bg-black/30 border border-white/10 rounded-2xl px-4 py-2.5 focus-within:border-[#5865F2]/40 transition-colors">
-                  <LuDatabase className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
-                  <input value={guildId} onChange={e => setGuildId(e.target.value)}
-                    className="flex-1 bg-transparent text-xs text-white placeholder-white/20 focus:outline-none font-mono"
-                    placeholder="Guild ID gir (örn: 1465698764453838882)" />
-                  {guildId && (
-                    <button onClick={() => router.push(`/developer/market/${guildId}`)}
-                      className="text-[10px] text-[#5865F2]/60 hover:text-[#5865F2] transition-colors whitespace-nowrap">
-                      Detay →
-                    </button>
-                  )}
+                <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+                  <h3 className="text-sm font-semibold text-white mb-3">Mevcut araçlar</h3>
+                  <ul className="space-y-2 text-sm text-white/60">
+                    <li>Sunucu ve kullanıcı yönetimi</li>
+                    <li>Bakım ve sistem durumu</li>
+                    <li>Cache yönetimi</li>
+                    <li>API testi ve konfigürasyon</li>
+                  </ul>
                 </div>
               </div>
-
-              {/* Quick Prompts */}
-              {messages.length === 0 && (
-                <div className="px-4 pt-3 flex flex-wrap gap-1.5">
-                  {QUICK_PROMPTS.map(p => (
-                    <button key={p} onClick={() => { if (guildId.trim()) analyze(p); else setPrompt(p); }}
-                      className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all">
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4" style={{ scrollbarWidth: 'none' }}>
-                {messages.length === 0 && !aiLoading && (
-                  <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
-                    <div className="w-14 h-14 rounded-2xl bg-[#5865F2]/15 flex items-center justify-center">
-                      <LuBrainCircuit className="w-7 h-7 text-[#5865F2]/60" />
-                    </div>
-                    <p className="text-sm text-white/25 max-w-[200px] leading-relaxed">Guild ID girip piyasa hakkında soru sor</p>
-                  </div>
-                )}
-
-                {messages.map(msg => (
-                  <div key={msg.id} style={{ animation: 'fadeUp 0.3s ease forwards' }}>
-                    {msg.role === 'user' ? (
-                      <div className="flex justify-end">
-                        <div className="max-w-[85%] bg-[#5865F2]/20 border border-[#5865F2]/25 rounded-2xl rounded-tr-sm px-4 py-2.5">
-                          <p className="text-[11px] text-white/30 mb-1 font-mono">{msg.guildId}</p>
-                          <p className="text-sm text-white/90 leading-relaxed">{msg.content}</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-5 h-5 rounded-lg bg-[#5865F2]/20 flex items-center justify-center">
-                            <LuBrainCircuit className="w-3 h-3 text-[#5865F2]" />
-                          </div>
-                          <span className="text-[10px] text-white/30">Gemini · {msg.timestamp.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                        <div className="bg-white/[0.04] border border-white/8 rounded-2xl rounded-tl-sm px-4 py-3">
-                          <p className="text-sm text-white/80 leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                        </div>
-                        {msg.actions && msg.actions.length > 0 && (
-                          <div className="space-y-2">
-                            <p className="text-[10px] uppercase tracking-wider text-white/25 px-1">Önerilen Aksiyonlar</p>
-                            {msg.actions.map((action, i) => {
-                              const key = `${msg.id}-${i}`;
-                              const applied = applyResults[key];
-                              return (
-                                <div key={i} className={`rounded-xl border p-3 transition-all ${
-                                  applied === true ? 'border-emerald-500/25 bg-emerald-500/8' :
-                                  applied === false ? 'border-rose-500/25 bg-rose-500/8' :
-                                  'border-white/8 bg-white/[0.03]'
-                                }`}>
-                                  <div className="flex items-center justify-between gap-2">
-                                    <div className="flex-1 min-w-0">
-                                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold border mr-1.5 ${typeColors[action.type] ?? 'bg-white/10 text-white/40 border-white/10'}`}>{action.type}</span>
-                                      <span className="text-xs text-white/70">{action.label}</span>
-                                    </div>
-                                    {applied === true ? <span className="text-[10px] text-emerald-400 whitespace-nowrap">✓ Uygulandı</span> :
-                                     applied === false ? <span className="text-[10px] text-rose-400 whitespace-nowrap">✗ Hata</span> : (
-                                      <button onClick={() => applyAction(msg.id, i, action)} disabled={applying !== null}
-                                        className="group/a relative overflow-hidden flex-shrink-0 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-300 text-[10px] font-bold hover:bg-emerald-500/25 disabled:opacity-40 transition-all">
-                                        <span className="pointer-events-none absolute inset-0 -translate-x-full skew-x-12 bg-white/10 transition-transform duration-500 group-hover/a:translate-x-full" />
-                                        <span className="relative">{applying === key ? '...' : 'Uygula'}</span>
-                                      </button>
-                                    )}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {aiLoading && (
-                  <div style={{ animation: 'fadeUp 0.3s ease forwards' }}>
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <div className="w-5 h-5 rounded-lg bg-[#5865F2]/20 flex items-center justify-center">
-                        <LuBrainCircuit className="w-3 h-3 text-[#5865F2] animate-pulse" />
-                      </div>
-                      <span className="text-[10px] text-white/30">Gemini düşünüyor</span>
-                    </div>
-                    <div className="bg-white/[0.04] border border-white/8 rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1.5">
-                      {[0,1,2].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#5865F2]/60 animate-bounce" style={{ animationDelay: `${i*0.15}s` }} />)}
-                    </div>
-                  </div>
-                )}
-                <div ref={chatEndRef} />
-              </div>
-
-              {/* Input Area */}
-              <div className="relative p-4 border-t border-white/8">
-                <div className="flex gap-2">
-                  <textarea value={prompt} onChange={e => setPrompt(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); analyze(); } }}
-                    rows={2} placeholder="Piyasa hakkında sor... (Enter ile gönder)"
-                    className="flex-1 bg-black/30 border border-white/10 rounded-2xl px-4 py-2.5 text-sm text-white placeholder-white/20 resize-none focus:outline-none focus:border-[#5865F2]/40 transition-colors leading-relaxed" />
-                  <button onClick={() => analyze()} disabled={aiLoading || !prompt.trim() || !guildId.trim()}
-                    className="group relative overflow-hidden flex-shrink-0 w-10 h-10 self-end rounded-2xl bg-[#5865F2] hover:bg-[#4752C4] disabled:bg-white/8 disabled:text-white/20 flex items-center justify-center transition-all shadow-lg shadow-[#5865F2]/20 disabled:shadow-none">
-                    <span className="pointer-events-none absolute inset-0 -translate-x-full skew-x-12 bg-white/20 transition-transform duration-500 group-hover:translate-x-full" />
-                    {aiLoading ? <LuLoader className="w-4 h-4 animate-spin relative" /> : <LuSend className="w-4 h-4 relative" />}
-                  </button>
-                </div>
-                {!guildId.trim() && <p className="text-[10px] text-white/20 mt-1.5 px-1">↑ Önce Guild ID gir</p>}
+              <div className="mt-6 rounded-3xl border border-white/10 bg-[#5865F2]/5 p-5">
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30 mb-3">Not</p>
+                <p className="text-sm leading-6 text-white/60">Borsa ve ekonomi özellikleriyle ilgili sayfalar, menüler ve API çağrıları bu panelden kaldırılmıştır.</p>
               </div>
             </div>
           </div>
