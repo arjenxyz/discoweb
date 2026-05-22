@@ -77,16 +77,6 @@ const DOCS_SECTIONS = [
     ],
   },
   {
-    id: 'magaza-takip',
-    title: 'Mağaza Takip (Üye Paneli)',
-    description: 'Rol sürelerini ve kalan zamanı takip etme.',
-    bullets: [
-      'Aynı rolün tekrar satın alınmasıyla süreler üst üste eklenir.',
-      'Geri sayım tek rol için toplam süre üzerinden çalışır.',
-      'Süresiz roller zamanlayıcıya dahil edilmez.',
-    ],
-  },
-  {
     id: 'guvenlik',
     title: 'Güvenlik Notları',
     description: 'Yetkili panelinde önerilen güvenlik uygulamaları.',

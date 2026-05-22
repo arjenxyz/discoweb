@@ -28,7 +28,7 @@ import {
   LuZap,
   LuLayoutGrid,
 } from 'react-icons/lu';
-import { LuCode, LuLayoutDashboard } from 'react-icons/lu';
+import { LuCode } from 'react-icons/lu';
 
 /* ─── MENÜ YAPISI ─── */
 const MENU_GROUPS = [
@@ -146,10 +146,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         const devResponse = await fetch('/api/developer/check-access', { credentials: 'include', cache: 'no-store' });
         if (devResponse.ok) { setIsDeveloper(true); return; }
         console.warn('Developer erişimi reddedildi:', await safeJson(devResponse));
-        window.location.href = '/dashboard';
+        window.location.href = '/';
       } catch (error) {
         console.error('Erişim kontrolü hatası:', error);
-        window.location.href = '/dashboard';
+        window.location.href = '/';
       }
     };
     checkAccess();
@@ -391,16 +391,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           
           <div className="mx-3 border-t border-white/[0.06]" />
 
-          {/* Bottom Panel (Dashboard / Developer) */}
           {!collapsed && (
             <div className="px-3 pb-4 pt-3 flex flex-col gap-1.5">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-white/45 transition hover:bg-white/5 hover:text-white"
-              >
-                <LuLayoutDashboard className="h-4 w-4" />
-                <span className="text-sm font-medium">Üye Paneli</span>
-              </Link>
               {isDeveloper && (
                 <Link
                   href="/developer"
@@ -524,15 +516,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         <LuChevronRight className="h-3.5 w-3.5 text-white/30" />
                       </button>
 
-                      <div className="grid gap-1.5 pt-1 grid-cols-2">
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setAccountMenuOpen(false)}
-                          className="flex flex-col items-center gap-1 rounded-xl border border-white/[0.06] bg-white/[0.03] py-2.5 text-xs text-white/60 transition hover:bg-white/[0.07] hover:text-white"
-                        >
-                          <LuLayoutDashboard className="h-3.5 w-3.5" />
-                          Üye Paneli
-                        </Link>
+                      <div className="grid gap-1.5 pt-1">
                         <button
                           type="button"
                           onClick={handleLogout}
