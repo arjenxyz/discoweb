@@ -24,6 +24,13 @@ import {
   LuGlobe,
   LuBell,
   LuFileText,
+  LuClipboardList,
+  LuMegaphone,
+  LuListChecks,
+  LuMessageSquare,
+  LuTriangleAlert,
+  LuBug,
+  LuScrollText,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -56,6 +63,24 @@ const NAV_GROUPS: NavGroup[] = [
       { href: '/developer/users', label: 'Kullanıcılar', icon: LuUsers },
       { href: '/developer/servers', label: 'Sunucular', icon: LuDatabase },
       { href: '/developer/all-servers', label: 'Sunucular & Üyeler', icon: LuGlobe },
+    ],
+  },
+  {
+    category: 'AKTİVİTE & İÇERİK',
+    items: [
+      { href: '/developer/economy-apps', label: 'Ekonomi Başvuruları', icon: LuClipboardList },
+      { href: '/developer/ads', label: 'Reklamlar', icon: LuMegaphone },
+      { href: '/developer/weekly-tasks', label: 'Haftalık Görevler', icon: LuListChecks },
+      { href: '/developer/announcements', label: 'Duyurular', icon: LuMessageSquare },
+    ],
+  },
+  {
+    category: 'MODERASYON',
+    items: [
+      { href: '/developer/suspicious', label: 'Şüpheli Aktiviteler', icon: LuTriangleAlert },
+      { href: '/developer/reports', label: 'Hata Bildirimleri', icon: LuBug },
+      { href: '/developer/bans', label: 'Yasaklamalar', icon: LuShield },
+      { href: '/developer/logs', label: 'Sistem Logları', icon: LuScrollText },
     ],
   },
   {
