@@ -295,19 +295,6 @@ const CATEGORIES: ErrorCategory[] = [
     description: "Ekonomi sistemi ile ilgili işlem ve bakiye hataları.",
     errors: [
       {
-        code: "DW-4001",
-        title: "Yüksek Ekonomi Gerekli",
-        message: "Bu özellik yüksek ekonomi gerektiriyor.",
-        causes: [
-          "Erişmeye çalıştığın özellik (Borsa, Hazine, Piyasa vb.) sunucunun yüksek ekonomi planında olmasını gerektiriyor.",
-          "Sunucu hâlâ temel ekonomi planında.",
-        ],
-        solutions: [
-          "Sunucu yöneticinizden Yüksek Ekonomi başvurusu yapmasını isteyin.",
-          "Yöneticiyseniz sol menüdeki Yüksek Ekonomi Başvurusu bölümünden başvuru yapabilirsiniz.",
-        ],
-      },
-      {
         code: "DW-4002",
         title: "Yetersiz Bakiye",
         message: "İşlem bakiyeniz yetersiz.",

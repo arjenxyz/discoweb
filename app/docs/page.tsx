@@ -116,7 +116,7 @@ export default function DocsPage() {
                 sürdürülebilir dijital ekosistemler inşa etmektir.
                 <br />
                 <br />
-                Bu belge; <strong className="text-white/70">Hizmet Koşulları</strong>, <strong className="text-white/70">Gizlilik Politikası</strong>, <strong className="text-white/70">Basit Ekonomi</strong> ve <strong className="text-white/70">Yüksek Ekonomi</strong> modüllerinin işleyişi ve kriterlerini içerir.
+                Bu belge; <strong className="text-white/70">Hizmet Koşulları</strong>, <strong className="text-white/70">Gizlilik Politikası</strong> ve <strong className="text-white/70">Basit Ekonomi</strong> modülünün işleyişi ve kriterlerini içerir.
                 Sol menü aracılığıyla ilgili başlıklara hızlıca erişebilir ve şirket standardına uygun kontrollü bir inceleme gerçekleştirebilirsiniz.
               </p>
             </header>
@@ -151,12 +151,6 @@ export default function DocsPage() {
                   href="/economy/basic"
                   description="Yeni sunucular için ön tanımlı olarak gelen, günlük aktivite ve mağaza katına dayalı temel ekonomi modeli. Transfer, çekiliş ve günlük bonusları kapsar."
                   icon={<LuCoins className="w-4 h-4" />}
-                />
-                <DocsCard
-                  title="Yüksek Ekonomi"
-                  href="/economy/advanced"
-                  description="İleri düzey kullanıcılar için tasarlanmış; hazne sistemi, yakma mekaniği, referral programı, halka arz (IPO) ve temettü dağıtımı içeren gelişmiş ekonomi modeli."
-                  icon={<LuZap className="w-4 h-4" />}
                 />
                 <DocsCard
                   title="Hata Kodları"
@@ -237,21 +231,6 @@ export default function DocsPage() {
                     Detayları görüntüle
                   </Link>
                 </InfoBox>
-                <InfoBox title="Yüksek Ekonomi">
-                  Yüksek Ekonomi, daha deneyimli sunucu yöneticileri ve büyük topluluklar için
-                  tasarlanmıştır. Bu modda, sunucu haznesi (merkezi bütçe), ekonomiden otomatik
-                  yakma sistemi, referral (tavsiye) programı, halka arz (IPO) ile hisse dağıtımı ve
-                  temettü gelirleri bulunur. Ekonomi üzerinde gelişmiş denetim araçları, enflasyon
-                  kontrol mekanizmaları ve gerçek zamanlı borsa simülasyonu yer alır. Yüksek Ekonomi’ye
-                  geçiş kalıcıdır ve tüm bakiye, envanter verileri sıfırlanır; bu nedenle geçiş
-                  öncesinde detaylı planlama yapmanızı öneririz.
-                  <Link
-                    href="/economy/advanced"
-                    className="text-indigo-300 hover:text-indigo-200 underline ml-1"
-                  >
-                    Detayları görüntüle
-                  </Link>
-                </InfoBox>
               </div>
             </section>
 
@@ -265,15 +244,8 @@ export default function DocsPage() {
                 </li>
                 <li>
                   Sunucunuz en az 3 ay boyunca aktif ve düzenli kullanıcı kitlesine sahip olduktan
-                  sonra, yönetim paneli üzerinden <strong>Yüksek Ekonomi</strong> başvurusu yapın.
-                  Başvuruda sunucu aktiflik istatistikleri ve beklenen kullanıcı sayısı gibi
-                  bilgiler talep edilir.
-                </li>
-                <li>
-                  Başvurunuz değerlendirildikten ve onaylandıktan sonra geçiş süreci başlatılır.
-                  Bu sırada tüm kullanıcı bakiyeleri sıfırlanır, hazne sistemi devreye girer,
-                  referral ve IPO altyapısı aktifleştirilir. Geçiş tamamlandığında bir bildirim
-                  alırsınız ve yeni ekonomi sistemini yönetmeye başlayabilirsiniz.
+                  sonra, temel ekonomi modelinin sürekliliğini sağlamak için aktif yönetim ve
+                  planlama yapabilirsiniz.
                 </li>
               </ol>
             </section>
@@ -287,10 +259,6 @@ export default function DocsPage() {
               <FaqItem
                 question="Verilerimin silinmesini nasıl talep edebilirim?"
                 answer="Kişisel verilerinizin silinmesi talebinizi, platform üzerinden veya resmi iletişim adresimizden bize iletebilirsiniz. Talebiniz, KVKK’nın 11. maddesi uyarınca en geç 30 gün içinde sonuçlandırılır. Talebin işleme alınabilmesi için kimlik doğrulama adımları gerekmektedir. Detaylı prosedür için Gizlilik Politikası sayfamızdaki 'Veri Sahibi Hakları' bölümünü ziyaret edin."
-              />
-              <FaqItem
-                question="Yüksek Ekonomi'ye geçtikten sonra eski sisteme geri dönebilir miyim?"
-                answer="Hayır, Yüksek Ekonomi'ye geçiş kalıcıdır. Bu nedenle geçiş kararı vermeden önce her iki modun özelliklerini, getirilerini ve olası etkilerini dikkatlice değerlendirmeniz önemlidir. Geçiş sonrasında tüm kullanıcı verileri sıfırlanacağından, yedekleme ve duyuru süreçlerini eksiksiz tamamlamanızı tavsiye ederiz."
               />
             </section>
 

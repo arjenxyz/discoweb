@@ -34,7 +34,6 @@ export default function BasicEconomyPage() {
     { id: 'transfer',  label: 'Transfer',           icon: LuArrowRightLeft },
     { id: 'admin',     label: 'Admin Araçları',     icon: LuUsers },
     { id: 'limits',    label: 'Kısıtlamalar',       icon: LuShield },
-    { id: 'upgrade',   label: 'Yükseltme',          icon: LuZap },
   ];
 
   return (
@@ -85,17 +84,6 @@ export default function BasicEconomyPage() {
               })}
             </ul>
 
-            {/* Compare box */}
-            <div className="mt-8 mx-3 p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/15">
-              <p className="text-[11px] font-semibold text-indigo-400 mb-2">Karşılaştır</p>
-              <a
-                href="/economy/advanced"
-                className="flex items-center gap-2 text-[12px] text-white/50 hover:text-indigo-300 transition-colors"
-              >
-                <LuZap className="w-3.5 h-3.5" />
-                Yüksek Ekonomi'yi incele
-              </a>
-            </div>
           </nav>
         </aside>
 
@@ -238,23 +226,6 @@ export default function BasicEconomyPage() {
             </div>
           </section>
 
-          {/* Yükseltme */}
-          <section id="upgrade" className="mb-16">
-            <h2 className="text-2xl font-bold mb-2">Yüksek Ekonomi'ye Geçiş</h2>
-            <p className="text-white/40 text-sm mb-6">Hazır hissettiğinde bir üst kademeye geçebilirsin.</p>
-            <div className="p-5 rounded-xl bg-indigo-500/5 border border-indigo-500/15 text-[13px] text-white/60 space-y-3 mb-6">
-              <p>⚠️ <strong className="text-white/80">Geri dönüş yoktur.</strong> Yüksek Ekonomi'ye geçiş kalıcıdır.</p>
-              <p>⚠️ Geçiş onaylandığında tüm üyelerin Papel bakiyeleri <strong className="text-white/80">sıfırlanır</strong>.</p>
-              <p>✅ Developer onayından sonra sunucuna bir başlangıç hazine paketi yüklenir.</p>
-            </div>
-            <a
-              href="/economy/advanced"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium hover:bg-indigo-500/15 transition-colors"
-            >
-              <LuZap className="w-4 h-4" />
-              Yüksek Ekonomi'yi incele
-            </a>
-          </section>
 
         </main>
       </div>

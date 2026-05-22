@@ -299,9 +299,6 @@ export default function AdminRafflesPage() {
                   </button>
                 ))}
               </div>
-              {form.prize_type === 'mari' && (
-                <p className="mt-1 text-[11px] text-amber-400/60">⚠️ Yüksek Ekonomi özelliği — ödül sunucu kasasından çıkar.</p>
-              )}
             </div>
 
             {/* Prize-specific fields */}
