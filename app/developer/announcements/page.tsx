@@ -39,7 +39,7 @@ export default function AnnouncementsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/announcements?lang=tr', { cache: 'no-store' });
+      const res = await fetch('/api/admin/global-announcements?lang=tr', { cache: 'no-store' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? String(res.status));
       setAnnouncements(data.announcements ?? []);
@@ -106,7 +106,7 @@ export default function AnnouncementsPage() {
         } : undefined,
       };
 
-      const url = editingId ? '/api/admin/announcements' : '/api/admin/announcements';
+      const url = editingId ? '/api/admin/global-announcements' : '/api/admin/global-announcements';
       const body = editingId ? { ...payload, id: editingId } : payload;
 
       const res = await fetch(url, {
@@ -131,7 +131,7 @@ export default function AnnouncementsPage() {
   const deleteAnnouncement = async (id: string) => {
     if (!window.confirm('Bu duyuruyu silmek istiyor musunuz?')) return;
     try {
-      await fetch(`/api/admin/announcements?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+      await fetch(`/api/admin/global-announcements?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
       await fetchAnnouncements();
     } catch {}
   };
