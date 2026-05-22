@@ -26,7 +26,7 @@ import {
   LuAward,
   LuGift,
 } from 'react-icons/lu';
-import { LuCode, LuLayoutDashboard, LuCoins, LuCalculator, LuHistory, LuTrendingUp, LuBanknote } from 'react-icons/lu';
+import { LuCode, LuLayoutDashboard } from 'react-icons/lu';
 
 /* ─── MEN\u00DC YAPISI ─── */
 const MENU_GROUPS = [
@@ -52,22 +52,6 @@ const MENU_GROUPS = [
           { href: '/admin/store/discounts', label: 'İndirim Listesi', group: 'Listeler', icon: <LuBadgePercent className="h-4 w-4" /> },
         ],
       },
-    ],
-  },
-  {
-    title: 'Ekonomi',
-    items: [
-      { href: '/admin/economy', label: 'Ekonomi Paneli', icon: <LuCoins className="h-5 w-5" /> },
-      { href: '/admin/economy/transactions', label: 'İşlem Geçmişi', icon: <LuHistory className="h-5 w-5" /> },
-      { href: '/admin/economy/settings', label: 'Simülasyon & Öneriler', icon: <LuCalculator className="h-5 w-5" /> },
-    ],
-  },
-  {
-    title: 'Borsa',
-    items: [
-      { href: '/admin/market',          label: 'Borsa Durumu',    icon: <LuTrendingUp className="h-5 w-5" /> },
-      { href: '/admin/market/treasury', label: 'Hazine',          icon: <LuBanknote className="h-5 w-5" /> },
-      { href: '/admin/market/ipo',      label: 'IPO Başvurusu',   icon: <LuCoins className="h-5 w-5" /> },
     ],
   },
   {
