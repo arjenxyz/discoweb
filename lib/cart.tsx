@@ -2,8 +2,19 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { getSupabaseClient } from './supabaseClient';
-import type { StoreItem, CartItem } from '../app/dashboard/types';
+export type StoreItem = {
+  id: string;
+  title: string;
+  price: number;
+  [key: string]: any;
+};
 
+export type CartItem = {
+  itemId: string;
+  title: string;
+  price: number;
+  qty: number;
+};
 type Coupon = { id: string; code: string; percent: number; minSpend?: number; is_welcome?: boolean; is_special?: boolean; perUserLimit?: number; userUsageCount?: number };
 
 type CartContextValue = {
