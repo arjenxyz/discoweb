@@ -202,6 +202,159 @@
       "suffix_message": "(mesaj)",
       "suffix_voice": "(ses)",
       "no_channels_selected": "Henüz kanal seçilmedi."
+    },
+    "guide": {
+      "eyebrow": "Dokümantasyon",
+      "title": "Admin Kullanım Kılavuzu",
+      "subtitle": "DiscoWeb yönetim panelinin tüm modüllerini adım adım öğrenin. Güncel özellikler, en iyi uygulamalar ve sık sorulan sorular tek bir yerde.",
+      "search_placeholder": "Modül veya konu ara…",
+      "toc_title": "İçindekiler",
+      "tips_label": "Pratik İpuçları",
+      "open_page": "Sayfaya Git",
+      "stat_modules": "modül",
+      "stat_steps": "kurulum adımı",
+      "stat_faq": "SSS",
+      "no_results": "Aramanızla eşleşen bölüm bulunamadı.",
+      "clear_search": "Aramayı temizle",
+      "roadmap_title": "İlk Kurulum Yol Haritası",
+      "roadmap_subtitle": "Sunucunuzu canlıya almak için önerilen sıra.",
+      "quick_title": "Hızlı Erişim",
+      "quick_subtitle": "En sık kullanılan sayfalara tek tıkla ulaşın.",
+      "faq_title": "Sık Sorulan Sorular",
+      "faq_subtitle": "Karşılaşılan sorunlar ve çözüm önerileri.",
+      "cta_title": "Kuruluma hazır mısınız?",
+      "cta_desc": "Rolleri tanımlayın, log kanallarını bağlayın ve ekonomiyi yapılandırdıktan sonra ana ekrandan sunucunuzu izlemeye başlayın.",
+      "cta_settings": "Sunucu Ayarları",
+      "cta_dashboard": "Ana Ekrana Dön",
+      "quick": {
+        "new_product": "Yeni Ürün Oluştur",
+        "wallet": "Bakiye Yönetimi",
+        "earn": "Kazanç Ayarları",
+        "logs": "Kanallar ve Loglar",
+        "settings": "Sunucu Ayarları",
+        "announce": "Küresel Duyuru"
+      },
+      "roadmap": {
+        "login": {
+          "title": "Giriş & Sunucu Seçimi",
+          "desc": "Discord OAuth ile giriş yapın, yöneteceğiniz sunucuyu seçin."
+        },
+        "roles": {
+          "title": "Rol Yapılandırması",
+          "desc": "Admin ve onaylı üye rollerini Panel Ayarları'ndan tanımlayın."
+        },
+        "logs": {
+          "title": "Log Kanalları",
+          "desc": "Webhook URL'lerini ekleyin ve bağlantıyı test edin."
+        },
+        "economy": {
+          "title": "Ekonomi & Mağaza",
+          "desc": "Kazanç ayarları, ürünler ve promosyonları yapılandırın."
+        },
+        "launch": {
+          "title": "Canlıya Al & İzle",
+          "desc": "Ana ekrandan istatistikleri takip edin, bakım modunu yönetin."
+        }
+      },
+      "sections": {
+        "dashboard": {
+          "title": "Ana Ekran",
+          "desc": "Sunucunuzun nabzını tutan merkezi kontrol paneli. Mesaj, ses, üye, cüzdan ve tag/booster metriklerini son 24 saat ve toplam bazında görüntüleyin.",
+          "tip1": "Yenile düğmesiyle istatistikleri anlık güncelleyebilirsiniz.",
+          "tip2": "Hızlı İşlemler kartları en sık kullanılan sayfalara kısayol sağlar.",
+          "tip3": "Tag sahibi ve booster sayıları topluluk katılımını ölçmenize yardımcı olur."
+        },
+        "store": {
+          "title": "Mağaza Yönetimi",
+          "desc": "Discord rolü satan ürünler, papel paketi sunan promosyon kodları ve yüzde indirim kodlarını tek merkezden yönetin.",
+          "tip1": "Ürün oluştururken rol adıyla arama yapın; bot rol ID'sini otomatik doldurur.",
+          "tip2": "Promosyon kodları papel yükler, kullanım limiti ve süre tanımlanabilir.",
+          "tip3": "İndirim kodları yüzde bazlıdır; mağaza alışverişlerinde uygulanır.",
+          "tip4": "Pasif ürünler listede kalır ancak satın alınamaz — geçici kapatma için idealdir."
+        },
+        "earn": {
+          "title": "Kazanç Ayarları",
+          "desc": "Mesaj ve sesli sohbet kazanç oranlarını, tag/booster bonuslarını, doğrulama rolünü ve kanal filtrelerini (tüm/beyaz liste/kara liste) yapılandırın.",
+          "tip1": "Doğrulama rolü boş bırakılırsa tüm üyeler ödül alır; doluysa yalnızca o role sahip üyeler.",
+          "tip2": "Tag zorunluluğu için sunucuda Discord tag yapılandırması gerekir.",
+          "tip3": "Kanal modu ile kazancı belirli metin/ses kanallarına veya kategorilere sınırlayabilirsiniz.",
+          "tip4": "Değişiklikleri kaydetmeden önce Geri Al ile son haline dönebilirsiniz."
+        },
+        "wallet": {
+          "title": "Bakiye Yönetimi",
+          "desc": "Tek kullanıcıya veya tüm üyelere papel ekleyin veya çıkarın. Hazır mesaj şablonları, açıklama zorunluluğu ve otomatik bildirim maili desteklenir.",
+          "tip1": "Papel eklerken açıklama zorunludur; {amount} yer tutucusu otomatik doldurulur.",
+          "tip2": "Kullanıcı araması nickname veya username ile çalışır.",
+          "tip3": "Toplu işlemlerde tüm üye bakiyeleri etkilenir — dikkatli kullanın."
+        },
+        "logs": {
+          "title": "Kanallar ve Loglar",
+          "desc": "Üye ve admin olaylarını ayrı webhook kanallarına yönlendirin. Kimlik, roller, mağaza, cüzdan, bildirim ve ayar logları ayrı ayrı izlenebilir.",
+          "tip1": "Aynı webhook URL birden fazla kanala atanamaz — sistem bunu engeller.",
+          "tip2": "Webhook Testi ile bağlantıyı kaydetmeden önce doğrulayın.",
+          "tip3": "Üye kanalları: genel, kimlik, roller, değişim, mağaza. Admin kanalları: genel, cüzdan, mağaza, bildirim, ayarlar.",
+          "tip4": "Pasif kanallar log almaz; geçici kapatma için is_active kullanın."
+        },
+        "community": {
+          "title": "Tag & Booster",
+          "desc": "Tag rozet kademeleri ve booster ödül katmanlarını tanımlayın. Gün/ay şartı, papel ödülü, kazanç çarpanı ve rol ataması yapılandırılabilir.",
+          "tip1": "Tag Ayarları sayfasında kademe oluşturup sıralama, emoji ve arka plan görseli ekleyin.",
+          "tip2": "Booster Ayarları, sunucu takviye süresine göre ödül katmanları sunar.",
+          "tip3": "Kazanç Ayarları'ndaki tag/booster bonusları bu kademelerle birlikte çalışır."
+        },
+        "settings": {
+          "title": "Sunucu Ayarları",
+          "desc": "Admin rolü, onaylı üye rolü, onay eşiği ve davet ödülü gibi temel sunucu tercihlerini yönetin. Panel Ayarları menüsünden erişilir.",
+          "tip1": "Admin rolü panel erişimini belirler; bot bu rolden daha üstte olmalıdır.",
+          "tip2": "Onaylı üye rolü mağaza ve kazanç sistemine erişimi kontrol eder.",
+          "tip3": "Kurulumu kaldırma seçeneği sunucu bağlantısını sıfırlar — yalnızca gerekli durumlarda kullanın."
+        },
+        "maintenance": {
+          "title": "Bakım Modu",
+          "desc": "Site, mağaza, işlemler, promosyon, indirim, transfer, bot ve activity akışlarını ayrı ayrı bakıma alın.",
+          "tip1": "Granüler bayraklar sayesinde yalnızca etkilenen modül kapatılır.",
+          "tip2": "Her değişiklik güncelleyen kullanıcı ve zaman damgasıyla kaydedilir."
+        },
+        "announcements": {
+          "title": "Küresel Duyuru",
+          "desc": "Tüm DiscoWeb kullanıcılarına görünen duyurular oluşturun. Başlık, içerik, detay URL'si ve medya görseli desteklenir.",
+          "tip1": "Başlık ve içerik zorunludur; görsel ve detay linki isteğe bağlıdır.",
+          "tip2": "Yayınlanan duyurular platform genelinde görünür — dikkatli kullanın."
+        },
+        "security": {
+          "title": "Güvenlik Merkezi",
+          "desc": "Rol hiyerarşisi, webhook yönetimi, service role key ve şüpheli olay izleme hakkında en iyi uygulamalar.",
+          "tip1": "SUPABASE_SERVICE_ROLE_KEY yalnızca sunucu tarafında saklanmalıdır.",
+          "tip2": "Webhook URL'lerini yalnızca güvenilir admin ekibi yönetmelidir.",
+          "tip3": "Bot rolü, otomatik atanacak tüm rollerden daha üstte konumlandırılmalıdır."
+        }
+      },
+      "faq": {
+        "access": {
+          "q": "Admin paneline kimler erişebilir?",
+          "a": "Sunucu Ayarları'nda tanımlanan admin rolüne sahip Discord üyeleri panele erişir. Rol panelden veya DISCORD_ADMIN_ROLE_ID ortam değişkeniyle belirlenebilir."
+        },
+        "roles": {
+          "q": "Rol aramasında sonuç çıkmıyor, ne yapmalıyım?",
+          "a": "En az 2 karakter yazın. Botun sunucuda rol listesini okuma izni olduğundan ve bot rolünün hedef rolden üstte olduğundan emin olun."
+        },
+        "logs": {
+          "q": "Loglar Discord'a düşmüyor, ne kontrol etmeliyim?",
+          "a": "Webhook URL'sinin geçerli olduğunu, kanalın aktif (is_active) olduğunu ve aynı URL'nin başka kanala atanmadığını doğrulayın. Webhook Testi ile bağlantıyı test edin."
+        },
+        "orders": {
+          "q": "Mağaza siparişleri neden başarısız oluyor?",
+          "a": "Bot çevrimdışı olabilir, rol hiyerarşisi hatalı olabilir veya hedef rol bot rolünden üstte olabilir. Mağaza bakım modunun kapalı olduğunu kontrol edin."
+        },
+        "earn": {
+          "q": "Üyeler papel kazanamıyor, olası nedenler neler?",
+          "a": "Kazanç Ayarları'nda mesaj/ses kazancının açık olduğunu, doğrulama rolü gereksinimini, kanal filtresini (beyaz/kara liste) ve tag zorunluluğunu kontrol edin."
+        },
+        "wallet": {
+          "q": "Bakiye işlemi sonrası mail gitmiyor?",
+          "a": "Papel düşme işlemlerinde admin mail API'si devreye girer. API yanıt kodunu kontrol edin; ekleme işlemlerinde ödül maili bot tarafından gönderilir."
+        }
+      }
     }
   }
 }
