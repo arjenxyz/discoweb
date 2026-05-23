@@ -262,7 +262,7 @@ export async function DELETE(request: Request) {
     .eq('id', body.id)
     .single();
 
-  const targetId = banRecord ? (body.type === 'server' ? banRecord.guild_id : banRecord.user_id) : 'Bilinmiyor';
+  const targetId = banRecord ? (body.type === 'server' ? (banRecord as any).guild_id : (banRecord as any).user_id) : 'Bilinmiyor';
 
   const { error } = await supabase
     .from(table)
