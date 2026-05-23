@@ -1,0 +1,19 @@
+{
+  "sidebar": {
+    "dashboard": "Ana Ekran",
+    "bot_settings": "Bot Ayarları",
+    "channels_logs": "Kanallar ve Loglar",
+    "economy": "Ekonomi",
+    "store": "Mağaza (Market)",
+    "user_management": "Kullanıcı Yönetimi",
+    "global_announcements": "Küresel Duyuru",
+    "back_to_select": "Sunucu Seçimine Dön"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "success": "Başarılı"
+  }
+}

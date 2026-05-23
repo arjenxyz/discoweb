@@ -1,0 +1,19 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "bot_settings": "Bot Settings",
+    "channels_logs": "Channels & Logs",
+    "economy": "Economy",
+    "store": "Store (Market)",
+    "user_management": "User Management",
+    "global_announcements": "Global Announcements",
+    "back_to_select": "Back to Select Server"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "success": "Success"
+  }
+}

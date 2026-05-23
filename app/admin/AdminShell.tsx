@@ -29,58 +29,62 @@ import {
   LuLayoutGrid,
 } from 'react-icons/lu';
 import { LuCode } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
+import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
-/* ─── MENÜ YAPISI ─── */
-const MENU_GROUPS = [
-  {
-    title: 'Genel',
-    items: [{ href: '/admin', label: 'Genel Bakış', icon: <LuChartBar className="h-4 w-4" /> }],
-  },
-  {
-    title: 'Mağaza',
-    items: [
-      {
-        label: 'Mağaza',
-        icon: <LuStore className="h-4 w-4" />,
-        children: [
-          { href: '/admin/store/products/new', label: 'Yeni Ürün Oluştur', group: 'Oluştur', icon: <LuPackage className="h-4 w-4" /> },
-          { href: '/admin/store/promos/new', label: 'Promosyon Kodu Oluştur', group: 'Oluştur', icon: <LuTag className="h-4 w-4" /> },
-          { href: '/admin/store/discounts/new', label: 'İndirim Kodu Oluştur', group: 'Oluştur', icon: <LuBadgePercent className="h-4 w-4" /> },
-          { href: '/admin/store/products', label: 'Ürün Listesi', group: 'Listeler', icon: <LuClipboardList className="h-4 w-4" /> },
-          { href: '/admin/store/promos', label: 'Promosyon Listesi', group: 'Listeler', icon: <LuTag className="h-4 w-4" /> },
-          { href: '/admin/store/discounts', label: 'İndirim Listesi', group: 'Listeler', icon: <LuBadgePercent className="h-4 w-4" /> },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Topluluk',
-    items: [
-      {
-        label: 'Tag & Booster',
-        icon: <LuAward className="h-4 w-4" />,
-        children: [
-          { href: '/admin/badges', label: 'Tag Ayarları', group: 'Tag Rozeti', icon: <LuAward className="h-4 w-4" /> },
-          { href: '/admin/boosters', label: 'Booster Ayarları', group: 'Tag Rozeti', icon: <LuZap className="h-4 w-4" /> },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Yönetim',
-    items: [
-      { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-4 w-4" /> },
-      { href: '/admin/earn-settings', label: 'Kazanç Ayarları', icon: <LuChartBar className="h-4 w-4" /> },
-      { href: '/admin/log-channels', label: 'Log Kanalları', icon: <LuClipboardList className="h-4 w-4" /> },
-    ],
-  },
-];
-
-const HEADER_LINKS = [
-  { href: '/admin/guide', label: 'Kullanım Kılavuzu', icon: <LuFileText className="h-4 w-4" /> },
-];
+/* ─── MENÜ YAPISI İÇERİ TAŞINDI ─── */
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
+
+  const MENU_GROUPS = [
+    {
+      title: 'Genel',
+      items: [{ href: '/admin', label: t('sidebar.dashboard'), icon: <LuChartBar className="h-4 w-4" /> }],
+    },
+    {
+      title: 'Mağaza',
+      items: [
+        {
+          label: t('sidebar.store'),
+          icon: <LuStore className="h-4 w-4" />,
+          children: [
+            { href: '/admin/store/products/new', label: 'Yeni Ürün Oluştur', group: 'Oluştur', icon: <LuPackage className="h-4 w-4" /> },
+            { href: '/admin/store/promos/new', label: 'Promosyon Kodu Oluştur', group: 'Oluştur', icon: <LuTag className="h-4 w-4" /> },
+            { href: '/admin/store/discounts/new', label: 'İndirim Kodu Oluştur', group: 'Oluştur', icon: <LuBadgePercent className="h-4 w-4" /> },
+            { href: '/admin/store/products', label: 'Ürün Listesi', group: 'Listeler', icon: <LuClipboardList className="h-4 w-4" /> },
+            { href: '/admin/store/promos', label: 'Promosyon Listesi', group: 'Listeler', icon: <LuTag className="h-4 w-4" /> },
+            { href: '/admin/store/discounts', label: 'İndirim Listesi', group: 'Listeler', icon: <LuBadgePercent className="h-4 w-4" /> },
+          ],
+        },
+      ],
+    },
+    {
+      title: 'Topluluk',
+      items: [
+        {
+          label: 'Tag & Booster',
+          icon: <LuAward className="h-4 w-4" />,
+          children: [
+            { href: '/admin/badges', label: 'Tag Ayarları', group: 'Tag Rozeti', icon: <LuAward className="h-4 w-4" /> },
+            { href: '/admin/boosters', label: 'Booster Ayarları', group: 'Tag Rozeti', icon: <LuZap className="h-4 w-4" /> },
+          ],
+        },
+      ],
+    },
+    {
+      title: 'Yönetim',
+      items: [
+        { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-4 w-4" /> },
+        { href: '/admin/earn-settings', label: t('sidebar.economy'), icon: <LuChartBar className="h-4 w-4" /> },
+        { href: '/admin/log-channels', label: t('sidebar.channels_logs'), icon: <LuClipboardList className="h-4 w-4" /> },
+      ],
+    },
+  ];
+
+  const HEADER_LINKS = [
+    { href: '/admin/guide', label: 'Kullanım Kılavuzu', icon: <LuFileText className="h-4 w-4" /> },
+  ];
   const [collapsed, setCollapsed] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [storeMenuOpen, setStoreMenuOpen] = useState(false);
@@ -469,6 +473,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   {item.icon}
                 </Link>
               ))}
+
+              <LanguageSwitcher />
 
               <div className="relative" ref={accountMenuRef}>
                 <button

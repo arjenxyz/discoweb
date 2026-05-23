@@ -32,6 +32,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { LanguageProvider } from "@/lib/i18nContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,10 +47,12 @@ export default function RootLayout({
         <ThemeBootstrap />
         <ServiceWorkerRegister />
         <DeveloperHideGuard />
-        <CartProvider>
-          {children}
-          <CartDrawer />
-        </CartProvider>
+        <LanguageProvider>
+          <CartProvider>
+            {children}
+            <CartDrawer />
+          </CartProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
