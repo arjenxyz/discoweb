@@ -1,73 +1,39 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getMaintenanceFlags } from '@/lib/maintenance';
+import {
+  buildDayKeys,
+  buildHistoryFromErrors,
+  calcUptimePercent,
+  COMPONENT_IDS,
+  HISTORY_DAYS,
+  INCIDENT_DAYS,
+  incidentBody,
+  incidentTitle,
+  liveCheckToStatus,
+  mapCategoryToComponent,
+  mapIncidentPhase,
+  mapIncidentSeverity,
+  resolveOverallStatus,
+  type ErrorLogRow,
+} from '@/lib/status/helpers';
+import type {
+  ComponentStatus,
+  StatusDayIncidents,
+  StatusGroup,
+  StatusIncident,
+  StatusPayload,
+} from '@/lib/status/types';
 
 const BOT_STATUS_URL = process.env.BOT_STATUS_URL || 'https://discoweb-bot.onrender.com/api/test';
 const BOT_STATUS_TIMEOUT_MS = Number(process.env.BOT_STATUS_TIMEOUT_MS || 4000);
+const DEFAULT_GUILD_ID = process.env.DISCORD_GUILD_ID || '1465698764453838882';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!supabaseUrl || !serviceRoleKey) return null;
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
-};
-
-const mapIncidentStatus = (severity?: string) => {
-  const s = (severity || '').toUpperCase();
-  if (s === 'CRITICAL') return 'investigating';
-  if (s === 'HIGH') return 'identified';
-  if (s === 'MEDIUM') return 'monitoring';
-  return 'monitoring';
-};
-
-const mapIncidentSeverity = (severity?: string) => {
-  const s = (severity || '').toLowerCase();
-  if (s === 'critical') return 'critical';
-  if (s === 'high') return 'high';
-  if (s === 'medium') return 'medium';
-  return 'low';
-};
-
-const mapAffectedService = (category?: string) => {
-  const c = (category || '').toUpperCase();
-  if (c === 'DATA') return 'Database';
-  if (c === 'NETWORK' || c === 'SYSTEM' || c === 'PERMISSION') return 'Discord Bot';
-  return 'Web API';
-};
-
-const friendlyIncidentTitle = (category?: string) => {
-  const c = (category || '').toUpperCase();
-  if (c === 'DATA') return 'Veritabanında gecikme veya hata';
-  if (c === 'NETWORK') return 'Discord bağlantısında sorun';
-  if (c === 'PERMISSION') return 'Bot yetkilerinde sorun';
-  if (c === 'SYSTEM') return 'Botta beklenmeyen hata';
-  return 'Web servisinde sorun';
-};
-
-const friendlyIncidentDescription = (category?: string, severity?: string) => {
-  const c = (category || '').toUpperCase();
-  const s = (severity || '').toUpperCase();
-  const critical = s === 'CRITICAL' || s === 'HIGH';
-  if (c === 'DATA') {
-    return critical
-      ? 'Veritabanında kritik hata var. Ekiplerimiz müdahale ediyor.'
-      : 'Veritabanında performans sorunu tespit edildi, takipteyiz.';
-  }
-  if (c === 'NETWORK') {
-    return critical
-      ? 'Discord bağlantısında kritik kesinti var, ekiplerimiz inceliyor.'
-      : 'Discord bağlantısında geçici dalgalanma var, izleniyor.';
-  }
-  if (c === 'PERMISSION') {
-    return 'Bot yetkilerinde sorun var. Ekiplerimiz düzeltme üzerinde çalışıyor.';
-  }
-  if (c === 'SYSTEM') {
-    return critical
-      ? 'Botta kritik bir hata oluştu, ekiplerimiz inceliyor.'
-      : 'Botta geçici bir hata oluştu, ekiplerimiz izliyor.';
-  }
-  return critical
-    ? 'Web servisinde kritik hata var, ekiplerimiz inceliyor.'
-    : 'Web servisinde küçük bir sorun tespit edildi, izleniyor.';
 };
 
 async function checkBotStatus() {
@@ -77,14 +43,11 @@ async function checkBotStatus() {
   try {
     const res = await fetch(BOT_STATUS_URL, { signal: controller.signal, cache: 'no-store' });
     const elapsed = Date.now() - start;
-    if (res.ok) {
-      return { status: 'operational', responseTime: elapsed };
-    }
-    if (res.status >= 500) return { status: 'down', responseTime: elapsed };
-    return { status: 'degraded', responseTime: elapsed };
+    if (res.ok) return { status: 'operational' as const, responseTime: elapsed };
+    if (res.status >= 500) return { status: 'down' as const, responseTime: elapsed };
+    return { status: 'degraded' as const, responseTime: elapsed };
   } catch {
-    const elapsed = Date.now() - start;
-    return { status: 'down', responseTime: elapsed };
+    return { status: 'down' as const, responseTime: Date.now() - start };
   } finally {
     clearTimeout(timeout);
   }
@@ -93,17 +56,76 @@ async function checkBotStatus() {
 async function checkDbStatus(supabase: NonNullable<ReturnType<typeof getSupabase>>) {
   const start = Date.now();
   try {
-    const { error } = await supabase
-      .from('servers')
-      .select('id')
-      .limit(1);
+    const { error } = await supabase.from('servers').select('id').limit(1);
     const elapsed = Date.now() - start;
-    if (error) return { status: 'down', responseTime: elapsed };
-    return { status: 'operational', responseTime: elapsed };
+    if (error) return { status: 'down' as const, responseTime: elapsed };
+    return { status: 'operational' as const, responseTime: elapsed };
   } catch {
-    const elapsed = Date.now() - start;
-    return { status: 'down', responseTime: elapsed };
+    return { status: 'down' as const, responseTime: Date.now() - start };
   }
+}
+
+function formatDayLabel(dateKey: string, locale = 'tr-TR') {
+  const date = new Date(`${dateKey}T12:00:00`);
+  return date.toLocaleDateString(locale, {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function buildPastIncidents(errors: ErrorLogRow[]): StatusDayIncidents[] {
+  const cutoff = new Date();
+  cutoff.setHours(0, 0, 0, 0);
+  cutoff.setDate(cutoff.getDate() - (INCIDENT_DAYS - 1));
+
+  const dayKeys: string[] = [];
+  for (let i = 0; i < INCIDENT_DAYS; i += 1) {
+    const d = new Date(cutoff);
+    d.setDate(cutoff.getDate() + i);
+    dayKeys.push(d.toISOString().slice(0, 10));
+  }
+
+  const byDay = new Map<string, StatusIncident[]>();
+  for (const key of dayKeys) {
+    byDay.set(key, []);
+  }
+
+  for (const row of errors) {
+    const day = row.created_at.slice(0, 10);
+    if (!byDay.has(day)) continue;
+    const phase = mapIncidentPhase(row.severity);
+    byDay.get(day)!.push({
+      id: row.id,
+      title: incidentTitle(row.category),
+      status: phase,
+      severity: mapIncidentSeverity(row.severity),
+      startedAt: row.created_at,
+      updatedAt: row.created_at,
+      affectedComponents: [mapCategoryToComponent(row.category)],
+      updates: [
+        {
+          phase,
+          body: incidentBody(row.category, row.severity),
+          at: row.created_at,
+        },
+        ...(phase !== 'resolved'
+          ? [{
+              phase: 'resolved' as const,
+              body: 'Sorun giderildi ve servisler normal çalışmaya döndü.',
+              at: row.created_at,
+            }]
+          : []),
+      ],
+    });
+  }
+
+  return [...dayKeys].reverse().map((date) => ({
+    date,
+    label: formatDayLabel(date),
+    incidents: byDay.get(date) ?? [],
+    empty: (byDay.get(date) ?? []).length === 0,
+  }));
 }
 
 export async function GET() {
@@ -111,69 +133,172 @@ export async function GET() {
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
 
-  const [bot, db] = await Promise.all([
-    checkBotStatus(),
-    checkDbStatus(supabase),
-  ]);
+  const maintenanceData = await getMaintenanceFlags(DEFAULT_GUILD_ID);
+  const flags = maintenanceData?.flags;
 
+  const [bot, db] = await Promise.all([checkBotStatus(), checkDbStatus(supabase)]);
+  const webApiTime = Date.now() - startApi;
   const nowIso = new Date().toISOString();
-  const dayAgoIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-  const { data: recentErrors } = await supabase
+  const historySince = new Date();
+  historySince.setHours(0, 0, 0, 0);
+  historySince.setDate(historySince.getDate() - (HISTORY_DAYS - 1));
+
+  const incidentSince = new Date();
+  incidentSince.setHours(0, 0, 0, 0);
+  incidentSince.setDate(incidentSince.getDate() - (INCIDENT_DAYS - 1));
+
+  const { data: historyErrors } = await supabase
     .from('error_logs')
     .select('id,code,title,severity,category,created_at')
-    .gte('created_at', dayAgoIso)
+    .gte('created_at', historySince.toISOString())
     .order('created_at', { ascending: false })
-    .limit(10);
+    .limit(500);
 
-  const incidents = (recentErrors || []).map((e) => ({
-    id: e.id,
-    title: friendlyIncidentTitle(e.category),
-    status: mapIncidentStatus(e.severity),
-    severity: mapIncidentSeverity(e.severity),
-    startedAt: e.created_at,
-    updatedAt: e.created_at,
-    description: friendlyIncidentDescription(e.category, e.severity),
-    affectedServices: [mapAffectedService(e.category)],
-  }));
+  const errors = (historyErrors ?? []) as ErrorLogRow[];
+  const dayKeys = buildDayKeys(HISTORY_DAYS);
 
-  const webApiTime = Date.now() - startApi;
+  const siteMaint = Boolean(flags?.site?.is_active);
+  const botMaint = Boolean(flags?.bot?.is_active);
+  const storeMaint = Boolean(flags?.store?.is_active);
+  const transfersMaint = Boolean(flags?.transfers?.is_active);
+  const promosMaint = Boolean(flags?.promotions?.is_active || flags?.discounts?.is_active);
+  const activityMaint = Boolean(flags?.activity?.is_active);
 
-  // Gerçekçi bir uptime hesaplaması simülasyonu
-  // Gerçekte ayrı bir ping servisi gerekir, burada hata sayısına göre hafif düşüş yapıyoruz
-  const calcUptime = (base: number, affectedCategory: string) => {
-    const errorCount = (recentErrors || []).filter(e => mapAffectedService(e.category) === affectedCategory).length;
-    return Number((base - (errorCount * 0.05)).toFixed(2));
+  const componentDefs = [
+    {
+      id: COMPONENT_IDS.WEB_API,
+      name: 'Web API',
+      description: 'REST API uç noktaları ve panel istekleri',
+      live: liveCheckToStatus('operational', siteMaint),
+      responseTime: webApiTime,
+      maintenance: siteMaint,
+    },
+    {
+      id: COMPONENT_IDS.DISCORD_BOT,
+      name: 'Discord Bot',
+      description: 'Bot komutları, olay dinleyicileri ve rol işlemleri',
+      live: liveCheckToStatus(bot.status, botMaint),
+      responseTime: bot.responseTime,
+      maintenance: botMaint,
+    },
+    {
+      id: COMPONENT_IDS.DATABASE,
+      name: 'Database',
+      description: 'PostgreSQL veritabanı ve Supabase bağlantısı',
+      live: liveCheckToStatus(db.status, false),
+      responseTime: db.responseTime,
+      maintenance: false,
+    },
+    {
+      id: COMPONENT_IDS.STORE,
+      name: 'Store',
+      description: 'Mağaza, ürün satın alma ve sipariş akışı',
+      live: storeMaint ? 'maintenance' as ComponentStatus : 'operational',
+      maintenance: storeMaint,
+    },
+    {
+      id: COMPONENT_IDS.WALLET,
+      name: 'Wallet & Transfers',
+      description: 'Papel bakiyesi, transferler ve cüzdan işlemleri',
+      live: transfersMaint ? 'maintenance' as ComponentStatus : 'operational',
+      maintenance: transfersMaint,
+    },
+    {
+      id: COMPONENT_IDS.PROMOTIONS,
+      name: 'Promotions & Discounts',
+      description: 'Promosyon ve indirim kodu kullanımı',
+      live: promosMaint ? 'maintenance' as ComponentStatus : 'operational',
+      maintenance: promosMaint,
+    },
+    {
+      id: COMPONENT_IDS.ACTIVITY,
+      name: 'Activity Tracking',
+      description: 'Mesaj/ses aktivitesi ve kazanç senkronizasyonu',
+      live: activityMaint ? 'maintenance' as ComponentStatus : 'operational',
+      maintenance: activityMaint,
+    },
+  ] as const;
+
+  const components = componentDefs.map((def) => {
+    const history = buildHistoryFromErrors(def.id, dayKeys, errors);
+    const todayKey = dayKeys[dayKeys.length - 1];
+    if (def.maintenance && history.length > 0) {
+      history[history.length - 1] = 'maintenance';
+    }
+    return {
+      id: def.id,
+      name: def.name,
+      description: def.description,
+      status: def.live,
+      uptime90: calcUptimePercent(history),
+      history,
+      responseTime: 'responseTime' in def ? def.responseTime : undefined,
+    };
+  });
+
+  const platformIds = new Set<string>([
+    COMPONENT_IDS.WEB_API,
+    COMPONENT_IDS.DISCORD_BOT,
+    COMPONENT_IDS.DATABASE,
+  ]);
+  const economyIds = new Set<string>([
+    COMPONENT_IDS.STORE,
+    COMPONENT_IDS.WALLET,
+    COMPONENT_IDS.PROMOTIONS,
+  ]);
+
+  const groups: StatusGroup[] = [
+    {
+      id: 'core',
+      name: 'Platform',
+      components: components.filter((c) => platformIds.has(c.id)),
+    },
+    {
+      id: 'economy',
+      name: 'Economy',
+      components: components.filter((c) => economyIds.has(c.id)),
+    },
+    {
+      id: 'features',
+      name: 'Features',
+      components: components.filter((c) => c.id === COMPONENT_IDS.ACTIVITY),
+    },
+  ];
+
+  const activeIncidents: StatusIncident[] = errors
+    .filter((e) => {
+      const age = Date.now() - new Date(e.created_at).getTime();
+      return age <= 24 * 60 * 60 * 1000;
+    })
+    .slice(0, 8)
+    .map((row) => {
+      const phase = mapIncidentPhase(row.severity);
+      return {
+        id: row.id,
+        title: incidentTitle(row.category),
+        status: phase,
+        severity: mapIncidentSeverity(row.severity),
+        startedAt: row.created_at,
+        updatedAt: row.created_at,
+        affectedComponents: [mapCategoryToComponent(row.category)],
+        updates: [
+          { phase, body: incidentBody(row.category, row.severity), at: row.created_at },
+        ],
+      };
+    });
+
+  const payload: StatusPayload = {
+    generatedAt: nowIso,
+    overall: resolveOverallStatus(components.map((c) => c.status)),
+    groups,
+    activeIncidents,
+    pastIncidents: buildPastIncidents(errors),
   };
 
-  return NextResponse.json({
-    generatedAt: nowIso,
-    services: [
-      {
-        name: 'Discord Bot API',
-        status: bot.status,
-        description: 'Discord bot komutları ve olayları',
-        lastChecked: nowIso,
-        responseTime: bot.responseTime,
-        uptime: calcUptime(99.99, 'Discord Bot'),
-      },
-      {
-        name: 'Database',
-        status: db.status,
-        description: 'PostgreSQL veritabanı bağlantısı',
-        lastChecked: nowIso,
-        responseTime: db.responseTime,
-        uptime: calcUptime(100.00, 'Database'),
-      },
-      {
-        name: 'Web API',
-        status: 'operational',
-        description: 'REST API endpoint\'leri',
-        lastChecked: nowIso,
-        responseTime: webApiTime,
-        uptime: calcUptime(99.99, 'Web API'),
-      },
-    ],
-    incidents,
+  return NextResponse.json(payload, {
+    headers: {
+      'Cache-Control': 'no-store, max-age=0',
+    },
   });
 }
