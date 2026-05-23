@@ -1,9 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { LuFileText, LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu';
+import { LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
 import AdminSidebarNav from './AdminSidebarNav';
 
@@ -22,7 +20,6 @@ type AdminSidebarProps = {
   openSections: Record<string, boolean>;
   onToggleSection: (id: string) => void;
   variant?: 'desktop' | 'mobile';
-  onClose?: () => void;
 };
 
 export default function AdminSidebar({
@@ -32,10 +29,8 @@ export default function AdminSidebar({
   openSections,
   onToggleSection,
   variant = 'desktop',
-  onClose,
 }: AdminSidebarProps) {
   const { t } = useTranslation();
-  const pathname = usePathname();
   const isMobile = variant === 'mobile';
   const showExpanded = !collapsed || isMobile;
 
@@ -108,27 +103,6 @@ export default function AdminSidebar({
           openSections={openSections}
           onToggleSection={onToggleSection}
         />
-      </div>
-
-      {/* Footer links */}
-      <div className="shrink-0 border-t border-white/[0.06] px-3 py-3 space-y-1">
-        <Link
-          href="/admin/guide"
-          onClick={onClose}
-          className={`flex items-center rounded-xl transition-all duration-200 ${
-            showExpanded ? 'gap-3 px-2.5 py-2' : 'mx-auto h-11 w-11 justify-center'
-          } ${
-            pathname.startsWith('/admin/guide')
-              ? 'bg-indigo-500/12 text-indigo-200 shadow-[inset_3px_0_0_0_#818cf8]'
-              : 'text-white/45 hover:bg-white/[0.04] hover:text-white/80'
-          }`}
-          title={!showExpanded ? t('admin.shell.guide') : undefined}
-        >
-          <span className={`flex shrink-0 items-center justify-center rounded-lg bg-white/[0.04] ${showExpanded ? 'h-8 w-8' : 'h-9 w-9'}`}>
-            <LuFileText className="h-4 w-4" />
-          </span>
-          {showExpanded && <span className="text-[13px] font-medium">{t('admin.shell.guide')}</span>}
-        </Link>
       </div>
     </>
   );

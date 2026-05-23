@@ -177,7 +177,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           collapsed={false}
           onToggleCollapse={() => {}}
           variant="mobile"
-          onClose={() => setMobileMenuOpen(false)}
         />
       </AdminMobileDrawer>
     </div>
