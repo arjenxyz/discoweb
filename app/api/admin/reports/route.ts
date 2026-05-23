@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireSessionUser } from '@/lib/auth';
 import { createClient } from '@supabase/supabase-js';
 
+const DEV_GUILD_ID = process.env.DEVELOPER_GUILD_ID ?? process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
+const DEV_ROLE_ID = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
+const ERROR_WEBHOOK = process.env.DISCORD_ERROR_WEBHOOK_URL ?? '';
+
 const getSupabaseAdmin = () => {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
@@ -10,15 +14,12 @@ const getSupabaseAdmin = () => {
 
 export const dynamic = 'force-dynamic';
 
-const DEV_GUILD_ID  = process.env.DISCORD_GUILD_ID ?? '';
-const DEV_ROLE_ID   = process.env.DEVELOPER_ROLE_ID ?? '';
-
 async function isDeveloper(userId: string): Promise<boolean> {
   if (!DEV_GUILD_ID || !DEV_ROLE_ID) return false;
   const botToken = process.env.DISCORD_BOT_TOKEN;
   if (!botToken) return false;
   try {
-    const res = await fetch(`https://discord.com/api/guilds/${DEV_GUILD_ID}/members/${userId}`, {
+    const res = await fetch(`https://discord.com/api/v10/guilds/${DEV_GUILD_ID}/members/${userId}`, {
       headers: { Authorization: `Bot ${botToken}` },
     });
     if (!res.ok) return false;

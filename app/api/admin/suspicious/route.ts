@@ -12,8 +12,8 @@ import { requireSessionUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-const DEV_GUILD_ID = process.env.DISCORD_GUILD_ID ?? '';
-const DEV_ROLE_ID  = process.env.DEVELOPER_ROLE_ID ?? '';
+const DEV_GUILD_ID = process.env.DEVELOPER_GUILD_ID ?? process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
+const DEV_ROLE_ID  = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
 const ERROR_WEBHOOK = process.env.DISCORD_ERROR_WEBHOOK_URL ?? '';
 
 const getSupabase = () => {
@@ -28,7 +28,7 @@ async function isDeveloper(userId: string): Promise<boolean> {
   const botToken = process.env.DISCORD_BOT_TOKEN;
   if (!botToken) return false;
   try {
-    const res = await fetch(`https://discord.com/api/guilds/${DEV_GUILD_ID}/members/${userId}`, {
+    const res = await fetch(`https://discord.com/api/v10/guilds/${DEV_GUILD_ID}/members/${userId}`, {
       headers: { Authorization: `Bot ${botToken}` },
     });
     if (!res.ok) return false;
