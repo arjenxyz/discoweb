@@ -16,7 +16,7 @@ const translations: Record<Language, Translations> = {
 interface I18nContextProps {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const I18nContext = createContext<I18nContextProps | undefined>(undefined);
@@ -46,7 +46,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     document.cookie = `app_language=${lang}; path=/; max-age=31536000`;
   };
 
-  const t = (key: string): string => {
+  const t = (key: string, params?: Record<string, string | number>): string => {
     const keys = key.split('.');
     let value = translations[language];
 
@@ -59,7 +59,15 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    return typeof value === 'string' ? value : key;
+    let str = typeof value === 'string' ? value : key;
+    
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+      });
+    }
+
+    return str;
   };
 
   // Always provide the context so hooks don't break during SSR
@@ -77,7 +85,7 @@ export const useTranslation = (): I18nContextProps => {
     return {
       language: 'tr',
       setLanguage: () => {},
-      t: (key: string) => key,
+      t: (key: string, params?: Record<string, string | number>) => key,
     };
   }
   return context;

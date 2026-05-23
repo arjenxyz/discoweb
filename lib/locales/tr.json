@@ -15,5 +15,41 @@
     "save": "Kaydet",
     "cancel": "İptal",
     "success": "Başarılı"
+  },
+  "home": {
+    "loading": "Yükleniyor...",
+    "welcome": "DiscoWeb'e Hoş Geldiniz",
+    "description": "Discord sunucularınızı yönetmek için epik bir yolculuğa çıkın! Mağaza, promosyonlar ve daha fazlasıyla topluluğunuzu büyütün. Hazır mısınız?",
+    "copyright": "DiscoWeb | 2026 © Tüm hakları saklıdır"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Yönetim Paneli",
+      "active": "Aktif",
+      "unconfigured": "Kurulmamış",
+      "default_server_name": "Yönetim Merkezi",
+      "subtitle": "Sunucunuzun genel durumunu ve istatistiklerini buradan takip edin.",
+      "refresh": "Yenile",
+      "earn_settings": "Kazanç Ayarları",
+      "maintenance_mode": "Bakım Modu",
+      "server_activity": "Sunucu Aktivitesi",
+      "messages_24h": "Mesaj (Son 24 Saat)",
+      "total": "Toplam",
+      "voice_24h": "Sesli Dakika (Son 24 Saat)",
+      "total_min": "Toplam: {0} dk",
+      "registered_members": "Kayıtlı Üye",
+      "wallets_created": "{0} cüzdan oluşturulmuş",
+      "tag_owner": "Tag Sahibi",
+      "booster": "Booster",
+      "stats_error": "İstatistik verileri yüklenemedi. Lütfen sayfayı yenileyin.",
+      "quick_actions": "Hızlı İşlemler",
+      "action_new_product": "Yeni Ürün Oluştur",
+      "action_wallet": "Bakiye Yönetimi",
+      "action_notify": "Bildirim Gönder",
+      "action_promo": "Promosyon Kodu Oluştur",
+      "action_discount": "İndirim Kodu Oluştur",
+      "action_log_channels": "Log Kanalları",
+      "action_guide": "Kullanım Kılavuzu"
+    }
   }
 }

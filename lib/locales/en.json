@@ -15,5 +15,41 @@
     "save": "Save",
     "cancel": "Cancel",
     "success": "Success"
+  },
+  "home": {
+    "loading": "Loading...",
+    "welcome": "Welcome to DiscoWeb",
+    "description": "Embark on an epic journey to manage your Discord servers! Grow your community with the store, promos and much more. Are you ready?",
+    "copyright": "DiscoWeb | 2026 © All rights reserved"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Management Panel",
+      "active": "Active",
+      "unconfigured": "Not Configured",
+      "default_server_name": "Management Center",
+      "subtitle": "Track your server's general status and statistics from here.",
+      "refresh": "Refresh",
+      "earn_settings": "Earning Settings",
+      "maintenance_mode": "Maintenance Mode",
+      "server_activity": "Server Activity",
+      "messages_24h": "Messages (Last 24h)",
+      "total": "Total",
+      "voice_24h": "Voice Minutes (Last 24h)",
+      "total_min": "Total: {0} mins",
+      "registered_members": "Registered Members",
+      "wallets_created": "{0} wallets created",
+      "tag_owner": "Tag Owner",
+      "booster": "Booster",
+      "stats_error": "Failed to load statistics. Please refresh the page.",
+      "quick_actions": "Quick Actions",
+      "action_new_product": "Create New Product",
+      "action_wallet": "Wallet Management",
+      "action_notify": "Send Notification",
+      "action_promo": "Create Promo Code",
+      "action_discount": "Create Discount Code",
+      "action_log_channels": "Log Channels",
+      "action_guide": "User Guide"
+    }
   }
 }

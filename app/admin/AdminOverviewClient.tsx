@@ -23,6 +23,7 @@ import {
   LuBell,
   LuStore,
 } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 
 type OverviewStats = {
   rangeHours: number;
@@ -89,6 +90,7 @@ export default function AdminOverviewClient({
   serverSetup,
   selectedGuildId,
 }: Props) {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<OverviewStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -123,16 +125,16 @@ export default function AdminOverviewClient({
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Yönetim Paneli</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">{t('admin.dashboard.title')}</p>
               <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${serverSetup ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'}`}>
-                {serverSetup ? 'Aktif' : 'Kurulmamış'}
+                {serverSetup ? t('admin.dashboard.active') : t('admin.dashboard.unconfigured')}
               </span>
             </div>
             <h1 className="mt-3 text-3xl font-bold text-white">
-              {serverName ?? 'Yönetim Merkezi'}
+              {serverName ?? t('admin.dashboard.default_server_name')}
             </h1>
             <p className="mt-2 text-sm text-white/50">
-              Sunucunuzun genel durumunu ve istatistiklerini buradan takip edin.
+              {t('admin.dashboard.subtitle')}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -143,21 +145,21 @@ export default function AdminOverviewClient({
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white/70 transition hover:border-white/20 hover:text-white disabled:opacity-50"
             >
               <LuRefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-              Yenile
+              {t('admin.dashboard.refresh')}
             </button>
             <Link
               href="/admin/earn-settings"
               className="inline-flex items-center gap-2 rounded-xl bg-indigo-500/90 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400"
             >
               <LuChartBar className="h-4 w-4" />
-              Kazanç Ayarları
+              {t('admin.dashboard.earn_settings')}
             </Link>
             <Link
               href="/admin/maintenance"
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white/70 transition hover:border-white/20 hover:text-white"
             >
               <LuShield className="h-4 w-4" />
-              Bakım Modu
+              {t('admin.dashboard.maintenance_mode')}
             </Link>
           </div>
         </div>
@@ -174,27 +176,27 @@ export default function AdminOverviewClient({
         <>
           {/* Activity Stats */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Sunucu Aktivitesi</p>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">{t('admin.dashboard.server_activity')}</p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 icon={<LuMessageSquare className="h-5 w-5" />}
-                label="Mesaj (Son 24 Saat)"
+                label={t('admin.dashboard.messages_24h')}
                 value={stats.rangeMessages}
-                sub={`Toplam: ${fmt.format(stats.totalMessages)}`}
+                sub={`${t('admin.dashboard.total')}: ${fmt.format(stats.totalMessages)}`}
                 color="bg-blue-500"
               />
               <StatCard
                 icon={<LuMic className="h-5 w-5" />}
-                label="Sesli Dakika (Son 24 Saat)"
+                label={t('admin.dashboard.voice_24h')}
                 value={stats.rangeVoiceMinutes}
-                sub={`Toplam: ${fmt.format(stats.totalVoiceMinutes)} dk`}
+                sub={t('admin.dashboard.total_min', { 0: fmt.format(stats.totalVoiceMinutes) })}
                 color="bg-violet-500"
               />
               <StatCard
                 icon={<LuUsers className="h-5 w-5" />}
-                label="Kayıtlı Üye"
+                label={t('admin.dashboard.registered_members')}
                 value={stats.totalMembers}
-                sub={`${fmt.format(stats.totalWallets)} cüzdan oluşturulmuş`}
+                sub={t('admin.dashboard.wallets_created', { 0: fmt.format(stats.totalWallets) })}
                 color="bg-cyan-500"
               />
               <div className="grid grid-rows-2 gap-4">
@@ -204,7 +206,7 @@ export default function AdminOverviewClient({
                   </div>
                   <div>
                     <p className="text-lg font-bold text-white">{fmt.format(stats.tagCount)}</p>
-                    <p className="text-xs text-white/40">Tag Sahibi</p>
+                    <p className="text-xs text-white/40">{t('admin.dashboard.tag_owner')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f1116] p-4 transition hover:border-white/20">
@@ -213,7 +215,7 @@ export default function AdminOverviewClient({
                   </div>
                   <div>
                     <p className="text-lg font-bold text-white">{fmt.format(stats.boosterCount)}</p>
-                    <p className="text-xs text-white/40">Booster</p>
+                    <p className="text-xs text-white/40">{t('admin.dashboard.booster')}</p>
                   </div>
                 </div>
               </div>
@@ -224,23 +226,23 @@ export default function AdminOverviewClient({
         </>
       ) : (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/50">
-          İstatistik verileri yüklenemedi. Lütfen sayfayı yenileyin.
+          {t('admin.dashboard.stats_error')}
         </div>
       )}
 
       {/* Quick Actions */}
       <div>
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Hızlı İşlemler</p>
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">{t('admin.dashboard.quick_actions')}</p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { href: '/admin/store/products/new', label: 'Yeni Ürün Oluştur', icon: <LuPackage className="h-5 w-5" />, color: 'text-emerald-300' },
-            { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-5 w-5" />, color: 'text-blue-300' },
-            { href: '/admin/notifications/send', label: 'Bildirim Gönder', icon: <LuBell className="h-5 w-5" />, color: 'text-violet-300' },
-            { href: '/admin/store/promos/new', label: 'Promosyon Kodu Oluştur', icon: <LuTag className="h-5 w-5" />, color: 'text-pink-300' },
-            { href: '/admin/store/discounts/new', label: 'İndirim Kodu Oluştur', icon: <LuCoins className="h-5 w-5" />, color: 'text-amber-300' },
-            { href: '/admin/log-channels', label: 'Log Kanalları', icon: <LuDatabase className="h-5 w-5" />, color: 'text-cyan-300' },
-            { href: '/admin/earn-settings', label: 'Kazanç Ayarları', icon: <LuSettings className="h-5 w-5" />, color: 'text-indigo-300' },
-            { href: '/admin/guide', label: 'Kullanım Kılavuzu', icon: <LuStore className="h-5 w-5" />, color: 'text-white/50' },
+            { href: '/admin/store/products/new', label: t('admin.dashboard.action_new_product'), icon: <LuPackage className="h-5 w-5" />, color: 'text-emerald-300' },
+            { href: '/admin/wallet', label: t('admin.dashboard.action_wallet'), icon: <LuWallet className="h-5 w-5" />, color: 'text-blue-300' },
+            { href: '/admin/notifications/send', label: t('admin.dashboard.action_notify'), icon: <LuBell className="h-5 w-5" />, color: 'text-violet-300' },
+            { href: '/admin/store/promos/new', label: t('admin.dashboard.action_promo'), icon: <LuTag className="h-5 w-5" />, color: 'text-pink-300' },
+            { href: '/admin/store/discounts/new', label: t('admin.dashboard.action_discount'), icon: <LuCoins className="h-5 w-5" />, color: 'text-amber-300' },
+            { href: '/admin/log-channels', label: t('admin.dashboard.action_log_channels'), icon: <LuDatabase className="h-5 w-5" />, color: 'text-cyan-300' },
+            { href: '/admin/earn-settings', label: t('admin.dashboard.earn_settings'), icon: <LuSettings className="h-5 w-5" />, color: 'text-indigo-300' },
+            { href: '/admin/guide', label: t('admin.dashboard.action_guide'), icon: <LuStore className="h-5 w-5" />, color: 'text-white/50' },
           ].map((action) => (
             <Link
               key={action.href}

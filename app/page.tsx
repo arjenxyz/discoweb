@@ -3,10 +3,12 @@ import Image from 'next/image';
 import CuteNavbar from '../components/CuteNavbar';
 import { Ubuntu } from "next/font/google";
 import { useState, useEffect } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
 
 const ubuntu = Ubuntu({ subsets: ["latin"], weight: ["400", "700"] });
 
 export default function Home() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
 
@@ -55,7 +57,7 @@ export default function Home() {
           </div>
           
           <p className="text-[#cbd5db] text-sm animate-pulse">
-            Yükleniyor... {progress}%
+            {t('home.loading')} {progress}%
           </p>
         </div>
       </div>
@@ -87,9 +89,9 @@ export default function Home() {
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl">
             <div className="w-full flex flex-col md:flex-row md:items-center items-center gap-8">
             <div className="flex-1 text-center md:text-left md:pl-4 lg:pl-6">
-              <h1 className={`text-3xl md:text-5xl lg:text-6xl font-extrabold text-white ${ubuntu.className}`}>DiscoWeb&apos;e Hoş Geldiniz</h1>
+              <h1 className={`text-3xl md:text-5xl lg:text-6xl font-extrabold text-white ${ubuntu.className}`}>{t('home.welcome')}</h1>
               <p className="mt-4 text-sm md:text-lg text-[#cbd5db] leading-relaxed break-words px-2">
-                Discord sunucularınızı yönetmek için epik bir yolculuğa çıkın! Mağaza, promosyonlar ve daha fazlasıyla topluluğunuzu büyütün. Hazır mısınız?
+                {t('home.description')}
               </p>
             </div>
 
@@ -120,7 +122,7 @@ export default function Home() {
       <div className="absolute bottom-4 left-0 right-0 z-20 px-6">
         <div className="text-center">
           <p className="text-xs text-[#99AAB5] opacity-75">
-           DiscoWeb | 2026 © Tüm hakları saklıdır
+           {t('home.copyright')}
           </p>
         </div>
       </div>
