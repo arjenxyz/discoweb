@@ -292,14 +292,21 @@ export async function middleware(request: NextRequest) {
 
 			if (!userId || !selectedGuildId) {
 				console.log('🔍 Middleware: Missing user or guild ID, redirecting to select-server');
-				return NextResponse.redirect(new URL('/auth/select-server', request.url));
+				return NextResponse.redirect(new URL('/auth/select-server?error=missing_id', request.url));
+			}
+
+			// DEVELOPER BYPASS
+			const developer = await isDeveloper(userId);
+			if (developer) {
+				console.log('✅ Middleware: Developer access granted, bypassing server checks');
+				return NextResponse.next();
 			}
 
 			const userRoles = await checkUserRoles(userId, selectedGuildId);
 			
 			if (userRoles === null) {
 				console.warn('🔍 Middleware: Could not fetch user roles (transient error), redirecting to select-server');
-				return NextResponse.redirect(new URL('/auth/select-server', request.url));
+				return NextResponse.redirect(new URL('/auth/select-server?error=roles_null', request.url));
 			}
 
 			if (userRoles === false) {
@@ -316,12 +323,11 @@ export async function middleware(request: NextRequest) {
 			}
 
 			const hasAdminRole = userRoles.includes(adminRoleId);
-			const developer = await isDeveloper(userId);
 
-			if (!hasAdminRole && !developer) {
-				console.log(`🔍 Middleware: User ${userId} is neither Admin nor Developer. Redirecting to home.`);
+			if (!hasAdminRole) {
+				console.log(`🔍 Middleware: User ${userId} is not Admin. Redirecting to home.`);
 				roleCheckCache.delete(`${userId}-${selectedGuildId}`);
-				return NextResponse.redirect(new URL('/', request.url));
+				return NextResponse.redirect(new URL('/?error=not_admin', request.url));
 			}
 
 			console.log('✅ Middleware: Access granted for protected page');
