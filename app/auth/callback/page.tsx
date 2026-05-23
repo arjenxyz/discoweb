@@ -80,19 +80,7 @@ function DiscordAuthCallbackContent() {
           user?: { id: string; username: string; avatar: string | null; discriminator: string };
         };
 
-        if (payload.status === 'needs_rules') {
-          // Sunucu bilgilerini localStorage'a kaydet (rules sayfasında kullanılacak)
-          if (payload.adminGuilds) {
-            localStorage.setItem('adminGuilds', JSON.stringify(payload.adminGuilds));
-            localStorage.setItem('adminGuildsUpdatedAt', new Date().toISOString());
-          }
-          // Kullanıcı bilgilerini localStorage'a kaydet
-          if (payload.user) {
-            localStorage.setItem('discordUser', JSON.stringify(payload.user));
-          }
-          router.replace('/auth/rules');
-          return;
-        }
+        // Kurallar sayfası kaldırıldı, 'needs_rules' kontrolüne gerek yok.
 
         if (payload.status === 'no_guilds') {
           setStatus('Botumuzun bulunduğu bir sunucu bulunamadı. Yönlendiriliyor...');

@@ -279,68 +279,27 @@ export async function middleware(request: NextRequest) {
 			}
 		}
 	} catch (error) {
-		console.error('ğŸ” Middleware: Error checking server membership:', error);
+		console.error('ğŸ”  Middleware: Error checking server membership:', error);
 		// Hata durumunda devam et (fail-safe)
 	}
 
-	// Dashboard/Admin sayfaları için verify rol zorunluluğu.
+	// Dashboard ve Admin sayfalarına sadece Admin ve Developer yetkisi olanlar girebilir
 	if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
+		console.log('🔍 Middleware: Protected page access detected:', pathname);
 		try {
 			const userId = await getSessionUserId(request);
 			const selectedGuildId = request.cookies.get('selected_guild_id')?.value;
 
 			if (!userId || !selectedGuildId) {
+				console.log('🔍 Middleware: Missing user or guild ID, redirecting to select-server');
 				return NextResponse.redirect(new URL('/auth/select-server', request.url));
 			}
 
 			const userRoles = await checkUserRoles(userId, selectedGuildId);
+			
 			if (userRoles === null) {
+				console.warn('🔍 Middleware: Could not fetch user roles (transient error), redirecting to select-server');
 				return NextResponse.redirect(new URL('/auth/select-server', request.url));
-			}
-
-			if (userRoles === false) {
-				return NextResponse.redirect(new URL('/server-left', request.url));
-			}
-
-			const roleConfig = await getServerRoleConfig(selectedGuildId);
-			const hasVerifyRole = roleConfig.verifyRoleId
-				? userRoles.includes(roleConfig.verifyRoleId)
-				: true;
-			const developer = await isDeveloper(userId);
-
-			if (!hasVerifyRole && !developer) {
-				const rulesUrl = new URL('/auth/rules', request.url);
-				rulesUrl.searchParams.set('pendingGuildId', selectedGuildId);
-				return NextResponse.redirect(rulesUrl);
-			}
-		} catch (error) {
-			console.error('Middleware: verify role gate error:', error);
-			return NextResponse.redirect(new URL('/auth/select-server', request.url));
-		}
-	}
-
-	if (pathname.startsWith('/admin')) {
-		console.log('ğŸ” Middleware: Admin page access detected:', pathname);
-		try {
-			// Cookie'lerden gerekli bilgileri al
-			const userId = await getSessionUserId(request);
-			const selectedGuildId = request.cookies.get('selected_guild_id')?.value;
-
-			console.log('ğŸ” Middleware: Cookies - userId:', userId, 'guildId:', selectedGuildId);
-
-			if (!userId || !selectedGuildId) {
-				console.log('ğŸ” Middleware: Missing user or guild ID, redirecting to home');
-				// Session yok, ana sayfaya yÃ¶nlendir
-				return NextResponse.redirect(new URL('/', request.url));
-			}
-
-			// Kullanıcıların rollerini kontrol et
-			const userRoles = await checkUserRoles(userId, selectedGuildId);
-			console.log('🔍 Middleware: User roles fetched:', userRoles);
-
-			if (userRoles === null) {
-				console.warn('🔍 Middleware: Could not fetch user roles (transient error), redirecting to home without logging out');
-				return NextResponse.redirect(new URL('/', request.url));
 			}
 
 			if (userRoles === false) {
@@ -348,45 +307,27 @@ export async function middleware(request: NextRequest) {
 				return NextResponse.redirect(new URL('/server-left', request.url));
 			}
 
-			// Sunucunun admin rolünü al
 			const roleConfig = await getServerRoleConfig(selectedGuildId);
 			const adminRoleId = roleConfig.adminRoleId;
-			console.log('Middleware: Admin role ID for server:', adminRoleId);
 
 			if (!adminRoleId) {
-				console.log('ğŸ” Middleware: No admin role configured for server, allowing access');
-				// Admin rolÃ¼ ayarlanmamÄ±ÅŸ, eriÅŸime izin ver
+				console.log('🔍 Middleware: No admin role configured for server, allowing access');
 				return NextResponse.next();
 			}
 
-			// KullanÄ±cÄ± admin rolÃ¼ne sahip mi kontrol et
 			const hasAdminRole = userRoles.includes(adminRoleId);
-			console.log('ğŸ” Middleware: User has admin role:', hasAdminRole, 'Role ID:', adminRoleId, 'User roles:', userRoles);
+			const developer = await isDeveloper(userId);
 
-			if (!hasAdminRole) {
-				// Developer ise eriÅŸime izin ver
-				const developer = await isDeveloper(userId);
-				if (developer) {
-					console.log('ğŸ” Middleware: User is a developer, granting admin access');
-					return NextResponse.next();
-				}
-
-				console.log(`ğŸ” Middleware: User ${userId} no longer has admin role ${adminRoleId}, redirecting to home`);
-
-				// Admin rolÃ¼ yok, eriÅŸimi engelle (ama oturumu silme)
+			if (!hasAdminRole && !developer) {
+				console.log(`🔍 Middleware: User ${userId} is neither Admin nor Developer. Redirecting to home.`);
 				roleCheckCache.delete(`${userId}-${selectedGuildId}`);
 				return NextResponse.redirect(new URL('/', request.url));
 			}
 
-			console.log('ğŸ” Middleware: Access granted for admin page');
+			console.log('✅ Middleware: Access granted for protected page');
 		} catch (error) {
-			console.error('ğŸ” Middleware: Unexpected error:', error);
-			// Hata durumunda gÃ¼venli tarafta kal, Ã§Ä±kÄ±ÅŸ yap
-			const response = NextResponse.redirect(new URL('/', request.url));
-			response.cookies.set('discord_session', '', { maxAge: 0, path: '/' });
-			response.cookies.set('csrf_token', '', { maxAge: 0, path: '/' });
-			response.cookies.set('discord_user_id', '', { maxAge: 0, path: '/' });
-			return response;
+			console.error('🔍 Middleware: Unexpected error in protected route gate:', error);
+			return NextResponse.redirect(new URL('/', request.url));
 		}
 	}
 
