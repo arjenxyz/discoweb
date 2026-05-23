@@ -291,29 +291,6 @@ export default function AdminSettingsPage() {
           Genel Ayarlar
         </p>
         <div className="space-y-3">
-          <div className="rounded-2xl border border-white/10 bg-[#0f1116] p-5">
-            <h3 className="text-sm font-semibold text-white">Yetkili Uygunluk Eşiği</h3>
-            <p className="mt-0.5 text-xs text-white/40">
-              Admin işlemlerinde onay yüzdesini belirler. (50-100%)
-            </p>
-            <div className="mt-3 flex items-center gap-3">
-              <input
-                type="range"
-                min={50}
-                max={100}
-                step={5}
-                value={settings.approval_threshold}
-                onChange={(e) =>
-                  setSettings({ ...settings, approval_threshold: Number(e.target.value) })
-                }
-                className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-white/10 accent-indigo-500 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-indigo-400"
-              />
-              <span className="w-12 rounded-lg border border-white/10 bg-[#0b0d12] px-2 py-1.5 text-center text-sm font-semibold text-white">
-                {settings.approval_threshold}%
-              </span>
-            </div>
-          </div>
-
           {/* Referral Reward */}
           <div className="rounded-2xl border border-white/10 bg-[#0f1116] p-5">
             <div className="flex items-start gap-4">
