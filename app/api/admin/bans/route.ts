@@ -33,7 +33,7 @@ async function isDeveloper(userId: string): Promise<boolean> {
 export async function GET(request: Request) {
   const session = await requireSessionUser(request);
   if (!session.ok) return session.response;
-  if (!isDeveloper(session.userId)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (!(await isDeveloper(session.userId))) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
@@ -81,7 +81,7 @@ type CreateBanBody = {
 export async function POST(request: Request) {
   const session = await requireSessionUser(request);
   if (!session.ok) return session.response;
-  if (!isDeveloper(session.userId)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (!(await isDeveloper(session.userId))) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
@@ -134,7 +134,7 @@ type LiftBanBody = {
 export async function DELETE(request: Request) {
   const session = await requireSessionUser(request);
   if (!session.ok) return session.response;
-  if (!isDeveloper(session.userId)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (!(await isDeveloper(session.userId))) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
