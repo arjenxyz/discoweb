@@ -175,6 +175,41 @@ export async function POST(request: Request) {
       console.warn('Warning: could not fetch guild roles for validation', rolesResponse.status);
     }
 
+    // Call Bot API to setup the Admin Log channel (ÖNCE BUNU YAPACAĞIZ)
+    let botApiSuccess = false;
+    let createdChannelId = null;
+    const botApiUrl = process.env.BOT_API_URL || 'http://localhost:3000';
+    const botApiKey = process.env.BOT_API_KEY || '';
+
+    try {
+      const botRes = await fetch(`${botApiUrl}/api/setup-server-logs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(botApiKey && { 'Authorization': `Bearer ${botApiKey}` })
+        },
+        body: JSON.stringify({
+          guildId,
+          targetGuildId: targetGuildId || guildId
+        })
+      });
+
+      if (botRes.ok) {
+        const botData = await botRes.json();
+        botApiSuccess = true;
+        createdChannelId = botData.channelId;
+        console.log('✅ Bot API ile log kanalı kurulumu başarılı:', createdChannelId);
+      } else {
+        const errData = await botRes.json().catch(() => null);
+        console.error('❌ Bot API hata döndürdü:', botRes.status, errData);
+        // We will throw error so frontend knows bot is not in the server and NO DB CHANGES OCCUR
+        return NextResponse.json({ error: errData?.error || 'Log sunucusu kurulumu başarısız' }, { status: 400 });
+      }
+    } catch (botErr) {
+      console.error('❌ Bot API bağlantı hatası:', botErr);
+      return NextResponse.json({ error: 'Bot API sunucusuna ulaşılamadı. Botun açık olduğundan emin olun.' }, { status: 500 });
+    }
+
     // Veritabanında sunucuyu güncelle/kaydet
     const { data: existingServer } = await supabase
       .from('servers')
@@ -303,40 +338,7 @@ export async function POST(request: Request) {
       console.warn('Exception fetching saved server row:', fetchErr);
     }
 
-    // Call Bot API to setup the Admin Log channel
-    let botApiSuccess = false;
-    let createdChannelId = null;
-    const botApiUrl = process.env.BOT_API_URL || 'http://localhost:3000';
-    const botApiKey = process.env.BOT_API_KEY || '';
 
-    try {
-      const botRes = await fetch(`${botApiUrl}/api/setup-server-logs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(botApiKey && { 'Authorization': `Bearer ${botApiKey}` })
-        },
-        body: JSON.stringify({
-          guildId,
-          targetGuildId: targetGuildId || guildId
-        })
-      });
-
-      if (botRes.ok) {
-        const botData = await botRes.json();
-        botApiSuccess = true;
-        createdChannelId = botData.channelId;
-        console.log('✅ Bot API ile log kanalı kurulumu başarılı:', createdChannelId);
-      } else {
-        const errData = await botRes.json().catch(() => null);
-        console.error('❌ Bot API hata döndürdü:', botRes.status, errData);
-        // We will throw error so frontend knows bot is not in the server
-        return NextResponse.json({ error: errData?.error || 'Log sunucusu kurulumu başarısız' }, { status: 400 });
-      }
-    } catch (botErr) {
-      console.error('❌ Bot API bağlantı hatası:', botErr);
-      return NextResponse.json({ error: 'Bot API sunucusuna ulaşılamadı. Botun açık olduğundan emin olun.' }, { status: 500 });
-    }
 
     return NextResponse.json({
       success: true,
