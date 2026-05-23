@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { LuSave, LuRefreshCw, LuUpload, LuUserCircle2, LuInfo, LuTriangleAlert } from 'react-icons/lu';
+import { LuSave, LuRefreshCw, LuUpload, LuUser, LuInfo, LuTriangleAlert } from 'react-icons/lu';
 
 type BotInfo = {
   id: string;
@@ -158,7 +158,7 @@ export default function BotIdentityPage() {
               {previewAvatar ? (
                 <img src={previewAvatar} alt="Bot Avatar" className="w-full h-full object-cover" />
               ) : (
-                <LuUserCircle2 className="w-16 h-16 text-white/20" />
+                <LuUser className="w-16 h-16 text-white/20" />
               )}
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

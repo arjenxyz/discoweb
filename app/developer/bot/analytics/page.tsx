@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LuRefreshCw, LuServer, LuUsers, LuMessageSquare, LuMic, LuTrendingUp, LuAlertCircle } from 'react-icons/lu';
+import { LuRefreshCw, LuServer, LuUsers, LuMessageSquare, LuMic, LuTrendingUp, LuTriangleAlert } from 'react-icons/lu';
 import {
   AreaChart,
   Area,
@@ -83,7 +83,7 @@ export default function BotAnalyticsPage() {
 
       {error && (
         <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-start gap-3">
-          <LuAlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+          <LuTriangleAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
           <div className="text-rose-200 text-sm">{error}</div>
         </div>
       )}
