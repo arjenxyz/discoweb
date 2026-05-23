@@ -66,7 +66,7 @@ async function getLogs(supabase: ReturnType<typeof getSupabase>, limit: number) 
     supabase
       .from('admin_actions')
       .select('id, action_type, created_at, payload_after, payload_before')
-      .in('action_type', ['auth_login', 'auth_logout'])
+      .in('action_type', ['auth_login', 'auth_logout', 'ban_added', 'ban_removed'])
       .order('created_at', { ascending: false })
       .limit(limit),
     supabase
@@ -99,10 +99,16 @@ async function getLogs(supabase: ReturnType<typeof getSupabase>, limit: number) 
   const logs: LogItem[] = [];
 
   for (const row of authLogs.data ?? []) {
+    let title = row.action_type;
+    if (row.action_type === 'auth_login') title = 'Yetkili Girişi (Auth Login)';
+    else if (row.action_type === 'auth_logout') title = 'Yetkili Çıkışı (Auth Logout)';
+    else if (row.action_type === 'ban_added') title = 'Yasaklama Eklendi (Ban Added)';
+    else if (row.action_type === 'ban_removed') title = 'Yasaklama Kaldırıldı (Ban Removed)';
+
     logs.push({
-      id: `auth_${row.id}`,
+      id: `action_${row.id}`,
       type: row.action_type,
-      title: row.action_type === 'auth_login' ? 'Auth Login' : 'Auth Logout',
+      title,
       created_at: row.created_at,
       data: {
         after: row.payload_after,

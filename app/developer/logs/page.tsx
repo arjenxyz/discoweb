@@ -64,7 +64,7 @@ export default function LogsPage() {
         <div className="flex flex-col rounded-3xl border border-white/10 bg-[#0b0d12]/80 backdrop-blur-md p-5 overflow-hidden">
           {/* Filters */}
           <div className="flex flex-wrap gap-2 mb-6 border-b border-white/5 pb-4">
-            {['all','auth_login','auth_logout','new_user','new_server','bug','suggestion','error_log','client_error', 'api_error'].map((type) => (
+            {['all','auth_login','auth_logout','ban_added','ban_removed','new_user','new_server','bug','suggestion','error_log','client_error', 'api_error'].map((type) => (
               <button key={type} onClick={() => setFilter(type)}
                 className={`rounded-full border px-3 py-1 text-[11px] font-medium transition ${filter === type ? 'border-[#5865F2]/50 bg-[#5865F2]/20 text-white' : 'border-white/10 text-white/40 hover:text-white/70 hover:bg-white/5'}`}>
                 {type.toUpperCase()}

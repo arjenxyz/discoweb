@@ -104,6 +104,12 @@ export async function POST(request: Request) {
       .select('*')
       .single();
     if (error) return NextResponse.json({ error: 'insert_failed', details: error.message }, { status: 500 });
+
+    await supabase.from('admin_actions').insert({
+      action_type: 'ban_added',
+      payload_after: { target: 'server', guild_id: body.guildId, reason: body.reason, admin_id: session.userId }
+    });
+
     return NextResponse.json({ ok: true, ban: data });
   }
 
@@ -123,6 +129,12 @@ export async function POST(request: Request) {
     .single();
 
   if (error) return NextResponse.json({ error: 'insert_failed', details: error.message }, { status: 500 });
+
+  await supabase.from('admin_actions').insert({
+    action_type: 'ban_added',
+    payload_after: { target: 'member', user_id: body.userId, reason: body.reason, admin_id: session.userId }
+  });
+
   return NextResponse.json({ ok: true, ban: data });
 }
 
@@ -154,5 +166,11 @@ export async function DELETE(request: Request) {
     .eq('id', body.id);
 
   if (error) return NextResponse.json({ error: 'update_failed', details: error.message }, { status: 500 });
+
+  await supabase.from('admin_actions').insert({
+    action_type: 'ban_removed',
+    payload_after: { type: body.type, ban_id: body.id, admin_id: session.userId }
+  });
+
   return NextResponse.json({ ok: true });
 }
