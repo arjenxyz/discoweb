@@ -23,14 +23,13 @@ async function isDeveloper(userId: string): Promise<boolean> {
       headers: { Authorization: `Bot ${botToken}` },
     });
     if (!res.ok) return false;
-    const member = await res.json() as { roles?: string[] };
+    const member = (await res.json()) as { roles?: string[] };
     return Array.isArray(member.roles) && member.roles.includes(DEV_ROLE_ID);
   } catch {
     return false;
   }
 }
 
-// GET — aktif reklamı getir
 export async function GET(request: NextRequest) {
   const session = await requireSessionUser(request);
   if (!session.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -39,23 +38,30 @@ export async function GET(request: NextRequest) {
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
 
-  const { data } = await supabase.from('ads').select('*').order('created_at', { ascending: false }).limit(10);
+  const { data } = await supabase
+    .from('ads')
+    .select('*')
+    .order('sort_order', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(50);
+
   return NextResponse.json({ ads: data ?? [] });
 }
 
-// POST — yeni reklam ekle (eskiyi deaktif et)
 export async function POST(request: NextRequest) {
   const session = await requireSessionUser(request);
   if (!session.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!(await isDeveloper(session.userId))) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
-  const body = await request.json() as {
+  const body = (await request.json()) as {
     invite_url: string;
     server_name: string;
     server_description?: string;
     server_icon?: string;
     member_count?: number;
     online_count?: number;
+    target_guild_id?: string;
+    active?: boolean;
   };
 
   if (!body.invite_url || !body.server_name) {
@@ -65,24 +71,62 @@ export async function POST(request: NextRequest) {
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
 
-  // Mevcut aktif reklamı kapat
-  await supabase.from('ads').update({ active: false }).eq('active', true);
+  const { data: topRow } = await supabase
+    .from('ads')
+    .select('sort_order')
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-  const { data, error } = await supabase.from('ads').insert({
-    invite_url: body.invite_url,
-    server_name: body.server_name,
-    server_description: body.server_description ?? null,
-    server_icon: body.server_icon ?? null,
-    member_count: body.member_count ?? null,
-    online_count: body.online_count ?? null,
-    active: true,
-  }).select().single();
+  const nextSort = Number((topRow as { sort_order?: number } | null)?.sort_order ?? 0) + 1;
+
+  const { data, error } = await supabase
+    .from('ads')
+    .insert({
+      invite_url: body.invite_url,
+      server_name: body.server_name,
+      server_description: body.server_description ?? null,
+      server_icon: body.server_icon ?? null,
+      member_count: body.member_count ?? null,
+      online_count: body.online_count ?? null,
+      target_guild_id: body.target_guild_id ?? null,
+      active: body.active ?? true,
+      sort_order: nextSort,
+    })
+    .select()
+    .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ad: data });
 }
 
-// DELETE — aktif reklamı kaldır
+export async function PATCH(request: NextRequest) {
+  const session = await requireSessionUser(request);
+  if (!session.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!(await isDeveloper(session.userId))) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+
+  const body = (await request.json()) as {
+    id?: string;
+    active?: boolean;
+    sort_order?: number;
+  };
+
+  if (!body.id) {
+    return NextResponse.json({ error: 'id zorunlu' }, { status: 400 });
+  }
+
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
+
+  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (typeof body.active === 'boolean') patch.active = body.active;
+  if (typeof body.sort_order === 'number') patch.sort_order = body.sort_order;
+
+  const { data, error } = await supabase.from('ads').update(patch).eq('id', body.id).select().single();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ ad: data });
+}
+
 export async function DELETE(request: NextRequest) {
   const session = await requireSessionUser(request);
   if (!session.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -93,11 +137,10 @@ export async function DELETE(request: NextRequest) {
 
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
-  if (id) {
-    await supabase.from('ads').delete().eq('id', id);
-  } else {
-    await supabase.from('ads').update({ active: false }).eq('active', true);
+  if (!id) {
+    return NextResponse.json({ error: 'id zorunlu' }, { status: 400 });
   }
 
+  await supabase.from('ads').delete().eq('id', id);
   return NextResponse.json({ ok: true });
 }
