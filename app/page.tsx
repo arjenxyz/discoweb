@@ -57,7 +57,7 @@ export default function Home() {
           </div>
           
           <p className="text-[#cbd5db] text-sm animate-pulse">
-            {t('home.loading')} {progress}%
+            {t('home.loading_progress', { progress })}
           </p>
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function Home() {
               <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] mx-auto">
                 <Image
                   src="/gif/indir.gif"
-                  alt="Discord Banner"
+                  alt={t('home.banner_alt')}
                   fill
                   className="object-contain"
                   unoptimized
@@ -109,7 +109,7 @@ export default function Home() {
               <div className="mt-4">
                 <div className="relative inline-block leading-none">
                   <img src="/gif/cat.gif" alt="cat" className="absolute left-1/2 transform -translate-x-1/2 translate-y-60 bottom-full block" style={{margin:0}} />
-                  <h2 className="sr-only">Decorative cat overlay</h2>
+                  <h2 className="sr-only">{t('home.decorative_cat')}</h2>
                 </div>
               </div>
             </div>

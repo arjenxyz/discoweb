@@ -2,6 +2,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
+import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
 // Dropdown Link
 const DropdownLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -27,6 +29,7 @@ const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
 );
 
 export default function CuteNavbar() {
+  const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -168,7 +171,7 @@ export default function CuteNavbar() {
             >
               {/* Z-Index 50: Yazının penguenin üzerinde kalmasını sağlar */}
               <div className="text-white font-black text-xl tracking-tight z-50 relative">DiscoWeb</div>
-              <span className="text-[10px] uppercase tracking-widest text-white/40 hidden lg:inline font-bold border border-white/10 px-2 py-0.5 rounded-full z-50 relative">Beta</span>
+              <span className="text-[10px] uppercase tracking-widest text-white/40 hidden lg:inline font-bold border border-white/10 px-2 py-0.5 rounded-full z-50 relative">{t('navbar.beta')}</span>
 
               {/* --- ASILI PENGUEN GIF --- */}
               <div className={`absolute top-[60%] left-1/2 -translate-x-1/2 z-0 transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) ${
@@ -204,7 +207,7 @@ export default function CuteNavbar() {
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Ana Sayfa
+                {t('navbar.home')}
 
                 <ChevronIcon isOpen={openMenu === 'home'} />
               </button>
@@ -213,8 +216,8 @@ export default function CuteNavbar() {
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72 animate-slideUp origin-top z-50">
                   <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
                     <div className="relative z-20 space-y-1">
-                      <DropdownLink href="#">🏠 Genel Bakış</DropdownLink>
-                      <DropdownLink href="#">🎯 Özellikler</DropdownLink>
+                      <DropdownLink href="#">🏠 {t('navbar.home_overview')}</DropdownLink>
+                      <DropdownLink href="#">🎯 {t('navbar.home_features')}</DropdownLink>
                     </div>
                     <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
                       <img src="/gif/from.gif" alt="Home GIF" className="w-full h-full object-contain" />
@@ -237,15 +240,15 @@ export default function CuteNavbar() {
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Mağaza
+                {t('navbar.store')}
                 <ChevronIcon isOpen={openMenu === 'store'} />
               </button>
               {openMenu === 'store' && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72 animate-slideUp origin-top z-50">
                   <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
                     <div className="relative z-20 space-y-1">
-                      <DropdownLink href="#">🎁 Ürünler</DropdownLink>
-                      <DropdownLink href="#">🔥 Kampanyalar</DropdownLink>
+                      <DropdownLink href="#">🎁 {t('navbar.store_products')}</DropdownLink>
+                      <DropdownLink href="#">🔥 {t('navbar.store_campaigns')}</DropdownLink>
                     </div>
                     <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
                       <img src="/gif/sungerbubi.gif" alt="Store GIF" className="w-full h-full object-contain" />
@@ -268,15 +271,15 @@ export default function CuteNavbar() {
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Developer
+                {t('navbar.developer')}
                 <ChevronIcon isOpen={openMenu === 'developer'} />
               </button>
               {openMenu === 'developer' && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72 animate-slideUp origin-top z-50">
                   <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
                       <div className="relative z-20 space-y-1">
-                      <DropdownLink href="#">👨🏻‍💻 Hakkında</DropdownLink>
-                      <DropdownLink href="#">🛠 Canlı Destek</DropdownLink>
+                      <DropdownLink href="#">👨🏻‍💻 {t('navbar.developer_about')}</DropdownLink>
+                      <DropdownLink href="#">🛠 {t('navbar.developer_support')}</DropdownLink>
                     </div>
                     <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
                       <img src="/gif/indir2.gif" alt="Developer GIF" className="w-full h-full object-contain" />
@@ -299,16 +302,16 @@ export default function CuteNavbar() {
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                📊 Status
+                📊 {t('navbar.status')}
                 <ChevronIcon isOpen={openMenu === 'status'} />
               </button>
               {openMenu === 'status' && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72 animate-slideUp origin-top z-50">
                   <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
                     <div className="relative z-20 space-y-1">
-                      <DropdownLink href="/status">🟢 Sistem Durumu</DropdownLink>
-                      <DropdownLink href="/status#incidents">⚠️ Olaylar</DropdownLink>
-                      <DropdownLink href="/status#history">📈 Geçmiş</DropdownLink>
+                      <DropdownLink href="/status">🟢 {t('navbar.status_system')}</DropdownLink>
+                      <DropdownLink href="/status#incidents">⚠️ {t('navbar.status_incidents')}</DropdownLink>
+                      <DropdownLink href="/status#history">📈 {t('navbar.status_history')}</DropdownLink>
                     </div>
                     <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
                       <img src="/gif/asılıpengu.gif" alt="Status GIF" className="w-full h-full object-contain" />
@@ -331,16 +334,16 @@ export default function CuteNavbar() {
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Keşfet
+                {t('navbar.discover')}
                 <ChevronIcon isOpen={openMenu === 'discover'} />
               </button>
               {openMenu === 'discover' && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72 animate-slideUp origin-top z-50">
                   <div className="bg-[#5865F2] border border-white/20 rounded-[32px] shadow-[0_20px_50px_rgba(88,101,242,0.4)] p-5 pb-16 relative overflow-visible">
                     <div className="relative z-20 space-y-1">
-                      <DropdownLink href="#">🌍 Topluluk</DropdownLink>
-                      <DropdownLink href="#">✍️ Blog</DropdownLink>
-                      <DropdownLink href="#">⛑️ Destek</DropdownLink>
+                      <DropdownLink href="#">🌍 {t('navbar.discover_community')}</DropdownLink>
+                      <DropdownLink href="#">✍️ {t('navbar.discover_blog')}</DropdownLink>
+                      <DropdownLink href="#">⛑️ {t('navbar.discover_support')}</DropdownLink>
                     </div>
                     <div className="absolute -bottom-6 -right-6 w-40 h-40 pointer-events-none drop-shadow-2xl z-10 transform rotate-[-10deg] transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
                       <img src="/gif/Patickstar.gif" alt="Discover GIF" className="w-full h-full object-contain" />
@@ -352,14 +355,14 @@ export default function CuteNavbar() {
 
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* --- GİRİŞ YAP / DEVAM ET BUTONU --- */}
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             {isLoggedIn ? (
               <Link 
                 href="/auth/select-server"
                 className="hidden md:inline-flex items-center justify-center px-5 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300"
               >
-                Devam Et
+                {t('navbar.continue')}
               </Link>
             ) : (
               <Link 
@@ -370,7 +373,7 @@ export default function CuteNavbar() {
                   if (!DISCORD_CLIENT_ID || !DISCORD_LOGIN_URL || DISCORD_LOGIN_URL === '/') {
                     e.preventDefault();
                     console.warn('DISCORD login blocked: missing env vars', { DISCORD_CLIENT_ID, DISCORD_LOGIN_URL });
-                    alert('Giriş yapılamıyor: Discord istemci kimliği veya redirect URI yapılandırılmamış. Lütfen NEXT_PUBLIC_DISCORD_CLIENT_ID ve NEXT_PUBLIC_REDIRECT_URI değerlerini kontrol edin.');
+                    alert(t('navbar.login_error'));
                     return;
                   }
                 }}
@@ -380,7 +383,7 @@ export default function CuteNavbar() {
                     : 'text-white hover:bg-white/10'
                 }`}
               >
-                Giriş Yap
+                {t('navbar.login')}
               </Link>
             )}
 
@@ -411,38 +414,38 @@ export default function CuteNavbar() {
                    <img src="/gif/cat.gif" alt="avatar" className="w-full h-full rounded-lg object-cover" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold">Merhaba!</h3>
-                  <p className="text-white/40 text-xs">DiscoWeb dünyasına hoş geldin.</p>
+                  <h3 className="text-white font-bold">{t('navbar.mobile_greeting')}</h3>
+                  <p className="text-white/40 text-xs">{t('navbar.mobile_welcome')}</p>
                 </div>
               </div>
 
               {/* Mobil Menü Linkleri */}
               <div className="space-y-3">
                  <button onClick={() => toggleMobileSubmenu('home')} className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl text-white font-semibold">
-                  <span>🏠 Ana Sayfa</span>
+                  <span>🏠 {t('navbar.home')}</span>
                   <span className={`transition-transform ${mobileSubmenu === 'home' ? 'rotate-180' : ''}`}>▼</span>
                  </button>
                  {mobileSubmenu === 'home' && (
                   <div className="grid grid-cols-1 gap-2 pl-4 animate-fadeIn">
-                    <Link href="#" className="text-white/60 p-2">Genel Bakış</Link>
-                    <Link href="#" className="text-white/60 p-2">Özellikler</Link>
+                    <Link href="#" className="text-white/60 p-2">{t('navbar.home_overview')}</Link>
+                    <Link href="#" className="text-white/60 p-2">{t('navbar.home_features')}</Link>
                   </div>
                  )}
                  <button onClick={() => toggleMobileSubmenu('status')} className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl text-white font-semibold">
-                  <span>📊 Status</span>
+                  <span>📊 {t('navbar.status')}</span>
                   <span className={`transition-transform ${mobileSubmenu === 'status' ? 'rotate-180' : ''}`}>▼</span>
                  </button>
                  {mobileSubmenu === 'status' && (
                   <div className="grid grid-cols-1 gap-2 pl-4 animate-fadeIn">
-                    <Link href="/status" className="text-white/60 p-2">🟢 Sistem Durumu</Link>
-                    <Link href="/status#incidents" className="text-white/60 p-2">⚠️ Olaylar</Link>
-                    <Link href="/status#history" className="text-white/60 p-2">📈 Geçmiş</Link>
+                    <Link href="/status" className="text-white/60 p-2">🟢 {t('navbar.status_system')}</Link>
+                    <Link href="/status#incidents" className="text-white/60 p-2">⚠️ {t('navbar.status_incidents')}</Link>
+                    <Link href="/status#history" className="text-white/60 p-2">📈 {t('navbar.status_history')}</Link>
                   </div>
                  )}
                  {/* MOBIL GİRİŞ / DEVAM ET BUTONU */}
                  {isLoggedIn ? (
                    <Link href="/auth/select-server" className="w-full block text-center bg-[#5865F2] text-white font-bold py-4 rounded-2xl">
-                     Devam Et
+                     {t('navbar.continue')}
                    </Link>
                  ) : (
                    <Link
@@ -451,13 +454,13 @@ export default function CuteNavbar() {
                        if (!DISCORD_CLIENT_ID || !DISCORD_LOGIN_URL || DISCORD_LOGIN_URL === '/') {
                          e.preventDefault();
                          console.warn('DISCORD login blocked (mobile): missing env vars', { DISCORD_CLIENT_ID, DISCORD_LOGIN_URL });
-                         alert('Giriş yapılamıyor: Discord istemci kimliği veya redirect URI yapılandırılmamış. Lütfen NEXT_PUBLIC_DISCORD_CLIENT_ID ve NEXT_PUBLIC_REDIRECT_URI değerlerini kontrol edin.');
+                         alert(t('navbar.login_error'));
                          return;
                        }
                      }}
                      className="w-full block text-center bg-[#5865F2] text-white font-bold py-4 rounded-2xl"
                    >
-                     Discord ile Bağlan
+                     {t('navbar.connect_discord')}
                    </Link>
                  )}
               </div>

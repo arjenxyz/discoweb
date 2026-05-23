@@ -18,9 +18,38 @@
   },
   "home": {
     "loading": "Yükleniyor...",
+    "loading_progress": "Yükleniyor... {progress}%",
     "welcome": "DiscoWeb'e Hoş Geldiniz",
     "description": "Discord sunucularınızı yönetmek için epik bir yolculuğa çıkın! Mağaza, promosyonlar ve daha fazlasıyla topluluğunuzu büyütün. Hazır mısınız?",
-    "copyright": "DiscoWeb | 2026 © Tüm hakları saklıdır"
+    "copyright": "DiscoWeb | 2026 © Tüm hakları saklıdır",
+    "banner_alt": "Discord Banner",
+    "decorative_cat": "Dekoratif kedi"
+  },
+  "navbar": {
+    "beta": "Beta",
+    "home": "Ana Sayfa",
+    "store": "Mağaza",
+    "developer": "Developer",
+    "status": "Status",
+    "discover": "Keşfet",
+    "continue": "Devam Et",
+    "login": "Giriş Yap",
+    "connect_discord": "Discord ile Bağlan",
+    "login_error": "Giriş yapılamıyor: Discord istemci kimliği veya redirect URI yapılandırılmamış. Lütfen NEXT_PUBLIC_DISCORD_CLIENT_ID ve NEXT_PUBLIC_REDIRECT_URI değerlerini kontrol edin.",
+    "mobile_greeting": "Merhaba!",
+    "mobile_welcome": "DiscoWeb dünyasına hoş geldin.",
+    "home_overview": "Genel Bakış",
+    "home_features": "Özellikler",
+    "store_products": "Ürünler",
+    "store_campaigns": "Kampanyalar",
+    "developer_about": "Hakkında",
+    "developer_support": "Canlı Destek",
+    "status_system": "Sistem Durumu",
+    "status_incidents": "Olaylar",
+    "status_history": "Geçmiş",
+    "discover_community": "Topluluk",
+    "discover_blog": "Blog",
+    "discover_support": "Destek"
   },
   "admin": {
     "dashboard": {
