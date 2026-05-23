@@ -30,6 +30,91 @@ async function isDeveloper(userId: string): Promise<boolean> {
   }
 }
 
+async function sendBanLogToDiscord({
+  action,
+  targetId,
+  reason,
+  adminId
+}: {
+  action: 'user_ban' | 'user_unban' | 'server_ban' | 'server_unban';
+  targetId: string;
+  reason?: string | null;
+  adminId: string;
+}) {
+  const botToken = process.env.DISCORD_BOT_TOKEN;
+  if (!botToken) return;
+
+  const CHANNELS = {
+    user_ban: '1507729561201152032',
+    user_unban: '1487128317650927726',
+    server_ban: '1487132157771255950',
+    server_unban: '1507729625026003045',
+  };
+
+  const channelId = CHANNELS[action];
+  
+  let title = '';
+  let color = 0;
+  
+  switch(action) {
+    case 'user_ban':
+      title = '🚨 Kullanıcı Yasaklandı';
+      color = 0xED4245; // Red
+      break;
+    case 'user_unban':
+      title = '✅ Kullanıcı Yasağı Kaldırıldı';
+      color = 0x57F287; // Green
+      break;
+    case 'server_ban':
+      title = '🚨 Sunucu Yasaklandı';
+      color = 0xED4245;
+      break;
+    case 'server_unban':
+      title = '✅ Sunucu Yasağı Kaldırıldı';
+      color = 0x57F287;
+      break;
+  }
+
+  const embed = {
+    title,
+    color,
+    fields: [
+      {
+        name: action.startsWith('server') ? 'Sunucu ID' : 'Kullanıcı ID',
+        value: `\`${targetId}\``,
+        inline: true
+      },
+      {
+        name: 'İşlemi Yapan Yetkili',
+        value: `<@${adminId}> (\`${adminId}\`)`,
+        inline: true
+      },
+      {
+        name: 'Sebep',
+        value: reason || 'Belirtilmedi',
+        inline: false
+      }
+    ],
+    timestamp: new Date().toISOString(),
+    footer: {
+      text: 'DiscoWeb Security'
+    }
+  };
+
+  try {
+    await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bot ${botToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ embeds: [embed] })
+    });
+  } catch (error) {
+    console.error('Failed to send discord log', error);
+  }
+}
+
 export async function GET(request: Request) {
   const session = await requireSessionUser(request);
   if (!session.ok) return session.response;
@@ -110,6 +195,13 @@ export async function POST(request: Request) {
       payload_after: { target: 'server', guild_id: body.guildId, reason: body.reason, admin_id: session.userId }
     });
 
+    await sendBanLogToDiscord({
+      action: 'server_ban',
+      targetId: body.guildId,
+      reason: body.reason,
+      adminId: session.userId
+    });
+
     return NextResponse.json({ ok: true, ban: data });
   }
 
@@ -135,6 +227,13 @@ export async function POST(request: Request) {
     payload_after: { target: 'member', user_id: body.userId, reason: body.reason, admin_id: session.userId }
   });
 
+  await sendBanLogToDiscord({
+    action: 'user_ban',
+    targetId: body.userId,
+    reason: body.reason,
+    adminId: session.userId
+  });
+
   return NextResponse.json({ ok: true, ban: data });
 }
 
@@ -156,6 +255,15 @@ export async function DELETE(request: Request) {
 
   const table = body.type === 'server' ? 'server_bans' : 'member_bans';
 
+  // Yasağın kime/hangi sunucuya ait olduğunu bul
+  const { data: banRecord } = await supabase
+    .from(table)
+    .select(body.type === 'server' ? 'guild_id' : 'user_id')
+    .eq('id', body.id)
+    .single();
+
+  const targetId = banRecord ? (body.type === 'server' ? banRecord.guild_id : banRecord.user_id) : 'Bilinmiyor';
+
   const { error } = await supabase
     .from(table)
     .update({
@@ -170,6 +278,13 @@ export async function DELETE(request: Request) {
   await supabase.from('admin_actions').insert({
     action_type: 'ban_removed',
     payload_after: { type: body.type, ban_id: body.id, admin_id: session.userId }
+  });
+
+  await sendBanLogToDiscord({
+    action: body.type === 'server' ? 'server_unban' : 'user_unban',
+    targetId,
+    adminId: session.userId,
+    reason: 'Yasaklama kaldırıldı'
   });
 
   return NextResponse.json({ ok: true });
