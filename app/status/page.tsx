@@ -52,8 +52,8 @@ export default function StatusPage() {
 
   useEffect(() => {
     refreshStatus();
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(refreshStatus, 30000);
+    // Auto-refresh every 5 seconds for real-time feel
+    const interval = setInterval(refreshStatus, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -241,7 +241,13 @@ export default function StatusPage() {
         {/* Footer */}
         <div className="mt-12 pt-8 border-t">
           <div className="text-center text-sm text-gray-500">
-            <p>Sistem durumu her 30 saniyede bir otomatik olarak güncellenir.</p>
+            <p className="flex items-center justify-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+              Sistem durumu gerçek zamanlı olarak (5 saniyede bir) güncellenmektedir.
+            </p>
             <p className="mt-2">Sorun bildirmek için: <a href="/contact" className="text-[#5865F2] hover:underline">İletişim</a></p>
           </div>
         </div>

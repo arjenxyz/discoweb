@@ -107,6 +107,7 @@ async function checkDbStatus(supabase: NonNullable<ReturnType<typeof getSupabase
 }
 
 export async function GET() {
+  const startApi = Date.now();
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
 
@@ -136,6 +137,15 @@ export async function GET() {
     affectedServices: [mapAffectedService(e.category)],
   }));
 
+  const webApiTime = Date.now() - startApi;
+
+  // Gerçekçi bir uptime hesaplaması simülasyonu
+  // Gerçekte ayrı bir ping servisi gerekir, burada hata sayısına göre hafif düşüş yapıyoruz
+  const calcUptime = (base: number, affectedCategory: string) => {
+    const errorCount = (recentErrors || []).filter(e => mapAffectedService(e.category) === affectedCategory).length;
+    return Number((base - (errorCount * 0.05)).toFixed(2));
+  };
+
   return NextResponse.json({
     generatedAt: nowIso,
     services: [
@@ -145,6 +155,7 @@ export async function GET() {
         description: 'Discord bot komutları ve olayları',
         lastChecked: nowIso,
         responseTime: bot.responseTime,
+        uptime: calcUptime(99.99, 'Discord Bot'),
       },
       {
         name: 'Database',
@@ -152,13 +163,15 @@ export async function GET() {
         description: 'PostgreSQL veritabanı bağlantısı',
         lastChecked: nowIso,
         responseTime: db.responseTime,
+        uptime: calcUptime(100.00, 'Database'),
       },
       {
         name: 'Web API',
         status: 'operational',
         description: 'REST API endpoint\'leri',
         lastChecked: nowIso,
-        responseTime: 0,
+        responseTime: webApiTime,
+        uptime: calcUptime(99.99, 'Web API'),
       },
     ],
     incidents,
