@@ -88,9 +88,6 @@ const NAV_GROUPS: NavGroup[] = [
   {
     category: 'SİSTEM',
     items: [
-      { href: '/developer/maintenance', label: 'Bakım Yönetimi', icon: LuWrench },
-      { href: '/developer/cache', label: 'Cache Yönetimi', icon: LuHardDrive },
-      { href: '/developer/config-view', label: 'Ayarlar', icon: LuSettings },
       { href: '/developer/api-test', label: 'API Test', icon: LuFlaskConical },
       { href: '/developer/clear-data', label: 'Veri Temizleme', icon: LuTrash2 },
     ],
