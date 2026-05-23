@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuArrowRight, LuDatabase, LuLoader, LuLock, LuShield, LuSettings } from 'react-icons/lu';
+import { LuArrowRight, LuCode, LuDatabase, LuLoader, LuLock, LuShield, LuSettings } from 'react-icons/lu';
 
 const AGREEMENT_OVERVIEW = [
   {
@@ -54,6 +54,7 @@ export default function SelectServerPage() {
   const [showAgreementModal, setShowAgreementModal] = useState(false);
   const [agreementTargetHref, setAgreementTargetHref] = useState<string | null>(null);
   const [isProcessingAgreement, setIsProcessingAgreement] = useState(false);
+  const [isDeveloper, setIsDeveloper] = useState(false);
 
   const ensureAgreementAndRedirect = useCallback((href: string) => {
     if (typeof window !== 'undefined' && localStorage.getItem('discord_agreement_accepted') === 'true') {
@@ -176,27 +177,21 @@ export default function SelectServerPage() {
         console.log('Filtered admin guilds:', adminOnlyGuilds);
         setGuilds(adminOnlyGuilds);
 
+        let developerAccess = false;
         try {
-          console.log('Checking developer access for auto-redirect...');
           const developerResponse = await fetch('/api/developer/check-access', {
             credentials: 'include',
             cache: 'no-store',
           });
-
           if (developerResponse.ok) {
-            if (withSetupStatus.length > 0) {
-              const firstGuild = withSetupStatus[0];
-              document.cookie = `selected_guild_id=${firstGuild.id}; path=/`;
-              localStorage.setItem('selectedGuildId', firstGuild.id);
-            }
-            router.replace('/developer');
-            return;
+            developerAccess = true;
+            setIsDeveloper(true);
           }
         } catch (error) {
           console.error('Developer access check failed:', error);
         }
 
-        if (filteredGuilds.length === 0) {
+        if (filteredGuilds.length === 0 && !developerAccess) {
           console.log('User is not a member of any guilds, redirecting to bot invite');
           router.replace('/auth/bot-invite');
           return;
@@ -240,32 +235,12 @@ export default function SelectServerPage() {
 
     console.log('isAdmin:', isAdmin, 'verifyRoleId:', verifyRoleId);
 
-    try {
-      console.log('Checking developer access...');
-      const developerResponse = await fetch('/api/developer/check-access', {
-        credentials: 'include',
-        cache: 'no-store',
-      });
-
-      if (developerResponse.ok) {
-        document.cookie = `selected_guild_id=${guildId}; path=/`;
-        localStorage.setItem('selectedGuildId', guildId);
-        router.replace('/developer');
-        return;
-      }
-    } catch (error) {
-      console.error('Developer access check failed:', error);
-    }
-
     if (isAdmin) {
       console.log('Redirecting to admin panel');
-      document.cookie = `selected_guild_id=${guildId}; path=/`;
-      localStorage.setItem('selectedGuildId', guildId);
       router.replace('/admin');
       return;
     }
 
-    // Artık herkes admin/developer olduğu için direkt admin paneline yönlendir
     router.replace('/admin');
   };
 
@@ -319,6 +294,27 @@ export default function SelectServerPage() {
       </nav>
 
       <main className="mx-auto w-full max-w-5xl px-4 py-8">
+        {isDeveloper && (
+          <button
+            type="button"
+            onClick={() => router.replace('/developer')}
+            className="mb-6 w-full rounded-[24px] border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-5 text-left transition-all hover:border-emerald-500/50 hover:bg-emerald-500/15"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-300">
+                  <LuCode className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-white">Developer Panele Git</h2>
+                  <p className="text-sm text-white/60">Sistem yönetimi ve geliştirici araçları</p>
+                </div>
+              </div>
+              <LuArrowRight className="h-5 w-5 shrink-0 text-emerald-300" />
+            </div>
+          </button>
+        )}
+
         <div className="mb-6 rounded-[28px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_18px_50px_rgba(15,23,42,0.25)]">
           <h1 className="mb-2 text-2xl font-bold text-white">Sunucu seçin</h1>
           <p className="text-sm text-white/70">İşlem yapmak istediğiniz sunucuyu seçin.</p>
