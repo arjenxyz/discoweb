@@ -7,6 +7,7 @@ import {
 } from 'react-icons/lu';
 import Image from 'next/image';
 import { useCart } from '../lib/cart';
+import { PromoRedeemPanel } from './PromoRedeemWidget';
 
 type Coupon = {
   id: string | number;
@@ -300,6 +301,11 @@ export default function CartDrawer() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Promosyon kodu — her zaman görünür */}
+        <div className="relative z-10 shrink-0 border-t border-white/10 bg-[#0b0d12]/95 px-4 py-3">
+          <PromoRedeemPanel compact />
         </div>
 
         {/* --- FOOTER --- */}

@@ -120,7 +120,7 @@ export async function POST(request: Request) {
 
   const { error } = await supabase.from('promotions').insert({
     server_id: serverId,
-    code: payload.code,
+    code: payload.code.trim().toUpperCase(),
     value: payload.value,
     max_uses: maxUses,
     status: payload.status ?? 'active',

@@ -52,6 +52,25 @@
     "discover_blog": "Blog",
     "discover_support": "Support"
   },
+  "promo": {
+    "title": "Promo Code",
+    "subtitle": "Enter your code to add Papel to your balance.",
+    "placeholder": "Enter code",
+    "redeem": "Redeem",
+    "success": "{amount} Papel added to your balance!",
+    "error": {
+      "empty": "Please enter a code.",
+      "generic": "Could not redeem promo code.",
+      "invalid": "Invalid promo code.",
+      "unauthorized": "You need to sign in.",
+      "server": "Server not found.",
+      "wrong_server": "This code belongs to another server.",
+      "expired": "This code has expired.",
+      "limit": "This code has reached its usage limit.",
+      "already_used": "You have already used this code.",
+      "maintenance": "Promo system is under maintenance."
+    }
+  },
   "admin": {
     "dashboard": {
       "title": "Management Panel",

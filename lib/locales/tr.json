@@ -52,6 +52,25 @@
     "discover_blog": "Blog",
     "discover_support": "Destek"
   },
+  "promo": {
+    "title": "Promosyon Kodu",
+    "subtitle": "Kodunuzu girin, Papel bakiyenize eklensin.",
+    "placeholder": "Kodu girin",
+    "redeem": "Kullan",
+    "success": "{amount} Papel hesabınıza eklendi!",
+    "error": {
+      "empty": "Lütfen bir kod girin.",
+      "generic": "Promosyon kodu kullanılamadı.",
+      "invalid": "Geçersiz promosyon kodu.",
+      "unauthorized": "Giriş yapmanız gerekiyor.",
+      "server": "Sunucu bulunamadı.",
+      "wrong_server": "Bu kod bu sunucuya ait değil.",
+      "expired": "Kodun süresi dolmuş.",
+      "limit": "Kodun kullanım limiti dolmuş.",
+      "already_used": "Bu kodu zaten kullandınız.",
+      "maintenance": "Promosyon sistemi bakımda."
+    }
+  },
   "admin": {
     "dashboard": {
       "title": "Yönetim Paneli",

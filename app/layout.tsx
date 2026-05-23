@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import CartProvider from "../lib/cart";
 import CartDrawer from "../components/CartDrawer";
+import PromoRedeemWidget from "../components/PromoRedeemWidget";
 import ThemeBootstrap from "./components/ThemeBootstrap";
 import DeveloperHideGuard from "./components/DeveloperHideGuard";
 import ServiceWorkerRegister from "./components/ServiceWorkerRegister";
@@ -51,6 +52,7 @@ export default function RootLayout({
           <CartProvider>
             {children}
             <CartDrawer />
+            <PromoRedeemWidget />
           </CartProvider>
         </LanguageProvider>
       </body>
