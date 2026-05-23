@@ -88,6 +88,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     category: 'SİSTEM',
     items: [
+      { href: '/developer/broadcast', label: 'Toplu Yayın (Broadcast)', icon: LuMegaphone },
       { href: '/developer/api-test', label: 'API Test', icon: LuFlaskConical },
       { href: '/developer/clear-data', label: 'Veri Temizleme', icon: LuTrash2 },
     ],
