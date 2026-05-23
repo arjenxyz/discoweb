@@ -226,7 +226,7 @@ export default function TermsPage() {
                 </P>
                 <div className="mt-5 space-y-3">
                   <ContactCard icon="💬" label="Discord Sunucusu" value="Destek kanalı üzerinden bize ulaşabilirsiniz" />
-                  <ContactCard icon="🌐" label="Web Sitesi" value="discoweb.tr iletişim sayfası" />
+                  <ContactCard icon="📧" label="E-posta" value="destek@discoweb.com" />
                 </div>
 
                 <div className="mt-8 p-5 rounded-xl bg-white/[0.02] border border-white/[0.06]">

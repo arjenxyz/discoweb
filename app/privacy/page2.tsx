@@ -1,4 +1,3 @@
-import Link from 'next/link';
 
 export const metadata = {
   title: 'Gizlilik Politikası',
@@ -51,12 +50,12 @@ export default function PrivacyPage() {
 
         <section id="retention">
           <h2>Saklama Süreleri</h2>
-          <p>Veriler, kanuni yükümlülükler, hizmet gereksinimleri veya kullanıcı talepleri doğrultusunda saklanır. Hesap silme talepleri için <Link href="/contact" className="text-blue-600 hover:underline">İletişim</Link> sayfasından başvurabilirsiniz.</p>
+          <p>Veriler, kanuni yükümlülükler, hizmet gereksinimleri veya kullanıcı talepleri doğrultusunda saklanır. Hesap silme talepleri için <a href="mailto:destek@discoweb.com" className="text-blue-600 hover:underline">destek@discoweb.com</a> adresine başvurabilirsiniz.</p>
         </section>
 
         <section id="rights">
           <h2>Kullanıcı Hakları</h2>
-          <p>Kullanıcılar; verilerine erişim, verilerde düzeltme, silme talebi, işleme kısıtlama ve itiraz etme haklarına sahiptir. Hak taleplerinizi <Link href="/contact" className="text-blue-600 hover:underline">İletişim</Link> sayfası üzerinden iletebilirsiniz.</p>
+          <p>Kullanıcılar; verilerine erişim, verilerde düzeltme, silme talebi, işleme kısıtlama ve itiraz etme haklarına sahiptir. Hak taleplerinizi <a href="mailto:destek@discoweb.com" className="text-blue-600 hover:underline">destek@discoweb.com</a> üzerinden iletebilirsiniz.</p>
         </section>
 
         <section id="cookies">
@@ -71,7 +70,7 @@ export default function PrivacyPage() {
 
         <section id="contact">
           <h2>İletişim</h2>
-          <p>Gizlilik ile ilgili sorularınız veya talepleriniz için lütfen <Link href="/contact" className="text-blue-600 hover:underline">İletişim</Link> sayfasından bize ulaşın. Talepler titizlikle incelenecektir.</p>
+          <p>Gizlilik ile ilgili sorularınız veya talepleriniz için lütfen <a href="mailto:destek@discoweb.com" className="text-blue-600 hover:underline">destek@discoweb.com</a> adresinden bize ulaşın. Talepler titizlikle incelenecektir.</p>
         </section>
 
         <footer className="mt-8 text-sm text-white/60">

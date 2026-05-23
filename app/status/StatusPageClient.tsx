@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { siteConfig } from '@/config/site';
 import type {
   ComponentStatus,
   DayStatus,
@@ -224,17 +225,9 @@ export default function StatusPageClient() {
             </div>
             <span className="text-lg font-bold text-[#2e3438]">DiscoWeb Status</span>
           </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/contact"
-              className="hidden rounded-md border border-[#5865F2] px-4 py-2 text-sm font-medium text-[#5865F2] transition hover:bg-[#5865F2]/5 sm:inline-block"
-            >
-              Bildirim Al
-            </Link>
-            <Link href="/" className="text-sm font-medium text-[#5865F2] hover:underline">
+          <Link href="/" className="text-sm font-medium text-[#5865F2] hover:underline">
               discoweb.app
             </Link>
-          </div>
         </div>
       </header>
 
@@ -330,10 +323,15 @@ export default function StatusPageClient() {
           </p>
           <p className="mt-2">
             Sorun bildirmek için{' '}
-            <Link href="/contact" className="text-[#5865F2] hover:underline">
-              iletişim
-            </Link>{' '}
-            sayfasını kullanın. Veriler {REFRESH_MS / 1000} saniyede bir güncellenir.
+            <a
+              href={siteConfig.links.support}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#5865F2] hover:underline"
+            >
+              Discord destek sunucusunu
+            </a>{' '}
+            kullanın. Veriler {REFRESH_MS / 1000} saniyede bir güncellenir.
           </p>
         </footer>
       </main>

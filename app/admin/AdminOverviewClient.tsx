@@ -14,7 +14,6 @@ import {
   LuZap,
   LuArrowUpRight,
   LuRefreshCw,
-  LuShield,
   LuPackage,
   LuCoins,
   LuChartBar,
@@ -158,13 +157,6 @@ export default function AdminOverviewClient({
             >
               <LuChartBar className="h-4 w-4" />
               {t('admin.dashboard.earn_settings')}
-            </Link>
-            <Link
-              href="/admin/maintenance"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white/70 transition hover:border-white/20 hover:text-white"
-            >
-              <LuShield className="h-4 w-4" />
-              {t('admin.dashboard.maintenance_mode')}
             </Link>
           </div>
         </div>

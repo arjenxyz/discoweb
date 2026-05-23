@@ -11,7 +11,6 @@ export default function ThankYou() {
         <p className="text-lg text-[#cbd5db] mb-6">DiscoWeb Türkiye'yi ziyaret ettiğiniz için teşekkür ederiz. Mesajınızı aldık ve en kısa sürede sizinle iletişime geçeceğiz.</p>
         <div className="flex gap-3">
           <Link href="/" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#5865F2] to-[#7289DA] px-4 py-2 text-sm font-semibold text-white">Ana Sayfa</Link>
-          <Link href="/contact" className="text-sm text-[#99AAB5] hover:text-white">İletişim</Link>
         </div>
       </div>
     </main>

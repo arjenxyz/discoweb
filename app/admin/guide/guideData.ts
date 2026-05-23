@@ -7,11 +7,7 @@ import {
   LuDatabase,
   LuAward,
   LuSettings,
-  LuTriangle,
-  LuMegaphone,
-  LuShield,
   LuRocket,
-  LuBell,
   LuPackage,
 } from 'react-icons/lu';
 
@@ -148,46 +144,6 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       'admin.guide.sections.settings.tip3',
     ],
   },
-  {
-    id: 'maintenance',
-    href: '/admin/maintenance',
-    icon: LuTriangle,
-    accent: 'text-orange-300',
-    glow: 'bg-orange-500',
-    titleKey: 'admin.guide.sections.maintenance.title',
-    descKey: 'admin.guide.sections.maintenance.desc',
-    tipKeys: [
-      'admin.guide.sections.maintenance.tip1',
-      'admin.guide.sections.maintenance.tip2',
-    ],
-  },
-  {
-    id: 'announcements',
-    href: '/admin/announcements',
-    icon: LuMegaphone,
-    accent: 'text-rose-300',
-    glow: 'bg-rose-500',
-    titleKey: 'admin.guide.sections.announcements.title',
-    descKey: 'admin.guide.sections.announcements.desc',
-    tipKeys: [
-      'admin.guide.sections.announcements.tip1',
-      'admin.guide.sections.announcements.tip2',
-    ],
-  },
-  {
-    id: 'security',
-    href: '/admin/security',
-    icon: LuShield,
-    accent: 'text-teal-300',
-    glow: 'bg-teal-500',
-    titleKey: 'admin.guide.sections.security.title',
-    descKey: 'admin.guide.sections.security.desc',
-    tipKeys: [
-      'admin.guide.sections.security.tip1',
-      'admin.guide.sections.security.tip2',
-      'admin.guide.sections.security.tip3',
-    ],
-  },
 ];
 
 export const FAQ_ITEMS: FaqItem[] = [
@@ -205,5 +161,4 @@ export const QUICK_LINKS = [
   { href: '/admin/earn-settings', icon: LuCoins, labelKey: 'admin.guide.quick.earn' },
   { href: '/admin/log-channels', icon: LuDatabase, labelKey: 'admin.guide.quick.logs' },
   { href: '/admin/settings', icon: LuSettings, labelKey: 'admin.guide.quick.settings' },
-  { href: '/admin/announcements', icon: LuBell, labelKey: 'admin.guide.quick.announce' },
 ];

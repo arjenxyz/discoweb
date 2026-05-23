@@ -253,7 +253,7 @@
         },
         "launch": {
           "title": "Go Live & Monitor",
-          "desc": "Track stats from the dashboard and manage maintenance mode."
+          "desc": "Track stats from the dashboard and monitor your server."
         }
       },
       "sections": {
