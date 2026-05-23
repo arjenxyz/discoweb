@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuArrowRight, LuDatabase, LuLoader, LuLock, LuShield } from 'react-icons/lu';
+import { LuArrowRight, LuDatabase, LuLoader, LuLock, LuShield, LuSettings } from 'react-icons/lu';
 
 const AGREEMENT_OVERVIEW = [
   {
@@ -398,9 +398,23 @@ export default function SelectServerPage() {
                       </div>
                     </div>
 
-                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white ${roleBadgeClass}`}>
-                      {guild.isOwner ? 'Sahip' : guild.isAdmin ? 'Yönetici' : 'Üye'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white ${roleBadgeClass}`}>
+                        {guild.isOwner ? 'Sahip' : guild.isAdmin ? 'Yönetici' : 'Üye'}
+                      </span>
+                      {guild.isSetup && (guild.isOwner || guild.isAdmin) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSetupGuild(guild.id);
+                          }}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+                          title="Sunucu Ayarlarını Güncelle"
+                        >
+                          <LuSettings className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </button>
               );
