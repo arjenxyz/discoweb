@@ -75,8 +75,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     {
       title: 'Yönetim',
       items: [
-        { href: '/admin/wallet', label: 'Bakiye Yönetimi', icon: <LuWallet className="h-4 w-4" /> },
-        { href: '/admin/earn-settings', label: t('sidebar.economy'), icon: <LuChartBar className="h-4 w-4" /> },
+        { href: '/admin/wallet', label: t('sidebar.wallet'), icon: <LuWallet className="h-4 w-4" /> },
+        { href: '/admin/earn-settings', label: t('sidebar.earn_settings'), icon: <LuChartBar className="h-4 w-4" /> },
         { href: '/admin/log-channels', label: t('sidebar.channels_logs'), icon: <LuClipboardList className="h-4 w-4" /> },
       ],
     },

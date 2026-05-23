@@ -3,6 +3,7 @@ import { createClient, SupabaseClient, PostgrestResponse } from '@supabase/supab
 import RemoveSetupButton from './RemoveSetupButton';
 import { getSessionUserId } from '@/lib/auth';
 import AdminOverviewClient from './AdminOverviewClient';
+import { AdminAccessDenied, AdminLoadFailed } from './AdminAccessDenied';
 
 interface SupabaseQueryResult {
   data: unknown;
@@ -281,22 +282,7 @@ export default async function AdminDashboardPage() {
   
   if (!hasAdminAccess) {
     console.log('No admin access, showing error page');
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0d12] text-white">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-400 mb-4">Erişim Reddedildi</h1>
-          <p className="text-white/70 mb-6">
-            Bu sunucuda yönetici yetkiniz yok.
-          </p>
-          <a 
-            href="/dashboard" 
-            className="inline-block px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
-          >
-            Ana Sayfaya Dön
-          </a>
-        </div>
-      </div>
-    );
+    return <AdminAccessDenied />;
   }
 
   console.log('Getting overview data...');
@@ -304,11 +290,7 @@ export default async function AdminDashboardPage() {
   console.log('Overview data:', overview);
 
   if (!overview) {
-    return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/60">
-        Admin verileri yüklenemedi. Sunucu ayarlarını ve yetkileri kontrol edin.
-      </div>
-    );
+    return <AdminLoadFailed />;
   }
 
   return (

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from 'next/image';
+import { useTranslation } from '@/lib/i18nContext';
 import {
   LuMessageSquare,
   LuMic,
@@ -55,6 +56,7 @@ type EarnSettings = {
 };
 
 export default function EarnSettingsPage() {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<EarnSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -70,12 +72,12 @@ export default function EarnSettingsPage() {
     const load = async () => {
       try {
         const res = await fetch('/api/admin/earn-settings', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Veri çekilemedi');
+        if (!res.ok) throw new Error(t('admin.earn.data_error'));
         const data = await res.json();
         setSettings(data);
         setInitialSettings(data);
       } catch {
-        setError('Ayarlar yüklenirken bir hata oluştu.');
+        setError(t('admin.earn.load_error'));
       } finally {
         setLoading(false);
       }
@@ -86,7 +88,7 @@ export default function EarnSettingsPage() {
   // Rol Adı Simülasyonu (Bunu ileride gerçek API ile değiştirebilirsin)
   useEffect(() => {
     if (settings?.verify_role_id && settings.verify_role_id.length > 15) {
-      setRoleName('@Doğrulanmış Üye'); 
+      setRoleName(t('admin.earn.verified_role_mock')); 
     } else {
       setRoleName(null);
     }
@@ -113,13 +115,13 @@ export default function EarnSettingsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings),
       });
-      if (!res.ok) throw new Error('Kaydetme başarısız');
+      if (!res.ok) throw new Error(t('admin.earn.save_error'));
       
-      setMessage('Ayarlar başarıyla kaydedildi.');
+      setMessage(t('admin.earn.save_success'));
       setInitialSettings(settings);
       setHasChanges(false);
     } catch {
-      setError('Ayarlar kaydedilemedi.');
+      setError(t('admin.earn.save_error'));
     } finally {
       setSaving(false);
     }
@@ -138,7 +140,7 @@ export default function EarnSettingsPage() {
     </div>
   );
   
-  if (!settings) return <div className="text-center p-10 text-red-400">Veri yüklenemedi.</div>;
+  if (!settings) return <div className="text-center p-10 text-red-400">{t('admin.earn.data_error')}</div>;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
@@ -146,8 +148,8 @@ export default function EarnSettingsPage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Kazanç Ayarları</h1>
-          <p className="mt-1 text-sm text-zinc-400">Sunucu ekonomisini buradan yönetin.</p>
+          <h1 className="text-3xl font-bold text-white tracking-tight">{t('admin.earn.title')}</h1>
+          <p className="mt-1 text-sm text-zinc-400">{t('admin.earn.subtitle')}</p>
         </div>
         
         <div className="flex items-center gap-3">
@@ -157,7 +159,7 @@ export default function EarnSettingsPage() {
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium"
                 >
                     <LuUndo2 size={16} />
-                    <span>Geri Al</span>
+                    <span>{t('admin.earn.undo')}</span>
                 </button>
             )}
             <button 
@@ -166,7 +168,7 @@ export default function EarnSettingsPage() {
                 className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-900/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {saving ? <LuLoader className="w-4 h-4 animate-spin" /> : <LuSave size={18} />}
-                <span>{saving ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}</span>
+                <span>{saving ? t('admin.earn.saving') : t('admin.earn.save')}</span>
             </button>
         </div>
       </div>
@@ -188,7 +190,7 @@ export default function EarnSettingsPage() {
                 <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
                   <LuMessageSquare size={20} />
                 </div>
-                <h2 className="text-lg font-bold text-white">Mesaj Aktivitesi</h2>
+                <h2 className="text-lg font-bold text-white">{t('admin.earn.message_activity')}</h2>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
@@ -203,7 +205,7 @@ export default function EarnSettingsPage() {
 
             <div className="space-y-4">
                <div>
-                  <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Mesaj Başına Kazanç</label>
+                  <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.earn_per_message')}</label>
                   <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <span className="text-amber-500 text-sm font-bold">P</span>
@@ -228,7 +230,7 @@ export default function EarnSettingsPage() {
                 <div className="p-2.5 rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20">
                   <LuMic size={20} />
                 </div>
-                <h2 className="text-lg font-bold text-white">Sesli Sohbet</h2>
+                <h2 className="text-lg font-bold text-white">{t('admin.earn.voice_chat')}</h2>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
@@ -243,7 +245,7 @@ export default function EarnSettingsPage() {
 
             <div className="space-y-4">
                <div>
-                  <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Dakika Başına Kazanç</label>
+                  <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.earn_per_voice')}</label>
                   <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <span className="text-emerald-500 text-sm font-bold">P</span>
@@ -273,8 +275,8 @@ export default function EarnSettingsPage() {
                               <LuTag size={20} />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-white">Etiket Bonusu</h2>
-                                <p className="text-xs text-zinc-500">Sunucunuzun etiketini takanlara ödül.</p>
+                                <h2 className="text-lg font-bold text-white">{t('admin.earn.tag_bonus')}</h2>
+                                <p className="text-xs text-zinc-500">{t('admin.earn.tag_bonus_desc')}</p>
                             </div>
                          </div>
                          <label className={`relative inline-flex items-center ${!settings.tag_configured ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}>
@@ -295,7 +297,7 @@ export default function EarnSettingsPage() {
                     {/* GERÇEK SUNUCU BİLGİSİ ÖNİZLEMESİ */}
                     {settings.tag_required && settings._guildPreview && (
                         <div className="p-4 rounded-xl bg-zinc-900/50 border border-white/5 flex items-center justify-between animate-in fade-in slide-in-from-top-2">
-                            <span className="text-xs text-zinc-500 font-medium">Bu sunucu için etiket kontrolü yapılacak:</span>
+                            <span className="text-xs text-zinc-500 font-medium">{t('admin.earn.tag_check_label')}</span>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#2B2D31] border border-[#1E1F22] text-[#DBDEE1]">
                                 {settings._guildPreview.icon ? (
                                     <div className="relative w-5 h-5 rounded-full overflow-hidden">
@@ -317,16 +319,16 @@ export default function EarnSettingsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Mesaj Bonusu</label>
+                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.message_bonus')}</label>
                           <input type="number" min={0} step="0.01" value={settings?.tag_bonus_message ?? 0} onChange={(e) => updateNumber('tag_bonus_message', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Ses Bonusu</label>
+                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.voice_bonus')}</label>
                           <input type="number" min={0} step="0.01" value={settings?.tag_bonus_voice ?? 0} onChange={(e) => updateNumber('tag_bonus_voice', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
                         </div>
                     </div>
                     {!settings.tag_configured && (
-                      <div className="mt-3 text-sm text-zinc-400">Sunucuda etiket yapılandırılmamış. Etiket zorunluluğunu etkinleştirmek için önce Discord üzerinde uygun bir etiket yapılandırın veya bot yapılandırmasını tamamlayın.</div>
+                      <div className="mt-3 text-sm text-zinc-400">{t('admin.earn.tag_not_configured')}</div>
                     )}
                 </div>
 
@@ -337,18 +339,18 @@ export default function EarnSettingsPage() {
                           <LuZap size={20} />
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-white">Booster Bonusu</h2>
-                            <p className="text-xs text-zinc-500">Takviye yapan üyelere ekstra ödül.</p>
+                            <h2 className="text-lg font-bold text-white">{t('admin.earn.booster_bonus')}</h2>
+                            <p className="text-xs text-zinc-500">{t('admin.earn.booster_bonus_desc')}</p>
                         </div>
                      </div>
 
                      <div className="grid grid-cols-2 gap-4 pt-2">
                         <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Mesaj Bonusu</label>
+                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.message_bonus')}</label>
                             <input type="number" min={0} step="0.01" value={settings?.booster_bonus_message ?? 0} onChange={(e) => updateNumber('booster_bonus_message', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">Ses Bonusu</label>
+                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.voice_bonus')}</label>
                             <input type="number" min={0} step="0.01" value={settings?.booster_bonus_voice ?? 0} onChange={(e) => updateNumber('booster_bonus_voice', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
                         </div>
                     </div>
@@ -371,20 +373,20 @@ export default function EarnSettingsPage() {
                 </div>
                 <div className="flex-1 space-y-4">
                     <div>
-                        <h3 className="text-lg font-bold text-white">Güvenlik & Doğrulama</h3>
+                        <h3 className="text-lg font-bold text-white">{t('admin.earn.security_title')}</h3>
                         <p className="text-sm text-red-200/70 mt-1">
-                            Bu alan, botun kimlere ödül vereceğini belirler. Boş bırakılırsa tüm üyeler ödül alır.
+                            {t('admin.earn.security_desc')}
                         </p>
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-red-300 uppercase mb-2">Doğrulama Rolü ID&#39;si</label>
+                        <label className="block text-xs font-medium text-red-300 uppercase mb-2">{t('admin.earn.verify_role_label')}</label>
                         <div className="flex items-center gap-3">
                             <input 
                                 type="text" 
                                 value={settings.verify_role_id ?? ''} 
                                 onChange={(e) => setSettings({ ...settings, verify_role_id: e.target.value || null })} 
-                                placeholder="Rol ID'si girin" 
+                                placeholder={t('admin.earn.verify_role_placeholder')} 
                                 className="flex-1 px-4 py-3 rounded-lg bg-black/40 border border-red-500/20 text-white placeholder-red-500/30 focus:ring-2 focus:ring-red-500/50 outline-none font-mono" 
                             />
                             
@@ -405,6 +407,7 @@ export default function EarnSettingsPage() {
         <ChannelEarnConfig
           settings={settings}
           onUpdate={(earnChannels) => setSettings({ ...settings, earn_channels: earnChannels })}
+          t={t}
         />
 
       </div>
@@ -416,9 +419,11 @@ export default function EarnSettingsPage() {
 function ChannelEarnConfig({
   settings,
   onUpdate,
+  t,
 }: {
   settings: EarnSettings;
   onUpdate: (channels: EarnChannels) => void;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   const channels = settings._channels ?? [];
   const earnChannels: EarnChannels = settings.earn_channels ?? {
@@ -451,8 +456,8 @@ function ChannelEarnConfig({
             <LuHash size={20} />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Kazanç Kanalları</h2>
-            <p className="text-xs text-zinc-500">Kanal bilgisi yüklenemedi.</p>
+            <h2 className="text-lg font-bold text-white">{t('admin.earn.channels_title')}</h2>
+            <p className="text-xs text-zinc-500">{t('admin.earn.channels_load_error')}</p>
           </div>
         </div>
       </div>
@@ -467,8 +472,8 @@ function ChannelEarnConfig({
             <LuHash size={20} />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Kazanç Kanalları</h2>
-            <p className="text-xs text-zinc-500">Hangi kanallarda papel kazanılacağını belirleyin.</p>
+            <h2 className="text-lg font-bold text-white">{t('admin.earn.channels_title')}</h2>
+            <p className="text-xs text-zinc-500">{t('admin.earn.channels_desc')}</p>
           </div>
         </div>
       </div>
@@ -476,9 +481,9 @@ function ChannelEarnConfig({
       {/* Mode Selection */}
       <div className="flex flex-wrap gap-3">
         {([
-          { value: 'all', label: 'Tüm Kanallar', desc: 'Her kanalda kazanç aktif' },
-          { value: 'whitelist', label: 'Beyaz Liste', desc: 'Sadece seçilen kanallarda kazanç' },
-          { value: 'blacklist', label: 'Kara Liste', desc: 'Seçilen kanallar hariç kazanç' },
+          { value: 'all', label: t('admin.earn.mode_all_label'), desc: t('admin.earn.mode_all_desc') },
+          { value: 'whitelist', label: t('admin.earn.mode_whitelist_label'), desc: t('admin.earn.mode_whitelist_desc') },
+          { value: 'blacklist', label: t('admin.earn.mode_blacklist_label'), desc: t('admin.earn.mode_blacklist_desc') },
         ] as const).map((opt) => (
           <button
             key={opt.value}
@@ -504,12 +509,12 @@ function ChannelEarnConfig({
           <div className="space-y-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-blue-300 flex items-center gap-2">
               <LuMessageSquare size={14} />
-              Mesaj Kanalları
+              {t('admin.earn.message_channels')}
             </p>
 
             {/* Kategori Seçimi */}
             <div>
-              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuFolder size={12} /> Kategoriler</p>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuFolder size={12} /> {t('admin.earn.categories')}</p>
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => {
                   const selected = earnChannels.message_categories.includes(cat.id);
@@ -535,7 +540,7 @@ function ChannelEarnConfig({
 
             {/* Kanal Seçimi */}
             <div>
-              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuHash size={12} /> Metin Kanalları</p>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuHash size={12} /> {t('admin.earn.text_channels')}</p>
               <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-white/5 bg-zinc-900/50 p-2">
                 {textChannels.map((ch) => {
                   const selected = earnChannels.message_channels.includes(ch.id);
@@ -565,12 +570,12 @@ function ChannelEarnConfig({
           <div className="space-y-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-violet-300 flex items-center gap-2">
               <LuMic size={14} />
-              Sesli Kanallar
+              {t('admin.earn.voice_channels')}
             </p>
 
             {/* Kategori Seçimi */}
             <div>
-              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuFolder size={12} /> Kategoriler</p>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuFolder size={12} /> {t('admin.earn.categories')}</p>
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => {
                   const selected = earnChannels.voice_categories.includes(cat.id);
@@ -596,7 +601,7 @@ function ChannelEarnConfig({
 
             {/* Kanal Seçimi */}
             <div>
-              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuVolume2 size={12} /> Ses Kanalları</p>
+              <p className="text-xs text-zinc-500 mb-2 flex items-center gap-1"><LuVolume2 size={12} /> {t('admin.earn.voice_channel_list')}</p>
               <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border border-white/5 bg-zinc-900/50 p-2">
                 {voiceChannels.map((ch) => {
                   const selected = earnChannels.voice_channels.includes(ch.id);
@@ -628,12 +633,12 @@ function ChannelEarnConfig({
       {earnChannels.mode !== 'all' && (
         <div className="rounded-xl border border-white/5 bg-zinc-900/50 p-4">
           <p className="text-xs font-semibold text-zinc-400 uppercase mb-2">
-            {earnChannels.mode === 'whitelist' ? 'Sadece şu kanallarda kazanç aktif:' : 'Şu kanallar hariç kazanç aktif:'}
+            {earnChannels.mode === 'whitelist' ? t('admin.earn.summary_whitelist') : t('admin.earn.summary_blacklist')}
           </p>
           <div className="flex flex-wrap gap-2">
             {earnChannels.message_categories.map((id) => (
               <span key={`mc-${id}`} className="inline-flex items-center gap-1 rounded-md bg-blue-500/10 px-2 py-1 text-[11px] text-blue-300">
-                <LuFolder size={10} /> {getCategoryName(id)} <span className="text-blue-500">(mesaj)</span>
+                <LuFolder size={10} /> {getCategoryName(id)} <span className="text-blue-500">{t('admin.earn.suffix_message')}</span>
               </span>
             ))}
             {earnChannels.message_channels.map((id) => (
@@ -643,7 +648,7 @@ function ChannelEarnConfig({
             ))}
             {earnChannels.voice_categories.map((id) => (
               <span key={`vc-${id}`} className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-1 text-[11px] text-violet-300">
-                <LuFolder size={10} /> {getCategoryName(id)} <span className="text-violet-500">(ses)</span>
+                <LuFolder size={10} /> {getCategoryName(id)} <span className="text-violet-500">{t('admin.earn.suffix_voice')}</span>
               </span>
             ))}
             {earnChannels.voice_channels.map((id) => (
@@ -655,7 +660,7 @@ function ChannelEarnConfig({
               earnChannels.message_categories.length === 0 &&
               earnChannels.voice_channels.length === 0 &&
               earnChannels.voice_categories.length === 0 && (
-                <span className="text-xs text-zinc-500">Henüz kanal seçilmedi.</span>
+                <span className="text-xs text-zinc-500">{t('admin.earn.no_channels_selected')}</span>
               )}
           </div>
         </div>

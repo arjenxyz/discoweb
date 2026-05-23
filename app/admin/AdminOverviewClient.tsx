@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import RemoveSetupButton from './RemoveSetupButton';
 import {
@@ -24,6 +24,7 @@ import {
   LuStore,
 } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
+import { getLocaleTag } from '@/lib/i18n/languages';
 
 type OverviewStats = {
   rangeHours: number;
@@ -49,8 +50,9 @@ type Props = {
   selectedGuildId: string;
 };
 
-// Use Turkish formatting for overview numeric values.
-const fmt = new Intl.NumberFormat('tr-TR');
+// Locale-aware number formatting
+const useNumberFormat = (language: string) =>
+  useMemo(() => new Intl.NumberFormat(getLocaleTag(language as 'tr' | 'en')), [language]);
 
 function StatCard({
   icon,
@@ -59,6 +61,7 @@ function StatCard({
   sub,
   color,
   href,
+  fmt,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -66,6 +69,7 @@ function StatCard({
   sub?: string;
   color: string;
   href?: string;
+  fmt: Intl.NumberFormat;
 }) {
   const content = (
     <div className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0f1116] p-5 transition hover:border-white/20 ${href ? 'cursor-pointer' : ''}`}>
@@ -90,7 +94,8 @@ export default function AdminOverviewClient({
   serverSetup,
   selectedGuildId,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const fmt = useNumberFormat(language);
   const [stats, setStats] = useState<OverviewStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -184,6 +189,7 @@ export default function AdminOverviewClient({
                 value={stats.rangeMessages}
                 sub={`${t('admin.dashboard.total')}: ${fmt.format(stats.totalMessages)}`}
                 color="bg-blue-500"
+                fmt={fmt}
               />
               <StatCard
                 icon={<LuMic className="h-5 w-5" />}
@@ -191,6 +197,7 @@ export default function AdminOverviewClient({
                 value={stats.rangeVoiceMinutes}
                 sub={t('admin.dashboard.total_min', { 0: fmt.format(stats.totalVoiceMinutes) })}
                 color="bg-violet-500"
+                fmt={fmt}
               />
               <StatCard
                 icon={<LuUsers className="h-5 w-5" />}
@@ -198,6 +205,7 @@ export default function AdminOverviewClient({
                 value={stats.totalMembers}
                 sub={t('admin.dashboard.wallets_created', { 0: fmt.format(stats.totalWallets) })}
                 color="bg-cyan-500"
+                fmt={fmt}
               />
               <div className="grid grid-rows-2 gap-4">
                 <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f1116] p-4 transition hover:border-white/20">

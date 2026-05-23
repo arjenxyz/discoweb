@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useTranslation } from '@/lib/i18nContext';
 
 type MemberResult = {
   id: string;
@@ -11,7 +12,21 @@ type MemberResult = {
   avatarUrl: string;
 };
 
+const USER_ADD_PRESET_KEYS = ['add_maintenance', 'add_event', 'add_gift', 'add_refund', 'add_milestone', 'add_support'] as const;
+const REMOVE_USER_PRESET_KEYS = ['remove_penalty', 'remove_chargeback', 'remove_fee', 'remove_refund'] as const;
+const ALL_ADD_PRESET_KEYS = ['all_maintenance', 'all_announcement', 'all_event', 'all_season', 'all_promo', 'all_loyalty'] as const;
+const ALL_REMOVE_PRESET_KEYS = ['remove_all_adjustment', 'remove_all_fee'] as const;
+
+function buildPresets(t: (key: string) => string, keys: readonly string[]) {
+  return keys.map((key) => ({
+    value: key,
+    label: t(`admin.wallet.presets.${key}.label`),
+    text: t(`admin.wallet.presets.${key}.text`),
+  }));
+}
+
 export default function AdminWalletPage() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<'add' | 'remove'>('add');
   const [scope, setScope] = useState<'user' | 'all'>('user');
   const [userId, setUserId] = useState('');
@@ -29,27 +44,33 @@ export default function AdminWalletPage() {
 
   const sendWalletChangeMail = async (userId: string | null, mode: 'add' | 'remove', amount: number, message: string, scope: 'user' | 'all') => {
     try {
-      const mailTitle = scope === 'all' 
-        ? `Toplu ${mode === 'add' ? 'Bakiye Eklendi' : 'Bakiye Çıkarıldı'}`
-        : (mode === 'add' ? 'Bakiye Eklendi' : 'Bakiye Çıkarıldı');
+      const mailTitle = scope === 'all'
+        ? t(mode === 'add' ? 'admin.wallet.mail.title_add_all' : 'admin.wallet.mail.title_remove_all')
+        : t(mode === 'add' ? 'admin.wallet.mail.title_add' : 'admin.wallet.mail.title_remove');
       // replace {amount} placeholders in the message with the actual amount
       const filledMessage = (message || '').replace(/\{amount\}/g, String(amount));
 
-      const mailBody = scope === 'all'
-        ? `
+      const sign = mode === 'add' ? '+' : '-';
+      const headingKey = scope === 'all'
+        ? (mode === 'add' ? 'admin.wallet.mail.heading_add_all' : 'admin.wallet.mail.heading_remove_all')
+        : (mode === 'add' ? 'admin.wallet.mail.heading_add' : 'admin.wallet.mail.heading_remove');
+      const footerKey = scope === 'all' ? 'admin.wallet.mail.footer_all' : 'admin.wallet.mail.footer_single';
+      const headingColor = mode === 'add' ? '#10b981' : '#ef4444';
+
+      const mailBody = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: ${mode === 'add' ? '#10b981' : '#ef4444'}; margin-bottom: 20px;">
-            ${mode === 'add' ? '✅ Toplu Bakiye Eklendi' : '❌ Toplu Bakiye Çıkarıldı'}
+          <h2 style="color: ${headingColor}; margin-bottom: 20px;">
+            ${t(headingKey)}
           </h2>
 
           <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p style="margin: 0; font-size: 16px; font-weight: bold;">
-              İşlem Tutarı: <span style="color: ${mode === 'add' ? '#10b981' : '#ef4444'};">${mode === 'add' ? '+' : '-'}${amount} Papel</span>
+              ${t('admin.wallet.mail.amount_label')} <span style="color: ${headingColor};">${t('admin.wallet.mail.amount_value', { sign, amount })}</span>
             </p>
           </div>
 
-            <div style="margin: 20px 0;">
-            <h3 style="color: #374151; margin-bottom: 10px;">İşlem Açıklaması:</h3>
+          <div style="margin: 20px 0;">
+            <h3 style="color: #374151; margin-bottom: 10px;">${t('admin.wallet.mail.description_label')}</h3>
             <p style="color: #6b7280; margin: 0; padding: 15px; background: #f9fafb; border-left: 4px solid #3b82f6; border-radius: 4px;">
               ${filledMessage}
             </p>
@@ -57,33 +78,7 @@ export default function AdminWalletPage() {
 
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
             <p style="color: #6b7280; font-size: 14px; margin: 0;">
-              Bu toplu işlem sistem tarafından gerçekleştirilmiştir.
-            </p>
-          </div>
-        </div>
-      `
-        : `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: ${mode === 'add' ? '#10b981' : '#ef4444'}; margin-bottom: 20px;">
-            ${mode === 'add' ? '✅ Bakiye Eklendi' : '❌ Bakiye Çıkarıldı'}
-          </h2>
-
-          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0; font-size: 16px; font-weight: bold;">
-              İşlem Tutarı: <span style="color: ${mode === 'add' ? '#10b981' : '#ef4444'};">${mode === 'add' ? '+' : '-'}${amount} Papel</span>
-            </p>
-          </div>
-
-            <div style="margin: 20px 0;">
-            <h3 style="color: #374151; margin-bottom: 10px;">İşlem Açıklaması:</h3>
-            <p style="color: #6b7280; margin: 0; padding: 15px; background: #f9fafb; border-left: 4px solid #3b82f6; border-radius: 4px;">
-              ${filledMessage}
-            </p>
-          </div>
-
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-            <p style="color: #6b7280; font-size: 14px; margin: 0;">
-              Bu işlem sistem tarafından gerçekleştirilmiştir.
+              ${t(footerKey)}
             </p>
           </div>
         </div>
@@ -108,107 +103,10 @@ export default function AdminWalletPage() {
     }
   };
 
-  const userPresets = [
-    {
-      value: 'maintenance',
-      label: 'Bakım telafisi mesajı',
-      text: 'Merhaba, kısa süreli bakım nedeniyle telafi olarak {amount} papel hesabınıza eklendi. Anlayışınız için teşekkürler.',
-    },
-    {
-      value: 'event',
-      label: 'Etkinlik/başarı ödülü',
-      text: 'Tebrikler! Etkinlik katkınız için {amount} papel ödülünüz hesabınıza aktarıldı. Keyifle kullanın.',
-    },
-    {
-      value: 'gift',
-      label: 'Topluluk teşekkür hediyesi',
-      text: 'Topluluğumuza verdiğiniz destek için teşekkürler. Size {amount} papel hediye ediyoruz.',
-    },
-    {
-      value: 'refund',
-      label: 'Hata telafisi/iade',
-      text: 'Yaşanan aksaklık için üzgünüz. Telafi olarak {amount} papel bakiyenize eklendi.',
-    },
-    {
-      value: 'milestone',
-      label: 'Seviye/katkı ödülü',
-      text: 'Topluluk katkınız için teşekkürler! {amount} papel ödülünüz hesabınıza aktarıldı.',
-    },
-    {
-      value: 'support',
-      label: 'Destek teşekkür',
-      text: 'Destek talebiniz sonrası iyi niyet hediyesi olarak {amount} papel hesabınıza yansıdı.',
-    },
-  ];
-
-  const removeUserPresets = [
-    {
-      value: 'remove_penalty',
-      label: 'Kural ihlali/ceza kesintisi',
-      text: 'Kural ihlali nedeniyle hesabınızdan {amount} papel düşülmüştür.',
-    },
-    {
-      value: 'remove_chargeback',
-      label: 'Hatalı işlem düzeltmesi',
-      text: 'Hatalı işlem düzeltmesi kapsamında {amount} papel bakiyenizden düşüldü.',
-    },
-    {
-      value: 'remove_fee',
-      label: 'İşlem ücreti',
-      text: 'İşlem ücreti olarak {amount} papel bakiyenizden düşüldü.',
-    },
-    {
-      value: 'remove_refund',
-      label: 'İade geri çekimi',
-      text: 'İade iptali nedeniyle {amount} papel bakiyenizden düşüldü.',
-    },
-  ];
-
-  const allPresets = [
-    {
-      value: 'maintenance_all',
-      label: 'Bakım telafisi (tüm üyeler)',
-      text: 'Planlı bakım nedeniyle telafi olarak {amount} papel tüm üye bakiyelerine eklendi. Teşekkürler.',
-    },
-    {
-      value: 'announcement_all',
-      label: 'Topluluk teşvik (genel)',
-      text: 'Topluluk motivasyonu için {amount} papel tüm üyelere tanımlandı. Keyifle kullanın.',
-    },
-    {
-      value: 'event_all',
-      label: 'Etkinlik ödülü (genel)',
-      text: 'Etkinlik katılım teşekkürü olarak {amount} papel tüm üyelere aktarıldı.',
-    },
-    {
-      value: 'season_all',
-      label: 'Sezon kapanışı bonusu',
-      text: 'Sezon kapanışı kapsamında {amount} papel tüm üyelere bonus olarak eklendi.',
-    },
-    {
-      value: 'promo_all',
-      label: 'Promosyon teşviki',
-      text: 'Yeni dönem teşviki için {amount} papel tüm üye bakiyelerine yüklendi.',
-    },
-    {
-      value: 'loyalty_all',
-      label: 'Sadakat teşekkür',
-      text: 'Topluluğa katkılarınız için {amount} papel tüm üyelerimize hediye edildi.',
-    },
-  ];
-
-  const removeAllPresets = [
-    {
-      value: 'remove_all_adjustment',
-      label: 'Genel bakiye düzeltmesi',
-      text: 'Genel bakiye düzeltmesi kapsamında tüm üyelere {amount} papel düşümü uygulanmıştır.',
-    },
-    {
-      value: 'remove_all_fee',
-      label: 'Genel işlem ücreti',
-      text: 'Genel işlem ücreti nedeniyle tüm üyelere {amount} papel kesinti uygulanmıştır.',
-    },
-  ];
+  const userPresets = useMemo(() => buildPresets(t, USER_ADD_PRESET_KEYS), [t]);
+  const removeUserPresets = useMemo(() => buildPresets(t, REMOVE_USER_PRESET_KEYS), [t]);
+  const allPresets = useMemo(() => buildPresets(t, ALL_ADD_PRESET_KEYS), [t]);
+  const removeAllPresets = useMemo(() => buildPresets(t, ALL_REMOVE_PRESET_KEYS), [t]);
 
   const presets = mode === 'remove'
     ? (scope === 'all' ? removeAllPresets : removeUserPresets)
@@ -230,17 +128,17 @@ export default function AdminWalletPage() {
 
     const value = Number(amount);
     if (Number.isNaN(value) || value <= 0) {
-      setError('Geçerli bir miktar girin.');
+      setError(t('admin.wallet.error_invalid_amount'));
       return;
     }
 
     if (scope === 'user' && !userId.trim()) {
-      setError('Kullanıcı ID zorunlu.');
+      setError(t('admin.wallet.error_user_required'));
       return;
     }
 
     if (mode === 'add' && !message.trim()) {
-      setError('Papel eklerken açıklama zorunludur.');
+      setError(t('admin.wallet.error_message_required'));
       return;
     }
 
@@ -262,18 +160,18 @@ export default function AdminWalletPage() {
 
     if (!response.ok) {
       if (data.error === 'message_required') {
-        setError('Papel eklemek için açıklama zorunludur.');
+        setError(t('admin.wallet.error_message_required'));
       } else {
-        setError('İşlem başarısız.');
+        setError(t('admin.wallet.error_failed'));
       }
       setLoading(false);
       return;
     }
 
     if (scope === 'all') {
-      setSuccess(`Tüm kullanıcılara işlem uygulandı. Toplam: ${data.updated ?? 0}`);
+      setSuccess(t('admin.wallet.success_all', { count: data.updated ?? 0 }));
     } else {
-      setSuccess('İşlem başarılı.');
+      setSuccess(t('admin.wallet.success_single'));
     }
 
     // Mail gönderme işlemi (sadece papel düşme için - ekleme API tarafından reward mail olarak gönderiliyor)
@@ -326,27 +224,27 @@ export default function AdminWalletPage() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Admin</p>
-        <h1 className="mt-2 text-2xl font-semibold">Bakiye Yönetimi</h1>
-        <p className="mt-1 text-sm text-white/60">Kullanıcılara veya tüm üyelere papel ekleyin/silin.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">{t('admin.wallet.eyebrow')}</p>
+        <h1 className="mt-2 text-2xl font-semibold">{t('admin.wallet.title')}</h1>
+        <p className="mt-1 text-sm text-white/60">{t('admin.wallet.subtitle')}</p>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-xs text-white/50">İşlem</label>
+            <label className="text-xs text-white/50">{t('admin.wallet.operation')}</label>
             <select
               value={mode}
               onChange={(event) => setMode(event.target.value as 'add' | 'remove')}
               className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
             >
-              <option value="add">Bakiye Ekle</option>
-              <option value="remove">Bakiye Sil</option>
+              <option value="add">{t('admin.wallet.mode_add')}</option>
+              <option value="remove">{t('admin.wallet.mode_remove')}</option>
             </select>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs text-white/50">Kapsam</label>
+            <label className="text-xs text-white/50">{t('admin.wallet.scope')}</label>
             <select
               value={scope}
               // DÜZELTME 2: Temizleme işlemi buraya (event handler'a) taşındı.
@@ -361,8 +259,8 @@ export default function AdminWalletPage() {
               }}
               className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
             >
-              <option value="user">Tek Kullanıcı</option>
-              <option value="all">Tüm Kullanıcılar</option>
+              <option value="user">{t('admin.wallet.scope_user')}</option>
+              <option value="all">{t('admin.wallet.scope_all')}</option>
             </select>
           </div>
         </div>
@@ -370,7 +268,7 @@ export default function AdminWalletPage() {
         {scope === 'user' && (
           <div className="mt-4 space-y-4">
             <div className="space-y-2">
-              <label className="text-xs text-white/50">Kullanıcı ara (nickname / username)</label>
+              <label className="text-xs text-white/50">{t('admin.wallet.search_label')}</label>
               <input
                 value={searchQuery}
                 onChange={(event) => {
@@ -380,12 +278,12 @@ export default function AdminWalletPage() {
                     setSearchResults([]);
                   }
                 }}
-                placeholder="Örn: night, newli"
+                placeholder={t('admin.wallet.search_placeholder')}
                 className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
               />
-              {searchLoading && <p className="text-xs text-white/50">Aranıyor...</p>}
+              {searchLoading && <p className="text-xs text-white/50">{t('admin.wallet.searching')}</p>}
               {!searchLoading && searchQuery.trim().length >= 2 && searchResults.length === 0 && (
-                <p className="text-xs text-white/50">Sonuç bulunamadı.</p>
+                <p className="text-xs text-white/50">{t('admin.wallet.no_results')}</p>
               )}
               {searchResults.length > 0 && (
                 <div className="grid gap-2 rounded-xl border border-white/10 bg-[#0b0d12]/60 p-2">
@@ -425,14 +323,14 @@ export default function AdminWalletPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-white/50">Kullanıcı Discord ID</label>
+              <label className="text-xs text-white/50">{t('admin.wallet.user_id_label')}</label>
               <input
                 value={userId}
                 onChange={(event) => {
                   setUserId(event.target.value);
                   setSelectedMember(null);
                 }}
-                placeholder="1234567890"
+                placeholder={t('admin.wallet.user_id_placeholder')}
                 className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
               />
             </div>
@@ -464,7 +362,7 @@ export default function AdminWalletPage() {
                   }}
                   className="text-xs text-white/60 transition hover:text-white"
                 >
-                  Seçimi temizle
+                  {t('admin.wallet.clear_selection')}
                 </button>
               </div>
             )}
@@ -472,18 +370,18 @@ export default function AdminWalletPage() {
         )}
 
         <div className="mt-4 space-y-2">
-          <label className="text-xs text-white/50">Miktar (papel)</label>
+          <label className="text-xs text-white/50">{t('admin.wallet.amount_label')}</label>
           <input
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
-            placeholder="100"
+            placeholder={t('admin.wallet.amount_placeholder')}
             type="number"
             className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
           />
         </div>
 
         <div className="mt-4 space-y-2">
-          <label className="text-xs text-white/50">Hazır mesajlar</label>
+          <label className="text-xs text-white/50">{t('admin.wallet.presets_label')}</label>
           <select
             value={preset}
             onChange={(event) => {
@@ -496,34 +394,34 @@ export default function AdminWalletPage() {
             }}
             className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
           >
-            <option value="">Seçiniz</option>
+            <option value="">{t('admin.wallet.presets_select')}</option>
             {presets.map((item) => (
               <option key={item.value} value={item.value}>
                 {item.label}
               </option>
             ))}
           </select>
-          <p className="text-xs text-white/40">{`{amount}`} yer tutucusu otomatik tutar ile değişir.</p>
+          <p className="text-xs text-white/40">{t('admin.wallet.amount_hint')}</p>
         </div>
 
         <div className="mt-4 space-y-2">
-          <label className="text-xs text-white/50">Açıklama {mode === 'add' ? '(zorunlu)' : '(opsiyonel)'}</label>
+          <label className="text-xs text-white/50">{mode === 'add' ? t('admin.wallet.description_required') : t('admin.wallet.description_optional')}</label>
           <textarea
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             rows={4}
-            placeholder="Örn: Bakım telafisi, etkinlik ödülü vb."
+            placeholder={t('admin.wallet.description_placeholder')}
             className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
           />
         </div>
 
         {mode === 'add' && (
           <div className="mt-4 space-y-2">
-            <label className="text-xs text-white/50">Görsel URL (opsiyonel)</label>
+            <label className="text-xs text-white/50">{t('admin.wallet.image_label')}</label>
             <input
               value={imageUrl}
               onChange={(event) => setImageUrl(event.target.value)}
-              placeholder="https://..."
+              placeholder={t('admin.wallet.image_placeholder')}
               className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
             />
             {imageUrl.trim().length > 0 && (
@@ -550,7 +448,7 @@ export default function AdminWalletPage() {
           disabled={loading}
           className="mt-4 rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? 'İşleniyor...' : 'Uygula'}
+          {loading ? t('admin.wallet.submit_loading') : t('admin.wallet.submit')}
         </button>
       </div>
     </div>

@@ -1,76 +1,52 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import tr from './locales/tr.json';
-import en from './locales/en.json';
-
-type Language = 'tr' | 'en';
-
-type Translations = Record<string, any>;
-
-const translations: Record<Language, Translations> = {
-  tr,
-  en,
-};
+import {
+  DEFAULT_LANGUAGE,
+  isLanguageCode,
+  translateText,
+  translations,
+  type LanguageCode,
+} from './i18n/languages';
 
 interface I18nContextProps {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: LanguageCode;
+  setLanguage: (lang: LanguageCode) => void;
   t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const I18nContext = createContext<I18nContextProps | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguageState] = useState<Language>('tr');
-  const [mounted, setMounted] = useState(false);
+  const [language, setLanguageState] = useState<LanguageCode>(DEFAULT_LANGUAGE);
 
   useEffect(() => {
-    setMounted(true);
-    // Load language from localStorage if available
-    const savedLang = localStorage.getItem('app_language') as Language;
-    if (savedLang && (savedLang === 'tr' || savedLang === 'en')) {
+    const savedLang = localStorage.getItem('app_language');
+    if (isLanguageCode(savedLang)) {
       setLanguageState(savedLang);
-    } else {
-      // Fallback to browser language
-      const browserLang = navigator.language.split('-')[0];
-      if (browserLang === 'en') {
-        setLanguageState('en');
-      }
+      return;
+    }
+
+    const browserLang = navigator.language.split('-')[0];
+    if (browserLang === 'en') {
+      setLanguageState('en');
     }
   }, []);
 
-  const setLanguage = (lang: Language) => {
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
+  const setLanguage = (lang: LanguageCode) => {
     setLanguageState(lang);
     localStorage.setItem('app_language', lang);
     document.cookie = `app_language=${lang}; path=/; max-age=31536000`;
+    document.documentElement.lang = lang;
   };
 
-  const t = (key: string, params?: Record<string, string | number>): string => {
-    const keys = key.split('.');
-    let value = translations[language];
+  const t = (key: string, params?: Record<string, string | number>): string =>
+    translateText(language, key, params);
 
-    for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = value[k];
-      } else {
-        // Fallback to key if not found
-        return key;
-      }
-    }
-
-    let str = typeof value === 'string' ? value : key;
-    
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => {
-        str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
-      });
-    }
-
-    return str;
-  };
-
-  // Always provide the context so hooks don't break during SSR
   return (
     <I18nContext.Provider value={{ language, setLanguage, t }}>
       {children}
@@ -81,12 +57,14 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 export const useTranslation = (): I18nContextProps => {
   const context = useContext(I18nContext);
   if (!context) {
-    // Return a dummy context if used outside provider (e.g. server components if by mistake)
     return {
-      language: 'tr',
+      language: DEFAULT_LANGUAGE,
       setLanguage: () => {},
-      t: (key: string, params?: Record<string, string | number>) => key,
+      t: (key: string, params?: Record<string, string | number>) => translateText(DEFAULT_LANGUAGE, key, params),
     };
   }
   return context;
 };
+
+export type { LanguageCode };
+export { translations, DEFAULT_LANGUAGE };
