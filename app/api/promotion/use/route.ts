@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireSessionUser } from '@/lib/auth';
 import { checkMaintenance } from '@/lib/maintenance';
-import { redeemPromoCode } from '@/lib/promotions/redeemPromo';
+import { redeemPromoCode, mapPromoErrorForClient } from '@/lib/promotions/redeemPromo';
 
 const getSelectedGuildId = async (): Promise<string> => {
   const cookieStore = await cookies();
@@ -46,14 +46,17 @@ export async function POST(request: Request) {
     });
 
     if (!result.ok) {
-      return NextResponse.json({ error: result.message, code: result.error }, { status: result.status });
+      return NextResponse.json(
+        { error: mapPromoErrorForClient(result.error), message: result.message },
+        { status: result.status },
+      );
     }
 
     return NextResponse.json({
       success: true,
-      message: result.message,
-      newBalance: result.balance,
+      message: 'promotion_applied',
       amount: result.amount,
+      newBalance: result.balance,
     });
   } catch (error) {
     console.error('Promotion usage error:', error);

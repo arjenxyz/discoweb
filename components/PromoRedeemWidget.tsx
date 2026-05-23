@@ -12,6 +12,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   wrong_server: 'promo.error.wrong_server',
   expired: 'promo.error.expired',
   limit_reached: 'promo.error.limit',
+  usage_limit_exceeded: 'promo.error.limit',
   already_used: 'promo.error.already_used',
   maintenance: 'promo.error.maintenance',
 };

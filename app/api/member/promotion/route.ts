@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { getSessionUserId } from '@/lib/auth';
-import { redeemPromoCode } from '@/lib/promotions/redeemPromo';
+import { mapPromoErrorForClient, redeemPromoCode } from '@/lib/promotions/redeemPromo';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   const maintenance = await checkMaintenance(['site', 'promotions']);
   if (maintenance.blocked) {
     return NextResponse.json(
-      { error: 'maintenance', message: 'Promosyon sistemi şu an bakımda.', key: maintenance.key, reason: maintenance.reason },
+      { error: 'maintenance', message: 'Promosyon sistemi şu an bakımda.' },
       { status: 503 },
     );
   }
@@ -51,15 +51,17 @@ export async function POST(request: Request) {
 
   if (!result.ok) {
     return NextResponse.json(
-      { error: result.error, message: result.message },
+      { error: mapPromoErrorForClient(result.error), message: result.message },
       { status: result.status },
     );
   }
 
   return NextResponse.json({
+    success: true,
+    message: 'promotion_applied',
     code: result.code,
     amount: result.amount,
     balance: result.balance,
-    message: result.message,
+    newBalance: result.balance,
   });
 }

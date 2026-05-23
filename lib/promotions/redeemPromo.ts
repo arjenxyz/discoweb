@@ -94,7 +94,7 @@ export async function redeemPromoCode(params: {
   }
 
   if (promotion.max_uses && promotion.used_count >= promotion.max_uses) {
-    return fail('limit_reached', 'Promosyon kodunun kullanım limiti dolmuş.', 400);
+    return fail('usage_limit_exceeded', 'Promosyon kodunun kullanım limiti dolmuş.', 400);
   }
 
   const { data: existingUsage } = await supabase
@@ -139,7 +139,7 @@ export async function redeemPromoCode(params: {
       .delete()
       .eq('promotion_id', promotion.id)
       .eq('user_id', userId);
-    return fail('limit_reached', 'Promosyon kodunun kullanım limiti dolmuş.', 400);
+    return fail('usage_limit_exceeded', 'Promosyon kodunun kullanım limiti dolmuş.', 400);
   }
 
   const packageAmount = Number(promotion.value);
@@ -177,7 +177,7 @@ export async function redeemPromoCode(params: {
       .from('promotions')
       .update({ used_count: promotion.used_count })
       .eq('id', promotion.id);
-    return fail('wallet_failed', 'Cüzdan güncellenirken hata oluştu.', 500);
+    return fail('wallet_update_failed', 'Cüzdan güncellenirken hata oluştu.', 500);
   }
 
   await supabase.from('wallet_ledger').insert({
@@ -211,4 +211,12 @@ export async function redeemPromoCode(params: {
     balance: newBalance,
     message: `${packageAmount} Papel hesabınıza eklendi!`,
   };
+}
+
+/** Map internal error codes to activity-web client codes. */
+export function mapPromoErrorForClient(error: string): string {
+  if (error === 'limit_reached') return 'usage_limit_exceeded';
+  if (error === 'wallet_failed') return 'wallet_update_failed';
+  if (error === 'server_not_found') return 'profile_not_found';
+  return error;
 }
