@@ -1,18 +1,9 @@
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { logWebEvent } from '@/lib/serverLogger';
 import { getSessionUserId } from '@/lib/auth';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
-
-const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
-const DEFAULT_SLUG = 'default';
-
-const getSelectedGuildId = async (): Promise<string> => {
-  const cookieStore = await cookies();
-  const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || GUILD_ID; // Fallback to default
-};
+import { getSelectedGuildId, resolveServer } from '@/lib/serverResolve';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -29,29 +20,6 @@ const getAdminId = async () => {
   return getSessionUserId();
 };
 
-const resolveServerId = async (supabase: SupabaseClient) => {
-  const selectedGuildId = await getSelectedGuildId();
-
-  const { data: byDiscord } = await supabase
-    .from('servers')
-    .select('id')
-    .eq('discord_id', selectedGuildId)
-    .maybeSingle();
-
-  const discordId = (byDiscord as { id?: string } | null)?.id;
-  if (discordId) {
-    return discordId;
-  }
-
-  const { data: bySlug } = await supabase
-    .from('servers')
-    .select('id')
-    .eq('slug', DEFAULT_SLUG)
-    .maybeSingle();
-
-  return (bySlug as { id?: string } | null)?.id ?? null;
-};
-
 export async function GET() {
   if (!(await isAdminUser())) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
@@ -62,15 +30,15 @@ export async function GET() {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
 
-  const serverId = await resolveServerId(supabase);
-  if (!serverId) {
+  const resolved = await resolveServer(supabase);
+  if (!resolved) {
     return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
   }
 
   const { data, error } = await supabase
     .from('promotions')
     .select('id,code,value,max_uses,used_count,status,expires_at,created_at')
-    .eq('server_id', serverId)
+    .eq('server_id', resolved.serverId)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -90,8 +58,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
   }
 
-  const serverId = await resolveServerId(supabase);
-  if (!serverId) {
+  const resolved = await resolveServer(supabase);
+  if (!resolved) {
     return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
   }
 
@@ -119,7 +87,7 @@ export async function POST(request: Request) {
       : null;
 
   const { error } = await supabase.from('promotions').insert({
-    server_id: serverId,
+    server_id: resolved.serverId,
     code: payload.code.trim().toUpperCase(),
     value: payload.value,
     max_uses: maxUses,
