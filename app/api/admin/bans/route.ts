@@ -4,7 +4,8 @@ import { requireSessionUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-const DEVELOPER_USER_ID = process.env.DEVELOPER_DISCORD_USER_ID ?? '';
+const DEV_GUILD_ID = process.env.DEVELOPER_GUILD_ID ?? process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
+const DEV_ROLE_ID = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -13,7 +14,21 @@ const getSupabase = () => {
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 };
 
-const isDeveloper = (userId: string) => DEVELOPER_USER_ID && userId === DEVELOPER_USER_ID;
+async function isDeveloper(userId: string): Promise<boolean> {
+  if (!DEV_GUILD_ID || !DEV_ROLE_ID) return false;
+  const botToken = process.env.DISCORD_BOT_TOKEN;
+  if (!botToken) return false;
+  try {
+    const res = await fetch(`https://discord.com/api/v10/guilds/${DEV_GUILD_ID}/members/${userId}`, {
+      headers: { Authorization: `Bot ${botToken}` },
+    });
+    if (!res.ok) return false;
+    const member = await res.json() as { roles?: string[] };
+    return Array.isArray(member.roles) && member.roles.includes(DEV_ROLE_ID);
+  } catch {
+    return false;
+  }
+}
 
 export async function GET(request: Request) {
   const session = await requireSessionUser(request);
