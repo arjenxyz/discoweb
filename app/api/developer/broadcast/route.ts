@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { requireDeveloper } from '@/lib/adminAuth';
+import { isAdminOrDeveloper } from '@/lib/adminAuth';
 
 export async function POST(request: Request) {
   // Developer doğrulama
-  const auth = await requireDeveloper(request);
-  if (!auth.ok) return auth.response;
+  const isAuth = await isAdminOrDeveloper();
+  if (!isAuth) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
   try {
     const body = await request.json();

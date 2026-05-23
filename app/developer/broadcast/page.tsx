@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LuMegaphone, LuCheckCircle2, LuAlertCircle, LuSend } from 'react-icons/lu';
+import { LuMegaphone, LuCircleCheck, LuTriangleAlert, LuSend } from 'react-icons/lu';
 import { BROADCAST_TEMPLATES, BroadcastTemplate } from '@/lib/broadcastTemplates';
 
 export default function BroadcastPage() {
@@ -116,7 +116,7 @@ export default function BroadcastPage() {
 
       {status && (
         <div className={`p-4 rounded-xl border flex items-start gap-3 ${status.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
-          {status.type === 'success' ? <LuCheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" /> : <LuAlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />}
+          {status.type === 'success' ? <LuCircleCheck className="w-5 h-5 flex-shrink-0 mt-0.5" /> : <LuTriangleAlert className="w-5 h-5 flex-shrink-0 mt-0.5" />}
           <p className="text-sm font-medium">{status.message}</p>
         </div>
       )}
