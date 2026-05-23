@@ -4,7 +4,21 @@ import { requireSessionUser } from '@/lib/auth';
 
 const DEFAULT_DEVELOPER_GUILD_ID = '1465698764453838882';
 const DEFAULT_DEVELOPER_ROLE_ID = '1467580199481639013';
-const BROADCAST_CHANNEL_NAMES = new Set(['developer-duyuru', 'developer_duyuru', 'developer-duyurular']);
+
+const EXACT_BROADCAST_CHANNEL_NAMES = new Set([
+  'developer-duyuru',
+  'developer_duyuru',
+  'developer-duyurular',
+  'geliştirici-duyuru',
+  'gelistirici-duyuru',
+]);
+
+const BROADCAST_CHANNEL_TYPES = new Set([
+  'developer_duyuru',
+  'developer-duyuru',
+  'developer_duyurular',
+  'developer_duyuru_kanal',
+]);
 
 const getSupabase = () => {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,6 +26,41 @@ const getSupabase = () => {
   if (!url || !key) return null;
   return createClient(url, key, { auth: { persistSession: false } });
 };
+
+function normalizeChannelName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function matchesBroadcastChannelName(name: string): boolean {
+  const lower = name.toLowerCase();
+  if (EXACT_BROADCAST_CHANNEL_NAMES.has(lower)) return true;
+
+  const compact = normalizeChannelName(name);
+  return (
+    (compact.includes('developer') && compact.includes('duyuru')) ||
+    (compact.includes('gelistirici') && compact.includes('duyuru')) ||
+    compact.includes('developerduyuru')
+  );
+}
+
+function matchesBroadcastChannelType(channelType: string): boolean {
+  const type = channelType.toLowerCase();
+  if (BROADCAST_CHANNEL_TYPES.has(type)) return true;
+  return type.includes('developer') && type.includes('duyuru');
+}
+
+function splitMessageContent(content: string): { pingContent?: string; body: string } {
+  const trimmed = content.trim();
+  if (trimmed.toLowerCase().startsWith('@everyone')) {
+    const body = trimmed.replace(/^@everyone\s*/i, '').trim();
+    return { pingContent: '@everyone', body: body || trimmed };
+  }
+  return { body: trimmed };
+}
 
 async function requireDeveloper() {
   const auth = await requireSessionUser();
@@ -51,85 +100,114 @@ function parseEmbedColor(color: string | undefined): number {
   return Number.isFinite(parsed) ? parsed : 0x5865f2;
 }
 
+async function loadDbBroadcastTargets(): Promise<Map<string, string>> {
+  const targets = new Map<string, string>();
+  const supabase = getSupabase();
+  if (!supabase) return targets;
+
+  const { data: rows } = await supabase
+    .from('bot_log_channels')
+    .select('guild_id, channel_id, channel_type, is_active')
+    .not('channel_id', 'is', null);
+
+  for (const row of rows ?? []) {
+    if (row.is_active === false) continue;
+    if (!row.guild_id || !row.channel_id) continue;
+    if (!matchesBroadcastChannelType(row.channel_type ?? '')) continue;
+    targets.set(String(row.guild_id), String(row.channel_id));
+  }
+
+  return targets;
+}
+
 async function broadcastViaBotApi(title: string, content: string, color: string) {
   const botApiUrl = process.env.BOT_API_URL;
   if (!botApiUrl) return null;
 
-  const botApiKey = process.env.BOT_API_KEY ?? '';
-  const response = await fetch(`${botApiUrl.replace(/\/$/, '')}/api/broadcast-system`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(botApiKey ? { Authorization: `Bearer ${botApiKey}` } : {}),
-    },
-    body: JSON.stringify({ title, content, color }),
-  });
+  try {
+    const botApiKey = process.env.BOT_API_KEY ?? '';
+    const response = await fetch(`${botApiUrl.replace(/\/$/, '')}/api/broadcast-system`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(botApiKey ? { Authorization: `Bearer ${botApiKey}` } : {}),
+      },
+      body: JSON.stringify({ title, content, color }),
+    });
 
-  if (!response.ok) return null;
-  return (await response.json()) as { successCount?: number; failCount?: number };
+    if (!response.ok) return null;
+    const data = (await response.json()) as { successCount?: number; failCount?: number };
+    if ((data.successCount ?? 0) <= 0) return null;
+    return data;
+  } catch {
+    return null;
+  }
 }
 
 async function broadcastViaDiscord(botToken: string, title: string, content: string, color: string) {
-  const supabase = getSupabase();
-  if (!supabase) {
-    throw new Error('Veritabanı bağlantısı kurulamadı.');
-  }
+  const { Client, GatewayIntentBits, ChannelType } = await import('discord.js');
+  const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-  const { data: servers, error } = await supabase
-    .from('servers')
-    .select('discord_id')
-    .eq('is_setup', true);
-
-  if (error) {
-    throw new Error('Sunucu listesi alınamadı.');
-  }
-
-  const guildIds = (servers ?? []).map((s) => s.discord_id).filter(Boolean);
-  if (guildIds.length === 0) {
-    return { successCount: 0, failCount: 0 };
-  }
-
+  const dbTargets = await loadDbBroadcastTargets();
+  const sentChannelIds = new Set<string>();
   let successCount = 0;
   let failCount = 0;
   const embedColor = parseEmbedColor(color);
+  const { pingContent, body } = splitMessageContent(content);
 
-  for (const guildId of guildIds) {
-    try {
-      const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, {
-        headers: { Authorization: `Bot ${botToken}` },
-      });
+  const buildPayload = () => ({
+    content: pingContent,
+    embeds: [
+      {
+        title,
+        description: body,
+        color: embedColor,
+      },
+    ],
+  });
 
-      if (!channelsRes.ok) {
+  try {
+    await client.login(botToken);
+
+    for (const [, channelId] of dbTargets) {
+      try {
+        const channel = await client.channels.fetch(channelId);
+        if (!channel?.isTextBased() || !('send' in channel)) {
+          failCount += 1;
+          continue;
+        }
+        await channel.send(buildPayload());
+        sentChannelIds.add(channelId);
+        successCount += 1;
+      } catch {
         failCount += 1;
-        continue;
       }
-
-      const channels = (await channelsRes.json()) as Array<{ id: string; name: string; type: number }>;
-      const targetChannel = channels.find(
-        (channel) => channel.type === 0 && BROADCAST_CHANNEL_NAMES.has(channel.name.toLowerCase()),
-      );
-
-      if (!targetChannel) {
-        failCount += 1;
-        continue;
-      }
-
-      const messageRes = await fetch(`https://discord.com/api/v10/channels/${targetChannel.id}/messages`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bot ${botToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          embeds: [{ title, description: content, color: embedColor }],
-        }),
-      });
-
-      if (messageRes.ok) successCount += 1;
-      else failCount += 1;
-    } catch {
-      failCount += 1;
     }
+
+    for (const [, guild] of client.guilds.cache) {
+      try {
+        const channels = await guild.channels.fetch();
+        const target = channels.find(
+          (channel) =>
+            channel?.type === ChannelType.GuildText &&
+            !!channel.name &&
+            matchesBroadcastChannelName(channel.name) &&
+            !sentChannelIds.has(channel.id),
+        );
+
+        if (!target?.isTextBased() || !('send' in target)) {
+          continue;
+        }
+
+        await target.send(buildPayload());
+        sentChannelIds.add(target.id);
+        successCount += 1;
+      } catch {
+        failCount += 1;
+      }
+    }
+  } finally {
+    await client.destroy().catch(() => undefined);
   }
 
   return { successCount, failCount };
@@ -156,6 +234,7 @@ export async function POST(request: Request) {
         success: true,
         successCount: botApiResult.successCount ?? 0,
         failCount: botApiResult.failCount ?? 0,
+        source: 'bot_api',
       });
     }
 
@@ -164,6 +243,7 @@ export async function POST(request: Request) {
       success: true,
       successCount: result.successCount,
       failCount: result.failCount,
+      source: 'discord',
     });
   } catch (err: unknown) {
     console.error('Broadcast endpoint error:', err);
