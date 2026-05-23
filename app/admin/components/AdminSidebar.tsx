@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LuCode, LuFileText, LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu';
+import { LuFileText, LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
 import AdminSidebarNav from './AdminSidebarNav';
 
@@ -19,7 +19,6 @@ type AdminSidebarProps = {
   profile: AdminProfile | null;
   collapsed: boolean;
   onToggleCollapse: () => void;
-  isDeveloper: boolean;
   openSections: Record<string, boolean>;
   onToggleSection: (id: string) => void;
   variant?: 'desktop' | 'mobile';
@@ -30,7 +29,6 @@ export default function AdminSidebar({
   profile,
   collapsed,
   onToggleCollapse,
-  isDeveloper,
   openSections,
   onToggleSection,
   variant = 'desktop',
@@ -131,22 +129,6 @@ export default function AdminSidebar({
           </span>
           {showExpanded && <span className="text-[13px] font-medium">{t('admin.shell.guide')}</span>}
         </Link>
-
-        {isDeveloper && (
-          <Link
-            href="/developer"
-            onClick={onClose}
-            className={`flex items-center rounded-xl transition-all duration-200 ${
-              showExpanded ? 'gap-3 px-2.5 py-2' : 'mx-auto h-11 w-11 justify-center'
-            } text-emerald-400/70 hover:bg-emerald-500/[0.08] hover:text-emerald-300`}
-            title={!showExpanded ? t('admin.shell.developer') : undefined}
-          >
-            <span className={`flex shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 ${showExpanded ? 'h-8 w-8' : 'h-9 w-9'}`}>
-              <LuCode className="h-4 w-4" />
-            </span>
-            {showExpanded && <span className="text-[13px] font-medium">{t('admin.shell.developer')}</span>}
-          </Link>
-        )}
       </div>
     </>
   );

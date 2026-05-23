@@ -11,7 +11,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
-  const [isDeveloper, setIsDeveloper] = useState(false);
   const [profile, setProfile] = useState<AdminProfile | null>(null);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
@@ -70,20 +69,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           }
           break;
         }
-        if (adminOk) {
-          try {
-            const devCheck = await fetch('/api/developer/check-access', { credentials: 'include', cache: 'no-store' });
-            if (devCheck.ok) setIsDeveloper(true);
-          } catch {
-            /* ignore */
-          }
-          return;
-        }
+        if (adminOk) return;
         const devResponse = await fetch('/api/developer/check-access', { credentials: 'include', cache: 'no-store' });
-        if (devResponse.ok) {
-          setIsDeveloper(true);
-          return;
-        }
+        if (devResponse.ok) return;
         window.location.href = '/';
       } catch {
         window.location.href = '/';
@@ -139,11 +127,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const sidebarProps = useMemo(
     () => ({
       profile,
-      isDeveloper,
       openSections,
       onToggleSection: toggleSection,
     }),
-    [profile, isDeveloper, openSections, toggleSection],
+    [profile, openSections, toggleSection],
   );
 
   return (
