@@ -68,7 +68,9 @@ export default function BotAnalyticsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Sistem Analizi</h1>
+          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50 tracking-tight">
+            Sistem Analizi
+          </h1>
           <p className="text-white/40 text-sm mt-1">Botun aktif büyüme ve kullanım istatistikleri.</p>
         </div>
         <button

@@ -48,11 +48,12 @@ export async function PATCH(req: Request) {
 
   try {
     const body = await req.json();
-    const { username, avatar } = body;
+    const { username, avatar, banner } = body;
 
     const payload: Record<string, string | null> = {};
     if (username) payload.username = username;
     if (avatar !== undefined) payload.avatar = avatar; // null to remove, base64 string to update
+    if (banner !== undefined) payload.banner = banner; // null to remove, base64 string to update
 
     const res = await fetch(`${DISCORD_API}/users/@me`, {
       method: 'PATCH',
