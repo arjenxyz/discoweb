@@ -1,5 +1,6 @@
 ﻿import { NextResponse } from 'next/server';
 import { logWebEvent } from '@/lib/serverLogger';
+import { logWebLogin } from '@/lib/activityLogger';
 import { createClient } from '@supabase/supabase-js';
 import { setSessionCookies } from '@/lib/auth';
 
@@ -204,6 +205,17 @@ export async function POST(request: Request) {
     }>;
 
     const supabase = getSupabase();
+
+    // Yeni kullanıcı mı? (logWebLogin için)
+    let isNewUser = false;
+    if (supabase) {
+      const { data: existingUser } = await supabase
+        .from('users')
+        .select('discord_id')
+        .eq('discord_id', user.id)
+        .maybeSingle();
+      isNewUser = !existingUser;
+    }
 
     if (supabase) {
       const expiresAt = tokenData.expires_in
@@ -447,6 +459,26 @@ export async function POST(request: Request) {
       guildId: selectedGuildId,
       roleId: REQUIRED_ROLE_ID,
       metadata: { username: user.username },
+    });
+
+    // Web giriş logu
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      request.headers.get('x-real-ip') ??
+      null;
+    const tokenExpiresAt = tokenData.expires_in
+      ? new Date(Date.now() + tokenData.expires_in * 1000).toISOString()
+      : null;
+    void logWebLogin({
+      userId: user.id,
+      username: user.username,
+      discriminator: user.discriminator,
+      avatar: user.avatar,
+      isNewUser,
+      guildCount: adminGuilds.length,
+      ip,
+      userAgent: request.headers.get('user-agent'),
+      tokenExpiresAt,
     });
 
     return response;

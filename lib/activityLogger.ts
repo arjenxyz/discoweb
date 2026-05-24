@@ -5,10 +5,17 @@
 
 const DISCORD_API = 'https://discord.com/api/v10';
 
+// --- Activity (Discord Activity) log kanalları ---
 const LOGIN_CHANNEL_ID      = '1484938345770651861';
 const LOGOUT_CHANNEL_ID     = '1484938399965122691';
 const NEW_USER_CHANNEL_ID   = '1484940513822904350';
 const NEW_SERVER_CHANNEL_ID = '1484940664818110544';
+
+// --- Web tarafı log kanalları ---
+const WEB_LOGIN_CHANNEL_ID      = '1508034150307725402'; // Giriş yapan kullanıcılar
+const SETUP_SUCCESS_CHANNEL_ID  = '1508034254209028116'; // Başarılı kurulumlar
+const SETUP_FAILED_CHANNEL_ID   = '1508034289466478662'; // Başarısız kurulumlar
+const LOG_SERVER_CHANNEL_ID     = '1508034336300208228'; // Log sunucusu farklı olan kurulumlar
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
@@ -68,6 +75,52 @@ type ErrorLogPayload = {
   userAgent: string | null;
   guildId?: string | null;
   metadata?: Record<string, unknown>;
+};
+
+export type WebLoginPayload = {
+  userId: string;
+  username: string;
+  discriminator?: string;
+  avatar: string | null;
+  isNewUser: boolean;
+  guildCount: number;
+  ip: string | null;
+  userAgent: string | null;
+  tokenExpiresAt: string | null;
+};
+
+export type SetupSuccessPayload = {
+  guildId: string;
+  guildName: string;
+  guildIcon?: string | null;
+  ownerId: string;
+  registeredBy: string;
+  adminRoleId: string;
+  verifyRoleId: string;
+  economyTier?: string | null;
+  isUpdate: boolean;
+  targetGuildId?: string | null;
+};
+
+export type SetupFailedPayload = {
+  guildId?: string | null;
+  guildName?: string | null;
+  guildIcon?: string | null;
+  userId?: string | null;
+  reason: string;
+  httpStatus: number;
+  ip: string | null;
+  userAgent: string | null;
+};
+
+export type SetupLogServerPayload = {
+  guildId: string;
+  guildName: string;
+  guildIcon?: string | null;
+  targetGuildId: string;
+  targetGuildName?: string | null;
+  targetGuildIcon?: string | null;
+  registeredBy: string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -319,6 +372,166 @@ export async function logNewServer(data: NewServerPayload): Promise<void> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AUTH ERROR
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WEB LOGIN (discoweb-main OAuth girişi)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function logWebLogin(data: WebLoginPayload): Promise<void> {
+  const tag = data.discriminator && data.discriminator !== '0'
+    ? `${data.username}#${data.discriminator}`
+    : data.username;
+
+  const embed = {
+    author: {
+      name: tag,
+      icon_url: cdnAvatar(data.userId, data.avatar),
+    },
+    title: data.isNewUser ? '🆕 Yeni Web Girişi' : '🔑 Web Girişi',
+    description: data.isNewUser
+      ? `**${data.username}** sisteme ilk kez giriş yaptı.`
+      : `**${data.username}** giriş yaptı.`,
+    color: data.isNewUser ? 0x57F287 : 0x5865F2,
+    thumbnail: { url: cdnAvatar(data.userId, data.avatar) },
+    fields: [
+      { name: '👤 Kullanıcı', value: `<@${data.userId}>\n\`${data.userId}\``, inline: true },
+      { name: '🏠 Sunucu Sayısı', value: `\`${data.guildCount}\` sunucu`, inline: true },
+      {
+        name: '⏱️ Token Sona Erer',
+        value: data.tokenExpiresAt
+          ? `${tsR(new Date(data.tokenExpiresAt))}\n${ts(new Date(data.tokenExpiresAt))}`
+          : '—',
+        inline: true,
+      },
+      { name: '🌐 IP', value: data.ip ? `\`${data.ip}\`` : '—', inline: true },
+      { name: '🖥️ Platform', value: parseUA(data.userAgent), inline: true },
+      { name: '📅 Zaman', value: ts(), inline: true },
+      ...(data.userAgent ? [{ name: '📋 User Agent', value: `\`\`\`\n${data.userAgent.slice(0, 300)}\n\`\`\``, inline: false }] : []),
+    ],
+    timestamp: new Date().toISOString(),
+    footer: { text: 'DiscoWeb · Web Giriş' },
+  };
+
+  await postToChannel(WEB_LOGIN_CHANNEL_ID, { embeds: [embed] });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SETUP SUCCESS (başarılı kurulum)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function logSetupSuccess(data: SetupSuccessPayload): Promise<void> {
+  const guildIconUrl = cdnGuildIcon(data.guildId, data.guildIcon);
+
+  const embed = {
+    author: guildIconUrl
+      ? { name: data.guildName, icon_url: guildIconUrl }
+      : { name: data.guildName },
+    title: data.isUpdate ? '🔄 Sunucu Kurulumu Güncellendi' : '🚀 Sunucu Kurulumu Tamamlandı',
+    description: data.isUpdate
+      ? `**${data.guildName}** sunucusunun kurulum ayarları güncellendi.`
+      : `**${data.guildName}** sunucusu başarıyla kuruldu ve sisteme dahil oldu.`,
+    color: data.isUpdate ? 0x1ABC9C : 0x57F287,
+    thumbnail: guildIconUrl ? { url: guildIconUrl } : undefined,
+    fields: [
+      { name: '🏠 Sunucu', value: `**${data.guildName}**\n\`${data.guildId}\``, inline: true },
+      { name: '👑 Sunucu Sahibi', value: `<@${data.ownerId}>\n\`${data.ownerId}\``, inline: true },
+      {
+        name: data.ownerId === data.registeredBy ? '🔧 Kuran' : '🔧 Kaydeden',
+        value: `<@${data.registeredBy}>\n\`${data.registeredBy}\``,
+        inline: true,
+      },
+      { name: '🎭 Admin Rolü', value: `<@&${data.adminRoleId}>\n\`${data.adminRoleId}\``, inline: true },
+      { name: '✅ Verify Rolü', value: `<@&${data.verifyRoleId}>\n\`${data.verifyRoleId}\``, inline: true },
+      { name: '💰 Ekonomi Tier', value: `\`${data.economyTier ?? 'basic'}\``, inline: true },
+      ...(data.targetGuildId && data.targetGuildId !== data.guildId
+        ? [{ name: '📡 Log Sunucusu', value: `\`${data.targetGuildId}\` *(farklı sunucu)*`, inline: false }]
+        : []),
+      { name: '📅 Zaman', value: ts(), inline: true },
+    ],
+    timestamp: new Date().toISOString(),
+    footer: guildIconUrl
+      ? { text: `${data.guildName} · ${data.isUpdate ? 'Güncelleme' : 'Yeni Kurulum'}`, icon_url: guildIconUrl }
+      : { text: `DiscoWeb · ${data.isUpdate ? 'Güncelleme' : 'Yeni Kurulum'}` },
+  };
+
+  await postToChannel(SETUP_SUCCESS_CHANNEL_ID, { embeds: [embed] });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SETUP FAILED (başarısız kurulum)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function logSetupFailed(data: SetupFailedPayload): Promise<void> {
+  const guildIconUrl = data.guildId ? cdnGuildIcon(data.guildId, data.guildIcon) : null;
+
+  const embed = {
+    title: '❌ Kurulum Başarısız',
+    description: data.guildName
+      ? `**${data.guildName}** sunucusunun kurulumu başarısız oldu.`
+      : 'Bir sunucunun kurulumu başarısız oldu.',
+    color: 0xED4245,
+    ...(guildIconUrl ? { thumbnail: { url: guildIconUrl } } : {}),
+    fields: [
+      ...(data.guildId ? [{ name: '🏠 Sunucu', value: data.guildName ? `**${data.guildName}**\n\`${data.guildId}\`` : `\`${data.guildId}\``, inline: true }] : []),
+      ...(data.userId ? [{ name: '👤 Kurmaya Çalışan', value: `<@${data.userId}>\n\`${data.userId}\``, inline: true }] : []),
+      { name: '🔖 Hata Sebebi', value: `\`${data.reason}\``, inline: false },
+      { name: '📋 HTTP Durumu', value: `\`${data.httpStatus}\``, inline: true },
+      { name: '🌐 IP', value: data.ip ? `\`${data.ip}\`` : '—', inline: true },
+      { name: '🖥️ Platform', value: parseUA(data.userAgent), inline: true },
+      { name: '📅 Zaman', value: ts(), inline: true },
+    ],
+    timestamp: new Date().toISOString(),
+    footer: { text: 'DiscoWeb · Kurulum Hatası' },
+  };
+
+  await postToChannel(SETUP_FAILED_CHANNEL_ID, { embeds: [embed] });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SETUP LOG-SERVER (kurulumda farklı log sunucusu)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function logSetupLogServer(data: SetupLogServerPayload): Promise<void> {
+  const guildIconUrl = cdnGuildIcon(data.guildId, data.guildIcon);
+  const targetIconUrl = data.targetGuildId ? cdnGuildIcon(data.targetGuildId, data.targetGuildIcon) : null;
+
+  const embed = {
+    title: '📡 Farklı Log Sunucusu Yapılandırıldı',
+    description: `**${data.guildName}** sunucusu, log merkezi olarak **${data.targetGuildName ?? data.targetGuildId}** sunucusunu kullanacak şekilde kuruldu.`,
+    color: 0xF1C40F,
+    ...(guildIconUrl ? { thumbnail: { url: guildIconUrl } } : {}),
+    fields: [
+      {
+        name: '🏠 Kurulan Sunucu',
+        value: `**${data.guildName}**\n\`${data.guildId}\``,
+        inline: true,
+      },
+      {
+        name: '📡 Log Merkezi (Farklı Sunucu)',
+        value: data.targetGuildName
+          ? `**${data.targetGuildName}**\n\`${data.targetGuildId}\`${targetIconUrl ? '' : ''}`
+          : `\`${data.targetGuildId}\``,
+        inline: true,
+      },
+      {
+        name: '🔧 Yapılandıran',
+        value: `<@${data.registeredBy}>\n\`${data.registeredBy}\``,
+        inline: true,
+      },
+      { name: '📅 Zaman', value: ts(), inline: true },
+    ],
+    timestamp: new Date().toISOString(),
+    footer: guildIconUrl
+      ? { text: `${data.guildName} → ${data.targetGuildName ?? data.targetGuildId} · Log Sunucusu`, icon_url: guildIconUrl }
+      : { text: `DiscoWeb · Log Sunucusu Yapılandırması` },
+  };
+
+  await postToChannel(LOG_SERVER_CHANNEL_ID, { embeds: [embed] });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTH ERROR (activity login hatası)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function logActivityAuthError(data: ErrorLogPayload): Promise<void> {

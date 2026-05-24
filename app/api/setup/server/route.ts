@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { getSessionUserId, requireSessionUser } from '@/lib/auth';
-import { logNewServer } from '@/lib/activityLogger';
+import { logNewServer, logSetupSuccess, logSetupFailed, logSetupLogServer } from '@/lib/activityLogger';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -82,10 +82,17 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    request.headers.get('x-real-ip') ??
+    null;
+  const userAgent = request.headers.get('user-agent') ?? null;
+
   try {
     const { guildId, targetGuildId, adminRoleId, verifyRoleId, messageEarnEnabled, voiceEarnEnabled, earnPerMessage, earnPerVoiceMinute, tagBonusMessage, tagBonusVoice, boosterBonusMessage, boosterBonusVoice, economyTier } = await request.json();
 
     if (!guildId || !adminRoleId || !verifyRoleId) {
+      void logSetupFailed({ guildId: guildId ?? null, userId: null, reason: 'Eksik parametre: guildId, adminRoleId veya verifyRoleId', httpStatus: 400, ip, userAgent });
       return NextResponse.json(
         { error: 'guildId, adminRoleId ve verifyRoleId gerekli' },
         { status: 400 }
@@ -124,6 +131,7 @@ export async function POST(request: Request) {
     );
 
     if (!memberResponse.ok) {
+      void logSetupFailed({ guildId, userId, reason: 'Kullanıcı sunucuda bulunamadı', httpStatus: 403, ip, userAgent });
       return NextResponse.json(
         { error: 'Kullanıcı sunucuda bulunamadı' },
         { status: 403 }
@@ -155,6 +163,7 @@ export async function POST(request: Request) {
     const isAdmin = member.roles.includes(adminRoleId);
 
     if (!isOwner) {
+      void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: 'Sunucu sahibi değil', httpStatus: 403, ip, userAgent });
       return NextResponse.json(
         { error: 'Bu işlem için sunucu sahibi olmanız gerekir' },
         { status: 403 }
@@ -203,10 +212,12 @@ export async function POST(request: Request) {
         const errData = await botRes.json().catch(() => null);
         console.error('❌ Bot API hata döndürdü:', botRes.status, errData);
         // We will throw error so frontend knows bot is not in the server and NO DB CHANGES OCCUR
+        void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `Bot API hatası: ${errData?.error || 'Log sunucusu kurulumu başarısız'}`, httpStatus: 400, ip, userAgent });
         return NextResponse.json({ error: errData?.error || 'Log sunucusu kurulumu başarısız' }, { status: 400 });
       }
     } catch (botErr) {
       console.error('❌ Bot API bağlantı hatası:', botErr);
+      void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: 'Bot API bağlantı hatası', httpStatus: 500, ip, userAgent });
       return NextResponse.json({ error: 'Bot API sunucusuna ulaşılamadı. Botun açık olduğundan emin olun.' }, { status: 500 });
     }
 
@@ -226,15 +237,18 @@ export async function POST(request: Request) {
 
     // Admin role must exist and have admin/manage guild/manage roles perms
     if (!adminRoleObj) {
+      void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `Admin rolü bulunamadı: ${adminRoleId}`, httpStatus: 400, ip, userAgent });
       return NextResponse.json({ error: 'Belirtilen admin rolü sunucuda bulunamadı' }, { status: 400 });
     }
     const perms = BigInt(adminRoleObj.permissions ?? '0');
     const hasAdminPerm = (perms & BigInt(0x8)) !== BigInt(0) || (perms & BigInt(0x20)) !== BigInt(0) || (perms & BigInt(0x10000000)) !== BigInt(0);
     if (!hasAdminPerm) {
+      void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `Admin rolü yetersiz izne sahip: ${adminRoleId}`, httpStatus: 400, ip, userAgent });
       return NextResponse.json({ error: 'Seçilen admin rolü gerekli yönetim izinlerine sahip değil' }, { status: 400 });
     }
 
     if (!verifyRoleObj) {
+      void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `Verify rolü bulunamadı: ${verifyRoleId}`, httpStatus: 400, ip, userAgent });
       return NextResponse.json({ error: 'Belirtilen verify rolü sunucuda bulunamadı' }, { status: 400 });
     }
 
@@ -264,6 +278,7 @@ export async function POST(request: Request) {
 
       if (updateError) {
         console.error('Server update error:', updateError);
+        void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `DB güncelleme hatası: ${updateError.message}`, httpStatus: 500, ip, userAgent });
         return NextResponse.json(
           { error: 'Sunucu güncellenirken hata oluştu' },
           { status: 500 }
@@ -299,6 +314,7 @@ export async function POST(request: Request) {
 
       if (insertError) {
         console.error('Server insert error:', insertError);
+        void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `DB insert hatası: ${insertError.message}`, httpStatus: 500, ip, userAgent });
         return NextResponse.json(
           { error: 'Sunucu oluşturulurken hata oluştu', detail: insertError.message, code: insertError.code },
           { status: 500 }
@@ -308,7 +324,8 @@ export async function POST(request: Request) {
       console.log('Server created:', newServer);
     }
 
-    await logNewServer({
+    // Eski kanal logu (backward compat)
+    void logNewServer({
       guildId,
       guildName: guild.name ?? guildId,
       guildIcon: guild.icon ?? null,
@@ -318,6 +335,47 @@ export async function POST(request: Request) {
       adminRoleId,
       verifyRoleId,
     });
+
+    // Yeni kurulum başarı logu
+    void logSetupSuccess({
+      guildId,
+      guildName: guild.name ?? guildId,
+      guildIcon: guild.icon ?? null,
+      ownerId: guild.owner_id ?? userId,
+      registeredBy: userId,
+      adminRoleId,
+      verifyRoleId,
+      economyTier: economyTier ?? 'basic',
+      isUpdate: !!existingServer,
+      targetGuildId: targetGuildId || null,
+    });
+
+    // Farklı log sunucusu kullanılıyorsa ayrıca logla
+    if (targetGuildId && targetGuildId !== guildId) {
+      // targetGuild adını almaya çalış (opsiyonel, hata olursa geç)
+      let targetGuildName: string | null = null;
+      let targetGuildIcon: string | null = null;
+      try {
+        const tgRes = await fetch(`https://discord.com/api/guilds/${targetGuildId}`, {
+          headers: { Authorization: `Bot ${botToken}` },
+        });
+        if (tgRes.ok) {
+          const tg = await tgRes.json();
+          targetGuildName = tg.name ?? null;
+          targetGuildIcon = tg.icon ?? null;
+        }
+      } catch { /* sessizce geç */ }
+
+      void logSetupLogServer({
+        guildId,
+        guildName: guild.name ?? guildId,
+        guildIcon: guild.icon ?? null,
+        targetGuildId,
+        targetGuildName,
+        targetGuildIcon,
+        registeredBy: userId,
+      });
+    }
 
     // Double-check roles stored in DB for debugging
     console.log('Storing roles (payload):', { adminRoleId, verifyRoleId });
@@ -350,6 +408,7 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Setup API error:', error);
+    void logSetupFailed({ reason: `Beklenmeyen hata: ${String(error)}`, httpStatus: 500, ip, userAgent });
     return NextResponse.json(
       { error: 'Kurulum sırasında beklenmeyen hata oluştu' },
       { status: 500 }
