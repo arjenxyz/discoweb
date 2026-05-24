@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServiceClient } from '@/lib/supabaseServiceClient';
 import { requireSessionUser } from '@/lib/auth';
-import { announcementMentionsEveryone } from '@/lib/announcementEveryone';
+import { stripEveryoneFromText } from '@/lib/announcementEveryone';
 
 const DEVELOPER_ROLE_ID = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
 const DEVELOPER_GUILD_ID = process.env.DEVELOPER_GUILD_ID ?? '1465698764453838882';
@@ -178,11 +178,7 @@ export async function GET(request: NextRequest) {
       is_active: item.is_active,
       author_name: item.author_name || 'Developer',
       author_avatar_url: item.author_avatar_url || null,
-      mentions_everyone: Boolean(item.mentions_everyone)
-        || announcementMentionsEveryone(
-          item.announcement_translations[0]?.title || '',
-          item.announcement_translations[0]?.content || '',
-        ),
+      mentions_everyone: Boolean(item.mentions_everyone),
       poll: pollsByAnnouncementId.get(item.id) ?? null,
     }));
 
@@ -205,11 +201,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const titleTrimmed = typeof title === 'string' ? title.trim() : '';
+    const mentionsEveryone = Boolean(mentionsEveryoneFlag);
+    const titleTrimmed = stripEveryoneFromText(typeof title === 'string' ? title.trim() : '');
     const { pollQuestion, pollOptions, hasPoll } = parsePollInput(poll);
-    const content = normalizeContent(typeof body === 'string' ? body : '', hasPoll);
-    const mentionsEveryone = Boolean(mentionsEveryoneFlag)
-      || announcementMentionsEveryone(titleTrimmed, content);
+    const content = stripEveryoneFromText(normalizeContent(typeof body === 'string' ? body : '', hasPoll));
 
     const supabaseServiceClient = getSupabaseServiceClient();
     if (!supabaseServiceClient) {
@@ -316,11 +311,10 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const titleTrimmed = typeof title === 'string' ? title.trim() : '';
+    const mentionsEveryone = Boolean(mentionsEveryoneFlag);
+    const titleTrimmed = stripEveryoneFromText(typeof title === 'string' ? title.trim() : '');
     const { pollQuestion, pollOptions, hasPoll } = parsePollInput(poll);
-    const content = normalizeContent(typeof body === 'string' ? body : '', hasPoll);
-    const mentionsEveryone = Boolean(mentionsEveryoneFlag)
-      || announcementMentionsEveryone(titleTrimmed, content);
+    const content = stripEveryoneFromText(normalizeContent(typeof body === 'string' ? body : '', hasPoll));
 
     const supabaseServiceClient = getSupabaseServiceClient();
     if (!supabaseServiceClient) {

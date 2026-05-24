@@ -1,8 +1,9 @@
-/** Metinde @everyone geçiyor mu? */
-export function textMentionsEveryone(text: string): boolean {
-  return /@everyone\b/i.test(text);
-}
-
-export function announcementMentionsEveryone(title: string, body: string): boolean {
-  return textMentionsEveryone(title) || textMentionsEveryone(body);
+/** Kayıt/görüntülemeden @everyone metnini temizle */
+export function stripEveryoneFromText(text: string): string {
+  return text
+    .replace(/^@everyone\s*\n?/im, '')
+    .replace(/\n@everyone\s*\n?/gi, '\n')
+    .replace(/@everyone\b/gi, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
