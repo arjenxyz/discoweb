@@ -2,29 +2,29 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServiceClient } from '@/lib/supabaseServiceClient';
 import { requireSessionUser } from '@/lib/auth';
 
+const DEVELOPER_ROLE_ID = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
+const DEVELOPER_GUILD_ID = process.env.DEVELOPER_GUILD_ID ?? '1465698764453838882';
+
 async function requireDeveloper(request: NextRequest): Promise<{ ok: boolean; response?: NextResponse; userId?: string }> {
   const auth = await requireSessionUser(request);
-  if (!auth.ok) {
-    return auth;
+  if (!auth.ok) return auth;
+
+  const botToken = process.env.DISCORD_BOT_TOKEN;
+  if (!botToken) {
+    return { ok: false, response: NextResponse.json({ error: 'Sunucu yapılandırma hatası' }, { status: 500 }) };
   }
 
-  const authHeader = request.headers.get('authorization') ?? '';
-  const cookieHeader = request.headers.get('cookie') ?? '';
-  const requestOrigin = new URL(request.url).origin;
-  const developerUrl = `${process.env.NEXT_PUBLIC_API_URL || requestOrigin}/api/activity/is-developer`;
-  const developerResponse = await fetch(developerUrl, {
-    headers: {
-      ...(authHeader ? { Authorization: authHeader } : {}),
-      ...(cookieHeader ? { cookie: cookieHeader } : {}),
-    },
-  });
+  const discordRes = await fetch(
+    `https://discord.com/api/guilds/${DEVELOPER_GUILD_ID}/members/${auth.userId}`,
+    { headers: { Authorization: `Bot ${botToken}` } },
+  );
 
-  if (!developerResponse.ok) {
+  if (!discordRes.ok) {
     return { ok: false, response: NextResponse.json({ error: 'Developer yetkisi gerekli' }, { status: 403 }) };
   }
 
-  const developerData = await developerResponse.json();
-  if (!developerData?.isDeveloper) {
+  const member = (await discordRes.json()) as { roles: string[] };
+  if (!member.roles.includes(DEVELOPER_ROLE_ID)) {
     return { ok: false, response: NextResponse.json({ error: 'Developer yetkisi gerekli' }, { status: 403 }) };
   }
 
