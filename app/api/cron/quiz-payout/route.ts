@@ -10,7 +10,7 @@
  * - Global event'te credit guild = participant.guild_id (kullanıcının katıldığı sunucu)
  * - member_wallets.balance += papel_earned upsert
  * - wallet_ledger insert: type='quiz_reward', metadata={ event_id, checkpoint_papel, perfect_bonus, breakdown }
- * - system_mails insert: category=order (bilgilendirme fişi; cüzdan zaten güncellendi)
+ * - system_mails insert: category=system (bilgilendirme; cüzdan zaten güncellendi)
  * - event.paid_out_at = now()
  *
  * Auth: ?secret=$QUIZ_CRON_SECRET veya Authorization: Bearer $QUIZ_CRON_SECRET
