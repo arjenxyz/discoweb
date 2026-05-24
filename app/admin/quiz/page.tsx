@@ -9,6 +9,7 @@ type QuizEvent = {
   guild_id: string | null;
   title: string;
   description: string | null;
+  lang: string;
   start_at: string;
   end_at: string | null;
   total_questions: number;
@@ -19,14 +20,23 @@ type QuizEvent = {
   checkpoints: Array<{ position: number; papel_reward: number; label?: string }>;
 };
 
+type Translation = { lang: string; question: string; options: string[]; is_ready: boolean };
+
 type CustomQuestion = {
   id: string;
   category: string | null;
   difficulty: 'easy' | 'medium' | 'hard' | null;
-  question_tr: string | null;
-  options_tr: string[] | null;
   correct_index: number;
-  is_ready: boolean;
+  translations: Translation[];
+};
+
+const LANG_LABELS: Record<string, string> = {
+  tr: 'Türkçe',
+  en: 'English',
+  'pt-br': 'Português (BR)',
+  es: 'Español',
+  de: 'Deutsch',
+  fr: 'Français',
 };
 
 export default function AdminQuizPage() {
@@ -68,6 +78,7 @@ function EventsPanel() {
   const [form, setForm] = useState({
     title: 'Sunucu Quiz Etkinliği',
     description: '',
+    lang: 'tr',
     start_at: '',
     prize_pool_papel: 5000,
     cp1_pos: 8,
@@ -111,6 +122,7 @@ function EventsPanel() {
         body: JSON.stringify({
           title: form.title,
           description: form.description,
+          lang: form.lang.toLowerCase(),
           start_at: new Date(form.start_at).toISOString(),
           prize_pool_papel: Number(form.prize_pool_papel),
           checkpoints,
@@ -138,16 +150,10 @@ function EventsPanel() {
   return (
     <div>
       <div className="mb-4 flex items-center gap-2">
-        <button
-          onClick={() => load()}
-          className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/80"
-        >
+        <button onClick={() => load()} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/80">
           <LuRefreshCw className="h-4 w-4" /> Yenile
         </button>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="ml-auto flex items-center gap-2 rounded-lg bg-amber-500 px-3 py-2 text-sm font-semibold text-black"
-        >
+        <button onClick={() => setShowCreate(true)} className="ml-auto flex items-center gap-2 rounded-lg bg-amber-500 px-3 py-2 text-sm font-semibold text-black">
           <LuPlus className="h-4 w-4" /> Yeni Etkinlik
         </button>
       </div>
@@ -159,6 +165,7 @@ function EventsPanel() {
           <thead className="bg-white/[0.04] text-xs uppercase text-white/50">
             <tr>
               <th className="px-3 py-2">Durum</th>
+              <th className="px-3 py-2">Dil</th>
               <th className="px-3 py-2">Başlık</th>
               <th className="px-3 py-2">Başlangıç</th>
               <th className="px-3 py-2">Havuz</th>
@@ -168,15 +175,18 @@ function EventsPanel() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {loading && (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>
+              <tr><td colSpan={7} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>
             )}
             {!loading && events.length === 0 && (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-white/40">Etkinlik yok</td></tr>
+              <tr><td colSpan={7} className="px-3 py-6 text-center text-white/40">Etkinlik yok</td></tr>
             )}
             {!loading && events.map((e) => (
               <tr key={e.id} className="hover:bg-white/[0.02]">
                 <td className="px-3 py-2">
                   <span className={`rounded-md border px-2 py-0.5 text-xs ${badgeStyle(e.status)}`}>{statusLabel(e.status)}</span>
+                </td>
+                <td className="px-3 py-2 text-white/70">
+                  <span className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">{e.lang ?? 'tr'}</span>
                 </td>
                 <td className="px-3 py-2 text-white/90">{e.title}</td>
                 <td className="px-3 py-2 text-white/60">{new Date(e.start_at).toLocaleString('tr-TR')}</td>
@@ -210,6 +220,13 @@ function EventsPanel() {
               <label className="block text-sm text-white/70 sm:col-span-2">
                 Açıklama
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
+              </label>
+              <label className="block text-sm text-white/70">
+                Dil
+                <select value={form.lang} onChange={(e) => setForm({ ...form, lang: e.target.value })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white">
+                  {Object.entries(LANG_LABELS).map(([c, l]) => <option key={c} value={c}>{l} ({c})</option>)}
+                </select>
+                <span className="mt-1 block text-xs text-white/40">Soru havuzunda bu dilde 25 hazır soru olmalı.</span>
               </label>
               <label className="block text-sm text-white/70">
                 Başlangıç
@@ -257,7 +274,8 @@ function CustomQuestionsPanel() {
   const [items, setItems] = useState<CustomQuestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editing, setEditing] = useState<CustomQuestion | null>(null);
+  const [editing, setEditing] = useState<EditDraft | null>(null);
+  const [editingLang, setEditingLang] = useState<string>('tr');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -278,8 +296,8 @@ function CustomQuestionsPanel() {
     load();
   }, [load]);
 
-  const save = async (q: CustomQuestion) => {
-    if (!q.question_tr || !q.options_tr || q.options_tr.some((o) => !o.trim())) {
+  const save = async (q: EditDraft) => {
+    if (!q.question.trim() || q.options.some((o) => !o.trim())) {
       setError('Soru ve 4 şık dolu olmalı');
       return;
     }
@@ -290,13 +308,17 @@ function CustomQuestionsPanel() {
         body: JSON.stringify({
           action: 'upsert',
           question: {
-            id: q.id,
+            id: q.id || undefined,
             category: q.category,
             difficulty: q.difficulty,
-            question_tr: q.question_tr,
-            options_tr: q.options_tr,
             correct_index: q.correct_index,
-            is_ready: q.is_ready,
+            translations: {
+              [editingLang]: {
+                question: q.question,
+                options: q.options,
+                is_ready: q.is_ready,
+              },
+            },
           },
         }),
       });
@@ -319,18 +341,45 @@ function CustomQuestionsPanel() {
     await load();
   };
 
+  const openEdit = (q: CustomQuestion | null) => {
+    if (q) {
+      const t = q.translations.find((tr) => tr.lang === editingLang) ?? q.translations[0];
+      setEditing({
+        id: q.id,
+        category: q.category,
+        difficulty: q.difficulty,
+        correct_index: q.correct_index,
+        question: t?.question ?? '',
+        options: t?.options ?? ['', '', '', ''],
+        is_ready: t?.is_ready ?? true,
+      });
+      if (t?.lang) setEditingLang(t.lang);
+    } else {
+      setEditing({
+        id: '',
+        category: '',
+        difficulty: 'medium',
+        correct_index: 0,
+        question: '',
+        options: ['', '', '', ''],
+        is_ready: true,
+      });
+    }
+  };
+
   return (
     <div>
       <div className="mb-4 flex items-center gap-2">
         <button onClick={() => load()} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/80">
           <LuRefreshCw className="h-4 w-4" /> Yenile
         </button>
-        <button
-          onClick={() =>
-            setEditing({ id: '', category: '', difficulty: 'medium', question_tr: '', options_tr: ['', '', '', ''], correct_index: 0, is_ready: true })
-          }
-          className="ml-auto flex items-center gap-2 rounded-lg bg-indigo-500 px-3 py-2 text-sm font-semibold text-white"
-        >
+        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/70">
+          <span className="text-xs text-white/40">Editör dili:</span>
+          <select value={editingLang} onChange={(e) => setEditingLang(e.target.value)} className="bg-transparent text-white focus:outline-none">
+            {Object.entries(LANG_LABELS).map(([c, l]) => <option key={c} value={c} className="bg-[#0f1116]">{l}</option>)}
+          </select>
+        </div>
+        <button onClick={() => openEdit(null)} className="ml-auto flex items-center gap-2 rounded-lg bg-indigo-500 px-3 py-2 text-sm font-semibold text-white">
           <LuPlus className="h-4 w-4" /> Yeni Soru
         </button>
       </div>
@@ -341,28 +390,41 @@ function CustomQuestionsPanel() {
         <table className="w-full text-left text-sm">
           <thead className="bg-white/[0.04] text-xs uppercase text-white/50">
             <tr>
-              <th className="px-3 py-2">Soru</th>
+              <th className="px-3 py-2">Diller</th>
+              <th className="px-3 py-2">Soru ({editingLang})</th>
               <th className="px-3 py-2">Doğru</th>
               <th className="px-3 py-2">Zorluk</th>
               <th className="px-3 py-2"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {loading && <tr><td colSpan={4} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>}
-            {!loading && items.length === 0 && <tr><td colSpan={4} className="px-3 py-6 text-center text-white/40">Sunucuya özel soru yok</td></tr>}
-            {!loading && items.map((q) => (
-              <tr key={q.id} className="hover:bg-white/[0.02]">
-                <td className="max-w-[400px] px-3 py-2 text-white/80"><div className="line-clamp-2">{q.question_tr}</div></td>
-                <td className="px-3 py-2 text-white/70">{'ABCD'[q.correct_index]}</td>
-                <td className="px-3 py-2 text-white/60">{q.difficulty ?? '—'}</td>
-                <td className="px-3 py-2">
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => setEditing(q)} className="rounded-md p-1.5 text-white/60 hover:bg-white/10"><LuPencil className="h-4 w-4" /></button>
-                    <button onClick={() => remove(q.id)} className="rounded-md p-1.5 text-red-300 hover:bg-red-500/10"><LuTrash2 className="h-4 w-4" /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {loading && <tr><td colSpan={5} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>}
+            {!loading && items.length === 0 && <tr><td colSpan={5} className="px-3 py-6 text-center text-white/40">Sunucuya özel soru yok</td></tr>}
+            {!loading && items.map((q) => {
+              const t = q.translations.find((tr) => tr.lang === editingLang);
+              return (
+                <tr key={q.id} className="hover:bg-white/[0.02]">
+                  <td className="px-3 py-2 text-white/60">
+                    <div className="flex flex-wrap gap-1">
+                      {q.translations.map((tr) => (
+                        <span key={tr.lang} className={`rounded px-1.5 py-0.5 text-xs ${tr.is_ready ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'}`}>{tr.lang}</span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="max-w-[400px] px-3 py-2 text-white/80">
+                    <div className="line-clamp-2">{t?.question || <span className="text-white/30">— bu dilde çevrilmemiş —</span>}</div>
+                  </td>
+                  <td className="px-3 py-2 text-white/70">{'ABCD'[q.correct_index]}</td>
+                  <td className="px-3 py-2 text-white/60">{q.difficulty ?? '—'}</td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => openEdit(q)} className="rounded-md p-1.5 text-white/60 hover:bg-white/10"><LuPencil className="h-4 w-4" /></button>
+                      <button onClick={() => remove(q.id)} className="rounded-md p-1.5 text-red-300 hover:bg-red-500/10"><LuTrash2 className="h-4 w-4" /></button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -371,20 +433,18 @@ function CustomQuestionsPanel() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f1116] p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">{editing.id ? 'Soruyu düzenle' : 'Yeni soru'}</h2>
+              <div>
+                <h2 className="text-lg font-semibold text-white">{editing.id ? 'Soruyu düzenle' : 'Yeni soru'}</h2>
+                <p className="text-xs text-white/50">Dil: <span className="font-mono text-indigo-300">{LANG_LABELS[editingLang] ?? editingLang}</span></p>
+              </div>
               <button onClick={() => setEditing(null)} className="rounded-md p-1 text-white/60 hover:bg-white/10"><LuX className="h-5 w-5" /></button>
             </div>
             <div className="space-y-3">
               <label className="block text-sm text-white/70">
                 Soru
-                <textarea
-                  value={editing.question_tr ?? ''}
-                  onChange={(e) => setEditing({ ...editing, question_tr: e.target.value })}
-                  rows={2}
-                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
-                />
+                <textarea value={editing.question} onChange={(e) => setEditing({ ...editing, question: e.target.value })} rows={2} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
               </label>
-              {(editing.options_tr ?? ['', '', '', '']).map((opt, i) => (
+              {editing.options.map((opt, i) => (
                 <label key={i} className="block text-sm text-white/70">
                   <div className="mb-1 flex items-center gap-2">
                     <span className="font-semibold text-white/80">{'ABCD'[i]}</span>
@@ -396,9 +456,9 @@ function CustomQuestionsPanel() {
                   <input
                     value={opt}
                     onChange={(e) => {
-                      const next = [...(editing.options_tr ?? ['', '', '', ''])];
+                      const next = [...editing.options];
                       next[i] = e.target.value;
-                      setEditing({ ...editing, options_tr: next });
+                      setEditing({ ...editing, options: next });
                     }}
                     className="w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
                   />
@@ -411,7 +471,7 @@ function CustomQuestionsPanel() {
                 </label>
                 <label className="block text-sm text-white/70">
                   Zorluk
-                  <select value={editing.difficulty ?? ''} onChange={(e) => setEditing({ ...editing, difficulty: e.target.value as CustomQuestion['difficulty'] })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white">
+                  <select value={editing.difficulty ?? ''} onChange={(e) => setEditing({ ...editing, difficulty: (e.target.value || null) as EditDraft['difficulty'] })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white">
                     <option value="">—</option>
                     <option value="easy">Kolay</option>
                     <option value="medium">Orta</option>
@@ -419,6 +479,10 @@ function CustomQuestionsPanel() {
                   </select>
                 </label>
               </div>
+              <label className="flex items-center gap-2 text-sm text-white/70">
+                <input type="checkbox" checked={editing.is_ready} onChange={(e) => setEditing({ ...editing, is_ready: e.target.checked })} className="accent-emerald-500" />
+                Bu dilde hazır (is_ready)
+              </label>
             </div>
             <div className="mt-6 flex justify-end gap-2">
               <button onClick={() => setEditing(null)} className="rounded-md border border-white/10 px-4 py-2 text-sm text-white/70 hover:bg-white/5">İptal</button>
@@ -430,6 +494,16 @@ function CustomQuestionsPanel() {
     </div>
   );
 }
+
+type EditDraft = {
+  id: string;
+  category: string | null;
+  difficulty: 'easy' | 'medium' | 'hard' | null;
+  correct_index: number;
+  question: string;
+  options: string[];
+  is_ready: boolean;
+};
 
 function badgeStyle(status: string) {
   switch (status) {

@@ -17,6 +17,7 @@ type CreatePayload = {
   title: string;
   description?: string;
   start_at: string;
+  lang?: string;
   total_questions?: number;
   seconds_per_question?: number;
   wrong_allowed?: number;
@@ -29,10 +30,13 @@ type UpdatePayload = {
   title?: string;
   description?: string;
   start_at?: string;
+  lang?: string;
   prize_pool_papel?: number;
   status?: 'cancelled';
   checkpoints?: Checkpoint[];
 };
+
+const LANG_RE = /^[a-z]{2}(-[a-z0-9]{2,8})?$/i;
 
 export async function GET() {
   if (!(await isAdminOrDeveloper())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
@@ -97,11 +101,15 @@ export async function POST(request: NextRequest) {
   if (Number.isNaN(startAt.getTime())) return NextResponse.json({ error: 'invalid_start_at' }, { status: 400 });
   const endAt = new Date(startAt.getTime() + total * (sec + 2) * 1000);
 
+  const lang = (body.lang ?? 'tr').toLowerCase();
+  if (!LANG_RE.test(lang)) return NextResponse.json({ error: 'invalid_lang' }, { status: 400 });
+
   const { data: event, error } = await supabase.from('quiz_events').insert({
     scope: 'guild',
     guild_id: guildId,
     title: body.title,
     description: body.description ?? null,
+    lang,
     start_at: startAt.toISOString(),
     end_at: endAt.toISOString(),
     total_questions: total,
@@ -169,6 +177,11 @@ export async function PATCH(request: NextRequest) {
       patch.end_at = new Date(startAt.getTime() + existing.total_questions * (existing.seconds_per_question + 2) * 1000).toISOString();
     }
     if (body.prize_pool_papel !== undefined) patch.prize_pool_papel = body.prize_pool_papel;
+    if (body.lang !== undefined) {
+      const lang = body.lang.toLowerCase();
+      if (!LANG_RE.test(lang)) return NextResponse.json({ error: 'invalid_lang' }, { status: 400 });
+      patch.lang = lang;
+    }
   }
   if (body.status === 'cancelled') {
     patch.status = 'cancelled';

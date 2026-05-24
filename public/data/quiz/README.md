@@ -1,39 +1,77 @@
-# Quiz Soru Bankası
+# Quiz Soru Bankası (Multi-language)
 
 Bu klasör DiscoWeb Quiz Event sisteminin yerel soru havuzunu içerir.
+Yapı dil-bağımsız tasarlandı — her yeni dil için yalnızca bir `lang-XX.json` dosyası eklemek yeterli.
 
 ## Dosyalar
 
-- `raw-en.json` — Open Trivia DB'den çekilmiş ham İngilizce sorular. **`scripts/fetch-trivia-bank.ts` ile üretilir.** Manuel düzenlenmemeli.
-- `tr.json` — Türkçeye çevrilmiş aktif soru havuzu. Her satır `is_ready: true` olduğunda quiz event'lerinde kullanılır.
+| Dosya | İçerik | Düzenlenebilir mi? |
+|---|---|---|
+| `bank.json` | **Canonical** soru kayıtları (dil-bağımsız): id, kategori, zorluk, correct_index | Hayır — `scripts/fetch-trivia-bank.ts` üretir |
+| `lang-en.json` | İngilizce çeviriler (Open Trivia DB kaynağından otomatik gelir, `is_ready=true`) | Hayır — script üretir |
+| `lang-tr.json` | Türkçe çeviriler **template** (boş gelir, çevrilecek; `is_ready=false`) | Evet — elle veya developer panel'den |
+| `lang-pt-br.json` | Portekizce (BR) çeviriler — *opsiyonel, yoksa elle yarat* | Evet |
+| `lang-es.json`, `lang-de.json`, ... | Diğer diller | Evet |
 
-## Format (tr.json)
+## Şema
 
-```jsonc
+### `bank.json`
+```json
 [
   {
     "id": "opentdb_xxxxx",
+    "source": "opentdb",
+    "source_external_id": "opentdb_xxxxx",
     "category": "Science: Computers",
     "difficulty": "medium",
-    "question_en": "What is the meaning of...?",
-    "options_en": ["A", "B", "C", "D"],
-    "correct_index": 2,
-    "question_tr": "... ne demektir?",
-    "options_tr": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
-    "is_ready": true
+    "correct_index": 2
   }
 ]
 ```
+> Bu dosyada **soru metni veya şıklar yoktur**. Sadece canonical alanlar.
 
-`correct_index`, `options_tr` ile `options_en` aynı sırada olmalıdır. Yani `options_en[2]`'nin TR karşılığı `options_tr[2]` olmalı.
+### `lang-XX.json`
+```json
+{
+  "lang": "tr",
+  "name": "Türkçe",
+  "questions": [
+    {
+      "id": "opentdb_xxxxx",
+      "question": "... ne demektir?",
+      "options": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
+      "is_ready": true
+    }
+  ]
+}
+```
+> `id` alanı `bank.json`'daki id ile aynı olmalıdır. `options[0..3]` sırası `bank.json`'daki `correct_index` ile eşleşmek zorundadır (çeviri yaparken şık sırasını koru).
 
 ## Akış
 
-1. `npx tsx scripts/fetch-trivia-bank.ts --count=500` çalıştır → `raw-en.json` + boş `tr.json` şablonu oluşur
-2. Developer panelinden ya da elle `tr.json`'daki `question_tr` ve `options_tr` alanlarını doldur
-3. Çevirisi tamamlanan satırın `is_ready: true` yap
-4. `/developer/quiz/questions` sayfasındaki "Veri tabanına yükle" butonu ile `quiz_question_bank` tablosuna sync et
+1. **Sorubankası üretimi** (geliştirici makinesinde):
+   ```bash
+   npx tsx scripts/fetch-trivia-bank.ts --count=500
+   ```
+   Bu komut `bank.json` + `lang-en.json` üretir. `lang-tr.json` yoksa boş template oluşturur, varsa mevcut çevirileri korur.
+
+2. **Database'e yükleme** (developer panelinden):
+   - `/developer/quiz/questions` → **"Ana Banka Yükle (bank.json)"** → `bank.json`'ı seç
+   - Aynı sayfada **"Çeviri Yükle (lang-XX.json)"** → `lang-en.json` (zaten hazır)
+   - Aynı butonla `lang-tr.json` → soruları yükler ama `is_ready=false` ise quiz'de kullanılmaz
+   - Editor'de her satırı aç → Türkçe çeviriyi yap → **"is_ready"** işaretle → Kaydet
+
+3. **Yeni dil eklemek**:
+   - `lang-tr.json`'ı kopyala → `lang-pt-br.json` olarak adlandır
+   - `"lang": "pt-br"`, `"name": "Português (BR)"` yap
+   - `questions[].question` ve `questions[].options`'ı çevir
+   - Developer panel → "Çeviri Yükle" → bu dosyayı seç
+   - Event oluştururken "Dil: pt-br" seçmek artık mümkün
 
 ## Per-Guild Custom Sorular
 
-Sunucu admin panelinden (`/admin/quiz`) eklenen özel sorular doğrudan `quiz_question_bank` tablosuna `is_custom_for_guild_id` alanı dolu olarak yazılır; bu JSON dosyalarına yansımaz.
+Admin panel (`/admin/quiz` → "Sunucuya Özel Sorular") üzerinden eklenen sorular:
+- Doğrudan database'e yazılır, JSON dosyalarına yansımaz
+- `quiz_question_bank.is_custom_for_guild_id` alanı dolu olur
+- Admin tek bir dilde yazar; isteğe göre başka dilleri de ekleyebilir (translations tablosu üzerinden)
+- Per-guild event'lerde önce custom sorular, sonra ortak banka kullanılır

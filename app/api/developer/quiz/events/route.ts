@@ -20,6 +20,7 @@ type CreatePayload = {
   title: string;
   description?: string;
   start_at: string;            // ISO
+  lang?: string;               // 'tr' | 'en' | 'pt-br' | ...  (default 'tr')
   total_questions?: number;
   seconds_per_question?: number;
   wrong_allowed?: number;
@@ -32,6 +33,7 @@ type UpdatePayload = {
   title?: string;
   description?: string;
   start_at?: string;
+  lang?: string;
   prize_pool_papel?: number;
   total_questions?: number;
   seconds_per_question?: number;
@@ -39,6 +41,8 @@ type UpdatePayload = {
   status?: 'scheduled' | 'cancelled';
   checkpoints?: Checkpoint[];
 };
+
+const LANG_RE = /^[a-z]{2}(-[a-z0-9]{2,8})?$/i;
 
 const DEFAULT_CHECKPOINTS = (total: number, pool: number): Checkpoint[] => {
   // 25 soru için: 8, 16, 25 pozisyonlarında 50 / 100 / 250 papel (örnek değerler)
@@ -141,11 +145,17 @@ export async function POST(request: NextRequest) {
   }
   const endAt = new Date(startAt.getTime() + total * (sec + reveal) * 1000);
 
+  const lang = (body.lang ?? 'tr').toLowerCase();
+  if (!LANG_RE.test(lang)) {
+    return NextResponse.json({ error: 'invalid_lang' }, { status: 400 });
+  }
+
   const insertRow = {
     scope: body.scope,
     guild_id: body.scope === 'guild' ? body.guild_id : null,
     title: body.title,
     description: body.description ?? null,
+    lang,
     start_at: startAt.toISOString(),
     end_at: endAt.toISOString(),
     total_questions: total,
@@ -220,6 +230,11 @@ export async function PATCH(request: NextRequest) {
     if (body.seconds_per_question !== undefined) patch.seconds_per_question = body.seconds_per_question;
     if (body.wrong_allowed !== undefined) patch.wrong_allowed = body.wrong_allowed;
     if (body.prize_pool_papel !== undefined) patch.prize_pool_papel = body.prize_pool_papel;
+    if (body.lang !== undefined) {
+      const lang = body.lang.toLowerCase();
+      if (!LANG_RE.test(lang)) return NextResponse.json({ error: 'invalid_lang' }, { status: 400 });
+      patch.lang = lang;
+    }
   }
 
   if (body.status === 'cancelled') {

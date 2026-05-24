@@ -11,6 +11,7 @@ type QuizEvent = {
   guild_id: string | null;
   title: string;
   description: string | null;
+  lang: string;
   start_at: string;
   end_at: string | null;
   total_questions: number;
@@ -21,6 +22,15 @@ type QuizEvent = {
   current_position: number;
   paid_out_at: string | null;
   checkpoints: Checkpoint[];
+};
+
+const LANG_LABELS: Record<string, string> = {
+  tr: 'Türkçe',
+  en: 'English',
+  'pt-br': 'Português (BR)',
+  es: 'Español',
+  de: 'Deutsch',
+  fr: 'Français',
 };
 
 export default function QuizEventsPage() {
@@ -35,6 +45,7 @@ export default function QuizEventsPage() {
     guild_id: '',
     title: 'Haftalık Quiz Etkinliği',
     description: '',
+    lang: 'tr',
     start_at: '',
     total_questions: 25,
     seconds_per_question: 20,
@@ -82,6 +93,7 @@ export default function QuizEventsPage() {
         guild_id: form.scope === 'guild' ? form.guild_id.trim() : null,
         title: form.title.trim(),
         description: form.description.trim() || undefined,
+        lang: form.lang.trim().toLowerCase(),
         start_at: new Date(form.start_at).toISOString(),
         total_questions: Number(form.total_questions),
         seconds_per_question: Number(form.seconds_per_question),
@@ -153,6 +165,7 @@ export default function QuizEventsPage() {
             <tr>
               <th className="px-3 py-2">Durum</th>
               <th className="px-3 py-2">Kapsam</th>
+              <th className="px-3 py-2">Dil</th>
               <th className="px-3 py-2">Başlık</th>
               <th className="px-3 py-2">Başlangıç</th>
               <th className="px-3 py-2">Soru</th>
@@ -164,12 +177,12 @@ export default function QuizEventsPage() {
           <tbody className="divide-y divide-white/5">
             {loading && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td>
+                <td colSpan={9} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td>
               </tr>
             )}
             {!loading && events.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-white/40">Etkinlik yok</td>
+                <td colSpan={9} className="px-3 py-6 text-center text-white/40">Etkinlik yok</td>
               </tr>
             )}
             {!loading &&
@@ -180,6 +193,9 @@ export default function QuizEventsPage() {
                   </td>
                   <td className="px-3 py-2 text-white/70">
                     {e.scope === 'global' ? 'Global' : `Sunucu (${e.guild_id})`}
+                  </td>
+                  <td className="px-3 py-2 text-white/70">
+                    <span className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">{e.lang ?? 'tr'}</span>
                   </td>
                   <td className="px-3 py-2 text-white/90">{e.title}</td>
                   <td className="px-3 py-2 text-white/60">
@@ -257,6 +273,21 @@ export default function QuizEventsPage() {
                   rows={2}
                   className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
                 />
+              </label>
+              <label className="block text-sm text-white/70">
+                Dil
+                <select
+                  value={form.lang}
+                  onChange={(e) => setForm({ ...form, lang: e.target.value })}
+                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
+                >
+                  {Object.entries(LANG_LABELS).map(([code, label]) => (
+                    <option key={code} value={code}>{label} ({code})</option>
+                  ))}
+                </select>
+                <span className="mt-1 block text-xs text-white/40">
+                  Soru bankasında bu dilde <strong>{form.total_questions}</strong> hazır soru olmalı, yoksa lock fail eder.
+                </span>
               </label>
               <label className="block text-sm text-white/70">
                 Başlangıç (yerel saat)
