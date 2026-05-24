@@ -4,5206 +4,5206 @@
   "questions": [
     {
       "id": "opentdb_tl8frg",
-      "question": "",
+      "question": "Bu karakterlerden hangisi \"Nier: Automata\"da görünmüyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "A1",
+        "A2",
+        "2B",
+        "9S"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_f0gb75",
-      "question": "",
+      "question": "Vanilya Minecraft'ta hepsinden zırh yapabilirsiniz ANCAK aşağıdakilerden hangisi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Deri",
+        "Zümrüt",
+        "Demir",
+        "Elmas"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_m9n6yg",
-      "question": "",
+      "question": "Jamaika İngiltere'den bağımsızlığını ne zaman aldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1963",
+        "1962",
+        "1987",
+        "1492"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_p8x5ri",
-      "question": "",
+      "question": "Hangi punk rock grubu \"Californication\", \"Can't Stop\" ve \"Under the Bridge\" gibi hit şarkıları yayınladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Red Hot Chili Peppers",
+        "Linkin Park",
+        "Green Day",
+        "Foo Fighters"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_gxxpyw",
-      "question": "",
+      "question": "\"Rick and Morty\" adlı TV programında Rick, \"Wubba Lubba Dub Dub\" sloganını kullanıyor, bu da Birdperson'da ne anlama geliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hayatımın bir an önce bitmesi için dua ediyorum.",
+        "Acı çekiyorum, lütfen bana yardım edin.",
+        "Hadi bu partiyi başlatalım!",
+        "Çok acı çekiyorum, lütfen bana yardım edin."
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_pgfdue",
-      "question": "",
+      "question": "Dünyanın ilk video oyun konsolu nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Magnavox Odyssey",
+        "Coleco Telstar",
+        "Atari 2600",
+        "Nintendo Renkli TV Oyunu"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hnyuyc",
-      "question": "",
+      "question": "Kenya'nın ilk cumhurbaşkanı kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Oginga Odinga",
+        "Daniel Moi",
+        "Jomo Kenyatta",
+        "Tom Mboya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hv9w7",
-      "question": "",
+      "question": "\"Nintendo Gamecube\"un kod adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Atlantis",
+        "Yunus",
+        "Devrim",
+        "nitro"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ssq9qg",
-      "question": "",
+      "question": "2015 yapımı RPG \"Undertale\"de yer altına düştükten sonra ilk olarak hangi karakterle karşılaşıyorsunuz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "akıcı",
+        "Papirüs",
+        "Toriel",
+        "sans"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3x1lj6",
-      "question": "",
+      "question": "Hangi radyocu kendisine \"Tüm Medyanın Kralı\" diyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ryan Seacrest",
+        "Pete Tong",
+        "Howard Stern",
+        "Rush Limbaugh"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nf4uhj",
-      "question": "",
+      "question": "Sanal gerçeklik şirketi Oculus VR, 2013'teki garip bir araba kazasında kurucu ortaklarından hangisini kaybetti?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Nate Mitchell",
+        "Jack McCauley",
+        "Andrew Scott Reisse",
+        "Palmer Şanslı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jf93i2",
-      "question": "",
+      "question": "Django çerçevesini hangi bilgisayar diliyle ilişkilendirirsiniz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "C++",
+        "Java",
+        "C#",
+        "Python"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_blv3ab",
-      "question": "",
+      "question": "Hangi yazar Karl Marx'la birlikte \"Komünist Manifesto\"yu yazdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Paul Lafargue'ın",
+        "Alexander Kerenski",
+        "Friedrich Engels",
+        "Robert Owen"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_l48oe4",
-      "question": "",
+      "question": "İlk memeli ne zaman başarıyla klonlandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2009",
+        "1999",
+        "1996",
+        "1985"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_y9wqty",
-      "question": "",
+      "question": "\"Star Trek\"teki Klingon lezzeti \"gagh\" neden yapılıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Solucanlar",
+        "Yılan solucanları",
+        "Klingworms",
+        "Spagetti eriştesi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9rxnor",
-      "question": "",
+      "question": "Elektronik sanatçıları Boys Noize ve Skrillex işbirliği yaptı ve hangi isim altında parçalar yayınladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Köpek Kanı",
+        "Jack Ü",
+        "ne yani",
+        "gürültü"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_443q2s",
-      "question": "",
+      "question": "Bu türlerden hangisinin nesli tükenmedi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Japon deniz aslanı",
+        "Tazmanya kaplanı",
+        "Suudi ceylanı",
+        "Komodo ejderi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_57cu9",
-      "question": "",
+      "question": "Mısır Sfenks'inin gövdesi hangi hayvana dayanıyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Aslan",
+        "Köpek",
+        "Atış",
+        "Boğa"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2myj4f",
-      "question": "",
+      "question": "\"Ocarina of Time\"da ilk boss kapısını açmak için Deku Scrubs'a hangi sırayla vurmanız gerekiyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1, 2, 3",
+        "2, 1, 3",
+        "2, 3, 1",
+        "1, 3, 2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ruvihx",
-      "question": "",
+      "question": "My Hero Academia'nın ana karakteri Midoriya hangi süper kahraman adını kullanıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Saitama",
+        "Her Şey Olabilir",
+        "Deku",
+        "Kona"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_su7v6v",
-      "question": "",
+      "question": "Invincible'ın babasının ırkı ne?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kree",
+        "Viltrumit",
+        "Kriptonlu",
+        "Irken"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3uftq7",
-      "question": "",
+      "question": "Hangi Avrupa ülkesi AB'nin bir parçası değildir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Norveç",
+        "Çekya",
+        "Litvanya",
+        "İrlanda"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lyon2h",
-      "question": "",
+      "question": "Half-Life oyununda son boss olarak hangi düşman gösteriliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "G-Adam",
+        "Dr.Wallace Breen",
+        "Nihilanth",
+        "Gonarş"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_h057sz",
-      "question": "",
+      "question": "Kirpi Sonic'in orijinal insan kız arkadaşının adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Nina",
+        "Madonna",
+        "Sierra",
+        "Celeste"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5nl1w1",
-      "question": "",
+      "question": "\"Call of Duty: Zombies\"de Doktor Maxis hangi grup için çalışıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Grubu Yeniden Canlandırma",
+        "Grup Dirilişi",
+        "9.Bölüm",
+        "Grup 935"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_gxc73z",
-      "question": "",
+      "question": "No Man's Sky'ı hangi Oyun Geliştirme şirketi yaptı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Blizzard Eğlence",
+        "Merhaba Oyunlar",
+        "Kırlangıç ​​Oyunları",
+        "Vana"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_gp4tnh",
-      "question": "",
+      "question": "\"Eşek\" kelimesinin İspanyolca karşılığı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Perro",
+        "Kabalo",
+        "Toro",
+        "eşek"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_t01a3",
-      "question": "",
+      "question": "\"Magic: The Gathering\" Scars of Mirrodin genişletme paketindeki hangi yetenek, oyunda en az üç eserin bulunmasını içeriyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Yaşayan Silah",
+        "Metal işçiliği",
+        "Yakınlık",
+        "Baskı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2p0sa1",
-      "question": "",
+      "question": "Fransız matematikçi Évariste Galois öncelikle hangi çalışmalarıyla tanınır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Değişmeli Entegrasyon",
+        "Galois'in Devamlı Kesirleri",
+        "Galois Teorisi",
+        "PDE'ler için Galois Yöntemi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_o134qv",
-      "question": "",
+      "question": "Herhangi bir programlama dilinde bir diziyi yinelemenin en yaygın yolu nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "'Do-while' döngüleri",
+        "'For' döngüleri",
+        "'Eğer' İfadeleri",
+        "'While' döngüleri"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_44bz1z",
-      "question": "",
+      "question": "Portal serisinde Aperture Science 1940'ların başında hangi isimle kuruldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Wheatley Laboratuvarları",
+        "Diyafram Armatürleri",
+        "Diyafram Biliminin Yenilikçileri",
+        "Diyaframlı Lavabolar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ljpd9e",
-      "question": "",
+      "question": "Kan basıncını ölçmek için aşağıdakilerden hangisi kullanılır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Barometre",
+        "Tansiyon aleti",
+        "Cetvel",
+        "Hemoeritrometre"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_x0dqjq",
-      "question": "",
+      "question": "Super Mario World'de minik Thwomp'lara ne ad veriliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mini Gümbürtü",
+        "tökezlemeler",
+        "Küçük Gümbürtü",
+        "Minik Tims"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qtfjh9",
-      "question": "",
+      "question": "BBC dizisi Postacı Pat'teki erkek öğretmenlerden birinin soyadı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Yürüteç",
+        "Lay'lar",
+        "pringle",
+        "Dorito"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nmwewa",
-      "question": "",
+      "question": "Eğer saatte 80 mil hızla gidiyorsanız, 80 mil gitmeniz ne kadar sürer?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "30 dakika",
+        "90 dakika",
+        "60 dakika",
+        "50 dakika"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_l7y8rh",
-      "question": "",
+      "question": "Çoğu bitki yaprağının yeşil rengini ne üretir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Işık kırılması",
+        "UV radyasyonu",
+        "Klorofil",
+        "Doğal pigmentler"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lo193w",
-      "question": "",
+      "question": "\"Türün dişisi erkeğinden daha öldürücüdür\" dizesini hangi yazar ve şair yazmıştır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Edgar Allan Poe'nun",
+        "Rudyard Kipling",
+        "William Shakespeare",
+        "William Wordsworth"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ri1s5n",
-      "question": "",
+      "question": "Call of Duty: Modern Warfare 2'de \"Tactical Nuke\" öldürme serisini kazanmak için ardı ardına kaç öldürme gerekiyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "25",
+        "20",
+        "35",
+        "30"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_794y2n",
-      "question": "",
+      "question": "Organik bir bileşik hangi fonksiyonel gruba sahipse alkol olarak kabul edilir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Aldehit",
+        "alkil",
+        "Karbonil",
+        "Hidroksil"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_vzsnpr",
-      "question": "",
+      "question": "MOBA 'League of Legends'taki bu şampiyonlardan hangisi Yordle DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Annie",
+        "Veigar",
+        "Lulu",
+        "Tristana"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_74m3hy",
-      "question": "",
+      "question": "Hangi ülkenin Eden, Major, Peel, Law, Brown ve Heath adında başbakanları olmuştur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Avustralya",
+        "Kanada",
+        "Birleşik Krallık",
+        "Yeni Zelanda"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zdtbv0",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi gerçek bir Pokémon değildir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Luminid",
+        "Araquanid",
+        "Mandibuzz",
+        "Dragalge"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_txdk9o",
-      "question": "",
+      "question": "Bu rapçilerden hangisi Wu-Tang Clan rap grubunun üyesi DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dr.Dre",
+        "Ol' Kirli Piç",
+        "Yöntem Adam",
+        "GZA"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jlxjtz",
-      "question": "",
+      "question": "SSD'nin açılımı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Katı Hal Diski",
+        "Kaynak Çözüm Sürücüsü",
+        "Katı Hal Sürücüsü",
+        "Çözüm Kaynağı Diski"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_anaxtd",
-      "question": "",
+      "question": "Earl Grey çayı neyle tatlandırılmış siyah çaydır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Vanilya",
+        "Bal",
+        "Lavanta",
+        "Bergamot yağı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_f0c634",
-      "question": "",
+      "question": "\"Archie\" çizgi romanlarında Jughead'in ilk kız arkadaşı kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ethel",
+        "Margret",
+        "Joani",
+        "Debbi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_bc0hzp",
-      "question": "",
+      "question": "Nelson Mandela hangi yılda hapisten çıktı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1994",
+        "1990",
+        "1992",
+        "1980"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_idy926",
-      "question": "",
+      "question": "Locke Lamora'nın Yalanları'nda Taht Therin'de \"Lamora\" ne anlama geliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kaos",
+        "Gölge",
+        "Hırsızlık",
+        "Adalet"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_opajgs",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi Zindanlar ve Ejderhalar 5e'deki sınıflardan biri DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dövüşçü",
+        "Şövalye",
+        "Ozan",
+        "Mühendis"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wyii18",
-      "question": "",
+      "question": "Undertale'de Hotland'da Spider Donuts'un fiyatı ne kadar?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "7G",
+        "9999G",
+        "12G",
+        "40G"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_codi3e",
-      "question": "",
+      "question": "\"Zelda Efsanesi: Majora'nın Maskesi\" nerede geçiyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gysahl",
+        "söylendi",
+        "Termina",
+        "Hyrule"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ixa8d",
-      "question": "",
+      "question": "Mükemmel bir oyunla kazanan ilk Big Brother ABD kazananı kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ian Terry",
+        "Dan Gheesling",
+        "Rachael Reilly",
+        "Ürdün Lloyd"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_yyc49d",
-      "question": "",
+      "question": "\"Geleceğe Dönüş\" filminde Doktor Brown'un DeLorean'ının zamanda yolculuk yapabilmesi için hangi hıza ulaşması gerekiyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "100 mil/saat",
+        "88 mil/saat",
+        "70 mil/saat",
+        "77 mil/saat"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_d5l67g",
-      "question": "",
+      "question": "İlk olarak hangi işletim sistemi piyasaya sürüldü?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Windows",
+        "Mac OS",
+        "Linux",
+        "İşletim Sistemi/2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hai1fr",
-      "question": "",
+      "question": "Kanada'nın en yüksek dağı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Logan Dağı",
+        "Whistler Dağı",
+        "Tremblant Dağı",
+        "Mavi Dağ"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_19c6ac",
-      "question": "",
+      "question": "Nidhogg hangi mitolojiden gelen efsanevi bir yaratıktır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Yunan",
+        "Hindu",
+        "İskandinav",
+        "Mısırlı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_z2rwuk",
-      "question": "",
+      "question": "\"Toriko\"da aşağıdaki Cennetsel Krallardan hangisinin gelişmiş bir İşitme duyusu vardır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Zebra",
+        "Hindistan cevizi",
+        "Güneşli",
+        "Toriko"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tvu458",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi edinsel bağışıklık sisteminin hücreleridir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sitotoksik T hücreleri",
+        "Beyaz kan hücreleri",
+        "Dendritik hücreler",
+        "Doğal öldürücü hücreler"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2tb8je",
-      "question": "",
+      "question": "Nike giyim ve ayakkabı markası adını Yunan tanrıçasından alıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kuvvet",
+        "Zafer",
+        "Cesaret",
+        "Onur"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rw1p56",
-      "question": "",
+      "question": "Ökaryotik bir hücre ile prokaryotik bir hücre arasındaki en büyük fark şudur:",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Genel boyut",
+        "Belirli organellerin varlığı veya yokluğu",
+        "Üreme modu",
+        "Çekirdeğin varlığı veya yokluğu"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_a5708c",
-      "question": "",
+      "question": "Bir video oyunundaki ilk kadın kahraman kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Alis Landale",
+        "Chell",
+        "Samus Aran",
+        "Lara Croft"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xup6o2",
-      "question": "",
+      "question": "World of Warcraft'ta orijinal seviye sınırı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "70",
+        "60",
+        "100",
+        "50"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xoxq0h",
-      "question": "",
+      "question": "\"Half-Life\" oyununun yazarı kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Chet Faliszek",
+        "Marc Laidlaw",
+        "Gabe Newell",
+        "Robin Walker"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_82tcjp",
-      "question": "",
+      "question": "Dead Space Dizisindeki Ana Karakterin Adı Nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ellen Ripley",
+        "Isaac Clarke",
+        "Kaptan Kirk",
+        "Komutan Shepard"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5j8hh",
-      "question": "",
+      "question": "Vücudun hangi kısmı insülin üretir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Karaciğer",
+        "Karın",
+        "Böbrek",
+        "Pankreas"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_a6epsg",
-      "question": "",
+      "question": "1940'tan 1942'ye kadar Özgür Fransa'nın sürgündeki başkenti neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Paris",
+        "Tunus",
+        "Brazzaville",
+        "Cezayir"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_bvixa6",
-      "question": "",
+      "question": "6. Nesil Pokémon'a ait aşağıdaki Elit Dört üyeden hangisi Flare Takımının bir üyesiydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Siebold",
+        "Malva",
+        "Wikström",
+        "Drasna"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_am40ux",
-      "question": "",
+      "question": "Aşağıdaki İspanyol eyaletleri İspanya'nın kuzey bölgesinde bulunmaktadır:",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Murcia",
+        "Navarre",
+        "Asturias",
+        "Leon"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_itnax9",
-      "question": "",
+      "question": "Team Fortress 2'nin kurgusal şirketi \"Mann Co\"nun kurucusu kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Zepheniah Mann",
+        "Mağara Johnson",
+        "Sakson Hale",
+        "Wallace Breem"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_br66cn",
-      "question": "",
+      "question": "Terraria'daki maksimum HP nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "100",
+        "400",
+        "1000",
+        "500"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_dwu4aq",
-      "question": "",
+      "question": "İspanya'nın başkenti neresidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sevilla",
+        "Barselona",
+        "Toledo",
+        "Madrid"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8zsnvp",
-      "question": "",
+      "question": "Bu kinaye, bir canavarın nasıl çalıştığını göstermek için öldürülen küçük karakterleri ifade eder.",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kırmızı Gömlek",
+        "Harcamalar",
+        "Minyonlar",
+        "Top Yemi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_s71gy9",
-      "question": "",
+      "question": "Bu black metal gruplarından hangisi solo bir projeydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Karanlık taht",
+        "Burzum",
+        "Diseksiyon",
+        "Kargaşa"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ddgggx",
-      "question": "",
+      "question": "Tek duyarlıklı kayan nokta sayısının anlamlı kısmını kaç bit oluşturur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "53",
+        "23",
+        "15",
+        "8"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lh7qzf",
-      "question": "",
+      "question": "World of Warcraft bilgisinde Sylvanas Windrunner'ın kaç kardeşi var?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2",
+        "3",
+        "4",
+        "1"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5ner8x",
-      "question": "",
+      "question": "Aşağıdaki karakterlerden hangisi \"Resident Evil 6\"da oynanamaz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Helena Harper",
+        "Şeri Birkin",
+        "Chris Redfield",
+        "Jill Valentine"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_vql5jk",
-      "question": "",
+      "question": "Dart tahtasında 1 numaranın tam karşısında hangi sayı vardır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "20",
+        "15",
+        "19",
+        "12"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_j8kla0",
-      "question": "",
+      "question": "Büyük İskender'e kim ders verdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Platon",
+        "Sokrates",
+        "Aristo",
+        "Kral Philip"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tma1om",
-      "question": "",
+      "question": "İngiliz alfabesinde en sık kullanılan harf hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "O",
+        "BEN",
+        "A",
+        "e"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_toezil",
-      "question": "",
+      "question": "İkinci Dünya Savaşı sırasında, 1945'te Amerika Birleşik Devletleri, Japonya'nın iki şehri Hiroşima'ya ve başka hangi şehre atom bombası attı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tokyo",
+        "Kagoşima",
+        "Nagazaki",
+        "Kawasaki"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_yd0mo3",
-      "question": "",
+      "question": "Barut komplosu, İngiltere'nin o dönemde hüküm süren hükümdarlarından hangisine karşı yapılan, iyi bilinen, başarısız bir suikast girişimiydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Elizabeth I",
+        "James ben",
+        "Charles I",
+        "Charles II"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nlky4b",
-      "question": "",
+      "question": "355 ml'lik bir kutu Pepsi Cola'da kaç kalori var?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "155",
+        "100",
+        "150",
+        "200"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_v74zkt",
-      "question": "",
+      "question": "Dünya vanilyasının yaklaşık %40'ını hangi ülke üretiyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Meksika",
+        "Çin",
+        "Endonezya",
+        "Madagaskar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_v61ck5",
-      "question": "",
+      "question": "Valve'ın \"Portal\" serisinde tasvir edilen pasta, gerçek dünyadaki hangi pasta türüne en çok benzemektedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kara Orman",
+        "Erimiş Çikolata",
+        "Alman Çikolatası",
+        "Şeytan Yemeği"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_to8ovh",
-      "question": "",
+      "question": "Twitter'da bir Tweet için orijinal karakter sınırı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "100",
+        "160",
+        "120",
+        "140"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lgp9l7",
-      "question": "",
+      "question": "Fallout 3, Fallout: New Vegas ve Fallout 4'te bulunan yaygın lazer tüfeğinin model numarası nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "AER10",
+        "AER12",
+        "AER9",
+        "AER14"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_j3ip19",
-      "question": "",
+      "question": "Deniz samuru her gün vücut ağırlığının ne kadarını yiyecekle tüketir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "%10",
+        "%45",
+        "%80",
+        "%25"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_y0y1y4",
-      "question": "",
+      "question": "Titanfall hangi motorla yapıldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gerçekdışı Motor",
+        "Kaynak Motoru",
+        "Donma 3",
+        "Cryengine"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_sbl1li",
-      "question": "",
+      "question": "Hangi ülke 2017 yılında NATO'ya 29. üye olarak katıldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "İzlanda",
+        "Andorra",
+        "Estonya",
+        "Karadağ"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_32anq2",
-      "question": "",
+      "question": "Watch Dogs 2'nin orijinal müziğini hangi sanatçı besteledi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Uçan Lotus",
+        "Rustie",
+        "Hudson Mohawke",
+        "Makine tamburu"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ut2vkk",
-      "question": "",
+      "question": "Oyuncu \"Dark Souls\" serisindeki hangi oyunu \"Ashen One\" olarak oynuyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Karanlık Ruhlar I",
+        "Kan yoluyla bulaşan",
+        "Karanlık Ruhlar III",
+        "Şeytan Ruhları"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_pv8vyj",
-      "question": "",
+      "question": "Latince \"Veni, vidi, vici\" deyiminin İngilizce'ye çevirisi nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Geçmiş, şimdiki zaman ve gelecek",
+        "Kötüyü görme, kötüyü duyma, kötü konuşma",
+        "Geldim, gördüm, yendim",
+        "Yaşam, özgürlük ve mutluluk"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_7vnivt",
-      "question": "",
+      "question": "Beceri seviyelerini, sınıfı ve doğum işaretini dikkate almadan \"The Elder Scrolls 4: Oblivion\"da ulaşabileceğiniz en yüksek seviye nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "80",
+        "100",
+        "Sınır yok",
+        "50"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xrnv8m",
-      "question": "",
+      "question": "Portal'da Ahlak Çekirdeği ne renktir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sarı",
+        "Mavi",
+        "Kırmızı",
+        "Mor"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_t1422n",
-      "question": "",
+      "question": "Phantom Menace'de Anakin Skywalker'ı canlandıran Jake Lloyd'un oyunculuğu bırakmasına ne sebep oldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "En Kötü Erkek Oyuncu Adaylığı",
+        "Sabıka Kaydı",
+        "Irkçılık",
+        "Zorbalık"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8hxvpf",
-      "question": "",
+      "question": "Aşağıdaki aktörlerden hangisi İngiliz televizyon dizisi Doctor Who'da Dokuzuncu Doktor'u canlandırdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Christopher Eccleston",
+        "Matt Smith",
+        "Tom Baker",
+        "David Tennant"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_oj6ap",
-      "question": "",
+      "question": "New York Manhattan'daki yeni Tek Dünya Ticaret Merkezi hangi mimar tarafından tasarlandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "David Childs",
+        "Fumihiko Maki",
+        "Michael Arad",
+        "Bjarke Ingels"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_px7kjt",
-      "question": "",
+      "question": "Meksika'nın ilk başkanı kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Guadalupe Victoria",
+        "Miguel Hidalgo ve Costilla",
+        "Benito Juárez",
+        "Vicente Guerrero"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9zrbcz",
-      "question": "",
+      "question": "Bir İskoçyalı bir düğünde genellikle hangi giysiyi giyer?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Elbise",
+        "Robes",
+        "İskoç eteği",
+        "Etek"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zhzmzs",
-      "question": "",
+      "question": "Aşağıdaki oyunlardan hangisinde en fazla oynanabilir karakter bulunur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mortal Kombat: Kıyamet",
+        "Dragon Ball Z: Budokai Tenkaichi 3",
+        "Zaman Bölücüler: Mükemmel Gelecek",
+        "Marvel Vs. Capcom 2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lk5olb",
-      "question": "",
+      "question": "Digimon Adventure'ın orijinal Japonca versiyonundaki Gatomon'un adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kedimon",
+        "Tailmon",
+        "Pawmon",
+        "Nekomon"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xwbbng",
-      "question": "",
+      "question": "Piyasaya sürülen ilk iki Pokémon oyunu hangileriydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kırmızı ve Yeşil",
+        "Kırmızı ve Sarı",
+        "Kırmızı ve Mavi",
+        "Yeşil ve Mavi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_s6fysb",
-      "question": "",
+      "question": "Bu dört binadan 1.483 ft (451,9 m) yüksekliğiyle en yüksek olanı hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Trump Uluslararası Otel ve Kule, Amerika Birleşik Devletleri",
+        "Zifeng Kulesi, Çin",
+        "Petronas İkiz Kuleleri, Malezya",
+        "Al Hamra Kulesi, Kuveyt"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_bnm6ns",
-      "question": "",
+      "question": "\"Pasta yesinler\" sözüyle ünlü olan ama bunu hiç söylemediği söylenen ünlü dünya lideri hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Henry VIII",
+        "Marie Antoinette",
+        "Çar Nicholas II",
+        "Elizabeth I"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rpikih",
-      "question": "",
+      "question": "Aşağıdaki NHL oyuncularından hangisi Normal Sezon MVP'si olarak hiçbir zaman Hart Trophy kazanmadı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Henrik Sedin",
+        "José Theodore",
+        "Steve Yzerman",
+        "Chris Pronger"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_d39hw3",
-      "question": "",
+      "question": "\"Harry Potter ve Zümrüdüanka Yoldaşlığı\" filminde Sirius Black öldükten sonra Harry Potter'ın çığlığı neden susturuldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Çok Acı Verici",
+        "Çok Gürültülü",
+        "Çok Sert",
+        "Çok Şiddetli"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ro0pp6",
-      "question": "",
+      "question": "\"Team Fortress 2\" adlı video oyununda hangi sınıf çift zıplama yeteneğine sahiptir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "izci",
+        "Casus",
+        "Mühendis",
+        "Pyro"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ktmt85",
-      "question": "",
+      "question": "Cook, Serve, Delicious! oyununda hangi yiyecekler oyuna dahil DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hamburger",
+        "Şiş kebap",
+        "Lazanya",
+        "Pasta"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mtwra6",
-      "question": "",
+      "question": "Homestuck Serisinde Işık Krallığı'nın alternatif adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Prospit",
+        "Sarı Ay",
+        "Altın Şehir",
+        "İsim Yok"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3wqg10",
-      "question": "",
+      "question": "Aşağıdaki oyunlardan hangisi Valve'ın Orange Box'ına dahil DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Half-Life 2: İkinci Bölüm",
+        "Counter-Strike",
+        "Portal",
+        "Takım Kalesi 2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_t600ge",
-      "question": "",
+      "question": "Tavşanların yaşadığı yerin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dray",
+        "Yuva",
+        "Yuva",
+        "Den"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tyq5u7",
-      "question": "",
+      "question": "Şu anda insanoğlunun bildiği en büyük canlı organizma nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mercan Resifi",
+        "Bal Mantarı",
+        "Sekoya Ağacı",
+        "Mavi Balina"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mfsnli",
-      "question": "",
+      "question": "Birleşmiş Milletlere üye kaç egemen devlet var?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "153",
+        "201",
+        "178",
+        "195"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_k3xg5x",
-      "question": "",
+      "question": "Standart bir Monopoly oyununun başında çift altılı atarsanız hangi kareye inersiniz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Şans",
+        "Su İşleri",
+        "Elektrik Şirketi",
+        "Topluluk Sandığı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_828xa5",
-      "question": "",
+      "question": "\"Bir Rüya Kalbinin Tuttuğu Bir Dilektir\" şarkısını hangi Disney karakteri söylüyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sindirella",
+        "Belle",
+        "Pocahontas",
+        "Karbeyaz"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zgnc9f",
-      "question": "",
+      "question": "\"Bendy ve Mürekkep Makinesi\" adlı video oyununu kim yaptı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "TheMeatly",
+        "Scott Cawthon",
+        "Konami",
+        "Jeff Kaplan"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_r1hsui",
-      "question": "",
+      "question": "Empire State Binası'nın tacı başlangıçta hangi amaçla inşa edildi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Antenler",
+        "Bayrak Direği",
+        "Paratoner",
+        "Zeplin İskelesi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_479c8c",
-      "question": "",
+      "question": "The Beatles'ın orijinal davulcusu kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tommy Moore",
+        "Pete En İyisi",
+        "Ringo Starr",
+        "Stuart Sutcliffe"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tec68v",
-      "question": "",
+      "question": "Müzik sanatçısı 'Sir Robert Bryson Hall II'nin (diğer adıyla Logic) doğum yeri neresiydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Londra, Birleşik Krallık",
+        "Botsvana, Afrika",
+        "Atlanta, Amerika Birleşik Devletleri",
+        "Maryland, Amerika Birleşik Devletleri"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xvstxn",
-      "question": "",
+      "question": "Hangi aktör \"Chicago\" müzikalinde Billy Flynn'i canlandırmadı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Patrick Swayze",
+        "Jerry Springer",
+        "David Hasselhoff",
+        "Christopher Walken"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3b3mry",
-      "question": "",
+      "question": "\"JoJo'nun Tuhaf Macerası\"nın 7. Bölümü hangi yılda geçiyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1999",
+        "1890",
+        "1888",
+        "2003"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tl1wst",
-      "question": "",
+      "question": "Titanik'le bağlantılı kaç Kardeş Gemi vardı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "4",
+        "1",
+        "3",
+        "2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_q0knct",
-      "question": "",
+      "question": "Splatoon 2'nin Kahraman Modunda oyuncu hangi ajanın rolünü üstleniyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ajan 2",
+        "Ajan 4",
+        "Ajan 1",
+        "Ajan 3"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_51epzq",
-      "question": "",
+      "question": "İlk .hack oyunu neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        ".hack//Enfeksiyon",
+        ".hack//Eşiklilik",
+        ".hack//Sign",
+        ".hack//Sıfır"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wprgcu",
-      "question": "",
+      "question": "Pokemon GO Kuzey Amerika'da ne zaman piyasaya sürüldü?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "24 Mayıs 2016",
+        "6 Temmuz 2016",
+        "2 Ocak 2017",
+        "5 Haziran 2016"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nb0dgm",
-      "question": "",
+      "question": "Wu-Tang Klanının hangi üyesinin ilk albümü Enter the Wu-Tang'da (36 Chambers) yalnızca bir dize vardı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Masta Killa",
+        "Yöntem Adam",
+        "GZA",
+        "Muayene Güvertesi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_4k4hd9",
-      "question": "",
+      "question": "\"Ace Combat Zero: The Belkan War\"un tamamı boyunca kaç as düşürülebilir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "169",
+        "132",
+        "245",
+        "100"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_spzwuo",
-      "question": "",
+      "question": "\"Call Of Duty: Zombies\"de silahları yükselten makinenin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Wunderfizz",
+        "Katır Tekmesi",
+        "Gersch Cihazı",
+        "Paket-A-Punch"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_u6joy2",
-      "question": "",
+      "question": "Süveyş Kanalı'nın ana geliştiricisi kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "John Milton",
+        "Johann Lukas von Hildebrandt",
+        "Ferdinand de Lesseps",
+        "Louis-Eugène Cavaignac"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_iz8adk",
-      "question": "",
+      "question": "NHL'de en çok Stanley Kupasını hangi takım kazandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Chicago Blackhawks",
+        "Detroit Kırmızı Kanatları",
+        "Toronto Akçaağaç Yaprakları",
+        "Montreal Kanadalılar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rfev2j",
-      "question": "",
+      "question": "Bir restoranın alabileceği en yüksek Michelin yıldızı sayısı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Üç",
+        "Dört",
+        "Beş",
+        "Altı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ag3d96",
-      "question": "",
+      "question": "Bilgisayarın \"beyni\" olarak bilinen şey nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Merkezi İşlem Birimi",
+        "Klavye",
+        "Anakart",
+        "Grafik İşlem Birimi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8yk6wo",
-      "question": "",
+      "question": "Team Fortress'in iptal edilen devam filminin adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Team Fortress 2: Klasik'e Dönüş",
+        "Team Fortress 2: Dişli Öğütücü Operasyonu",
+        "Team Fortress 2: Çöl Paralı Askerleri",
+        "Team Fortress 2: Silah Kardeşliği"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6kz3x8",
-      "question": "",
+      "question": "New Orleans Saints hangi yılda Super Bowl'u kazandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2009",
+        "2008",
+        "2011",
+        "2010"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_7l31tm",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi depremi tanımlamak için kullanılan kelimelerden biri değildir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Temblor",
+        "Drop-slayt",
+        "Grev kayması",
+        "Öncü şok"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lpnlgj",
-      "question": "",
+      "question": "Aşağıdaki şehirlerden hangisi Pandemi masa oyununda yer almaz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ho Chi Minh Şehri",
+        "Karaçi",
+        "Berlin",
+        "Lagos"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_u8bjqs",
-      "question": "",
+      "question": "Bu ülkelerden hangisi nüfus bakımından en küçüktür?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Slovakya",
+        "Norveç",
+        "Finlandiya",
+        "Hong Kong"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nskxv1",
-      "question": "",
+      "question": "Hangisi Afrika'da bir ülke değildir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Guyana",
+        "Liberya",
+        "Somali",
+        "Senegal"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_egok7a",
-      "question": "",
+      "question": "\"DELTARUNE\" oyununda Ralsei'nin özel yeteneği nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sakinleştir",
+        "Sarılmak",
+        "İkna etmek",
+        "Elemek"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_s7otsm",
-      "question": "",
+      "question": "Aşağıdaki insan genetik haplogrup adlarının tümü, Y kromozomu ve mitokondriyal DNA haplogrupları arasında paylaşılmaktadır.",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Haplogrubu J",
+        "Haplogrubu U",
+        "Haplogrup T",
+        "Haplogrup L"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_84agef",
-      "question": "",
+      "question": "Yeni Zelanda'nın yerli halkının adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Samoalılar",
+        "Vikingler",
+        "Polinezyalılar",
+        "Maori dili"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ebqabb",
-      "question": "",
+      "question": "Fransız elektronik müzik ikilisi Justice'in 2016 stüdyo albümünün adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kadın",
+        "Randy",
+        "Zevk",
+        "Güvenli ve Sağlam"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cfw9x4",
-      "question": "",
+      "question": "PAYDAY dizisinde PAYDAY çetesinin ikonik lideri kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hoxton'un",
+        "Dallas",
+        "Kurt",
+        "Zincirler"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_4fe74",
-      "question": "",
+      "question": "\"Su aygırı\" ne anlama geliyor ve hangi dilde?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Nehir Atı (Yunanca)",
+        "Şişman Domuz (Latince)",
+        "Nehir Atı (Latince)",
+        "Şişman Domuz (Yunanca)"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_eqkr3w",
-      "question": "",
+      "question": "\"Hey Arnold!\" dizisinde Gerald'ın gömleğinin numarası neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "83",
+        "38",
+        "88",
+        "33"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xmwi8q",
-      "question": "",
+      "question": "Hangi Amerikan yapımı hafif makineli tüfek, onu \"Gres Tabancası\" olarak kullanan Amerikan askerleri tarafından gayri resmi olarak biliniyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "M3",
+        "Thompson",
+        "MAC-10",
+        "Tay 9mm"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_yic6gp",
-      "question": "",
+      "question": "Grönland'ın başkenti neresidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sisimiut",
+        "Maniitsoq",
+        "Nuuk",
+        "Narsak"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_52tfda",
-      "question": "",
+      "question": "\"The Big Bang Theory\"de Howard Wolowitz'in World of Warcraft'taki takma adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Rajesh",
+        "Wolowizard",
+        "Sheldor",
+        "Priya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_yil50j",
-      "question": "",
+      "question": "Hipokampus hangi deniz canlısının Latince adıdır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ahtapot",
+        "Yunus",
+        "Balina",
+        "Denizatı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_g4ypx",
-      "question": "",
+      "question": "Seiji Kishi hangi animeyi yönetmedi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Danganronpa: Animasyon",
+        "Suikast Sınıfı",
+        "Bir diğer",
+        "İnsanlık Geriledi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6m75i7",
-      "question": "",
+      "question": "24 Ağustos 1812'de hangi bina ateşe verildi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Beyaz Saray",
+        "Ulus Sarayı",
+        "Parlamento Binası",
+        "Büyük Millet Meclisi Binası"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_fpkcie",
-      "question": "",
+      "question": "Radiohead \"OK Computer\" albümünü ne zaman çıkardı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2000",
+        "1997",
+        "1993",
+        "1995"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wnp1ws",
-      "question": "",
+      "question": "Bir Milyon, Bir Milyar ve Bir Trilyon'dan sonra ne gelir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kentilyon",
+        "Sekstilyon",
+        "Katrilyon",
+        "Septilyon"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lmpha7",
-      "question": "",
+      "question": "Bu şarkılardan hangisi Tatsuro Yamashita'ya ait değil?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hadi dans edelim bebeğim",
+        "Atlıkarınca Turu",
+        "Şanslı Bayan Çok İyi Hissediyor",
+        "Aşk Konuşması"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_kxom0v",
-      "question": "",
+      "question": "ABD'nin Wisconsin eyaletinin başkenti neresidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Milwaukee",
+        "Yeşil Körfez",
+        "Wisconsin Dells",
+        "Madison"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_iozynv",
-      "question": "",
+      "question": "Kazakça hangi dil ailesine aittir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hint-Avrupa",
+        "Türk",
+        "Ural",
+        "Moğol"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mgssth",
-      "question": "",
+      "question": "Aşağıdaki çarpışma önleme sistemlerinden hangisi uçakların birbirleriyle çarpışmasını önlemeye yardımcı olur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "GPWS",
+        "KIRBAÇ",
+        "OCAS",
+        "TCAS"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_eokwxu",
-      "question": "",
+      "question": "Steven Gerrard Şampiyonlar Ligi'ni kiminle kazandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Liverpool",
+        "Adam Şehir",
+        "Real Madrid",
+        "Chelsea"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_w6ibnu",
-      "question": "",
+      "question": "Lyndon B. Johnson Amerika Birleşik Devletleri Başkanı görevini üstlendiğinde kaç yaşındaydı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "55",
+        "54",
+        "60",
+        "50"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wgoxw9",
-      "question": "",
+      "question": "Team Fortress 2'de hangi sınıf pompalı tüfek kullanıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mühendis",
+        "Herkes Listelendi",
+        "Asker",
+        "Ağır"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_f5zd34",
-      "question": "",
+      "question": "\"Yeşil Yumurtalar ve Jambon\" hangi yazarın kitabıdır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Beatrix Potter'ın",
+        "Dr.Seuss",
+        "A.A. Milne",
+        "Roald Dahl"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2ic9wb",
-      "question": "",
+      "question": "Washington DC'de görevde olmayan tek başkan kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Richard Nixon",
+        "İbrahim Lincoln",
+        "Thomas Jefferson",
+        "George Washington"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_sa7ssu",
-      "question": "",
+      "question": "1951 yapımı bilim kurgu filmi klasiği 'Dünyanın Durduğu Gün' filmindeki robotun adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gort",
+        "Kutu",
+        "Devasa",
+        "Robby"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nch3v0",
-      "question": "",
+      "question": "Chris Pratt \"Galaksinin Koruyucuları\"ndaki Yıldız Lordu rolü nedeniyle ne kadar kilo verdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "60 lbs",
+        "70 lbs",
+        "30 lbs",
+        "50 lbs"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rvps4r",
-      "question": "",
+      "question": "Final Fantasy VIII'deki bu karakterlerden hangisi öncelikle tek kelimelik cümlelerle konuşuyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Zell",
+        "Seifer",
+        "Raijin",
+        "Fujin"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8lnc9d",
-      "question": "",
+      "question": "Periyodik Tablodaki Au hangi elementi ifade eder?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gümüş",
+        "Oksijen",
+        "Nikel",
+        "Altın"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9wfxcs",
-      "question": "",
+      "question": "\"Battlefield\" serisinin ilk oyunu neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Savaş Alanı 2",
+        "Savaş Alanı 1942",
+        "Savaş Alanı 1",
+        "Savaş Alanı Vietnam"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3r43ty",
-      "question": "",
+      "question": "\"YouTube\" ne zaman kuruldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "22 Mayıs 2004",
+        "12 Eylül 2005",
+        "19 Temmuz 2009",
+        "14 Şubat 2005"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_786pdd",
-      "question": "",
+      "question": "Antibiyotikler genellikle neyle savaşmak için alınır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Bakteriyel enfeksiyonlar",
+        "Virüsler",
+        "Kas ağrıları",
+        "Migren"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cf9vjh",
-      "question": "",
+      "question": "Michael Fassbender hangi video oyununda rol aldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kızıl Ölü Kefaret",
+        "Masal 3",
+        "Assassin's Creed 3",
+        "Call of Duty: Modern Savaş"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rxxnly",
-      "question": "",
+      "question": "'M*A*S*H' adlı TV programında Onbaşı Walter O'Reilly'nin takma adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Şahin göz",
+        "Radar",
+        "Tuzakçı",
+        "Sıcak Dudaklar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_vd6aal",
-      "question": "",
+      "question": "2020 Yaz Olimpiyatları'na hangi ülke ev sahipliği yaptı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Çin",
+        "Avustralya",
+        "Japonya",
+        "Almanya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cp30zt",
-      "question": "",
+      "question": "Uzun zamandır kullandıkları takma adlara göre Batman ve Robin nasıl bir \"ikili\"?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tehlikeli",
+        "Çılgın",
+        "Hanedan",
+        "Dinamik"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tck52m",
-      "question": "",
+      "question": "Ödüllü müzikal \"In The Heights\"ı kim yazdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "John Phillips Sousa",
+        "Steven Sondheim",
+        "Lin-Manuel Miranda",
+        "Francis Scott Key"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_219yeb",
-      "question": "",
+      "question": "\"Lift Your Spirit\" hangi sanatçının albümüdür?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Lena Meyer-Landrut",
+        "Aloe Siyah",
+        "Taylor Swift",
+        "Stevie Wonder"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xa1fdt",
-      "question": "",
+      "question": "\"Top Gun\", \"Jerry Maguire\" ve \"Dört Temmuz'da Doğdu\" filmlerinde hangi yıldız oyuncu vardı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "George Clooney",
+        "John Travolta",
+        "Tom Cruise",
+        "Kelly McGillis"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_a0vnas",
-      "question": "",
+      "question": "Mikrobiyolojide \"izolasyon\" terimi neyi ifade eder?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mağaralar gibi izole ortamlarda belirli mikroorganizmaların etkilerinin test edilmesi",
+        "Mikro ortamlarda beslenme eksikliği",
+        "Bir türün doğal, karışık canlı mikrop popülasyonundan ayrılması",
+        "Topraktaki azot seviyesi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tm3iu",
-      "question": "",
+      "question": "Video oyunu yayın platformu TwitchTV hangi yılda kuruldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2010",
+        "2012",
+        "2014",
+        "2011"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5crxwa",
-      "question": "",
+      "question": "DC Comics 2016'nın yeniden başlatılmasında, Rebirth'te hangi hızlı oyuncu varlıktan silindikten sonra Speed ​​Force'tan kaçtı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Eobard Thawne",
+        "Wally Batı",
+        "Johnny Hızlı",
+        "Jay Garrick"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_l2cl1l",
-      "question": "",
+      "question": "Hangi Roma İmparatoru Roma İmparatorluğu'nun maksimum toprak genişliğine ulaşmasını sağladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Büyük Konstantin",
+        "Julius Sezar",
+        "Claudius",
+        "Trajan"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xweg7v",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi insan kolunda bulunan bir kemik DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Yarıçap",
+        "Kaval kemiği",
+        "Omuz kemiği",
+        "Ulna"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3qz28e",
-      "question": "",
+      "question": "1979 yapımı İngiliz filmi \"Quadrophenia\"nın baş kahramanının adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jimmy Cooper",
+        "Pete Townshend",
+        "Frank Roddam",
+        "Archie Bunker"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rifhzg",
-      "question": "",
+      "question": "Hearthstone hangi yılda piyasaya sürüldü?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2014",
+        "2012",
+        "2011",
+        "2013"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_o5ao9a",
-      "question": "",
+      "question": "Süveyş Kanalı'nın inşaatı ne zaman bitti?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1869",
+        "1850",
+        "1859",
+        "1860"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_p4qu9",
-      "question": "",
+      "question": "Samurai Jack'in beşinci sezonu kaç bölümdü?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "12",
+        "10",
+        "13",
+        "11"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6o6djb",
-      "question": "",
+      "question": "Daha çok Logan takma adıyla tanınan Wolverine'in doğum adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "James Howlett",
+        "Thomas Wilde",
+        "John Savage",
+        "Logan Kurt"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_bvzfav",
-      "question": "",
+      "question": "Karbonun atom kütlesi nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "10",
+        "12",
+        "14",
+        "16"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_x5d287",
-      "question": "",
+      "question": "Rammstein grubu hangi ülkeden geliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ermenistan",
+        "Belçika",
+        "Almanya",
+        "Avusturya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wd58s5",
-      "question": "",
+      "question": "\"Devil May Cry\" serisinde kronolojik olarak hangi oyun ilk sırada yer alıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Şeytan Ağlayabilir 4",
+        "Şeytanlar da ağlar",
+        "Şeytan Ağlayabilir 2",
+        "Devil May Cry 3: Dante'nin Uyanışı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_vc59e9",
-      "question": "",
+      "question": "Minecraft'ta bir meşale oluşturmak için hangi iki öğenin birleştirilmesi gerekir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sopa ve Kömür",
+        "Odun ve Ateş",
+        "Odun ve Kömür",
+        "Sopa ve Ateş"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_80zv5b",
-      "question": "",
+      "question": "Hangi oyun serisinde sizi güçlendirecek ruhları topluyorsunuz ve bunlarla silah ve zırh satın alıyorsunuz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Canavar Avcısı",
+        "Zelda Efsanesi",
+        "Ruhlar",
+        "Final Fantezi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_d5957x",
-      "question": "",
+      "question": "Big Hero 6'da Big Hero 6 hangi kurgusal şehirden geliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "San Fransokyo",
+        "Tokisisco",
+        "Sankyo",
+        "San Tokyo"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_bvefzj",
-      "question": "",
+      "question": "Wikimedia veritabanında logolar için kullanılan en çok tercih edilen resim formatı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        ".png",
+        ".gif",
+        ".svg",
+        ".jpeg"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2sr8jf",
-      "question": "",
+      "question": "Rapçi The Notorious B.I.G'nin gerçek adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Christopher Wallace",
+        "Calvin Cordozar Broadus Jr.",
+        "O'Shea Jackson",
+        "Eric Lynn Wright"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_v8041c",
-      "question": "",
+      "question": "Aşağıdaki İran imparatorluklarını kronolojik sıraya göre listeleyin:",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Medyan, Ahameniş, Part, Sasani",
+        "Ahameniş, Medyan, Part, Sasani",
+        "Medyan, Ahameniş, Sasani, Part",
+        "Ahameniş, Medyan, Sasani, Part"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cmk6tx",
-      "question": "",
+      "question": "Japonların kağıdı dekoratif şekil ve figürlere katlama sanatının adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ukiyo-e",
+        "Origami",
+        "Sumi-e",
+        "Haiku"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_fdlofk",
-      "question": "",
+      "question": "Hidamari Sketch'i hangi animasyon stüdyosu canlandırıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tetiklemek",
+        "Kyoto Animasyonu",
+        "Üretim IG",
+        "Şaft"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_m43x7b",
-      "question": "",
+      "question": "Overwatch'taki Mercy'nin \"nihai yeteneğinin\" adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Roket Barajı",
+        "Dünyayı parçalayan",
+        "Erimiş Çekirdek",
+        "Valkyrie"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_h914oz",
-      "question": "",
+      "question": "Wario karakteri ilk olarak Mario video oyunu serisinin hangi oyununda tanıtıldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Süper Mario Bros.3 (1988)",
+        "Süper Mario Ülkesi 2: 6 Altın Para (1992)",
+        "Mario Partisi (1998)",
+        "Wario Land: Süper Mario Land 3 (1994)"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_omvmle",
-      "question": "",
+      "question": "SSCB'deki Büyük Vatanseverlik Savaşı ne zaman sona erdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "11 Aralık 1945",
+        "2 Eylül 1945",
+        "9 Ağustos 1945",
+        "9 Mayıs 1945"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3dp99v",
-      "question": "",
+      "question": "Dark Sun Gwyndolin \"Dark Souls\"ta hangi lokasyonda yaşıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Firelink Tapınağı",
+        "İlk alevin fırını",
+        "Felaket Kasabası",
+        "Anor Londo"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_f9qt9r",
-      "question": "",
+      "question": "Frank West'in \"Dead Rising\"deki işi neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kapıcı",
+        "Şef",
+        "Foto muhabiri",
+        "Taksi şoförü"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_a7np15",
-      "question": "",
+      "question": "Bu şarkılardan hangisi 2015 yapımı \"Undertale\" oyununun Harabeler bölümlerinde ÇALMAZ?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gereksiz Gerilim",
+        "Beklenti",
+        "Başka Bir Ortam",
+        "Kalıntılar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_b32chd",
-      "question": "",
+      "question": "Tanınmış elektronik müzisyeni Aphex Twin'in gerçek adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Richard D. James",
+        "Richard W. Wright",
+        "Richard M.Hall",
+        "Richard H. Blackmore"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_72apr9",
-      "question": "",
+      "question": "Aşağıdaki aktörlerden hangisi 2016 yapımı \"Suicide Squad\" filminin kadrosunda yer almıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Will Smith",
+        "Margot Robbie",
+        "Jared Leto",
+        "Scarlett Johansson"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jaddgv",
-      "question": "",
+      "question": "Henry VIII, altı karısından hangisiyle en uzun süre evliydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Catherine Parr",
+        "Aragonlu Catherine",
+        "Anne Boleyn",
+        "Jane Seymour"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zdxlrz",
-      "question": "",
+      "question": "Tüm Souls ve Merton hangi üniversitenin kurucu kolejleridir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Leeds",
+        "Manchester",
+        "Cambridge",
+        "Oxford"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_kxrz1m",
-      "question": "",
+      "question": "Counter-Strike: Global Offensive'deki en pahalı silah nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "R8 Tabanca",
+        "AWP",
+        "M4A1",
+        "Skar-20/G3SG1"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_725wia",
-      "question": "",
+      "question": "Geometry Dash'ta 13. seviye nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Herşeyin Teorisi",
+        "Kulüp adımı",
+        "Elektroman Maceraları",
+        "Dağınıklık"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ohk79e",
-      "question": "",
+      "question": "MicroProse'un 1997 tarihli \"Magic the Gathering\" adlı eserindeki varoluş düzlemi nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Amonket",
+        "Ravnica",
+        "Theros",
+        "Şandalar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6y9kb0",
-      "question": "",
+      "question": "Maliyetleri düşürmek için Mad Max'in (1979) çoğu ekstrası neyle ödeniyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Onlara ödeme yapılmadı",
+        "Bira",
+        "Gıda pulları",
+        "Fast food"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ve3nvu",
-      "question": "",
+      "question": "Beş dolar kaç nikel değerindedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "69",
+        "100",
+        "50",
+        "25"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9lsnr4",
-      "question": "",
+      "question": "1969'daki \"Dastardly and Muttley in They Flying Machines\" adlı karikatür şovunun açılış temasındaki sözlerden biri DEĞİLDİ?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ona dokun",
+        "Onu dürt",
+        "Yakala onu",
+        "Onu bıçakla"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rcjgkh",
-      "question": "",
+      "question": "PUBG'de hangi araç en yüksek hıza sahip?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "PG-117",
+        "Arabalı",
+        "Motosiklet",
+        "Dacia"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_egeo7b",
-      "question": "",
+      "question": "Hangi bit miktarı genellikle bir bayta eşittir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2",
+        "64",
+        "8",
+        "1"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_sl51d4",
-      "question": "",
+      "question": "TF2: \"Casusla Tanışın\" bölümünde Asker kapı tuş takımına hangi kodu koyuyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1111",
+        "1337",
+        "1432",
+        "Kod yok"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hepsjn",
-      "question": "",
+      "question": "On yıllık aradan önce çıkan son Aphex Twin albümü hangisiydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Toplu Ortam Çalışmaları 85-92",
+        "Pencere hırsızı",
+        "Drukq'lar",
+        "Suriye"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zi5w3t",
-      "question": "",
+      "question": "Patlıcan çekirdeğinde aşağıdaki kimyasallardan hangisi bulunur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Nikotin",
+        "Siyanür",
+        "Psilosibin",
+        "Meskalin"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_my8ov3",
-      "question": "",
+      "question": "Supernatural'da Sam'in erkek kardeşinin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mike",
+        "Dave",
+        "Dekan",
+        "Steve"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_s4rgl7",
-      "question": "",
+      "question": "Taylor Swift hangi yılda doğdu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1990",
+        "1989",
+        "1987",
+        "1988"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9bnai6",
-      "question": "",
+      "question": "Yer Değiştirmenin sembolü nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dp",
+        "R",
+        "veya",
+        "doktor"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_y7uea2",
-      "question": "",
+      "question": "\"The Walking Dead\" çizgi roman serisinin yaratıcısı kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Malcolm Wheeler-Nicholson",
+        "Stan Lee",
+        "Robert Kirkman",
+        "Robert Kırıntı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_c4bbf7",
-      "question": "",
+      "question": "J.D. Salinger'ın \"Çavdar Tarlasındaki Çocuklar\" kitabının baş kahramanı kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jerome David",
+        "Holden Caulfield",
+        "Holden David",
+        "Jerome Caulfield"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qav64n",
-      "question": "",
+      "question": "Bu oyunlardan hangisi Markus Persson tarafından geliştirilmedi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "minecraft",
+        "0x10c",
+        "Cüce Kalesi",
+        "Wurm Çevrimiçi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_meqg8e",
-      "question": "",
+      "question": "\"Harry Potter\"ı kim yazdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "J.K. Rowling'in",
+        "Terry Pratchett",
+        "J.R.R. Tolkien",
+        "Daniel Radcliffe"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_s09xjd",
-      "question": "",
+      "question": "Playstation 3 ne zaman piyasaya çıktı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "16 Temmuz 2006",
+        "11 Kasım 2006",
+        "8 Ocak 2007",
+        "25 Aralık 2007"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ydfjc",
-      "question": "",
+      "question": "'Eleanor Rigby' şarkısını hangi Beatles albümünde bulursunuz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kauçuk Ruhu",
+        "Yardım!",
+        "Manastır Yolu",
+        "Revolver"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5j9e3i",
-      "question": "",
+      "question": "Amsterdam Centraal istasyonu hangi istasyonla eşleştirilmiştir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Londra Liverpool Caddesi",
+        "Paris Gare du Nord",
+        "Frankfurt (Ana) Hauptbahnhof",
+        "Brüksel Midi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6rzu8r",
-      "question": "",
+      "question": "2019 Erkekler Royal Rumble'ı hangi güreşçi kazandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Andrade",
+        "Seth Rollins",
+        "AJ Stilleri",
+        "Braun Strowman'ın"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_g60n98",
-      "question": "",
+      "question": "Hangi ülkenin bayrağında akçaağaç yaprağı bulunur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Meksika",
+        "Brezilya",
+        "Hindistan",
+        "Kanada"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_v79r93",
-      "question": "",
+      "question": "Hangi JoJo's Bizarre Adventure karakteri Silver Chariot adlı Stand'a sahip?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jean Pierre Polnareff",
+        "Noriaki Kakyoin",
+        "Hol At",
+        "Hermes Costello"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_sbuod9",
-      "question": "",
+      "question": "Rapçi Drake'in gerçek adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dwayne Carter",
+        "Aubrey Graham",
+        "André Young",
+        "Shaun Carter"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_eiur84",
-      "question": "",
+      "question": "Yetişkin bir tavşanın kaç dişi vardır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "26",
+        "28",
+        "24",
+        "30"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_31afdd",
-      "question": "",
+      "question": "Aşağıdaki silah veya ekipmanlardan hangisi Counter Strike'ta var ancak Counter Strike'ta yok: Kaynak?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Taktik Kalkan",
+        "TMP",
+        "Molotof Kokteyli",
+        "MP5 Donanma"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6rxmoh",
-      "question": "",
+      "question": "Peynir yapımı ve arıcılık gibi çeşitli sanatların koruyucusu ve yaratıcısı olan küçük tanrı kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Özerk",
+        "Cephisso",
+        "Karme",
+        "Aristaeus"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_yv2dp9",
-      "question": "",
+      "question": "\"Ava's Demon\" adlı web çizgi romanında \"Nevy Nervine\" hangi günaha dayanıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "İmrenmek",
+        "Şehvet",
+        "Tembellik",
+        "Gazap"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_d7iuw7",
-      "question": "",
+      "question": "Cowboy Bebop'taki corgi'nin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Joel",
+        "Roket",
+        "Einstein",
+        "Edward"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_26a7bs",
-      "question": "",
+      "question": "\"Kaşık\" kelimesinin Almanca karşılığı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Löffel",
+        "Gabel",
+        "Essstäbchen",
+        "Messer"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wsmsbs",
-      "question": "",
+      "question": "Bu filmde şu alıntı yer alıyor: \"Sabahları napalm kokusunu seviyorum!\"",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kıyamet Şimdi",
+        "Geyik Avcısı",
+        "Tam Metal Ceket",
+        "Takım"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rmjrfs",
-      "question": "",
+      "question": "Hangi Shakespeare oyunu 'Batı Yakası Hikâyesi' müzikaline ilham kaynağı olmuştur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hamlet",
+        "Romeo ve Juliet",
+        "otello",
+        "Macbeth"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jjr6bh",
-      "question": "",
+      "question": "Matematik sabiti e'nin yaklaşık değeri nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1.62",
+        "3.14",
+        "2.72",
+        "1.41"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_c29579",
-      "question": "",
+      "question": "Left 4 Dead'de CEDA tarafından belirlenen ve çoğu insanın Enfekte Olmasına neden olan virüsün adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ahududu Nezlesi",
+        "Yeşil Grip",
+        "T-Virüs",
+        "Sarıhumma"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_w9jdrx",
-      "question": "",
+      "question": "\"TinyBuild\" olarak bilinen video oyunu yayıncıları bu oyunlardan hangilerini yayınladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Stardew Vadisi",
+        "Toplu kamyon",
+        "Balçık Çiftliği",
+        "Açlıktan ölmeyin"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_uv22t9",
-      "question": "",
+      "question": "\"Küçük Kadınlar\"da March kardeşlerden hangisi Laurie ile evlendi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Beth",
+        "Amy",
+        "Jo",
+        "Meg"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tzi6k4",
-      "question": "",
+      "question": "YouTube'a yüklenen ilk videonun adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Büyük büyükbaba Vern'den yeni yavrusu.",
+        "haraç",
+        "Hayvanat bahçesinde ben",
+        "Carrie kamyona biniyor"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_o9vl13",
-      "question": "",
+      "question": "Pong ne zaman serbest bırakıldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "14 Aralık 1974",
+        "29 Mart 2017",
+        "29 Kasım 1970",
+        "29 Kasım 1972"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_vgdt92",
-      "question": "",
+      "question": "\"Garip Gerçek\" hangi oyun serisi için Dünya benzeri hayali bir dünyadır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "As Savaşı",
+        "Jet Sosyete Radyosu",
+        "Deus Ex",
+        "Kızıl Gökyüzü"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ufo3ds",
-      "question": "",
+      "question": "Antik Roma savaş tanrısı yaygın olarak aşağıdakilerden hangisi olarak biliniyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jüpiter",
+        "Mars",
+        "Ares",
+        "Juno"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_t4w0h3",
-      "question": "",
+      "question": "Uranyumun atom numarası nedir",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "167",
+        "17",
+        "235",
+        "92"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3kp5xl",
-      "question": "",
+      "question": "\"Son Muhafız\" filminde ana karakterin arkadaş olduğu yaratığın adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kurt",
+        "Triko",
+        "Andazi",
+        "Nico"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_baghq0",
-      "question": "",
+      "question": "Chino Moreno hangi alternatif metal grubunun solistidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Alet",
+        "Korn",
+        "O Negatif Tipi",
+        "Deftones"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5dxkmx",
-      "question": "",
+      "question": "Bunlardan hangisi Sly Cooper ve Thievius Raccoonus oyunundaki Şeytani Beşli'nin bir üyesi değildi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mz. Yakut",
+        "Muggshot",
+        "Saat Kulesi",
+        "Dimitri Lousteau"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hxm015",
-      "question": "",
+      "question": "\"Tavşan Adam Köprüsü\" olarak da bilinen Colchester Üst Geçidi nerede?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Medford, Oregon",
+        "Limon Korusu, Kaliforniya",
+        "Fairfax İlçesi, Virginia",
+        "Braxton İlçesi, Virginia"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zd59k",
-      "question": "",
+      "question": "Marvel Evreninde Svartalfheim gezegeni hangi ırka ev sahipliği yapıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Don Devleri",
+        "Kronanlar",
+        "Kara Elfler",
+        "Skrull'lar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xlaume",
-      "question": "",
+      "question": "Minecraft'ta bir ağ portalı oluşturmak için kaç tane obsidiyen blok gereklidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "10",
+        "13",
+        "14",
+        "16"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_g3jqsg",
-      "question": "",
+      "question": "Yugioh'da \"Magic Drain\" ne tür bir şeydir? Ticaret Kartı Oyunu mu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Normal Tuzak",
+        "Hızlı Oynatma Büyüsü",
+        "Sayaç Tuzağı",
+        "Alan Büyüsü"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_uclm1u",
-      "question": "",
+      "question": "Laos'un başkenti neresidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Vientiane",
+        "Vaduz",
+        "Tegucigalpa",
+        "Tarawa"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8o0t1u",
-      "question": "",
+      "question": "Tokyo Metrosu Sarin Saldırısı hangi yılda gerçekleşti?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2001",
+        "1995",
+        "1991",
+        "2011"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_c114if",
-      "question": "",
+      "question": "Uranyum-235'in yarı ömrü nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "4.300.400.000 yıl",
+        "1.260.900.000 yıl",
+        "Uranyum-235 kararlı bir izotoptur",
+        "703.800.000 yıl"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_h4a32v",
-      "question": "",
+      "question": "Bakteriyel patojen örneği nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "AIDS",
+        "Saçkıran",
+        "Kızamık",
+        "Kolera"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_z810ku",
-      "question": "",
+      "question": "\"Call Of Duty: Zombies\" haritası \"Origins\"te kaç tane numaralı güç jeneratörü var?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "8",
+        "6",
+        "3",
+        "5"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mpdwno",
-      "question": "",
+      "question": "Yenilmezler: Sonsuzluk Savaşı'nda Gerçeklik Taşı (diğer adıyla Aether) kimin elinde güvenli bir şekilde tutuldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Koleksiyoncu",
+        "Doktor Garip",
+        "Kızıl Cadı",
+        "Büyük Usta"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_v2u1k2",
-      "question": "",
+      "question": "Verdun Muharebesi hangi yılda gerçekleşti?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1915",
+        "1917",
+        "1916",
+        "1918"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_uhpwql",
-      "question": "",
+      "question": "Çoklu kişilik bozukluğunun alternatif adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dissosiyatif kimlik bozukluğu",
+        "Beden bütünlüğü kimlik bozukluğu",
+        "Kimlik krizi",
+        "Şizofreni"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_umax3f",
-      "question": "",
+      "question": "1720'de İngiltere büyük bir borç batağındaydı ve Güney Denizi Balonu'na dahil oldu. Bunun arkasındaki ana beyin kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "John Blunt",
+        "Robert Harley",
+        "Daniel Defoe",
+        "John Churchill"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wm1eq7",
-      "question": "",
+      "question": "Nickelodeon hangi ana şirkete aittir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "ABC",
+        "Viacom",
+        "CBS",
+        "TİLKİ"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_frj4ya",
-      "question": "",
+      "question": "Sosyalizm fikri kim tarafından dile getirildi ve geliştirildi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Karl Marx",
+        "Joseph Stalin",
+        "Vladimir Lenin",
+        "Vladimir Putin"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mv7uww",
-      "question": "",
+      "question": "\"World of Warcraft\"ta hangi ejderha Lord Victor Nefarius'un insan kılığında görünüyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Nefarian",
+        "Nefaran",
+        "Nefarius",
+        "Neltharion"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wds5j3",
-      "question": "",
+      "question": "Aşağıdaki karakterlerden hangisinin Super Smash Bros. Melee'ye dahil edilmesi düşünüldü?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Diddy Kong",
+        "Mega Adam",
+        "Meta Şövalye",
+        "Lucas"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mncvwf",
-      "question": "",
+      "question": "Hellboy'un gerçek adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Anung Un Rama",
+        "Azzael",
+        "Kıyametin Sağ Eli",
+        "Ogdru Jahad"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_dlpej7",
-      "question": "",
+      "question": "Hangi Formula 1 pilotuna 'Profesör' lakabı takıldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ayrton Senna",
+        "Alain Prost",
+        "Emerson Fittipaldi",
+        "Niki Lauda"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_inf83y",
-      "question": "",
+      "question": "Xbox video oyun konsolları serisini hangi şirket geliştirdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "IBM'in",
+        "Toshiba",
+        "sony",
+        "Microsoft"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ohyvet",
-      "question": "",
+      "question": "Hangi ABD başkanının kiraz ağacını kesme konusunda babasına yalan söylemeyecek kadar dürüst olduğu söyleniyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Thomas Jefferson",
+        "İbrahim Lincoln",
+        "George Washington",
+        "James Monroe"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_pxnt1x",
-      "question": "",
+      "question": "\"Team Fortress 2\"deki Scout'un gerçek adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "John",
+        "Walter",
+        "Mızrak",
+        "Jeremy"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_65vv51",
-      "question": "",
+      "question": "LS3 motoru kaç inç küptür?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "364",
+        "346",
+        "376",
+        "427"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2n3gv7",
-      "question": "",
+      "question": "Dota 2'de Earthshaker'ın gerçek adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Barathrum",
+        "Carl",
+        "Raigor Taşhoof",
+        "Banehallow Ambry"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_90bir9",
-      "question": "",
+      "question": "Müzik bestecisi Mike Morasky'ye çalışmaları nedeniyle en çok ödülü hangi video oyunu kazandırdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Counter-Strike: Küresel Saldırı",
+        "Portal 2",
+        "Sol 4 Ölü 2",
+        "Takım Kalesi 2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cxqihl",
-      "question": "",
+      "question": "Aşağıdaki ABD senatörlerinden hangisinin 24 saatlik bir haydutluk yaptığı biliniyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Chuck Schumer",
+        "John Barrasso",
+        "Roy Blunt",
+        "Strom Thurmond"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5956cr",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi Donald Trump'ın çocuklarından biri DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "İvanka",
+        "Eric",
+        "Donald Jr.",
+        "Julius"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2pwzze",
-      "question": "",
+      "question": "80'lerin animasyon video oyunu 'Dragon's Lair'deki kahramanın adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Arthur",
+        "Sör Toby Belch",
+        "Gisbourne'lu Adam",
+        "Cesur Dirk"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qwng69",
-      "question": "",
+      "question": "Maoriler, hangi ada ulusunun Kupe tarafından kurulduğunu ve onu uzun beyaz bir bulutun altında keşfettiğini savunuyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Fiji",
+        "Vanuatu",
+        "Hawaii",
+        "Yeni Zelanda"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_taobpd",
-      "question": "",
+      "question": "Undertale'deki hangi karakter size \"kötü vakit geçireceğinizi\" söylüyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "sans",
+        "Asriel Dreemurr",
+        "Undyne",
+        "Asgor"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9mfrgk",
-      "question": "",
+      "question": "Enigma Cypher ve Machine'in yaratıcısı hangi millettendi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Almanca",
+        "Lehçe",
+        "İngiliz",
+        "Amerikan"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rouin2",
-      "question": "",
+      "question": "Counter-Strike: Global Offensive'de üretimi durdurulan görünümlerin nadirliğine ne denir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kaçak",
+        "Azaltılmış",
+        "Sınırlı",
+        "Durduruldu"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2u8c6f",
-      "question": "",
+      "question": "Yakuza 0'da Kazuma Kiryu olarak edinilen dövüş stillerinin sırası nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kavgacı, Acele, Canavar, Efsane",
+        "Kavgacı, Canavar, Acele, Efsane",
+        "Efsane, Acele, Kavgacı, Canavar",
+        "Canavar, Kavgacı, Acele, Efsane"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_gsru95",
-      "question": "",
+      "question": "\"Küçük dostuma merhaba de!\" sözü hangi filmde yer alıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dostlar",
+        "Yaralı Yüz",
+        "Sıcaklık",
+        "Rezervuar Köpekleri"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ktezts",
-      "question": "",
+      "question": "Çoğu semenderin aksine, semenderin bu kısmı düz mü?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dişler",
+        "KAFA",
+        "Kuyruk",
+        "Ayak"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_7edl6y",
-      "question": "",
+      "question": "Bu kelimelerden hangisi \"aylak seyirci\" anlamına gelir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Meupareunia",
+        "Gongoozler",
+        "Jentaküler",
+        "Gosipiboma"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jnh28t",
-      "question": "",
+      "question": "Kronik Zayıflama Hastalığı (CWD) yalnızca hangi hayvan ailesinin üyelerini etkiler?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Köpekgiller",
+        "Cervidler",
+        "Hominidler",
+        "Kedigiller"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_s2jf9v",
-      "question": "",
+      "question": "Bu 4 adadan en büyüğü hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Borneo'lu",
+        "Küba",
+        "Madagaskar",
+        "Büyük Britanya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_lg8btk",
-      "question": "",
+      "question": "Hangi Hanna-Barbera çizgi film karakteri Beegle Beagle adında bir köpek arkadaşıyla seyahat etti?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Patron Timsah",
+        "Üzüm Maymunu",
+        "Wally Timsahı",
+        "Ayı Yogi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_sh6qzg",
-      "question": "",
+      "question": "Şarkıcı Kyary Pamyu Pamyu hangi ülkeden?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Japonya",
+        "Çin",
+        "Vietnam",
+        "Güney Kore"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jt2pht",
-      "question": "",
+      "question": "İspanya Kralı'nın arması Kastilya, Leon, Aragon hükümdarlarının ve diğer hangi eski İberya krallığının armalarını içeriyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Granada",
+        "Galicia",
+        "Navarre",
+        "Katalonya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_88h9yy",
-      "question": "",
+      "question": "Hangi şair eşcinsel olduğu için hapisteyken \"Reading Hapishanesi Baladı\"nı yazdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Wilfred Owen",
+        "Oscar Wilde",
+        "William Blake",
+        "Lord Byron"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ldkypk",
-      "question": "",
+      "question": "Macar profesör Ernő Rubik'in icat ettiği oyuncağın şekli nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Küp",
+        "Piramit",
+        "Silindir",
+        "Küre"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mspu0d",
-      "question": "",
+      "question": "It's a Knockout'un 1999'da yeniden canlandırılmasında hangi boksör sunucuydu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Muhammed Ali",
+        "Henry Cooper",
+        "Frank Bruno",
+        "Joe Fraiser"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5ihao",
-      "question": "",
+      "question": "\"Nefelokoksiji\" ne yapma pratiğidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gözlerin açık uyumak",
+        "Bulutlardaki şekilleri bulma",
+        "Sesinizle camları kırıyorum",
+        "Dondurucu suda yüzmek"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xx6vds",
-      "question": "",
+      "question": "Birisi deneyimsiz olduğunda onun hangi renk olduğu söylenir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Yeşil",
+        "Mavi",
+        "Sarı",
+        "Kırmızı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_krcbj1",
-      "question": "",
+      "question": "Folik asit hangi vitaminin sentetik formudur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "D vitamini",
+        "C vitamini",
+        "B vitamini",
+        "A vitamini"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hvcfrl",
-      "question": "",
+      "question": "Hangi iki adam bağımsız olarak diferansiyel hesabı keşfetme konusunda itibar kazandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dvorak ve Smith",
+        "Newton ve Leibnitz",
+        "Platon ve Aristoteles",
+        "Asimov ve Rutherford"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wvkis4",
-      "question": "",
+      "question": "2004'te hangi kişi/kişiler \"Roblox\"u yarattı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jonas Alto ve Sarah Smith",
+        "David Baszucki ve Erik Cassel",
+        "James Kolein",
+        "Erik Cassel"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_g0xcgv",
-      "question": "",
+      "question": "1976 yapımı 'Taksi Şoförü' filminde Travis satıcıdan kaç silah satın aldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "4",
+        "1",
+        "6",
+        "2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_c740l0",
-      "question": "",
+      "question": "OSI modelinin 7. Katmanının adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sunmak",
+        "Başvuru",
+        "Ağ",
+        "Oturum"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_7gg66j",
-      "question": "",
+      "question": "Jamaika'nın başkenti neresidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Bridgetown",
+        "San Juan",
+        "Port-au-Prince",
+        "Kingston"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_l2aom0",
-      "question": "",
+      "question": "NASA'nın Apollo programındaki son Apollo görevi hangisiydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Apollon 11",
+        "Apollon 13",
+        "Apollon 17",
+        "Apollon 15"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ibp3l7",
-      "question": "",
+      "question": "Rodrigo Borgia hangi isimle Papa oldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Alexander VI",
+        "Rodrigo ben",
+        "Pius VII",
+        "John Paul II"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3d63pb",
-      "question": "",
+      "question": "İlk Pizza Hut restoranı hangi yılda açıldı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1976",
+        "1942",
+        "1958",
+        "1965"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_kkn40g",
-      "question": "",
+      "question": "İngiliz elektronik müzik grubu The Prodigy'nin \"The Fat of the Land\" albümünün kapağında hangi hayvan yer alıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tilki",
+        "Fil",
+        "Yengeç",
+        "Kaplan"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6675yp",
-      "question": "",
+      "question": "Cry of Fear, Natural Selection ve Counter-Strike oyunları aslında hangi video oyununun modlarıydı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Yarı ömür",
+        "Arma 2",
+        "Kıyamet",
+        "Warcraft III"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rbitek",
-      "question": "",
+      "question": "\"Cehennem başkalarıdır\" sözü hangi oyundandır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Şeytan ve İyi Tanrı",
+        "Sinekler",
+        "Çıkış yok",
+        "Altona Mahkumları"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8pszbd",
-      "question": "",
+      "question": "Dungeons & Dragons 5. Baskı Canavar Kılavuzu'ndaki en zorlu canavar hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tarrask",
+        "Lich",
+        "Seyirci",
+        "Yerinden Edici Canavar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_16z2mg",
-      "question": "",
+      "question": "Amerikan şirketi \"Campbell's\" en çok hangi gıda ürününü üretmesiyle tanınır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Konserve çorbalar",
+        "Alkolsüz içecekler",
+        "Çikolata",
+        "Sosisler"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9cn1ti",
-      "question": "",
+      "question": "Hangi Güneydoğu Asya ülkesi eskiden 'Lan Xang' olarak biliniyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Vietnam",
+        "Tayland",
+        "Kamboçya",
+        "Laos"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_q0e2hy",
-      "question": "",
+      "question": "Tek bir çöpte doğan chinchillaların ortalama miktarı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "15-18",
+        "10-15",
+        "5-8",
+        "2-3"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_my14tu",
-      "question": "",
+      "question": "Gergedanın boynuzu neyden yapılmıştır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Keratin",
+        "Kemik",
+        "Fildişi",
+        "Deri"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_o7bxy",
-      "question": "",
+      "question": "Netflix hangi yılda kuruldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1997",
+        "1999",
+        "2004",
+        "2001"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_s7aj4m",
-      "question": "",
+      "question": "2022 FIFA Dünya Kupası'na hangi ülke ev sahipliği yaptı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Amerika",
+        "Japonya",
+        "Katar",
+        "İsviçre"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_aar9of",
-      "question": "",
+      "question": "PLAYERUNKNOWN'S BATTLEGROUNDS'taki ana adanın adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Erangel",
+        "Severny",
+        "Lastovo",
+        "marmara"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_r5xxv5",
-      "question": "",
+      "question": "\"Splatoon\"dan hangi karakter?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Palutena",
+        "Cyrus",
+        "Marie",
+        "Shulk"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xpbzxy",
-      "question": "",
+      "question": "The Velvet Underground'ın ilk albümünün adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kadife Yeraltı ve Nico",
+        "Kadife Yeraltı",
+        "Beyaz Işık / Beyaz Isı",
+        "Yüklendi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_1g0239",
-      "question": "",
+      "question": "Sega Genesis için \"Sonic the Hedgehog 2\"de, gizli seviye seçimine erişmek için ses testi ekranına ne giriyorsunuz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "\"Sonic the Hedgehog\"un ilk çıkış tarihi",
+        "Sonic Team'in kurulduğu tarih",
+        "\"Sonic the Hedgehog 2\"nin ilk çıkış tarihi",
+        "Baş Programcının doğum günü"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_onn2ep",
-      "question": "",
+      "question": "Hangi sanatçı Amerikalı DJ Dillon Francis ile işbirliği yaparak 2016'nın \"Need You\" şarkısını çıkardı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "DVBBS'ler",
+        "KRNE",
+        "LOUDPVCK",
+        "GECE"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wteuxk",
-      "question": "",
+      "question": "Onaltılık sistemde 9'dan sonra hangi sayı gelir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "16",
+        "10",
+        "A harfi",
+        "0 Sayısı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2ne3rn",
-      "question": "",
+      "question": "Sinofobi ne korkusudur?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Köpekler",
+        "Kuşlar",
+        "Mikroplar",
+        "Uçan"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_4l9ift",
-      "question": "",
+      "question": "Hangi ikonik albüm kapağının ortasında CP 1919'un pulsar dalgaları yer alıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Bilinmeyen Zevkler",
+        "Kadife Yeraltı ve Nico",
+        "Londra Arıyor",
+        "Ayın Karanlık Yüzü"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_uebbei",
-      "question": "",
+      "question": "\"Splatoon\"da kaç tane normal Batık Deniz Parşömeni var?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "30",
+        "27",
+        "5",
+        "32"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_neoa1j",
-      "question": "",
+      "question": "İnternet Meme'si \"Tüm üssünüz bize ait\", hangi Video Oyununun kötü çevrilmiş İngilizce Versiyonuna dayanmaktadır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sıfır Kanat",
+        "Yıldız Savaşları: X-Wing",
+        "F-Sıfır",
+        "Kanat Komutanı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_d3kjrm",
-      "question": "",
+      "question": "Dead Space'in ana kahramanı kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gordon Freeman",
+        "Usta Şef",
+        "Isaac Clarke",
+        "Komutan Shepard"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_z40tvp",
-      "question": "",
+      "question": "Hangi souls oyunu Hidetaka Miyazaki tarafından yönetilmedi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Karanlık Ruhlar 2",
+        "Şeytan Ruhları",
+        "Karanlık Ruhlar 3",
+        "Karanlık Ruhlar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5bhou6",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi Kingdom Hearts: Birth by Sleep oyunundaki oynanabilir karakterlerden DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ateş",
+        "Su",
+        "Toprak",
+        "Ventus"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_k5lbki",
-      "question": "",
+      "question": "2018'in korku filmi \"A Quiet Place\"de Emily Blunt'la birlikte hangi Amerikalı aktör yönetti ve başrolü paylaştı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "John Krasinski",
+        "Keanu Reeves",
+        "Willem Dafoe",
+        "Josh Brolin"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2jd91",
-      "question": "",
+      "question": "Neil Armstrong ve Buzz Aldrin hangi yılda aya ayak bastı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1965",
+        "1969",
+        "1973",
+        "1966"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_w9st56",
-      "question": "",
+      "question": "\"Halo 2\"de Kurulum 05'in monitörünün adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "031 Coşkulu Tanık",
+        "2401 Tövbekar Teğet",
+        "252 Biodis Patlaması",
+        "343 Suçlu Kıvılcım"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xsb0fq",
-      "question": "",
+      "question": "James Cameron'ın \"Titanik\" filmi hangi yılda sinemalarda gösterime girdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1999",
+        "1996",
+        "1998",
+        "1997"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zgqe5",
-      "question": "",
+      "question": "\"Arap sakızı\" hangi ağaç türünün sertleştirilmiş özsuyundan oluşan doğal bir sakızdır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ficus",
+        "Akasya",
+        "Okaliptüs",
+        "Palmiye"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wkjz6q",
-      "question": "",
+      "question": "\"PUBATTLEGROUNDS\"ta M24 hangi cephane tipini kullanıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "5,56 mm",
+        "0,300 Magnum",
+        "9 mm",
+        "7,62 mm"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nfnkih",
-      "question": "",
+      "question": "2016 çiftçilik RPG'si \"Stardew Valley\"i kim geliştirdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jasper Byrne",
+        "Lucas Papa",
+        "Eric Barone",
+        "Daisuke Amaya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_el66xs",
-      "question": "",
+      "question": "2014-2015 NBA Şampiyonu hangi takımdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Houston Rockets",
+        "Golden State Warriors",
+        "Cleveland Cavaliers",
+        "Atlanta Hawks"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_byim0m",
-      "question": "",
+      "question": "ABD'li grup Weezer Weezer'ı (Beyaz Albüm) hangi yılda çıkardı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2001",
+        "2019",
+        "2016",
+        "2008"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cn8mi5",
-      "question": "",
+      "question": "Wizards of the Coast'ta çalışmadan önce \"Mark Rosewater\" hangi programın yazarıydı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "NYPD Mavi",
+        "Çocuk Dünyayla Buluşuyor",
+        "Roseanne",
+        "X Dosyaları"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_op35f6",
-      "question": "",
+      "question": "Scooby Doo'nun tam adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Scooby Dooby Doo",
+        "Scooter Doo",
+        "Scooby Doo",
+        "Scoobert Doo"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_22pqzg",
-      "question": "",
+      "question": "Benny, Brain, Fancy-Fancy, Spook ve Choo-Choo, Hanna Barbera'nın hangi çizgi film karakterinin ortakları olarak biliniyordu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Snagglepuss",
+        "Ayı Yogi",
+        "En İyi Kedi",
+        "Scooby Doo"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_1i77bg",
-      "question": "",
+      "question": "2008 yılında İngiliz ünlü şef Gordon Ramsay, İzlanda'da çekim yaparken hangi kazayı geçirdikten sonra neredeyse öldüğüne inanıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Keflavík havaalanına varırken kazayla iniş",
+        "Otelinde az pişmiş tavuk servisi yapılıyor",
+        "Kar fırtınasında küçük bir araba kazası",
+        "Bir uçurumdan kayıyor ve neredeyse buzlu suda boğuluyor"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_kyj7a4",
-      "question": "",
+      "question": "Muhabbet kuşunun bilimsel adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Pyrrhura molinae",
+        "Nymphicus hollandicus",
+        "Ara Makao",
+        "Melopsittacus undulatus"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_odk7ei",
-      "question": "",
+      "question": "Pokemon Black and White'da bulunan üç başlangıç ​​Pokemonu nelerdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Snivy, Fennekin, Froakie",
+        "Snivy, Tepig, Oshawott",
+        "Chespin, Tepig, Froakie",
+        "Chespin, Fennekin, Oshawott"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_7m880j",
-      "question": "",
+      "question": "Bir milde kaç furlong var?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dört",
+        "İki",
+        "Sekiz",
+        "Altı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_3hdr5o",
-      "question": "",
+      "question": "Red Hot Chill Pepper'ın \"Californication\" albümü hangi yılda çıktı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2000",
+        "1997",
+        "1999",
+        "1992"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_7jm39t",
-      "question": "",
+      "question": "Hangi Rus otomatik gazla çalışan saldırı tüfeği 1947'de Sovyetler Birliği'nde geliştirildi ve bugün hala yaygın olarak kullanılıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ücretli Ücret",
+        "MG42",
+        "AK-47",
+        "M16"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_pdw0wj",
-      "question": "",
+      "question": "İlk Half-Life oyununun başlangıcında başarısız olan ve aslında insanlığı felakete sürükleyen makinenin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Salınım jeneratörü",
+        "Karanlık füzyon rezonatörü",
+        "Karanlık füzyon reaktörü",
+        "Anti-kütle spektrometresi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8c5vua",
-      "question": "",
+      "question": "Periyodik tabloda 11 numarada yer alan hangi kimyasal elementin simgesi Na'dır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sodyum",
+        "Azot",
+        "Yol göstermek",
+        "Karbon"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qfcm69",
-      "question": "",
+      "question": "Dead Rising 1'deki hangi psikopat(lar) size küçük elektrikli testereyi verdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Cliff Hudson",
+        "Kasap Larry",
+        "Palyaço Adam",
+        "hükümlüler"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xddr8j",
-      "question": "",
+      "question": "Dünyanın en eski masa oyunu nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dama",
+        "Senet",
+        "Gitmek",
+        "Satranç"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_z334c3",
-      "question": "",
+      "question": "Danimarka'nın başkenti nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kopenhag",
+        "Aarhus",
+        "Odense",
+        "Aalborg"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2tihju",
-      "question": "",
+      "question": "Prince'in destek grubunun resmi adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Devrim",
+        "Ağlayanlar",
+        "Yoksullar",
+        "Kalp Kıranlar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_a4t4wu",
-      "question": "",
+      "question": "Alfred Hitchcock'un renkli çekilen ilk filmi hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Halat",
+        "Baş dönmesi",
+        "Rebecca",
+        "Psiko"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_t3aua4",
-      "question": "",
+      "question": "Hangi mantıksal yanılgı, rakibinizin argümanlarından ziyade karakterine saldırmak anlamına gelir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "reklam hominem",
+        "Post hoc bu nedenle propter hoc",
+        "Argumentum reklam popülerliği",
+        "Tu quoque"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_1inx4f",
-      "question": "",
+      "question": "Adını Hırvatistan'daki bir bölgeden alan köpek cinsi hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Pekinez",
+        "Chihuahua",
+        "Pomeranya",
+        "Dalmaçyalı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rjf7wv",
-      "question": "",
+      "question": "İrlanda Cumhuriyeti'nde kaç ilçe var?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "32",
+        "26",
+        "30",
+        "28"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_er3qqe",
-      "question": "",
+      "question": "π'nin dördüncü basamağı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1",
+        "4",
+        "3",
+        "2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_er9c0m",
-      "question": "",
+      "question": "Disney'in \"Aladdin\" filminde Cin'i kim seslendirdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Robin Williams",
+        "Adam Sandler",
+        "Jim Carrey",
+        "Billy Kristal"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_k80y3u",
-      "question": "",
+      "question": "Hangi oyun Kitlesel fonlama yoluyla finanse edilmedi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gungeon'a girin",
+        "Salem Kasabası",
+        "Kule Birleşmesi",
+        "Undertale"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xpb115",
-      "question": "",
+      "question": "Bu seçeneklerden en çok ziyaret edilen web sitesi hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Facebook",
+        "Vikipedi",
+        "YouTube",
+        "Google"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_tr5bra",
-      "question": "",
+      "question": "Portal'da İstihbarat Çekirdeği ne renktir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kırmızı",
+        "Mavi",
+        "Mor",
+        "Turuncu"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_fzd2ti",
-      "question": "",
+      "question": "Full Metal Panic animesinin ana kahramanı kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Teletha Testarossa",
+        "Kaname Chidori",
+        "Melissa Mao",
+        "Kyoko Tokiwa"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_dv0i88",
-      "question": "",
+      "question": "Matematikçi Leonhard Euler bunlardan hangisini geliştirmedi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "e, pi ve i sayılarını birbirine bağlayan bir kimlik",
+        "Birinci dereceden diferansiyel denklemleri çözme yöntemi",
+        "Hızlı Fourier Dönüşümünde bir gelişme",
+        "Bir grafikteki köşeleri, kenarları ve yüzleri birbirine bağlayan formül"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ys3hn6",
-      "question": "",
+      "question": "Hangi klasik romanda Homer Simpson adında bir karakter vardır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ayrı Bir Barış",
+        "Çekirge Günü",
+        "Yakalama-22",
+        "Fareler ve İnsanlar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_vmjcwt",
-      "question": "",
+      "question": "J.D. Salinger'ın Çavdar Tarlasındaki Çocuklar adlı romanının baş kahramanının adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Fletcher Christian",
+        "Holden Caulfield",
+        "Jay Gatsby",
+        "Randall Flagg"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_obm04o",
-      "question": "",
+      "question": "Ağ oluşturmada OSPF ne anlama gelir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "İlk Sipariş Durumu Kısmı",
+        "Sinyal Yolu Bulucuyu Aç",
+        "Önce En Kısa Yolu Aç",
+        "Order Sense Ping Bul"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xv30a5",
-      "question": "",
+      "question": "\"Kapa çeneni ve otur\" web sitesi hangi medya türünü inceliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Televizyon Programları",
+        "Filmler",
+        "Masa Oyunları",
+        "Video Oyunları"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_z3fbnz",
-      "question": "",
+      "question": "Aşağıdaki Mario Kart 8 Deluxe öğelerinden hangisi sizi yenilmez yapmaz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Altın Mantar",
+        "Yıldız",
+        "Boo",
+        "Mermi Faturası"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ybrwuu",
-      "question": "",
+      "question": "Deedee Magno Hall, Steven Universe'de Pearl'ü seslendirmeden önce hangi Amerikan grubunun parçasıydı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kedi Kedi Bebekleri",
+        "Hava Durumu Kızları",
+        "Parti",
+        "Çita Kızlar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_iedgpa",
-      "question": "",
+      "question": "Bari İtalyan Futbol Kulübü'nün kuruluş yılı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1895",
+        "1908",
+        "1945",
+        "2014"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6aijj9",
-      "question": "",
+      "question": "Çelloda kaç tel vardır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "8",
+        "6",
+        "4",
+        "5"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zfai08",
-      "question": "",
+      "question": "Tek bir zarda kaç nokta vardır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "24",
+        "18",
+        "15",
+        "21"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hynj9q",
-      "question": "",
+      "question": "Marvel vs Capcom 2: New Age of Heroes hangi yılda yayınlandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2001",
+        "2003",
+        "2000",
+        "1998"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ahjtkt",
-      "question": "",
+      "question": "Hangi video oyunu gizli \"Sıcak Kahve\" mini oyunu nedeniyle tartışmalara yol açtı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hitman: Kanlı Para",
+        "Grand Theft Auto: Vice City",
+        "Grand Theft Auto: San Andreas",
+        "Anne yemek"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hln6ly",
-      "question": "",
+      "question": "1.483 ft (451,9 m) yüksekliğiyle dünyanın en yüksek ikiz binaları hangileridir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Emirates Kuleleri, Birleşik Arap Emirlikleri",
+        "Huaguoyuan Kuleleri, Çin",
+        "Petronas İkiz Kuleleri, Malezya",
+        "Palmiye Kuleleri, Katar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_gmqst",
-      "question": "",
+      "question": "Bon Iver 2016'da hangi albümü çıkardı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Emma İçin, Sonsuza Kadar Önce",
+        "Kan Bankası EP",
+        "22, Bir Milyon",
+        "Bon Iver, Bon Iver"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_16c6lg",
-      "question": "",
+      "question": "1998 yılında Half-Life adlı video oyununu kim yayınladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sierra Çevrimiçi",
+        "Vana",
+        "EA",
+        "kar fırtınası"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ddpy9g",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi The Beatles'ın çıkardığı bir albüm DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Revolver",
+        "Duvar",
+        "Manastır Yolu",
+        "Büyülü Gizem Turu"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_a4pny5",
-      "question": "",
+      "question": "MMO Spiral Knights'ı (2011) hangi şirket geliştirdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Üç Yüzük Tasarımı",
+        "Çift İnce",
+        "Elektronik Sanatlar",
+        "Sega"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ceh3u8",
-      "question": "",
+      "question": "Bu oyunlardan hangisi ünlü olarak ilk kez oyun yazarının intihar etmesinden sonra sahnelendi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "4.48 Psikoz",
+        "Doğum Günü Partisi",
+        "Hiçbir Şey Hakkında Çok Gürültü",
+        "hamilton"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_h0qcn3",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi Pokémon GO'daki takım liderinin adı DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kıvılcım",
+        "Blanche",
+        "Leif",
+        "Kandela"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_uyzjt1",
-      "question": "",
+      "question": "Birinci Dünya Savaşı hangi gün başladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "28 Ocak",
+        "28 Haziran",
+        "28 Temmuz",
+        "28 Nisan"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qqzlfy",
-      "question": "",
+      "question": "Matt Stone ve Trey Parker aşağıdaki ödüllerden hangisine sahip DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Grammy",
+        "Tony",
+        "Oscar",
+        "Emmy"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ysnlw6",
-      "question": "",
+      "question": "Marvel's Avengers Endgame'i kim yönetti?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Josh Whedon",
+        "Zack Synder",
+        "Kevin Feige",
+        "Russo Kardeşler"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nu3zw2",
-      "question": "",
+      "question": "Süveyş Kanalı hangi Afrika ülkesinde bulunmaktadır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Gana",
+        "Libya",
+        "Mısır",
+        "Nijerya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wnxgef",
-      "question": "",
+      "question": "'Aslan Kral'ın kötü adamı kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Vada",
+        "Fred",
+        "Cafer",
+        "Yara izi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6d8em0",
-      "question": "",
+      "question": "Piyanist Frédéric Chopin hangi müzik döneminin bestecisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Romantik",
+        "Rönesans",
+        "Klasik",
+        "Barok"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2cmjgy",
-      "question": "",
+      "question": "Bu Marvel süper kahramanına genellikle \"Korkusuz adam\" denir.",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Thor",
+        "Wolverine",
+        "Hulk",
+        "Cesur"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qllvc7",
-      "question": "",
+      "question": "2. Dünya Savaşı sırasında müttefiklerin en çok korktuğu şey tank mıydı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "PanzerKampfwagen VI Kaplan",
+        "Mks Matilda II",
+        "Marder III",
+        "PanzerKampfwagen V Panter"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_rpgqh9",
-      "question": "",
+      "question": "Aşağıdaki mangalardan hangisi en fazla tankouban hacmine sahiptir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tek Parça",
+        "Dedektif Conan",
+        "JoJo'nun Tuhaf Macerası",
+        "Golgo 13"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jqy2jr",
-      "question": "",
+      "question": "David Bowie'nin gerçek soyadı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Edwards",
+        "Johnson",
+        "Arabacı",
+        "Jones"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_h20dvz",
-      "question": "",
+      "question": "İkinci Dünya Savaşı'nın başlangıcına hangi olay damgasını vurdu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Britanya Savaşı (1940)",
+        "Polonya'nın işgali (1939)",
+        "Rusya'nın İstilası (1942)",
+        "Normandiya İstilası (1944)"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_zgec69",
-      "question": "",
+      "question": "\"Beğendiğini Biliyorsun\" şarkısını kim yazdı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Steve Aoki",
+        "Binbaşı Lazer",
+        "AlunaGeorge",
+        "DJ Yılanı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_t1p7oi",
-      "question": "",
+      "question": "Senegal'in başkenti neresidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Konakri",
+        "Monrovia",
+        "Nuakşot",
+        "Dakar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_nltojh",
-      "question": "",
+      "question": "Birleşik Krallık Başbakanının tam unvanı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Majestelerinin Sadık Muhalefeti",
+        "Hazinenin Birinci Lordu",
+        "Cambridge Dükü",
+        "Crown Estate'in yöneticisi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2w8ecw",
-      "question": "",
+      "question": "20 Mayıs 1991'deki seçimlere 315 milyon seçmenin katılmasıyla dünya rekoru kıran ülke hangisidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hindistan",
+        "Polonya",
+        "Amerika Birleşik Devletleri",
+        "Sovyetler Birliği"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9t8h8m",
-      "question": "",
+      "question": "Blue Oyster Cult'un 1976 tarihli klasik bir şarkısı \"Don't Fear The\" tavsiyesini içeriyor ne?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sessizlik",
+        "Azrail",
+        "Karanlık",
+        "Palyaçolar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_39eefl",
-      "question": "",
+      "question": "Dijital dağıtım platformu Steam'i kim yarattı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Vana",
+        "Elektronik Sanatlar",
+        "Ubisoft",
+        "Piksel Kuyruk Oyunları"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_24ie8m",
-      "question": "",
+      "question": "Standart bir Tekel tahtasında hangi kare 'Go'nun çaprazındadır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hapishane",
+        "Hapishaneye git",
+        "Ücretsiz Otopark",
+        "Elektrik Şirketi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_fu1b05",
-      "question": "",
+      "question": "Orijinal DOOM oyunlarında aşağıdaki iblislerden hangisi Cehennem Baronu'nun yeniden rengidir ama Baron'dan daha zayıftır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Mancubus",
+        "Serçe parmağı",
+        "Arch-Vile",
+        "Cehennem Şövalyesi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_w4xs7n",
-      "question": "",
+      "question": "Bunlardan hangisi halka açık OpenSSL şifreleme kitaplığında Nisan 2014'te bulunan bir hatanın adıydı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kabuk betiği",
+        "Kabuk şoku",
+        "Bozuk Kan",
+        "Kalp kanaması"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_5cosfc",
-      "question": "",
+      "question": "\"Açlık Oyunları: Alaycı Kuş - Bölüm 1\"in resmi müziklerini hangi sanatçı hazırladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Charli XCX",
+        "Tove Lo",
+        "Kanye Batı",
+        "Lorde"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_z5c9qd",
-      "question": "",
+      "question": "Çizgi film \"Top Cat\"teki polis memurunun adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Murphy",
+        "Barbrady",
+        "Mahoney",
+        "Dibble"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_k9bvp7",
-      "question": "",
+      "question": "Denizciler teknenin ön kısmına ne ad verir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Liman",
+        "Yay",
+        "kıç",
+        "Sancak"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wmbsz1",
-      "question": "",
+      "question": "\"Himouto! Umaru-chan\" animesi hangi yılda yayınlandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2012",
+        "2014",
+        "2015",
+        "2013"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_bh1hxf",
-      "question": "",
+      "question": "Panik! At the Disco'nun altıncı albümü \"Pray For The Wicked\" hangi tarihte yayınlandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "22 Haziran 2018",
+        "13 Mart 2018",
+        "21 Şubat 2018",
+        "9 Mayıs 2018"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ko7b0z",
-      "question": "",
+      "question": "Orijinal Star Wars: Battlefront II ne zaman piyasaya sürüldü?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "9 Eylül 2007",
+        "21 Kasım 2006",
+        "18 Aralık 2004",
+        "31 Ekim 2005"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_b3z703",
-      "question": "",
+      "question": "Popüler ateşli silah şirketi Remington'un takip ettiği en önemli yan girişim nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kapı Kolları",
+        "Karıştırıcılar",
+        "Tavan Vantilatörleri",
+        "Daktilolar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_gt4w6z",
-      "question": "",
+      "question": "Lüksemburg'la kaç ülke kara sınırı paylaşıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "5",
+        "4",
+        "3",
+        "2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_n1xrsx",
-      "question": "",
+      "question": "Stardew Vadisi'ndeki madenlerde karşılaştığınız maceracının adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Marnie",
+        "Marvin",
+        "Marlon",
+        "Morris"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_b4p8f",
-      "question": "",
+      "question": "2017'de UEFA Şampiyonlar Ligi'ni kim kazandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "AS Monaco FC",
+        "Atletico Madrid",
+        "Juventus F.C.",
+        "Real Madrid C.F."
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_p6vwog",
-      "question": "",
+      "question": "Bowser Jr. ilk kez tanıtıldığında hangi Super Mario video oyunu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Süper Mario Galaksi",
+        "Mario ve Luigi: Bowser'ın İç Hikayesi + Bowser Jr.'ın Yolculuğu",
+        "Mario Parti serisi",
+        "Süper Mario Güneş Işığı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_71aogn",
-      "question": "",
+      "question": "\"Borderlands 2\" kaç benzersiz öğeye sahip olduğunu iddia ediyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "87 Milyon",
+        "87 Bazilyon",
+        "87 Trilyon",
+        "87 Gazilyon"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_uk98d",
-      "question": "",
+      "question": "Northampton kasabasının rugby kulübünün takma adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Palyaçolar",
+        "eşekarısı",
+        "Sarazenler",
+        "Azizler"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_m0097v",
-      "question": "",
+      "question": "Vietnam savaşı sırasında Vietnam'a atılan kimyasalın adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hardal Gazı",
+        "Fosgen",
+        "Ajan Portakal",
+        "Hidrojen Siyanür"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_x2jjsu",
-      "question": "",
+      "question": "New England'da hangi NFL takımı oynuyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Şefler",
+        "Vatanseverler",
+        "Yunuslar",
+        "49'lular"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9i104k",
-      "question": "",
+      "question": "Sovyetler Birliği'nde 1991 darbe girişimi hangi gün başladı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "19 Ağustos",
+        "24 Aralık",
+        "26 Aralık",
+        "21 Ağustos"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cu15w1",
-      "question": "",
+      "question": "Kalp krizi geçiren birine yardım etmek için yapılan acil durum prosedürü olan CPR ne anlama geliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kronik ağrı kesici",
+        "Kanser ağrısının serbest bırakılması",
+        "Kardiyopulmoner resüsitasyon",
+        "Kontraseptif yaygınlık oranı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_6osyoc",
-      "question": "",
+      "question": "Moğol Naadam festivalinde geleneksel olarak hangi spor oynanmaz?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Okçuluk",
+        "At Yarışı",
+        "Amerikan futbolu",
+        "Güreş"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xan25w",
-      "question": "",
+      "question": "Bangladeş'in başkenti neresidir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Khulna",
+        "Lahor",
+        "Londra",
+        "Dakka"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_etdukz",
-      "question": "",
+      "question": "Margaret Atwood'un \"Damızlık Kızın Hikayesi\" adlı eserinde Offred'in gerçek adının ne olduğu ima ediliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Nisan",
+        "Mayıs",
+        "Ağustos",
+        "Haziran"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_dhddq0",
-      "question": "",
+      "question": "2014 Kış Olimpiyatları hangi ülkenin Soçi kentinde düzenlendi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Rusya",
+        "Norveç",
+        "Güney Kore",
+        "Kanada"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_m6lkcc",
-      "question": "",
+      "question": "Bu Filmlerden hangisi 1996'da gösterime girmedi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Görev: İmkansız",
+        "Kaya",
+        "Bağımsızlık Günü",
+        "Gladyatör"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_uhpsxx",
-      "question": "",
+      "question": "Vatikan Şehri'nin alanı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "12.00km^2",
+        "0,44km^2",
+        "0,10km^2",
+        "0,86km^2"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_4q6cl2",
-      "question": "",
+      "question": "Silent Hill 4'ün ana düşmanı kim?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Walter Sullivan",
+        "Alessa Gillespie",
+        "Claudia Kurt",
+        "Piramit Kafası"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qp5q4h",
-      "question": "",
+      "question": "Sör Donald Bradman'ın test maçlarındaki vuruş ortalaması neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "100",
+        "99.94",
+        "44.78",
+        "69.51"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_4rsbrp",
-      "question": "",
+      "question": "Undertale'de MEGALOVANIA hangi karakterin temasıdır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "akıcı",
+        "Undyne",
+        "Papirüs",
+        "sans"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_kfxgof",
-      "question": "",
+      "question": "Aşağıdaki ülkelerden hangisi kişisel genetik soy testlerinin kullanımını yasaklamıştır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "İsveç",
+        "Almanya",
+        "Avusturya",
+        "Kanada"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ktakwf",
-      "question": "",
+      "question": "Nobuo Uematsu'nun kurduğu ve çeşitli Final Fantasy oyunlarından şarkılar çalan rock grubunun adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kara Büyücüler",
+        "Espers",
+        "Son Fanteziler",
+        "Kaya Çağırıcıları"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ip4bhj",
-      "question": "",
+      "question": "Robin Hood'un hikayesi hangi ülkeden geliyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "İskoçya",
+        "Fransa",
+        "İngiltere",
+        "Portekiz"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_iidrze",
-      "question": "",
+      "question": "Bağımsızlık Bildirgesi İkinci Kıta Kongresi tarafından ne zaman onaylandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2 Temmuz 1776",
+        "4 Mayıs 1776",
+        "4 Haziran 1776",
+        "4 Temmuz 1776"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_auxx6j",
-      "question": "",
+      "question": "Sega Mega Drive / Sega Genesis'in ana CPU'su nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Motorola 68000",
+        "Zilog Z80",
+        "Intel 8088",
+        "Yamaha YM2612"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ndexqg",
-      "question": "",
+      "question": "'Con Air' filmi ne zaman gösterime girdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "1985",
+        "1999",
+        "1990",
+        "1997"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hnzkve",
-      "question": "",
+      "question": "Hangi çizgi film ailesi 31 Spooner Street, Quahog, Rhode Island ABD'de yaşıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jetgiller",
+        "Griffinler",
+        "Tepeler",
+        "Simpsonlar"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qm8f8u",
-      "question": "",
+      "question": "Batman'in ebeveynlerinin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Thomas ve Martha",
+        "Todd ve Mira",
+        "Jason ve Sarah",
+        "Joey ve Jackie"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_hw48to",
-      "question": "",
+      "question": "Meat Loaf, Alice Cooper ve Chris Farley'nin konuk oyuncu olarak yer aldığı 90'ların kült komedi klasiği hangisi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Wayne'in Dünyası",
+        "Bill ve Ted'in Mükemmel Macerası",
+        "Aptal ve aptal",
+        "Austin Powers: Uluslararası Gizem Adamı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_9t6p5h",
-      "question": "",
+      "question": "49'un karekökü nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "9",
+        "7",
+        "12",
+        "4"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_bbwso8",
-      "question": "",
+      "question": "Hyaenidae familyası hangi bilimsel alt takıma aittir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Caniformia",
+        "Ciconiiformes",
+        "Haplorhini",
+        "Feliformia"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_m2n0li",
-      "question": "",
+      "question": "Masa oyunlarında, belirli bir grup veya yer için geçerli olan ek veya değiştirilmiş bir kural, gayri resmi olarak \"ne\" kuralı olarak bilinir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Değiştirmek",
+        "Gelenek",
+        "Ev",
+        "Ekstra"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_8uddbx",
-      "question": "",
+      "question": "Bastille'in solisti kimdir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Chris Wood",
+        "Dan Smith",
+        "Kyle Simmons",
+        "Will Farquarson"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_f2zgl5",
-      "question": "",
+      "question": "Beyzbolda kaç faul dışarıdadır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "3",
+        "2",
+        "0",
+        "5"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_cze50k",
-      "question": "",
+      "question": "Almanya'da bilinen çizgi film karakteri Andy Capp'in adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Dick Tingeler",
+        "Willi Wakker",
+        "Helmut Schmacker",
+        "Çubuk Tapa"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jcpjqn",
-      "question": "",
+      "question": "Ayasofya Bizans İmparatorluğu'nun hangi imparatoru tarafından yaptırılmıştır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Büyük Theodosius",
+        "Konstantin IV",
+        "Jüstinyen I",
+        "Arcadius"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_jzz7xr",
-      "question": "",
+      "question": "South Park'ın \"Big Gay Al's Big Gay Boat Ride\" bölümünde Stan'in köpeğini kim oynadı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Matt Taş",
+        "Robert Smith",
+        "George Clooney",
+        "Jay Leno"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qcacu6",
-      "question": "",
+      "question": "Fizikte enerjinin korunumu ve momentumun korunumu aşağıdakilerden hangisinin sonuçlarıdır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Carnot Teoremi",
+        "Bell'in Teoremi",
+        "Noether Teoremi",
+        "Wick Teoremi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_pokdx",
-      "question": "",
+      "question": "\"Star Trek\"te Klingon İmparatorluğu'nun ve felsefesinin kurucusu kimdi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Büyük Salon'dan Leydi Lukara",
+        "Dahar Usta Kor",
+        "Bağışlamayan Molor",
+        "Unutulmaz Kahless"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_xh72zl",
-      "question": "",
+      "question": "1979 yapımı İngiliz filmi \"Quadrophenia\"da modların ziyaret ettiği sahil şehrinin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Fare deliği",
+        "Eastbourne",
+        "Brighton",
+        "Bridlington"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_qq6jai",
-      "question": "",
+      "question": "En çok insanı öldüren tarihi çatışma hangisiydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "İkinci Dünya Savaşı",
+        "Taiping İsyanı",
+        "Üç Krallık Savaşı",
+        "Moğol fetihleri"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_98ckva",
-      "question": "",
+      "question": "Almanların Ekim 1941'de kıştan önce Moskova'yı ele geçirmek için gerçekleştirdiği taarruz operasyonunun adı neydi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Ayçiçeği Operasyonu",
+        "Tayfun Operasyonu",
+        "Mavi Kasa",
+        "Barbarossa Harekatı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_matehq",
-      "question": "",
+      "question": "Finlandiya'nın bağımsızlığının 100. yılı ne zamandı?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "2017",
+        "2018",
+        "2016",
+        "2015"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_r1kn07",
-      "question": "",
+      "question": "\"Call Of Duty: Zombies\"i yaratan oyun geliştiricisinin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Treyarch",
+        "Yaramaz Köpek",
+        "Balyoz Oyunları",
+        "Sonsuzluk Totemi"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_98ftkl",
-      "question": "",
+      "question": "Windows XP ile birlikte yüklenen varsayılan temanın adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Neptün",
+        "ıslıkçı",
+        "Mutluluk",
+        "Luna"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ocu5rm",
-      "question": "",
+      "question": "Hermione Granger'ın göbek adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Emma",
+        "Jean",
+        "Jo",
+        "Jane"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_niqk8y",
-      "question": "",
+      "question": "\"James Rolfe\" daha çok kim olarak bilinir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "PewDiePie",
+        "ToplamBisküvi",
+        "Kızgın Video Oyunu İneği",
+        "Fıstık EzmesiGamer"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_2a5rbx",
-      "question": "",
+      "question": "Artis Leon Ivey Jr. daha çok hangi rap sanatçısı olarak tanınıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Coolio",
+        "Snoop Dogg",
+        "Buz T",
+        "Dr Dre"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mbcoo",
-      "question": "",
+      "question": "\"Final Fantasy VI\"da Gılgamış'ın (çağırılan) en zayıf saldırısının adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Excalisnore",
+        "Excalibor",
+        "Excalisor",
+        "Excalipoor"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_wz6tz8",
-      "question": "",
+      "question": "Nintendo 64 için Paper Mario oyununda tanıştığınız ilk partner bir Goomba'dır, adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Goombario",
+        "Goomby",
+        "Goombella",
+        "Goombary"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_oj1pvn",
-      "question": "",
+      "question": "Sıçanların ortak adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sürüklenme",
+        "Irk",
+        "Yaramazlık",
+        "Ambalaj"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_kpnzrg",
-      "question": "",
+      "question": "Jack Dawkins, Charles Dickens'ın 'Oliver Twist' adlı romanında hangi takma adla anılıyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Fagin",
+        "Hedef tahtası",
+        "Bay Fang",
+        "Usta Dodger"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_play2e",
-      "question": "",
+      "question": "Bir googol'de kaç tane sıfır vardır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "10",
+        "1.000.000",
+        "1.000",
+        "100"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_r3p2kd",
-      "question": "",
+      "question": "1984 yapımı \"Terminatör\" filminde Arnold Schwarzenegger'in canlandırdığı Terminatör'ün model numarası nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "T-888",
+        "I-950",
+        "T-800",
+        "T-1000"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_exzocd",
-      "question": "",
+      "question": "Half-Life: Opposed Force olayları sırasında baş kahraman Adrian Shephard'ın yaşı kaçtır?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "24",
+        "22",
+        "23",
+        "21"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_y4auw1",
-      "question": "",
+      "question": "Çakmaktaşlar'ın bulunduğu şehrin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Rockhampton",
+        "Ana kaya",
+        "Stoneville",
+        "Boulder Şehri"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_fwusjn",
-      "question": "",
+      "question": "\"Puella Magi Madoka Magica\"da Madoka'nın küçük erkek kardeşinin adı nedir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Tomohisa",
+        "Montoya",
+        "Minato",
+        "Tatsuya"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_1w5w5r",
-      "question": "",
+      "question": "2011 yapımı animasyon filmi \"Rio\"da ana karakter Blu'yu kim seslendiriyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Jonah Tepesi",
+        "Michael Cera",
+        "Zach Galifianakis",
+        "Jesse Eisenberg"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_mz0n1a",
-      "question": "",
+      "question": "1973'te 'Hocus Pocus' şarkısı kimin hiti oldu?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Odak",
+        "Pilot",
+        "Acele etmek",
+        "AC/DC"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_ho1go3",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi Amerikan televizyon programı \"Saturday Night Live\"ın 42. sezonundaki aktör/aktris değildi?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Kate McKinnon",
+        "Sasheer Zamata",
+        "Tina Fey",
+        "Mikey Günü"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_1z3e2q",
-      "question": "",
+      "question": "Aşağıdakilerden hangisi \"South Park: The Stick of Truth\" oyunundaki çağrı DEĞİLDİR?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Bay Köle",
+        "İsa",
+        "Bay Hankey",
+        "Havlu"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_pmhakq",
-      "question": "",
+      "question": "Left 4 Dead'de hayatta kalanları diliyle kim yakalayabilir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Sigara içen",
+        "Jokey",
+        "Boomer",
+        "Avcı"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_o7lxvh",
-      "question": "",
+      "question": "Ultravox'un 1981 tarihli bir şarkısına adını hangi Avrupa başkenti veriyor?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Viyana",
+        "Brüksel",
+        "Berlin",
+        "Paris"
       ],
-      "is_ready": false
+      "is_ready": true
     },
     {
       "id": "opentdb_o85fhw",
-      "question": "",
+      "question": "Haikyuu!!'da kim Karasuno VBC üyesi değildir?",
       "options": [
-        "",
-        "",
-        "",
-        ""
+        "Hisashi Kinoshita",
+        "Şigeru Yahaba",
+        "Tadashi Yamaguchi",
+        "Kazuhito Narita"
       ],
-      "is_ready": false
+      "is_ready": true
     }
   ]
 }
