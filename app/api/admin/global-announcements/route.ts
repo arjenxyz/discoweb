@@ -293,16 +293,11 @@ export async function PATCH(request: NextRequest) {
       : [];
     const hasPoll = pollQuestion.length > 0 && pollOptions.length >= 2;
 
-    const { data: existingPoll, error: pollFetchError } = await supabaseServiceClient
+    const { data: existingPoll } = await supabaseServiceClient
       .from('announcement_polls')
       .select('id')
       .eq('announcement_id', id)
-      .single();
-
-    if (pollFetchError && pollFetchError.code !== 'PGRST102') {
-      console.error('Mevcut anket kontrol hatası:', pollFetchError);
-      return NextResponse.json({ error: 'Anket kontrolü yapılamadı' }, { status: 500 });
-    }
+      .maybeSingle();
 
     if (!hasPoll) {
       if (existingPoll) {
@@ -393,7 +388,15 @@ export async function DELETE(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id') || (await request.json()).id;
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await request.json();
+        id = typeof body?.id === 'string' ? body.id : null;
+      } catch {
+        // DELETE without JSON body is fine when ?id= is present
+      }
+    }
     if (!id) {
       return NextResponse.json({ error: 'Duyuru kimliği gerekli' }, { status: 400 });
     }
@@ -403,10 +406,9 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Veritabanı bağlantısı başarısız' }, { status: 500 });
     }
 
-    // Önce duyuruyu ve discord_message_id'yi al
     const { data: announcement, error: fetchError } = await supabaseServiceClient
       .from('announcements')
-      .select('id, discord_message_id')
+      .select('id')
       .eq('id', id)
       .single();
 
@@ -415,8 +417,22 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Duyuru bulunamadı' }, { status: 404 });
     }
 
-    // Discord mesajı varsa sil
-    if (announcement.discord_message_id) {
+    // discord_message_id kolonu yoksa sessizce atla
+    let discordMessageId: string | null = null;
+    try {
+      const { data: discordRow, error: discordColErr } = await supabaseServiceClient
+        .from('announcements')
+        .select('discord_message_id')
+        .eq('id', id)
+        .maybeSingle();
+      if (!discordColErr) {
+        discordMessageId = discordRow?.discord_message_id ?? null;
+      }
+    } catch {
+      // column may not exist on older schemas
+    }
+
+    if (discordMessageId) {
       try {
         const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN ?? process.env.DISCORD_TOKEN ?? '';
         if (BOT_TOKEN) {
@@ -430,7 +446,7 @@ export async function DELETE(request: NextRequest) {
           if (configData?.value) {
             const channelId = configData.value;
             const deleteResponse = await fetch(
-              `https://discord.com/api/v10/channels/${channelId}/messages/${announcement.discord_message_id}`,
+              `https://discord.com/api/v10/channels/${channelId}/messages/${discordMessageId}`,
               {
                 method: 'DELETE',
                 headers: { Authorization: `Bot ${BOT_TOKEN}` },
