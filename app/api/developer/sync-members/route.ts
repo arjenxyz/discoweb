@@ -106,23 +106,40 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Sunucu bilgilerini al/güncelle
-        const { data: serverData, error: serverError } = await supabase
-          .from('servers')
-          .upsert(
-            {
-              discord_id: guild.id,
-              name: guild.name,
-              slug: guild.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-              is_setup: false, // TODO: check setup status
-            },
-            { onConflict: 'discord_id' }
-          )
-          .select('id')
-          .single();
+        // Sunucu bilgilerini al/güncelle — is_setup asla sıfırlanmaz
+        const slug = guild.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
-        if (serverError || !serverData) {
-          console.error(`Failed to upsert server ${guild.id}:`, serverError);
+        const { data: existingServer } = await supabase
+          .from('servers')
+          .select('id, is_setup')
+          .eq('discord_id', guild.id)
+          .maybeSingle();
+
+        let serverData: { id: string } | null = null;
+
+        if (existingServer) {
+          // Mevcut sunucu: sadece name/slug güncelle, is_setup DOKUNMA
+          await supabase
+            .from('servers')
+            .update({ name: guild.name, slug })
+            .eq('discord_id', guild.id);
+          serverData = existingServer;
+        } else {
+          // Yeni sunucu: is_setup: false ile kaydet
+          const { data: inserted, error: insertError } = await supabase
+            .from('servers')
+            .insert({ discord_id: guild.id, name: guild.name, slug, is_setup: false })
+            .select('id')
+            .single();
+          if (insertError || !inserted) {
+            console.error(`Failed to insert server ${guild.id}:`, insertError);
+            continue;
+          }
+          serverData = inserted;
+        }
+
+        if (!serverData) {
+          console.error(`No server data for guild ${guild.id}`);
           continue;
         }
 

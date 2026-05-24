@@ -339,43 +339,58 @@ export async function POST() {
     const tableNames = [
       'store_orders',
       'store_items',
+      'store_discounts',
       'promotions',
+      'promotion_usages (via promotions)',
+      'daily_earnings',
+      'member_daily_stats',
+      'server_daily_stats',
+      'member_overview_stats',
+      'server_overview_stats',
       'wallet_ledger',
       'member_wallets',
       'member_profiles',
+      'members',
       'notifications',
       'notification_reads',
       'log_channel_configs',
       'bot_log_channels',
       'maintenance_flags',
-      'servers'
+      'weekly_tasks',
+      'web_audit_logs',
+      'booster_tiers',
+      'servers',
     ];
 
     const deleteOperations = [
-      // Delete store orders first (references store items)
+      // Store orders before items
       supabase.from('store_orders').delete().eq('server_id', serverId),
-      // Delete store items
       supabase.from('store_items').delete().eq('server_id', serverId),
-      // Delete promotions
+      supabase.from('store_discounts').delete().eq('server_id', serverId),
+      // Promotions — promotion_usages cascade via FK
       supabase.from('promotions').delete().eq('server_id', serverId),
-      // Delete wallet ledger
+      // Economy / earnings (guild_id based)
+      supabase.from('daily_earnings').delete().eq('guild_id', guildId),
+      supabase.from('member_daily_stats').delete().eq('guild_id', guildId),
+      supabase.from('server_daily_stats').delete().eq('guild_id', guildId),
+      supabase.from('member_overview_stats').delete().eq('guild_id', guildId),
+      supabase.from('server_overview_stats').delete().eq('guild_id', guildId),
       supabase.from('wallet_ledger').delete().eq('guild_id', guildId),
-      // Delete member wallets
       supabase.from('member_wallets').delete().eq('guild_id', guildId),
-      // Delete member profiles
       supabase.from('member_profiles').delete().eq('guild_id', guildId),
-      // Delete notifications
+      supabase.from('members').delete().eq('server_id', serverId),
+      // Notifications
       supabase.from('notifications').delete().eq('guild_id', guildId),
-      // Delete notification reads
       notificationIds.length > 0
         ? supabase.from('notification_reads').delete().in('notification_id', notificationIds)
         : Promise.resolve({ data: null, error: null }),
-      // Delete log channel configs
-      supabase.from('log_channel_configs').delete().eq('guild_id', guildId).eq('is_active', true),
-      // Delete bot log channels
-      supabase.from('bot_log_channels').delete().eq('guild_id', guildId).eq('is_active', true),
-      // Delete maintenance flags
+      // Infra
+      supabase.from('log_channel_configs').delete().eq('guild_id', guildId),
+      supabase.from('bot_log_channels').delete().eq('guild_id', guildId),
       supabase.from('maintenance_flags').delete().eq('server_id', serverId),
+      supabase.from('weekly_tasks').delete().eq('guild_id', guildId),
+      supabase.from('web_audit_logs').delete().eq('guild_id', guildId),
+      supabase.from('booster_tiers').delete().eq('guild_id', guildId),
       // Finally delete server
       supabase.from('servers').delete().eq('discord_id', guildId),
     ];
