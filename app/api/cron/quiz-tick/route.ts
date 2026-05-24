@@ -25,7 +25,7 @@ const getSupabase = () => {
 };
 
 function checkSecret(request: NextRequest): boolean {
-  const secret = process.env.QUIZ_CRON_SECRET;
+  const secret = process.env.QUIZ_CRON_SECRET ?? process.env.CRON_SECRET;
   if (!secret) {
     if (process.env.NODE_ENV === 'production') {
       console.warn('[quiz-tick] QUIZ_CRON_SECRET tanımlı değil; production için ekle');
@@ -127,7 +127,17 @@ async function run() {
     .limit(100);
 
   for (const ev of (live ?? []) as Event[]) {
-    const startedAt = ev.current_question_started_at ? new Date(ev.current_question_started_at).getTime() : 0;
+    let startedAt = ev.current_question_started_at ? new Date(ev.current_question_started_at).getTime() : 0;
+    if (!startedAt && ev.current_position > 0) {
+      const repairIso = now.toISOString();
+      await supabase
+        .from('quiz_events')
+        .update({ current_question_started_at: repairIso })
+        .eq('id', ev.id)
+        .eq('status', 'live')
+        .is('current_question_started_at', null);
+      startedAt = now.getTime();
+    }
     if (!startedAt) continue;
     const tickMs = (ev.seconds_per_question + (ev.reveal_seconds ?? 2)) * 1000;
     if (now.getTime() - startedAt < tickMs) continue;

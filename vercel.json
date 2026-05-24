@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/quiz-tick",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/quiz-payout",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}

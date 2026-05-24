@@ -10,6 +10,7 @@
  * - Global event'te credit guild = participant.guild_id (kullanıcının katıldığı sunucu)
  * - member_wallets.balance += papel_earned upsert
  * - wallet_ledger insert: type='quiz_reward', metadata={ event_id, checkpoint_papel, perfect_bonus, breakdown }
+ * - system_mails insert: category=order (bilgilendirme fişi; cüzdan zaten güncellendi)
  * - event.paid_out_at = now()
  *
  * Auth: ?secret=$QUIZ_CRON_SECRET veya Authorization: Bearer $QUIZ_CRON_SECRET
@@ -17,6 +18,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { sendQuizMotivationMail, sendQuizRewardMail } from '@/lib/quiz/sendRewardMail';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +32,7 @@ const getSupabase = () => {
 const DEFAULT_GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
 function checkSecret(request: NextRequest): boolean {
-  const secret = process.env.QUIZ_CRON_SECRET;
+  const secret = process.env.QUIZ_CRON_SECRET ?? process.env.CRON_SECRET;
   if (!secret) return true;
   const url = new URL(request.url);
   const fromQuery = url.searchParams.get('secret');
@@ -41,19 +43,21 @@ function checkSecret(request: NextRequest): boolean {
 
 type Event = {
   id: string;
+  title: string;
   scope: 'global' | 'guild';
   guild_id: string | null;
   total_questions: number;
   prize_pool_papel: number;
 };
 
-type Checkpoint = { position: number; papel_reward: number };
+type Checkpoint = { position: number; papel_reward: number; label: string | null };
 
 type Participant = {
   event_id: string;
   user_id: string;
   guild_id: string | null;
   total_correct: number;
+  wrong_count: number;
   last_position: number;
   eliminated_at: string | null;
   paid_out_at: string | null;
@@ -62,18 +66,19 @@ type Participant = {
 async function payoutEvent(supabase: SupabaseClient, event: Event) {
   const { data: checkpoints } = await supabase
     .from('quiz_event_checkpoints')
-    .select('position, papel_reward')
+    .select('position, papel_reward, label')
     .eq('event_id', event.id)
     .order('position', { ascending: true });
 
   const cps: Checkpoint[] = (checkpoints ?? []).map((c) => ({
     position: c.position,
     papel_reward: Number(c.papel_reward),
+    label: c.label ?? null,
   }));
 
   const { data: participants } = await supabase
     .from('quiz_event_participants')
-    .select('event_id, user_id, guild_id, total_correct, last_position, eliminated_at, paid_out_at')
+    .select('event_id, user_id, guild_id, total_correct, wrong_count, last_position, eliminated_at, paid_out_at')
     .eq('event_id', event.id);
 
   const parts = (participants ?? []) as Participant[];
@@ -83,17 +88,20 @@ async function payoutEvent(supabase: SupabaseClient, event: Event) {
     : 0;
 
   let paid = 0;
+  let mailsSent = 0;
   for (const p of parts) {
     if (p.paid_out_at) continue;
 
     let checkpointPapel = 0;
-    const breakdown: Array<{ position: number; papel_reward: number; label?: string }> = [];
+    const breakdown: Array<{ position: number; papel_reward: number; label?: string | null }> = [];
     for (const cp of cps) {
-      // Katılımcı bu pozisyonu doğru cevaplamış mı? Approx: last_position >= cp.position
-      // ama elenmemiş olmalı VEYA elendiyse last_position bu cp pozisyonunu kapsamalı.
       if (p.last_position >= cp.position) {
         checkpointPapel += cp.papel_reward;
-        breakdown.push({ position: cp.position, papel_reward: cp.papel_reward });
+        breakdown.push({
+          position: cp.position,
+          papel_reward: cp.papel_reward,
+          label: cp.label,
+        });
       }
     }
 
@@ -102,7 +110,8 @@ async function payoutEvent(supabase: SupabaseClient, event: Event) {
     const totalEarn = Number((checkpointPapel + bonus).toFixed(2));
 
     if (totalEarn <= 0) {
-      // Yine de paid_out_at işaretle ki bir daha geri dönmesin
+      const creditGuildId =
+        event.scope === 'guild' ? event.guild_id : (p.guild_id ?? DEFAULT_GUILD_ID);
       await supabase
         .from('quiz_event_participants')
         .update({
@@ -112,6 +121,20 @@ async function payoutEvent(supabase: SupabaseClient, event: Event) {
         })
         .eq('event_id', event.id)
         .eq('user_id', p.user_id);
+      if (creditGuildId) {
+        const mailResult = await sendQuizMotivationMail(supabase, {
+          guildId: creditGuildId,
+          userId: p.user_id,
+          eventId: event.id,
+          eventTitle: event.title,
+          totalCorrect: p.total_correct,
+          totalQuestions: event.total_questions,
+          wrongCount: p.wrong_count ?? 0,
+          lastPosition: p.last_position,
+          eliminated: !!p.eliminated_at,
+        });
+        if (mailResult.ok) mailsSent += 1;
+      }
       continue;
     }
 
@@ -172,6 +195,22 @@ async function payoutEvent(supabase: SupabaseClient, event: Event) {
       .eq('event_id', event.id)
       .eq('user_id', p.user_id);
 
+    const mailResult = await sendQuizRewardMail(supabase, {
+      guildId: creditGuildId,
+      userId: p.user_id,
+      eventId: event.id,
+      eventTitle: event.title,
+      totalEarn,
+      checkpointPapel,
+      perfectBonus: bonus,
+      isPerfect,
+      totalCorrect: p.total_correct,
+      totalQuestions: event.total_questions,
+      wrongCount: p.wrong_count ?? 0,
+      breakdown,
+    });
+    if (mailResult.ok) mailsSent += 1;
+
     paid += 1;
   }
 
@@ -187,6 +226,7 @@ async function payoutEvent(supabase: SupabaseClient, event: Event) {
     perfect_scorers: perfectScorers.length,
     perfect_bonus: perfectBonus,
     paid,
+    mails_sent: mailsSent,
   };
 }
 
@@ -196,7 +236,7 @@ async function run() {
 
   const { data: events } = await supabase
     .from('quiz_events')
-    .select('id, scope, guild_id, total_questions, prize_pool_papel')
+    .select('id, title, scope, guild_id, total_questions, prize_pool_papel')
     .eq('status', 'finished')
     .is('paid_out_at', null)
     .limit(20);
