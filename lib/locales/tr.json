@@ -8,7 +8,8 @@
     "store": "Mağaza (Market)",
     "user_management": "Kullanıcı Yönetimi",
     "global_announcements": "Küresel Duyuru",
-    "back_to_select": "Sunucu Seçimine Dön"
+    "back_to_select": "Sunucu Seçimine Dön",
+    "quiz_events": "Quiz Etkinlikleri"
   },
   "common": {
     "loading": "Yükleniyor...",

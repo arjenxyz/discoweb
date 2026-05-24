@@ -8,7 +8,8 @@
     "store": "Store (Market)",
     "user_management": "User Management",
     "global_announcements": "Global Announcements",
-    "back_to_select": "Back to Select Server"
+    "back_to_select": "Back to Select Server",
+    "quiz_events": "Quiz Events"
   },
   "common": {
     "loading": "Loading...",

@@ -33,6 +33,8 @@ import {
   LuScrollText,
   LuTrendingUp,
   LuCpu,
+  LuTrophy,
+  LuBrain,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -74,6 +76,8 @@ const NAV_GROUPS: NavGroup[] = [
       { href: '/developer/ads', label: 'Reklamlar', icon: LuMegaphone },
       { href: '/developer/weekly-tasks', label: 'Haftalık Görevler', icon: LuListChecks },
       { href: '/developer/announcements', label: 'Duyurular', icon: LuMessageSquare },
+      { href: '/developer/quiz/events', label: 'Quiz Etkinlikleri', icon: LuTrophy },
+      { href: '/developer/quiz/questions', label: 'Quiz Soru Bankası', icon: LuBrain },
     ],
   },
   {
