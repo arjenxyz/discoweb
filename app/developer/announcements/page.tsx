@@ -10,6 +10,7 @@ type AnnouncementAdminItem = {
   content: string;
   created_at: string;
   is_active: boolean;
+  mentions_everyone?: boolean;
   poll?: {
     id: string;
     question: string;
@@ -24,6 +25,7 @@ const emptyForm = {
   linkUrl: '',
   pollQuestion: '',
   pollOptions: '',
+  mentionEveryone: false,
 };
 
 type PostMode = 'announcement' | 'media_only' | 'poll_only';
@@ -124,11 +126,12 @@ export default function AnnouncementsPage() {
     setPostMode(isPollOnly ? 'poll_only' : isMediaOnly ? 'media_only' : 'announcement');
     setForm({
       title: a.title,
-      body: parsed.body,
+      body: parsed.body.replace(/^@everyone\s*/i, ''),
       mediaUrl: parsed.mediaUrl,
       linkUrl: parsed.linkUrl,
       pollQuestion: pollQ,
       pollOptions: pollO,
+      mentionEveryone: Boolean(a.mentions_everyone) || /@everyone\b/i.test(`${a.title}\n${a.content}`),
     });
     setView('editor');
     setError(null);
@@ -138,7 +141,10 @@ export default function AnnouncementsPage() {
   const saveAnnouncement = async () => {
     const pollOptions = form.pollOptions.split('\n').map((o) => o.trim()).filter(Boolean);
     const hasPoll = form.pollQuestion.trim().length > 0 && pollOptions.length >= 2;
-    const content = buildBody(form, postMode);
+    let content = buildBody(form, postMode);
+    if (form.mentionEveryone && !/@everyone\b/i.test(`${form.title}\n${content}`)) {
+      content = content.trim() ? `@everyone\n\n${content.trim()}` : '@everyone';
+    }
 
     if (!form.title.trim() && postMode !== 'media_only') {
       setError('Başlık zorunludur.');
@@ -175,6 +181,7 @@ export default function AnnouncementsPage() {
         title: form.title.trim(),
         body: content,
         lang: 'tr',
+        mentionsEveryone: form.mentionEveryone,
         poll: hasPoll
           ? {
               question: form.pollQuestion.trim(),
@@ -312,6 +319,17 @@ export default function AnnouncementsPage() {
                     onChange={(e) => setForm((p) => ({ ...p, body: e.target.value }))}
                     className="w-full min-h-[160px] rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/50 custom-scrollbar"
                   />
+                  <label className="mt-3 flex cursor-pointer items-center gap-2 rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2.5">
+                    <input
+                      type="checkbox"
+                      checked={form.mentionEveryone}
+                      onChange={(e) => setForm((p) => ({ ...p, mentionEveryone: e.target.checked }))}
+                      className="rounded border-amber-400/40 bg-black/40 text-amber-400 focus:ring-amber-400/30"
+                    />
+                    <span className="text-sm text-amber-100/90">
+                      <strong className="text-amber-200">@everyone</strong> etiketi ekle (sarı vurgu + bildirim sayacı)
+                    </span>
+                  </label>
                 </div>
               )}
               {(postMode === 'announcement' || postMode === 'media_only') && (
@@ -407,6 +425,11 @@ export default function AnnouncementsPage() {
                       {a.poll && (
                         <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-semibold text-violet-300">
                           {a.content === '·' ? 'Sadece Anket' : 'Anket'}
+                        </span>
+                      )}
+                      {(a.mentions_everyone || /@everyone\b/i.test(`${a.title}\n${a.content}`)) && (
+                        <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
+                          @everyone
                         </span>
                       )}
                       <span className="text-[10px] text-white/30">{new Date(a.created_at).toLocaleString('tr-TR')}</span>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServiceClient } from '@/lib/supabaseServiceClient';
 import { requireSessionUser } from '@/lib/auth';
+import { announcementMentionsEveryone } from '@/lib/announcementEveryone';
 
 const DEVELOPER_ROLE_ID = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
 const DEVELOPER_GUILD_ID = process.env.DEVELOPER_GUILD_ID ?? '1465698764453838882';
@@ -117,6 +118,7 @@ export async function GET(request: NextRequest) {
         is_active,
         author_name,
         author_avatar_url,
+        mentions_everyone,
         announcement_translations!inner (
           title,
           content,
@@ -176,6 +178,11 @@ export async function GET(request: NextRequest) {
       is_active: item.is_active,
       author_name: item.author_name || 'Developer',
       author_avatar_url: item.author_avatar_url || null,
+      mentions_everyone: Boolean(item.mentions_everyone)
+        || announcementMentionsEveryone(
+          item.announcement_translations[0]?.title || '',
+          item.announcement_translations[0]?.content || '',
+        ),
       poll: pollsByAnnouncementId.get(item.id) ?? null,
     }));
 
@@ -192,14 +199,17 @@ export async function POST(request: NextRequest) {
   const userId = (auth as { ok: true; userId: string }).userId;
 
   try {
-    const { title, body, lang = 'tr', poll } = await request.json();
+    const { title, body, lang = 'tr', poll, mentionsEveryone: mentionsEveryoneFlag } = await request.json();
     const validationError = validateAnnouncementInput(title, body, poll);
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
+    const titleTrimmed = typeof title === 'string' ? title.trim() : '';
     const { pollQuestion, pollOptions, hasPoll } = parsePollInput(poll);
     const content = normalizeContent(typeof body === 'string' ? body : '', hasPoll);
+    const mentionsEveryone = Boolean(mentionsEveryoneFlag)
+      || announcementMentionsEveryone(titleTrimmed, content);
 
     const supabaseServiceClient = getSupabaseServiceClient();
     if (!supabaseServiceClient) {
@@ -229,6 +239,7 @@ export async function POST(request: NextRequest) {
         is_active: true,
         author_name: authorName,
         author_avatar_url: authorAvatarUrl,
+        mentions_everyone: mentionsEveryone,
       })
       .select()
       .single();
@@ -243,7 +254,7 @@ export async function POST(request: NextRequest) {
       .insert({
         announcement_id: announcement.id,
         lang_code: lang,
-        title: title.trim(),
+        title: titleTrimmed,
         content,
       })
       .select();
@@ -296,7 +307,7 @@ export async function PATCH(request: NextRequest) {
   if (!auth.ok) return auth.response;
 
   try {
-    const { id, title, body, lang = 'tr', poll } = await request.json();
+    const { id, title, body, lang = 'tr', poll, mentionsEveryone: mentionsEveryoneFlag } = await request.json();
     if (!id) {
       return NextResponse.json({ error: 'Duyuru kimliği gerekli' }, { status: 400 });
     }
@@ -305,8 +316,11 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
+    const titleTrimmed = typeof title === 'string' ? title.trim() : '';
     const { pollQuestion, pollOptions, hasPoll } = parsePollInput(poll);
     const content = normalizeContent(typeof body === 'string' ? body : '', hasPoll);
+    const mentionsEveryone = Boolean(mentionsEveryoneFlag)
+      || announcementMentionsEveryone(titleTrimmed, content);
 
     const supabaseServiceClient = getSupabaseServiceClient();
     if (!supabaseServiceClient) {
@@ -323,10 +337,15 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Duyuru bulunamadı' }, { status: 404 });
     }
 
+    await supabaseServiceClient
+      .from('announcements')
+      .update({ mentions_everyone: mentionsEveryone })
+      .eq('id', id);
+
     const { data: updatedTranslations, error: translationUpdateError } = await supabaseServiceClient
       .from('announcement_translations')
       .update({
-        title: title.trim(),
+        title: titleTrimmed,
         content,
         updated_at: new Date().toISOString(),
       })
