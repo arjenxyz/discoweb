@@ -33,8 +33,9 @@ type PollPayload = { question?: string; options?: string[] } | undefined | null;
 
 function parsePollInput(poll: PollPayload) {
   const pollQuestion = poll?.question?.trim?.() ?? '';
-  const pollOptions = Array.isArray(poll?.options)
-    ? poll.options.map((option: string) => String(option).trim()).filter(Boolean)
+  const rawOptions = poll?.options;
+  const pollOptions = Array.isArray(rawOptions)
+    ? rawOptions.map((option: string) => String(option).trim()).filter(Boolean)
     : [];
   const hasPoll = pollQuestion.length > 0 && pollOptions.length >= 2;
   return { pollQuestion, pollOptions, hasPoll };
@@ -353,12 +354,6 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: 'Duyuru çevirisi güncellenemedi' }, { status: 500 });
       }
     }
-
-    const pollQuestion = poll?.question?.trim?.() ?? '';
-    const pollOptions = Array.isArray(poll?.options)
-      ? poll.options.map((option: string) => String(option).trim()).filter(Boolean)
-      : [];
-    const hasPoll = pollQuestion.length > 0 && pollOptions.length >= 2;
 
     const { data: existingPoll } = await supabaseServiceClient
       .from('announcement_polls')

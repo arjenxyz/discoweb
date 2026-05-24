@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { LuTrophy, LuPlus, LuRefreshCw, LuX, LuCalendar, LuBarChart3 } from 'react-icons/lu';
+import { LuTrophy, LuPlus, LuRefreshCw, LuX, LuCalendar, LuChartBar } from 'react-icons/lu';
 
 type Checkpoint = { position: number; papel_reward: number; label?: string };
 
@@ -268,7 +268,7 @@ export default function QuizEventsPage() {
                           onClick={() => loadResults(e.id)}
                           className="flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-200 hover:bg-amber-500/20"
                         >
-                          <LuBarChart3 className="h-3.5 w-3.5" /> Sonuçlar
+                          <LuChartBar className="h-3.5 w-3.5" /> Sonuçlar
                         </button>
                       )}
                       {e.status === 'scheduled' && (
@@ -363,13 +363,13 @@ export default function QuizEventsPage() {
                             <td className="px-2 py-2">
                               <div className="font-medium text-white/90">{p.username}</div>
                               <div className="font-mono text-[10px] text-white/30">{p.user_id}</div>
-                            </div>
-                            <td className="px-2 py-2 text-right text-emerald-300">{p.total_correct}</div>
-                            <td className="px-2 py-2 text-right text-red-300/80">{p.wrong_count}</div>
-                            <td className="px-2 py-2 text-right text-white/60">{p.last_position}</div>
+                            </td>
+                            <td className="px-2 py-2 text-right text-emerald-300">{p.total_correct}</td>
+                            <td className="px-2 py-2 text-right text-red-300/80">{p.wrong_count}</td>
+                            <td className="px-2 py-2 text-right text-white/60">{p.last_position}</td>
                             <td className="px-2 py-2 text-right font-semibold text-amber-300">
                               {p.papel_earned.toLocaleString('tr-TR')}
-                            </div>
+                            </td>
                             <td className="px-2 py-2">
                               {p.perfect_score ? (
                                 <span className="rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] text-violet-300">
@@ -384,7 +384,7 @@ export default function QuizEventsPage() {
                                   Devam / bitti
                                 </span>
                               )}
-                            </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
