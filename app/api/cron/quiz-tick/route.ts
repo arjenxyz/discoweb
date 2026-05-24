@@ -65,6 +65,7 @@ async function run() {
     started: 0,
     advanced: 0,
     finished: 0,
+    lock_failures: [] as { event_id: string; error: string }[],
     elapsed_ms: 0,
   };
   const t0 = Date.now();
@@ -82,7 +83,10 @@ async function run() {
   for (const ev of toLock ?? []) {
     const result = await lockEventQuestions(supabase, ev.id);
     if (result.ok && 'locked' in result && result.locked) summary.locked += 1;
-    if (!result.ok) console.warn('[quiz-tick] lock failed', ev.id, result.error);
+    if (!result.ok) {
+      console.warn('[quiz-tick] lock failed', ev.id, result.error);
+      summary.lock_failures.push({ event_id: ev.id, error: result.error });
+    }
   }
 
   // 2) Başlama vakti gelmiş scheduled event'leri live'a al
@@ -99,6 +103,7 @@ async function run() {
       const result = await lockEventQuestions(supabase, ev.id);
       if (!result.ok) {
         console.warn('[quiz-tick] start-time lock failed', ev.id, result.error);
+        summary.lock_failures.push({ event_id: ev.id, error: result.error });
         continue;
       }
     }

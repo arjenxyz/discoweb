@@ -3,18 +3,15 @@
  *
  * - Event başlamadan kısa süre önce çağrılır.
  * - `total_questions` adet, event.lang dilinde is_ready=true çevirisi olan soru seçilir.
+ * - Yeterli çeviri yoksa en → tr fallback denenir.
  * - Global event'ler sadece ortak bankayı (is_custom_for_guild_id is null) kullanır.
- * - Per-guild event'ler önce o sunucunun custom sorularını (en yenisinden eskisine),
- *   sonra eksik kalanı ortak bankadan tamamlar.
- * - Seçilen sorular `quiz_event_questions` tablosuna yazılır ve event row'unda
- *   `questions_locked_at` set edilir.
- * - Tekrar çağrılırsa (zaten kilitlenmişse) noop'tur.
+ * - Per-guild event'ler önce o sunucunun custom sorularını, sonra ortak bankayı tamamlar.
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type LockResult =
-  | { ok: true; locked: true; count: number }
+  | { ok: true; locked: true; count: number; lang_used?: string }
   | { ok: true; locked: false; reason: 'already_locked' | 'not_scheduled' | 'cancelled' }
   | { ok: false; error: string };
 
@@ -48,10 +45,11 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/**
- * quiz_question_bank'i quiz_question_translations ile JOIN edip event.lang'a göre
- * hazır olan kayıtları getirir. Custom filtresi (guild vs global) ekleyici tarafından verilir.
- */
+function uniqueLangs(primary: string): string[] {
+  const p = (primary || 'tr').toLowerCase();
+  return [...new Set([p, 'en', 'tr'])];
+}
+
 async function fetchReady(
   supabase: SupabaseClient,
   lang: string,
@@ -60,7 +58,7 @@ async function fetchReady(
   let query = supabase
     .from('quiz_question_bank')
     .select(
-      'id, correct_index, category, difficulty, is_custom_for_guild_id, last_used_at, quiz_question_translations!inner(question, options, is_ready, lang)'
+      'id, correct_index, category, difficulty, is_custom_for_guild_id, last_used_at, quiz_question_translations!inner(question, options, is_ready, lang)',
     )
     .eq('quiz_question_translations.lang', lang)
     .eq('quiz_question_translations.is_ready', true)
@@ -71,7 +69,11 @@ async function fetchReady(
   if (options.guildId) query = query.eq('is_custom_for_guild_id', options.guildId);
 
   const { data, error } = await query;
-  if (error) return [];
+  if (error) {
+    console.warn('[quiz-lock] fetchReady error', lang, error.message);
+    return [];
+  }
+
   type Row = {
     id: string;
     correct_index: number;
@@ -81,10 +83,11 @@ async function fetchReady(
     last_used_at: string | null;
     quiz_question_translations: Array<{ question: string; options: string[]; is_ready: boolean; lang: string }>;
   };
-  return (data as unknown as Row[] | null ?? [])
+
+  return ((data as unknown as Row[]) ?? [])
     .map((r) => {
-      const t = r.quiz_question_translations[0];
-      if (!t) return null;
+      const t = r.quiz_question_translations?.[0];
+      if (!t?.question || !Array.isArray(t.options) || t.options.length !== 4) return null;
       return {
         id: r.id,
         correct_index: r.correct_index,
@@ -97,6 +100,29 @@ async function fetchReady(
       } satisfies BankWithTranslation;
     })
     .filter((r): r is BankWithTranslation => r !== null);
+}
+
+async function collectForLang(
+  supabase: SupabaseClient,
+  e: EventRow,
+  lang: string,
+): Promise<BankWithTranslation[]> {
+  const total = e.total_questions;
+  const collected: BankWithTranslation[] = [];
+
+  if (e.scope === 'guild' && e.guild_id) {
+    collected.push(...await fetchReady(supabase, lang, { guildId: e.guild_id, limit: total }));
+  }
+  if (collected.length < total) {
+    const need = total - collected.length;
+    const globals = shuffle(await fetchReady(supabase, lang, { globalOnly: true, limit: need * 3 }));
+    for (const g of globals) {
+      if (collected.length >= total) break;
+      if (collected.some((c) => c.id === g.id)) continue;
+      collected.push(g);
+    }
+  }
+  return collected;
 }
 
 export async function lockEventQuestions(
@@ -114,41 +140,31 @@ export async function lockEventQuestions(
   }
 
   const e = event as EventRow;
-  const lang = (e.lang || 'tr').toLowerCase();
 
   if (e.questions_locked_at) return { ok: true, locked: false, reason: 'already_locked' };
   if (e.status === 'cancelled') return { ok: true, locked: false, reason: 'cancelled' };
   if (e.status !== 'scheduled') return { ok: true, locked: false, reason: 'not_scheduled' };
 
-  const total = e.total_questions;
-  const collected: BankWithTranslation[] = [];
+  let chosen: BankWithTranslation[] = [];
+  let langUsed = (e.lang || 'tr').toLowerCase();
 
-  // 1) Per-guild custom sorular
-  if (e.scope === 'guild' && e.guild_id) {
-    const customs = await fetchReady(supabase, lang, { guildId: e.guild_id, limit: total });
-    collected.push(...customs);
-  }
-
-  // 2) Ortak banka (rotasyon: en az kullanılanlar önce, sonra shuffle)
-  if (collected.length < total) {
-    const need = total - collected.length;
-    const globals = await fetchReady(supabase, lang, { globalOnly: true, limit: need * 3 });
-    const shuffled = shuffle(globals);
-    for (const g of shuffled) {
-      if (collected.length >= total) break;
-      if (collected.some((c) => c.id === g.id)) continue;
-      collected.push(g);
+  for (const lang of uniqueLangs(e.lang)) {
+    const collected = await collectForLang(supabase, e, lang);
+    if (collected.length >= e.total_questions) {
+      chosen = collected.slice(0, e.total_questions);
+      langUsed = lang;
+      break;
     }
   }
 
-  if (collected.length < total) {
+  if (chosen.length < e.total_questions) {
+    const tried = uniqueLangs(e.lang).join(', ');
     return {
       ok: false,
-      error: `Yetersiz soru havuzu. Gerekli: ${total}, '${lang}' dilinde hazır: ${collected.length}. /developer/quiz/questions sayfasından çevirileri tamamlayın veya event dilini değiştirin.`,
+      error: `Yetersiz hazır soru (${e.total_questions} gerekli). Denenen diller: ${tried}. Developer panelden çevirileri is_ready=true yapın.`,
     };
   }
 
-  const chosen = collected.slice(0, total);
   const rows = chosen.map((row, idx) => ({
     event_id: eventId,
     position: idx + 1,
@@ -165,7 +181,6 @@ export async function lockEventQuestions(
   const { error: insertErr } = await supabase.from('quiz_event_questions').insert(rows);
   if (insertErr) return { ok: false, error: insertErr.message };
 
-  // Bank tablosunda last_used_at + use_count güncelle (RPC varsa onu kullan)
   const bankIds = chosen.map((c) => c.id);
   if (bankIds.length > 0) {
     await supabase.rpc('quiz_bank_mark_used', { p_ids: bankIds }).then(
@@ -185,5 +200,5 @@ export async function lockEventQuestions(
     .eq('id', eventId);
   if (updateErr) return { ok: false, error: updateErr.message };
 
-  return { ok: true, locked: true, count: rows.length };
+  return { ok: true, locked: true, count: rows.length, lang_used: langUsed };
 }
