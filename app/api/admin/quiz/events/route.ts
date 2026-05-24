@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminOrDeveloper, getSelectedGuildId } from '@/lib/adminAuth';
+import {
+  findGuildQuizStartConflict,
+  quizEventConflictMessage,
+  quizEventDbErrorPayload,
+} from '@/lib/quiz/quizEventDbError';
 
 export const dynamic = 'force-dynamic';
 
@@ -104,13 +109,25 @@ export async function POST(request: NextRequest) {
   const lang = (body.lang ?? 'tr').toLowerCase();
   if (!LANG_RE.test(lang)) return NextResponse.json({ error: 'invalid_lang' }, { status: 400 });
 
+  const startAtIso = startAt.toISOString();
+  const conflict = await findGuildQuizStartConflict(supabase, guildId, startAtIso);
+  if (conflict) {
+    return NextResponse.json(
+      {
+        error: 'duplicate_guild_start',
+        message: quizEventConflictMessage('guild', conflict),
+      },
+      { status: 409 },
+    );
+  }
+
   const { data: event, error } = await supabase.from('quiz_events').insert({
     scope: 'guild',
     guild_id: guildId,
     title: body.title,
     description: body.description ?? null,
     lang,
-    start_at: startAt.toISOString(),
+    start_at: startAtIso,
     end_at: endAt.toISOString(),
     total_questions: total,
     seconds_per_question: sec,
@@ -119,7 +136,10 @@ export async function POST(request: NextRequest) {
     prize_pool_papel: body.prize_pool_papel ?? 50000,
     status: 'scheduled',
   }).select().single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    const err = quizEventDbErrorPayload(error);
+    return NextResponse.json(err.body, { status: err.status });
+  }
 
   const checkpoints = body.checkpoints && body.checkpoints.length
     ? body.checkpoints
@@ -173,7 +193,18 @@ export async function PATCH(request: NextRequest) {
     if (body.start_at) {
       const startAt = new Date(body.start_at);
       if (Number.isNaN(startAt.getTime())) return NextResponse.json({ error: 'invalid_start_at' }, { status: 400 });
-      patch.start_at = startAt.toISOString();
+      const startAtIso = startAt.toISOString();
+      const conflict = await findGuildQuizStartConflict(supabase, guildId, startAtIso, body.id);
+      if (conflict) {
+        return NextResponse.json(
+          {
+            error: 'duplicate_guild_start',
+            message: quizEventConflictMessage('guild', conflict),
+          },
+          { status: 409 },
+        );
+      }
+      patch.start_at = startAtIso;
       patch.end_at = new Date(startAt.getTime() + existing.total_questions * (existing.seconds_per_question + 2) * 1000).toISOString();
     }
     if (body.prize_pool_papel !== undefined) patch.prize_pool_papel = body.prize_pool_papel;
@@ -190,7 +221,10 @@ export async function PATCH(request: NextRequest) {
 
   if (Object.keys(patch).length > 0) {
     const { error } = await supabase.from('quiz_events').update(patch).eq('id', body.id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      const err = quizEventDbErrorPayload(error);
+      return NextResponse.json(err.body, { status: err.status });
+    }
   }
   if (body.checkpoints && existing.status === 'scheduled') {
     await supabase.from('quiz_event_checkpoints').delete().eq('event_id', body.id);

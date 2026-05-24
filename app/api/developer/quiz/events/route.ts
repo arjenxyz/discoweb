@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireSessionUser } from '@/lib/auth';
 import { isDeveloper } from '@/lib/developerAuth';
+import {
+  findGlobalQuizStartConflict,
+  findGuildQuizStartConflict,
+  quizEventConflictMessage,
+  quizEventDbErrorPayload,
+} from '@/lib/quiz/quizEventDbError';
 
 export const dynamic = 'force-dynamic';
 
@@ -150,13 +156,40 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'invalid_lang' }, { status: 400 });
   }
 
+  const startAtIso = startAt.toISOString();
+
+  if (body.scope === 'guild' && body.guild_id) {
+    const conflict = await findGuildQuizStartConflict(supabase, body.guild_id, startAtIso);
+    if (conflict) {
+      return NextResponse.json(
+        {
+          error: 'duplicate_guild_start',
+          message: quizEventConflictMessage('guild', conflict),
+        },
+        { status: 409 },
+      );
+    }
+  }
+  if (body.scope === 'global') {
+    const conflict = await findGlobalQuizStartConflict(supabase, startAtIso);
+    if (conflict) {
+      return NextResponse.json(
+        {
+          error: 'duplicate_global_start',
+          message: quizEventConflictMessage('global', conflict),
+        },
+        { status: 409 },
+      );
+    }
+  }
+
   const insertRow = {
     scope: body.scope,
     guild_id: body.scope === 'guild' ? body.guild_id : null,
     title: body.title,
     description: body.description ?? null,
     lang,
-    start_at: startAt.toISOString(),
+    start_at: startAtIso,
     end_at: endAt.toISOString(),
     total_questions: total,
     seconds_per_question: sec,
@@ -168,7 +201,10 @@ export async function POST(request: NextRequest) {
   };
 
   const { data: event, error } = await supabase.from('quiz_events').insert(insertRow).select().single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    const err = quizEventDbErrorPayload(error);
+    return NextResponse.json(err.body, { status: err.status });
+  }
 
   const checkpoints = body.checkpoints && body.checkpoints.length > 0
     ? body.checkpoints
@@ -207,7 +243,7 @@ export async function PATCH(request: NextRequest) {
   // Mevcut event'i çek (live ise belirli alanları kilitleyelim)
   const { data: existing } = await supabase
     .from('quiz_events')
-    .select('id, status, total_questions, seconds_per_question, start_at')
+    .select('id, status, scope, guild_id, total_questions, seconds_per_question, start_at')
     .eq('id', body.id)
     .single();
 
@@ -221,9 +257,34 @@ export async function PATCH(request: NextRequest) {
     if (body.start_at) {
       const startAt = new Date(body.start_at);
       if (Number.isNaN(startAt.getTime())) return NextResponse.json({ error: 'invalid_start_at' }, { status: 400 });
+      const startAtIso = startAt.toISOString();
+      if (existing.scope === 'guild' && existing.guild_id) {
+        const conflict = await findGuildQuizStartConflict(supabase, existing.guild_id, startAtIso, body.id);
+        if (conflict) {
+          return NextResponse.json(
+            {
+              error: 'duplicate_guild_start',
+              message: quizEventConflictMessage('guild', conflict),
+            },
+            { status: 409 },
+          );
+        }
+      }
+      if (existing.scope === 'global') {
+        const conflict = await findGlobalQuizStartConflict(supabase, startAtIso, body.id);
+        if (conflict) {
+          return NextResponse.json(
+            {
+              error: 'duplicate_global_start',
+              message: quizEventConflictMessage('global', conflict),
+            },
+            { status: 409 },
+          );
+        }
+      }
       const total = body.total_questions ?? existing.total_questions;
       const sec = body.seconds_per_question ?? existing.seconds_per_question;
-      patch.start_at = startAt.toISOString();
+      patch.start_at = startAtIso;
       patch.end_at = new Date(startAt.getTime() + total * (sec + 2) * 1000).toISOString();
     }
     if (body.total_questions !== undefined) patch.total_questions = body.total_questions;
@@ -244,7 +305,10 @@ export async function PATCH(request: NextRequest) {
 
   if (Object.keys(patch).length > 0) {
     const { error } = await supabase.from('quiz_events').update(patch).eq('id', body.id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      const err = quizEventDbErrorPayload(error);
+      return NextResponse.json(err.body, { status: err.status });
+    }
   }
 
   if (body.checkpoints && existing.status === 'scheduled') {

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { LuTrophy, LuPlus, LuRefreshCw, LuBrain, LuPencil, LuTrash2, LuX } from 'react-icons/lu';
+import { apiErrorMessage } from '@/lib/apiError';
 
 type QuizEvent = {
   id: string;
@@ -95,7 +96,7 @@ function EventsPanel() {
     try {
       const res = await fetch('/api/admin/quiz/events', { cache: 'no-store' });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       setEvents(data.events ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -129,7 +130,7 @@ function EventsPanel() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       setShowCreate(false);
       await load();
     } catch (e) {
@@ -283,7 +284,7 @@ function CustomQuestionsPanel() {
     try {
       const res = await fetch('/api/admin/quiz/questions', { cache: 'no-store' });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       setItems(data.questions ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -323,7 +324,7 @@ function CustomQuestionsPanel() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       setEditing(null);
       await load();
     } catch (e) {

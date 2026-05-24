@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { LuTrophy, LuPlus, LuRefreshCw, LuX, LuCalendar, LuChartBar } from 'react-icons/lu';
+import { apiErrorMessage } from '@/lib/apiError';
 
 type Checkpoint = { position: number; papel_reward: number; label?: string };
 
@@ -91,7 +92,7 @@ export default function QuizEventsPage() {
     try {
       const res = await fetch('/api/developer/quiz/events', { cache: 'no-store' });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       setEvents(data.events ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -134,7 +135,7 @@ export default function QuizEventsPage() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       setInfo('Etkinlik oluşturuldu');
       setShowCreate(false);
       await load();
@@ -153,7 +154,7 @@ export default function QuizEventsPage() {
         cache: 'no-store',
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       setResults(data as EventResults);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -177,7 +178,7 @@ export default function QuizEventsPage() {
         body: JSON.stringify({ id, status: 'cancelled' }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
