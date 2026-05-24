@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { LuTrophy, LuPlus, LuRefreshCw, LuX, LuCalendar } from 'react-icons/lu';
+import { LuTrophy, LuPlus, LuRefreshCw, LuX, LuCalendar, LuBarChart3 } from 'react-icons/lu';
 
 type Checkpoint = { position: number; papel_reward: number; label?: string };
 
@@ -24,6 +24,29 @@ type QuizEvent = {
   checkpoints: Checkpoint[];
 };
 
+type EventResults = {
+  event: QuizEvent;
+  summary: {
+    participant_count: number;
+    perfect_count: number;
+    eliminated_count: number;
+    total_papel_distributed: number;
+    rewards_paid: boolean;
+  };
+  participants: Array<{
+    user_id: string;
+    username: string;
+    guild_id: string | null;
+    total_correct: number;
+    wrong_count: number;
+    last_position: number;
+    eliminated_at: string | null;
+    perfect_score: boolean;
+    papel_earned: number;
+    paid_out_at: string | null;
+  }>;
+};
+
 const LANG_LABELS: Record<string, string> = {
   tr: 'Türkçe',
   en: 'English',
@@ -39,6 +62,9 @@ export default function QuizEventsPage() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [resultsEventId, setResultsEventId] = useState<string | null>(null);
+  const [results, setResults] = useState<EventResults | null>(null);
+  const [resultsLoading, setResultsLoading] = useState(false);
 
   const [form, setForm] = useState({
     scope: 'global' as 'global' | 'guild',
@@ -117,6 +143,31 @@ export default function QuizEventsPage() {
     }
   };
 
+  const loadResults = async (eventId: string) => {
+    setResultsEventId(eventId);
+    setResults(null);
+    setResultsLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/developer/quiz/events/${encodeURIComponent(eventId)}/results`, {
+        cache: 'no-store',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      setResults(data as EventResults);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setResultsEventId(null);
+    } finally {
+      setResultsLoading(false);
+    }
+  };
+
+  const closeResults = () => {
+    setResultsEventId(null);
+    setResults(null);
+  };
+
   const cancelEvent = async (id: string) => {
     if (!confirm('Etkinliği iptal etmek istediğine emin misin?')) return;
     try {
@@ -189,7 +240,7 @@ export default function QuizEventsPage() {
               events.map((e) => (
                 <tr key={e.id} className="hover:bg-white/[0.02]">
                   <td className="px-3 py-2">
-                    <StatusBadge status={e.status} />
+                    <StatusBadge status={e.status} paidOut={!!e.paid_out_at} />
                   </td>
                   <td className="px-3 py-2 text-white/70">
                     {e.scope === 'global' ? 'Global' : `Sunucu (${e.guild_id})`}
@@ -210,20 +261,141 @@ export default function QuizEventsPage() {
                     {e.checkpoints.map((c) => `${c.position}→${c.papel_reward}`).join(' · ')}
                   </td>
                   <td className="px-3 py-2">
-                    {e.status === 'scheduled' && (
-                      <button
-                        onClick={() => cancelEvent(e.id)}
-                        className="rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10"
-                      >
-                        İptal
-                      </button>
-                    )}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(e.status === 'finished' || e.status === 'cancelled' || e.status === 'live') && (
+                        <button
+                          type="button"
+                          onClick={() => loadResults(e.id)}
+                          className="flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-200 hover:bg-amber-500/20"
+                        >
+                          <LuBarChart3 className="h-3.5 w-3.5" /> Sonuçlar
+                        </button>
+                      )}
+                      {e.status === 'scheduled' && (
+                        <button
+                          type="button"
+                          onClick={() => cancelEvent(e.id)}
+                          className="rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10"
+                        >
+                          İptal
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
       </div>
+
+      {resultsEventId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-2xl border border-white/10 bg-[#0f1116] shadow-2xl">
+            <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  {results?.event.title ?? 'Etkinlik Sonuçları'}
+                </h2>
+                {results && (
+                  <p className="mt-1 text-xs text-white/50">
+                    {results.summary.participant_count} katılımcı ·{' '}
+                    {results.summary.total_papel_distributed.toLocaleString('tr-TR')} papel dağıtıldı
+                    {results.summary.rewards_paid ? ' · ödeme tamamlandı' : ' · ödeme bekleniyor'}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={closeResults}
+                className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white"
+              >
+                <LuX className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-auto p-6">
+              {resultsLoading && (
+                <p className="py-12 text-center text-sm text-white/40">Sonuçlar yükleniyor...</p>
+              )}
+              {!resultsLoading && results && (
+                <>
+                  {results.event.status === 'finished' && !results.summary.rewards_paid && (
+                    <div className="mb-4 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-200/90">
+                      Papel tutarları ödeme cron&apos;u çalıştıktan sonra güncellenir. Doğru/yanlış sayıları şimdiden görülebilir.
+                    </div>
+                  )}
+                  <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {[
+                      { label: 'Katılımcı', value: results.summary.participant_count },
+                      { label: 'Perfect', value: results.summary.perfect_count },
+                      { label: 'Elenen', value: results.summary.eliminated_count },
+                      {
+                        label: 'Toplam Papel',
+                        value: results.summary.total_papel_distributed.toLocaleString('tr-TR'),
+                      },
+                    ].map((s) => (
+                      <div key={s.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+                        <div className="text-[10px] uppercase tracking-wide text-white/40">{s.label}</div>
+                        <div className="mt-1 text-lg font-bold text-white">{s.value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {results.participants.length === 0 ? (
+                    <p className="py-8 text-center text-sm text-white/40">Henüz katılımcı yok.</p>
+                  ) : (
+                    <table className="w-full text-left text-sm">
+                      <thead className="sticky top-0 bg-[#0f1116] text-xs uppercase text-white/50">
+                        <tr>
+                          <th className="px-2 py-2">#</th>
+                          <th className="px-2 py-2">Kullanıcı</th>
+                          <th className="px-2 py-2 text-right">Doğru</th>
+                          <th className="px-2 py-2 text-right">Yanlış</th>
+                          <th className="px-2 py-2 text-right">Son poz.</th>
+                          <th className="px-2 py-2 text-right">Papel</th>
+                          <th className="px-2 py-2">Durum</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {results.participants.map((p, i) => (
+                          <tr key={p.user_id} className="hover:bg-white/[0.02]">
+                            <td className="px-2 py-2 text-white/40">{i + 1}</td>
+                            <td className="px-2 py-2">
+                              <div className="font-medium text-white/90">{p.username}</div>
+                              <div className="font-mono text-[10px] text-white/30">{p.user_id}</div>
+                            </div>
+                            <td className="px-2 py-2 text-right text-emerald-300">{p.total_correct}</div>
+                            <td className="px-2 py-2 text-right text-red-300/80">{p.wrong_count}</div>
+                            <td className="px-2 py-2 text-right text-white/60">{p.last_position}</div>
+                            <td className="px-2 py-2 text-right font-semibold text-amber-300">
+                              {p.papel_earned.toLocaleString('tr-TR')}
+                            </div>
+                            <td className="px-2 py-2">
+                              {p.perfect_score ? (
+                                <span className="rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] text-violet-300">
+                                  Perfect
+                                </span>
+                              ) : p.eliminated_at ? (
+                                <span className="rounded bg-red-500/15 px-1.5 py-0.5 text-[10px] text-red-300">
+                                  Elendi
+                                </span>
+                              ) : (
+                                <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] text-white/50">
+                                  Devam / bitti
+                                </span>
+                              )}
+                            </div>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {showCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
@@ -398,22 +570,30 @@ export default function QuizEventsPage() {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status, paidOut }: { status: string; paidOut?: boolean }) {
   const palette: Record<string, string> = {
     scheduled: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
     live: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    finished: 'bg-white/10 text-white/60 border-white/10',
+    finished: 'bg-violet-500/15 text-violet-200 border-violet-500/30',
     cancelled: 'bg-red-500/15 text-red-300 border-red-500/30',
   };
   const labels: Record<string, string> = {
     scheduled: 'Planlandı',
     live: 'Canlı',
-    finished: 'Bitti',
+    finished: 'Tamamlandı',
     cancelled: 'İptal',
   };
   return (
-    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs ${palette[status] ?? 'bg-white/10 text-white/60'}`}>
-      {labels[status] ?? status}
+    <span className="inline-flex flex-col items-start gap-0.5">
+      <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs ${palette[status] ?? 'bg-white/10 text-white/60'}`}>
+        {labels[status] ?? status}
+      </span>
+      {status === 'finished' && paidOut && (
+        <span className="text-[10px] text-emerald-400/80">Ödendi</span>
+      )}
+      {status === 'finished' && !paidOut && (
+        <span className="text-[10px] text-amber-400/70">Ödeme bekliyor</span>
+      )}
     </span>
   );
 }

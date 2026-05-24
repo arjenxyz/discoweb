@@ -162,6 +162,25 @@ type Payload = ImportBankPayload | ImportTranslationPayload | UpsertTranslationP
 
 const LANG_RE = /^[a-z]{2}(-[a-z0-9]{2,8})?$/i;
 
+/** Aynı batch içinde (source, source_external_id) tekrarı PostgreSQL upsert hatasına yol açar */
+function dedupeBySourceExternalId<T extends { source: string; source_external_id: string | null }>(
+  rows: T[],
+): T[] {
+  const map = new Map<string, T>();
+  for (const row of rows) {
+    map.set(`${row.source}\0${row.source_external_id ?? ''}`, row);
+  }
+  return Array.from(map.values());
+}
+
+function dedupeByQuestionLang<T extends { question_id: string; lang: string }>(rows: T[]): T[] {
+  const map = new Map<string, T>();
+  for (const row of rows) {
+    map.set(`${row.question_id}\0${row.lang}`, row);
+  }
+  return Array.from(map.values());
+}
+
 /**
  * POST /api/developer/quiz/questions
  *   action=import_bank          -> bank.json formatında soru kayıtlarını upsert eder
@@ -189,15 +208,18 @@ export async function POST(request: NextRequest) {
     if (!Array.isArray(body.questions) || body.questions.length === 0) {
       return NextResponse.json({ error: 'questions_required' }, { status: 400 });
     }
-    const rows = body.questions
-      .filter((q) => q && typeof q.correct_index === 'number' && q.correct_index >= 0 && q.correct_index <= 3)
-      .map((q) => ({
-        source: 'opentdb' as const,
-        source_external_id: q.source_external_id ?? q.id ?? null,
-        category: q.category ?? null,
-        difficulty: q.difficulty ?? null,
-        correct_index: q.correct_index,
-      }));
+    const rows = dedupeBySourceExternalId(
+      body.questions
+        .filter((q) => q && typeof q.correct_index === 'number' && q.correct_index >= 0 && q.correct_index <= 3)
+        .map((q) => ({
+          source: 'opentdb' as const,
+          // bank.json id (hash) benzersiz; eski dosyalarda source_external_id soru metninin ilk 64 karakteriydi ve çakışabiliyordu
+          source_external_id: String(q.id ?? q.source_external_id ?? '').trim() || null,
+          category: q.category ?? null,
+          difficulty: q.difficulty ?? null,
+          correct_index: q.correct_index,
+        })),
+    );
 
     if (rows.length === 0) return NextResponse.json({ error: 'no_valid_rows' }, { status: 400 });
 
@@ -235,21 +257,23 @@ export async function POST(request: NextRequest) {
     }
 
     const lang = body.lang.toLowerCase();
-    const trRows = body.questions
-      .filter((q) => q && Array.isArray(q.options) && q.options.length === 4 && q.question)
-      .map((q) => {
-        const bankId = extToBank.get(q.id);
-        if (!bankId) return null;
-        return {
-          question_id: bankId,
-          lang,
-          question: q.question,
-          options: q.options,
-          is_ready: q.is_ready === true,
-          translator_user_id: session.userId,
-        };
-      })
-      .filter((r): r is NonNullable<typeof r> => r !== null);
+    const trRows = dedupeByQuestionLang(
+      body.questions
+        .filter((q) => q && Array.isArray(q.options) && q.options.length === 4 && q.question)
+        .map((q) => {
+          const bankId = extToBank.get(q.id);
+          if (!bankId) return null;
+          return {
+            question_id: bankId,
+            lang,
+            question: q.question,
+            options: q.options,
+            is_ready: q.is_ready === true,
+            translator_user_id: session.userId,
+          };
+        })
+        .filter((r): r is NonNullable<typeof r> => r !== null),
+    );
 
     if (trRows.length === 0) {
       return NextResponse.json({

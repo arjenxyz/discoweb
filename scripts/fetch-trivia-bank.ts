@@ -124,7 +124,7 @@ function transform(r: OpenTriviaResult): Transformed {
     bank: {
       id,
       source: 'opentdb',
-      source_external_id: question_en.slice(0, 64),
+      source_external_id: id,
       category: decodeHTML(r.category),
       difficulty: r.difficulty,
       correct_index,

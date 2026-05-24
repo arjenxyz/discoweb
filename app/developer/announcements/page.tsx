@@ -26,16 +26,22 @@ const emptyForm = {
   pollOptions: '',
 };
 
-function buildBody(form: typeof emptyForm) {
+type PostMode = 'announcement' | 'media_only' | 'poll_only';
+
+function buildBody(form: typeof emptyForm, postMode: PostMode) {
+  if (postMode === 'poll_only') return '';
+  if (postMode === 'media_only') {
+    const sections: string[] = [];
+    const media = form.mediaUrl.trim().replace(/[&\s]+$/, '');
+    const link = form.linkUrl.trim().replace(/[&\s]+$/, '');
+    if (media) sections.push(`Medya: ${media}`);
+    if (link) sections.push(`Link: ${link}`);
+    return sections.join('\n\n');
+  }
   const sections: string[] = [];
   if (form.body.trim()) sections.push(form.body.trim());
-  if (form.mediaUrl.trim()) sections.push(`Medya: ${form.mediaUrl.trim()}`);
-  if (form.linkUrl.trim()) sections.push(`Link: ${form.linkUrl.trim()}`);
-  if (form.pollQuestion.trim()) {
-    const options = form.pollOptions.split('\n').map((o) => o.trim()).filter(Boolean);
-    const pollLines = [`Anket: ${form.pollQuestion.trim()}`, ...options.map((o) => `- ${o}`)];
-    sections.push(pollLines.join('\n'));
-  }
+  if (form.mediaUrl.trim()) sections.push(`Medya: ${form.mediaUrl.trim().replace(/[&\s]+$/, '')}`);
+  if (form.linkUrl.trim()) sections.push(`Link: ${form.linkUrl.trim().replace(/[&\s]+$/, '')}`);
   return sections.join('\n\n');
 }
 
@@ -67,7 +73,9 @@ function parseBody(body: string) {
     filtered.push(line);
   });
 
-  return { body: filtered.join('\n').trim(), mediaUrl, linkUrl };
+  let text = filtered.join('\n').trim();
+  if (text === '·' || text === '\u00B7') text = '';
+  return { body: text, mediaUrl, linkUrl };
 }
 
 export default function AnnouncementsPage() {
@@ -81,6 +89,7 @@ export default function AnnouncementsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [form, setForm] = useState(emptyForm);
+  const [postMode, setPostMode] = useState<PostMode>('announcement');
 
   const fetchAnnouncements = async () => {
     setLoading(true);
@@ -109,7 +118,10 @@ export default function AnnouncementsPage() {
         .sort((x, y) => x.position - y.position)
         .map((o) => o.label)
         .join('\n') ?? '';
+    const isPollOnly = a.poll && parsed.body === '' && !parsed.mediaUrl && !parsed.linkUrl;
+    const isMediaOnly = !a.poll && parsed.body === '' && (!!parsed.mediaUrl || !!parsed.linkUrl);
     setEditingId(a.id);
+    setPostMode(isPollOnly ? 'poll_only' : isMediaOnly ? 'media_only' : 'announcement');
     setForm({
       title: a.title,
       body: parsed.body,
@@ -124,13 +136,34 @@ export default function AnnouncementsPage() {
   };
 
   const saveAnnouncement = async () => {
-    const content = buildBody(form);
-    if (!form.title.trim()) {
+    const pollOptions = form.pollOptions.split('\n').map((o) => o.trim()).filter(Boolean);
+    const hasPoll = form.pollQuestion.trim().length > 0 && pollOptions.length >= 2;
+    const content = buildBody(form, postMode);
+
+    if (!form.title.trim() && postMode !== 'media_only') {
       setError('Başlık zorunludur.');
       return;
     }
-    if (!content.trim()) {
-      setError('En az içerik, medya URL veya link girmelisiniz.');
+    if (postMode === 'poll_only') {
+      if (!form.pollQuestion.trim()) {
+        setError('Anket sorusu zorunludur.');
+        return;
+      }
+      if (pollOptions.length < 2) {
+        setError('Anket için en az 2 seçenek girin.');
+        return;
+      }
+    } else if (postMode === 'media_only') {
+      if (!form.mediaUrl.trim() && !form.linkUrl.trim()) {
+        setError('Medya URL veya yönlendirme linki girin.');
+        return;
+      }
+    } else if (!content.trim() && !hasPoll) {
+      setError('En az içerik, medya URL, link veya anket girmelisiniz.');
+      return;
+    }
+    if (form.pollQuestion.trim() && pollOptions.length < 2) {
+      setError('Anket için en az 2 seçenek girin.');
       return;
     }
 
@@ -142,10 +175,10 @@ export default function AnnouncementsPage() {
         title: form.title.trim(),
         body: content,
         lang: 'tr',
-        poll: form.pollQuestion.trim()
+        poll: hasPoll
           ? {
               question: form.pollQuestion.trim(),
-              options: form.pollOptions.split('\n').map((o) => o.trim()).filter(Boolean),
+              options: pollOptions,
             }
           : undefined,
       };
@@ -163,6 +196,7 @@ export default function AnnouncementsPage() {
       setSuccess(editingId ? 'Duyuru güncellendi.' : 'Duyuru oluşturuldu.');
       setView('list');
       setForm(emptyForm);
+      setPostMode('announcement');
       setEditingId(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -207,6 +241,7 @@ export default function AnnouncementsPage() {
             onClick={() => {
               setEditingId(null);
               setForm(emptyForm);
+              setPostMode('announcement');
               setView('editor');
               setError(null);
               setSuccess(null);
@@ -235,28 +270,57 @@ export default function AnnouncementsPage() {
               İptal Et
             </button>
           </div>
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="mb-5 flex flex-wrap gap-2">
+            {(['announcement', 'media_only', 'poll_only'] as PostMode[]).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setPostMode(mode)}
+                className={`rounded-xl px-4 py-2 text-xs font-semibold transition ${
+                  postMode === mode
+                    ? 'bg-[#5865F2] text-white'
+                    : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
+                }`}
+              >
+                {mode === 'poll_only' ? 'Sadece Anket' : mode === 'media_only' ? 'Sadece Medya' : 'Duyuru'}
+              </button>
+            ))}
+          </div>
+          <div className={`grid gap-4 ${postMode === 'media_only' ? '' : 'lg:grid-cols-2'}`}>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-white/50 mb-1">Başlık</label>
+                <label className="block text-xs font-medium text-white/50 mb-1">
+                  {postMode === 'poll_only'
+                    ? 'Anket Başlığı'
+                    : postMode === 'media_only'
+                      ? 'Başlık (opsiyonel)'
+                      : 'Başlık'}
+                </label>
                 <input
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                  placeholder={postMode === 'media_only' ? 'Boş bırakılabilir' : undefined}
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/50"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-white/50 mb-1">İçerik</label>
-                <textarea
-                  value={form.body}
-                  onChange={(e) => setForm((p) => ({ ...p, body: e.target.value }))}
-                  className="w-full min-h-[160px] rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/50 custom-scrollbar"
-                />
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {postMode === 'announcement' && (
                 <div>
-                  <label className="block text-xs font-medium text-white/50 mb-1">Medya URL (Resim/Video/YouTube)</label>
+                  <label className="block text-xs font-medium text-white/50 mb-1">İçerik</label>
+                  <textarea
+                    value={form.body}
+                    onChange={(e) => setForm((p) => ({ ...p, body: e.target.value }))}
+                    className="w-full min-h-[160px] rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/50 custom-scrollbar"
+                  />
+                </div>
+              )}
+              {(postMode === 'announcement' || postMode === 'media_only') && (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-xs font-medium text-white/50 mb-1">
+                      Medya URL (Resim/Video/YouTube)
+                      {postMode === 'media_only' ? ' *' : ''}
+                    </label>
                   <input
                     type="url"
                     placeholder="https://..."
@@ -267,7 +331,10 @@ export default function AnnouncementsPage() {
                   <p className="mt-1 text-[10px] text-white/30">Doğrudan .jpg/.png/.mp4 veya YouTube linki</p>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-white/50 mb-1">Yönlendirme Linki</label>
+                  <label className="block text-xs font-medium text-white/50 mb-1">
+                    Yönlendirme Linki
+                    {postMode === 'media_only' ? ' (alternatif)' : ''}
+                  </label>
                   <input
                     type="url"
                     placeholder="https://..."
@@ -278,9 +345,13 @@ export default function AnnouncementsPage() {
                   <p className="mt-1 text-[10px] text-white/30">Tıklanabilir link önizlemesi olarak gösterilir</p>
                 </div>
               </div>
+              )}
             </div>
+            {postMode !== 'media_only' && (
             <div className="rounded-2xl border border-white/5 bg-black/20 p-4">
-              <p className="text-sm font-semibold text-white mb-3">Anket (Opsiyonel)</p>
+              <p className="text-sm font-semibold text-white mb-3">
+                {postMode === 'poll_only' ? 'Anket' : 'Anket (Opsiyonel)'}
+              </p>
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-white/50 mb-1">Anket Sorusu</label>
@@ -301,6 +372,7 @@ export default function AnnouncementsPage() {
                 </div>
               </div>
             </div>
+            )}
           </div>
           <div className="mt-6 flex justify-end">
             <button
@@ -318,14 +390,37 @@ export default function AnnouncementsPage() {
           {loading ? (
             <p className="text-white/40 text-sm">Yükleniyor...</p>
           ) : announcements.length > 0 ? (
-            announcements.map((a) => (
+            announcements.map((a) => {
+              const preview = parseBody(a.content);
+              const isMediaOnly = !a.poll && preview.body === '' && (!!preview.mediaUrl || !!preview.linkUrl);
+              return (
               <div key={a.id} className="rounded-2xl border border-white/10 bg-[#0b0d12] p-5 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-bold text-white">{a.title}</h3>
-                    <span className="text-[10px] text-white/30">{new Date(a.created_at).toLocaleString('tr-TR')}</span>
+                  <div className="flex items-center justify-between mb-2 gap-2">
+                    <h3 className="font-bold text-white">{a.title || (isMediaOnly ? 'Medya' : 'Başlıksız')}</h3>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {isMediaOnly && (
+                        <span className="rounded-full bg-cyan-500/15 px-2 py-0.5 text-[10px] font-semibold text-cyan-300">
+                          Sadece Medya
+                        </span>
+                      )}
+                      {a.poll && (
+                        <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-semibold text-violet-300">
+                          {a.content === '·' ? 'Sadece Anket' : 'Anket'}
+                        </span>
+                      )}
+                      <span className="text-[10px] text-white/30">{new Date(a.created_at).toLocaleString('tr-TR')}</span>
+                    </div>
                   </div>
-                  <p className="text-xs text-white/60 line-clamp-3 mb-4 whitespace-pre-wrap">{a.content}</p>
+                  {a.poll && (
+                    <p className="text-xs text-violet-200/80 mb-2">{a.poll.question}</p>
+                  )}
+                  {preview.body && (
+                    <p className="text-xs text-white/60 line-clamp-3 mb-4 whitespace-pre-wrap">{preview.body}</p>
+                  )}
+                  {isMediaOnly && preview.mediaUrl && (
+                    <p className="text-xs text-cyan-200/70 mb-4 truncate">{preview.mediaUrl}</p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 border-t border-white/5 pt-3">
                   <button
@@ -344,7 +439,8 @@ export default function AnnouncementsPage() {
                   </button>
                 </div>
               </div>
-            ))
+              );
+            })
           ) : (
             <p className="text-white/40 text-sm">Duyuru bulunmuyor.</p>
           )}

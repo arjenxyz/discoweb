@@ -5,6 +5,71 @@ import { requireSessionUser } from '@/lib/auth';
 const DEVELOPER_ROLE_ID = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
 const DEVELOPER_GUILD_ID = process.env.DEVELOPER_GUILD_ID ?? '1465698764453838882';
 
+/** Sadece anket gönderimlerinde içerik alanı için placeholder (UI'da gizlenir) */
+const POLL_ONLY_CONTENT = '·';
+
+function bodyHasMediaOrLink(body: string): boolean {
+  return body.split('\n').some((line) => {
+    const trimmed = line.trim().toLowerCase();
+    if (trimmed.startsWith('medya:')) return trimmed.slice(6).trim().length > 0;
+    if (trimmed.startsWith('link:')) return trimmed.slice(5).trim().length > 0;
+    return false;
+  });
+}
+
+function bodyHasPlainText(body: string): boolean {
+  const lines = body.split('\n');
+  const filtered: string[] = [];
+  for (const line of lines) {
+    const trimmed = line.trim().toLowerCase();
+    if (trimmed.startsWith('medya:') || trimmed.startsWith('link:')) continue;
+    filtered.push(line);
+  }
+  const text = filtered.join('\n').trim();
+  return text.length > 0 && text !== POLL_ONLY_CONTENT;
+}
+
+type PollPayload = { question?: string; options?: string[] } | undefined | null;
+
+function parsePollInput(poll: PollPayload) {
+  const pollQuestion = poll?.question?.trim?.() ?? '';
+  const pollOptions = Array.isArray(poll?.options)
+    ? poll.options.map((option: string) => String(option).trim()).filter(Boolean)
+    : [];
+  const hasPoll = pollQuestion.length > 0 && pollOptions.length >= 2;
+  return { pollQuestion, pollOptions, hasPoll };
+}
+
+function validateAnnouncementInput(title: unknown, body: unknown, poll: PollPayload): string | null {
+  const titleText = typeof title === 'string' ? title.trim() : '';
+  const { pollQuestion, pollOptions, hasPoll } = parsePollInput(poll);
+  const bodyText = typeof body === 'string' ? body.trim() : '';
+  const hasMediaLink = bodyHasMediaOrLink(bodyText);
+  const hasBodyText = bodyHasPlainText(bodyText);
+  const isMediaOnlyPost = hasMediaLink && !hasBodyText && !hasPoll;
+
+  if (!titleText && !isMediaOnlyPost) {
+    return 'Başlık gerekli';
+  }
+  if (!hasBodyText && !hasPoll && !hasMediaLink) {
+    return 'İçerik, medya/link URL veya geçerli bir anket (soru + en az 2 seçenek) gerekli';
+  }
+  if (pollQuestion && pollOptions.length < 2) {
+    return 'Anket için en az 2 seçenek gerekli';
+  }
+  if (pollOptions.length > 0 && !pollQuestion) {
+    return 'Anket sorusu gerekli';
+  }
+  return null;
+}
+
+function normalizeContent(body: string, hasPoll: boolean): string {
+  const trimmed = body.trim();
+  if (trimmed) return trimmed;
+  if (hasPoll) return POLL_ONLY_CONTENT;
+  return trimmed;
+}
+
 async function requireDeveloper(request: NextRequest): Promise<{ ok: boolean; response?: NextResponse; userId?: string }> {
   const auth = await requireSessionUser(request);
   if (!auth.ok) return auth;
@@ -127,15 +192,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const { title, body, lang = 'tr', poll } = await request.json();
-    if (!title?.trim() || !body?.trim()) {
-      return NextResponse.json({ error: 'Başlık ve içerik gerekli' }, { status: 400 });
+    const validationError = validateAnnouncementInput(title, body, poll);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const pollQuestion = poll?.question?.trim?.() ?? '';
-    const pollOptions = Array.isArray(poll?.options)
-      ? poll.options.map((option: string) => String(option).trim()).filter(Boolean)
-      : [];
-    const hasPoll = pollQuestion.length > 0 && pollOptions.length >= 2;
+    const { pollQuestion, pollOptions, hasPoll } = parsePollInput(poll);
+    const content = normalizeContent(typeof body === 'string' ? body : '', hasPoll);
 
     const supabaseServiceClient = getSupabaseServiceClient();
     if (!supabaseServiceClient) {
@@ -180,7 +243,7 @@ export async function POST(request: NextRequest) {
         announcement_id: announcement.id,
         lang_code: lang,
         title: title.trim(),
-        content: body.trim(),
+        content,
       })
       .select();
 
@@ -236,9 +299,13 @@ export async function PATCH(request: NextRequest) {
     if (!id) {
       return NextResponse.json({ error: 'Duyuru kimliği gerekli' }, { status: 400 });
     }
-    if (!title?.trim() || !body?.trim()) {
-      return NextResponse.json({ error: 'Başlık ve içerik gerekli' }, { status: 400 });
+    const validationError = validateAnnouncementInput(title, body, poll);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
+
+    const { pollQuestion, pollOptions, hasPoll } = parsePollInput(poll);
+    const content = normalizeContent(typeof body === 'string' ? body : '', hasPoll);
 
     const supabaseServiceClient = getSupabaseServiceClient();
     if (!supabaseServiceClient) {
@@ -259,7 +326,7 @@ export async function PATCH(request: NextRequest) {
       .from('announcement_translations')
       .update({
         title: title.trim(),
-        content: body.trim(),
+        content,
         updated_at: new Date().toISOString(),
       })
       .eq('announcement_id', id)
@@ -278,7 +345,7 @@ export async function PATCH(request: NextRequest) {
           announcement_id: id,
           lang_code: lang,
           title: title.trim(),
-          content: body.trim(),
+          content,
         });
 
       if (translationInsertError) {

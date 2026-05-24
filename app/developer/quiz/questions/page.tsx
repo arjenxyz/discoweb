@@ -108,7 +108,7 @@ export default function QuizQuestionsPage() {
         action: 'import_bank' as const,
         questions: arr.map((q: Record<string, unknown>) => ({
           id: q.id as string,
-          source_external_id: (q.source_external_id as string) ?? (q.id as string),
+          source_external_id: (q.id as string) ?? (q.source_external_id as string),
           category: q.category as string | undefined,
           difficulty: q.difficulty as 'easy' | 'medium' | 'hard' | undefined,
           correct_index: q.correct_index as number,
