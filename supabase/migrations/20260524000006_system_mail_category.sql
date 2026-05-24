@@ -1,5 +1,5 @@
 -- system_mails.category: 'system' kategorisini ekle (quiz ve sistem bildirimleri)
-DO $$
+DO $migrate$
 DECLARE
   cname text;
 BEGIN
@@ -9,6 +9,7 @@ BEGIN
   JOIN pg_namespace nsp ON nsp.oid = cls.relnamespace
   WHERE cls.relname = 'system_mails'
     AND nsp.nspname = 'public'
+    AND con.contype = 'c'
     AND pg_get_constraintdef(con.oid) ILIKE '%category%'
   LIMIT 1;
 
@@ -16,9 +17,11 @@ BEGIN
     EXECUTE format('ALTER TABLE public.system_mails DROP CONSTRAINT %I', cname);
   END IF;
 
-  EXECUTE $$ALTER TABLE public.system_mails
+  EXECUTE $sql$
+    ALTER TABLE public.system_mails
     ADD CONSTRAINT system_mails_category_check
     CHECK (category IN (
       'announcement','maintenance','sponsor','update','lottery','reward','order','system'
-    ));$$;
-END $$;
+    ))
+  $sql$;
+END $migrate$;
