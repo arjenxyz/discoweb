@@ -15,6 +15,7 @@ export type CustomRoleRequestRow = {
   role_name: string;
   role_color: number;
   role_emoji: string | null;
+  role_icon_url: string | null;
   hoist: boolean;
   mentionable: boolean;
   requester_note: string | null;

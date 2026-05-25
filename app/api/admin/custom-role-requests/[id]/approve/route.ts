@@ -9,6 +9,8 @@ import {
   createGuildRole,
   fetchGuildRoles,
   getBotMaxRolePosition,
+  dataUrlToIconBase64,
+  setGuildRoleIcon,
 } from '@/lib/customRoles/discord';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
@@ -89,6 +91,17 @@ export async function POST(request: Request, ctx: RouteCtx) {
     const roles = await fetchGuildRoles(botToken, guildId);
     const createdRole = roles.find((r) => r.id === created.id);
     const position = createdRole?.position ?? created.position ?? 0;
+
+    if (row.role_icon_url) {
+      const b64 = dataUrlToIconBase64(row.role_icon_url);
+      if (b64) {
+        try {
+          await setGuildRoleIcon(botToken, guildId, created.id, b64);
+        } catch (e) {
+          console.warn('[custom-role approve] icon upload failed', e);
+        }
+      }
+    }
 
     if (!canBotManageRole(botMax, position)) {
       await fetch(`https://discord.com/api/guilds/${guildId}/roles/${created.id}`, {

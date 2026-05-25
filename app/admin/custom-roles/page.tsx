@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { LuCheck, LuClock, LuSearch, LuShield, LuX } from 'react-icons/lu';
-import DiscordRolePreview from '../components/DiscordRolePreview';
+import DiscordProfileRolePreview from '../components/DiscordProfileRolePreview';
 import type { CustomRoleRequestRow } from '@/lib/customRoles/types';
 import { discordColorToHex } from '@/lib/customRoles/types';
 
@@ -242,12 +242,11 @@ export default function AdminCustomRolesPage() {
                   )}
                 </div>
                 <div className="w-full max-w-[260px] shrink-0">
-                  <DiscordRolePreview
+                  <DiscordProfileRolePreview
                     roleName={row.role_name}
                     roleColor={row.role_color}
-                    username="kazanan"
+                    roleIconUrl={row.role_icon_url}
                     displayName="Kazanan Üye"
-                    showHierarchyWarning={false}
                   />
                 </div>
                 {row.status === 'pending' && (
@@ -418,9 +417,10 @@ export default function AdminCustomRolesPage() {
               </div>
 
               <div>
-                <DiscordRolePreview
+                <DiscordProfileRolePreview
                   roleName={activeRequest.role_name}
                   roleColor={activeRequest.role_color}
+                  roleIconUrl={activeRequest.role_icon_url}
                   username={selectedMember?.username ?? 'kazanan'}
                   displayName={
                     selectedMember?.displayName ??
