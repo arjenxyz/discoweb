@@ -239,7 +239,8 @@
       "discount_list": "Discount List",
       "tag_booster": "Tag & Booster",
       "tag_settings": "Tag Settings",
-      "booster_settings": "Booster Settings"
+      "booster_settings": "Booster Settings",
+      "custom_roles": "Custom Role Requests"
     },
     "shell": {
       "default_server": "Data Center",

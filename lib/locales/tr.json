@@ -239,7 +239,8 @@
       "discount_list": "İndirim Listesi",
       "tag_booster": "Tag & Booster",
       "tag_settings": "Tag Ayarları",
-      "booster_settings": "Booster Ayarları"
+      "booster_settings": "Booster Ayarları",
+      "custom_roles": "Özel Rol Talepleri"
     },
     "shell": {
       "default_server": "Veri Merkezi",
