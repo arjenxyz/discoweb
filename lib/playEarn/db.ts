@@ -1,29 +1,11 @@
-import { cookies } from 'next/headers';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { DEFAULT_PLAY_EARN_CONFIG, type PlayEarnConfig } from './types';
-
-const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
 export function getSupabase(): SupabaseClient | null {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!supabaseUrl || !serviceRoleKey) return null;
   return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
-}
-
-export async function getSelectedGuildId(): Promise<string> {
-  const cookieStore = await cookies();
-  return cookieStore.get('selected_guild_id')?.value || GUILD_ID;
-}
-
-export async function getServerRow(supabase: SupabaseClient, discordGuildId: string) {
-  const { data } = await supabase
-    .from('servers')
-    .select('id, discord_id, is_setup')
-    .eq('discord_id', discordGuildId)
-    .eq('is_setup', true)
-    .maybeSingle();
-  return data;
 }
 
 export async function getOrCreateConfig(
@@ -56,43 +38,4 @@ export async function getOrCreateConfig(
   const row = { server_id: serverId, ...DEFAULT_PLAY_EARN_CONFIG };
   await supabase.from('play_earn_config').insert(row);
   return { ...DEFAULT_PLAY_EARN_CONFIG };
-}
-
-export async function getTodayStats(
-  supabase: SupabaseClient,
-  serverId: string,
-  userId: string,
-) {
-  const today = new Date().toISOString().split('T')[0];
-  const { data } = await supabase
-    .from('play_earn_daily_stats')
-    .select('*')
-    .eq('server_id', serverId)
-    .eq('user_id', userId)
-    .eq('stat_date', today)
-    .maybeSingle();
-  return data;
-}
-
-export async function bumpDailyStats(
-  supabase: SupabaseClient,
-  serverId: string,
-  userId: string,
-  patch: { sessions_count?: number; papel_converted_today?: number },
-) {
-  const today = new Date().toISOString().split('T')[0];
-  const current = await getTodayStats(supabase, serverId, userId);
-  const nextSessions = (current?.sessions_count ?? 0) + (patch.sessions_count ?? 0);
-  const nextPapel = Number(current?.papel_converted_today ?? 0) + (patch.papel_converted_today ?? 0);
-
-  await supabase.from('play_earn_daily_stats').upsert(
-    {
-      server_id: serverId,
-      user_id: userId,
-      stat_date: today,
-      sessions_count: nextSessions,
-      papel_converted_today: nextPapel,
-    },
-    { onConflict: 'server_id,user_id,stat_date' },
-  );
 }

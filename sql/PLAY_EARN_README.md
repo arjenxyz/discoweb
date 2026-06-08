@@ -1,21 +1,20 @@
 # Play & Earn — Kurulum
 
 1. Supabase SQL Editor'da `play_earn_migration.sql` dosyasını çalıştırın.
-2. Admin panel: `/admin/play-earn-settings` — jeton/Papel oranı ve limitler.
-3. Oyuncu sayfası: `/play-earn` (giriş yapmış üye gerekir).
+2. **Admin (discoweb-main):** `/admin/play-earn-settings` — jeton/Papel oranı, limitler ve oyun aç/kapa.
+3. **Oyuncu (activity-web):** Dashboard → Play & Earn — balık avı, jeton kazanımı ve Papel dönüşümü.
+
+## Mimari
+
+| Repo | Rol |
+|------|-----|
+| **activity-web** | Oyun UI, `FishingGame`, `/api/member/play-earn/*`, `public/games/fish` |
+| **discoweb-main** | Sadece admin API: `GET/PUT /api/admin/play-earn-settings` |
+
+Her iki uygulama aynı Supabase tablolarını paylaşır (`play_earn_config`, `play_earn_sessions`, vb.).
 
 ## Balık Jetonu
 
 - Tur sırasında sunucu doğrulamalı yakalamalarla kazanılır.
 - `member_wallets.fish_token_balance` sütununda tutulur.
-- Papel'e dönüşüm: `POST /api/member/play-earn/convert`
-
-## Discord Activity (activity-web)
-
-Activity istemcisi aynı Supabase ve API'leri kullanmalıdır. Bileşenler `discoweb-main` içinde:
-
-- `components/play-earn/FishingGame.tsx`
-- `app/play-earn/page.tsx`
-- `app/api/member/play-earn/*`
-
-Activity repo'ya entegre ederken bu dosyaları kopyalayıp dashboard menüsüne `play-earn` section ekleyin.
+- Papel'e dönüşüm: `POST /api/member/play-earn/convert` (activity-web)
