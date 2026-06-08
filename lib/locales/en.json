@@ -9,7 +9,8 @@
     "user_management": "User Management",
     "global_announcements": "Global Announcements",
     "back_to_select": "Back to Select Server",
-    "quiz_events": "Quiz Events"
+    "quiz_events": "Quiz Events",
+    "play_earn_settings": "Play & Earn"
   },
   "common": {
     "loading": "Loading...",
@@ -222,6 +223,26 @@
       "suffix_message": "(message)",
       "suffix_voice": "(voice)",
       "no_channels_selected": "No channels selected yet."
+    },
+    "play_earn": {
+      "title": "Play & Earn Economy",
+      "subtitle": "Manage Fish Token rewards and Papel conversion rates.",
+      "save": "Save",
+      "undo": "Undo",
+      "save_success": "Play & Earn settings saved.",
+      "save_error": "Save failed.",
+      "load_error": "Failed to load settings.",
+      "default": "Default",
+      "field_enabled": "Game enabled",
+      "field_jeton_per_papel": "Jetons per 1 Papel",
+      "field_daily_cap": "Daily Papel conversion cap",
+      "field_min_convert": "Minimum conversion (jetons)",
+      "field_session_duration": "Round duration (sec)",
+      "field_cooldown": "Cooldown between rounds (sec)",
+      "field_max_sessions": "Max rounds per day",
+      "field_ramp_interval": "Difficulty ramp interval (sec)",
+      "field_speed_ramp": "Speed increase (% per phase)",
+      "field_spawn_ramp": "Spawn density increase (% per phase)"
     },
     "menu": {
       "group_general": "General",
