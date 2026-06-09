@@ -81,6 +81,9 @@ function EventsPanel() {
     description: '',
     lang: 'tr',
     start_at: '',
+    total_questions: 25,
+    seconds_per_question: 20,
+    wrong_allowed: 3,
     prize_pool_papel: 5000,
     cp1_pos: 8,
     cp1_reward: 25,
@@ -125,6 +128,9 @@ function EventsPanel() {
           description: form.description,
           lang: form.lang.toLowerCase(),
           start_at: new Date(form.start_at).toISOString(),
+          total_questions: Number(form.total_questions),
+          seconds_per_question: Number(form.seconds_per_question),
+          wrong_allowed: Number(form.wrong_allowed),
           prize_pool_papel: Number(form.prize_pool_papel),
           checkpoints,
         }),
@@ -169,6 +175,7 @@ function EventsPanel() {
               <th className="px-3 py-2">Dil</th>
               <th className="px-3 py-2">Başlık</th>
               <th className="px-3 py-2">Başlangıç</th>
+              <th className="px-3 py-2">Soru</th>
               <th className="px-3 py-2">Havuz</th>
               <th className="px-3 py-2">Checkpoint</th>
               <th className="px-3 py-2"></th>
@@ -176,10 +183,10 @@ function EventsPanel() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {loading && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>
             )}
             {!loading && events.length === 0 && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center text-white/40">Etkinlik yok</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center text-white/40">Etkinlik yok</td></tr>
             )}
             {!loading && events.map((e) => (
               <tr key={e.id} className="hover:bg-white/[0.02]">
@@ -191,6 +198,7 @@ function EventsPanel() {
                 </td>
                 <td className="px-3 py-2 text-white/90">{e.title}</td>
                 <td className="px-3 py-2 text-white/60">{new Date(e.start_at).toLocaleString('tr-TR')}</td>
+                <td className="px-3 py-2 text-white/70">{e.total_questions}</td>
                 <td className="px-3 py-2 text-amber-300">{Number(e.prize_pool_papel).toLocaleString('tr-TR')}</td>
                 <td className="px-3 py-2 text-white/60">{e.checkpoints.map(c => `${c.position}→${c.papel_reward}`).join(' · ')}</td>
                 <td className="px-3 py-2">
@@ -227,7 +235,42 @@ function EventsPanel() {
                 <select value={form.lang} onChange={(e) => setForm({ ...form, lang: e.target.value })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white">
                   {Object.entries(LANG_LABELS).map(([c, l]) => <option key={c} value={c}>{l} ({c})</option>)}
                 </select>
-                <span className="mt-1 block text-xs text-white/40">Soru havuzunda bu dilde 25 hazır soru olmalı.</span>
+                <span className="mt-1 block text-xs text-white/40">
+                  Soru havuzunda bu dilde <strong>{form.total_questions}</strong> hazır soru olmalı.
+                </span>
+              </label>
+              <label className="block text-sm text-white/70">
+                Toplam Soru
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={form.total_questions}
+                  onChange={(e) => setForm({ ...form, total_questions: Number(e.target.value) })}
+                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
+                />
+              </label>
+              <label className="block text-sm text-white/70">
+                Soru Başı Süre (sn)
+                <input
+                  type="number"
+                  min={5}
+                  max={60}
+                  value={form.seconds_per_question}
+                  onChange={(e) => setForm({ ...form, seconds_per_question: Number(e.target.value) })}
+                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
+                />
+              </label>
+              <label className="block text-sm text-white/70">
+                Yanlış Hakkı
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={form.wrong_allowed}
+                  onChange={(e) => setForm({ ...form, wrong_allowed: Number(e.target.value) })}
+                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
+                />
               </label>
               <label className="block text-sm text-white/70">
                 Başlangıç
