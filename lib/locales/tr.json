@@ -9,8 +9,7 @@
     "user_management": "Kullanıcı Yönetimi",
     "global_announcements": "Küresel Duyuru",
     "back_to_select": "Sunucu Seçimine Dön",
-    "quiz_events": "Quiz Etkinlikleri",
-    "play_earn_settings": "Play & Earn"
+    "quiz_events": "Quiz Etkinlikleri"
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -223,26 +222,6 @@
       "suffix_message": "(mesaj)",
       "suffix_voice": "(ses)",
       "no_channels_selected": "Henüz kanal seçilmedi."
-    },
-    "play_earn": {
-      "title": "Play & Earn Ekonomisi",
-      "subtitle": "Balık Jetonu kazancı ve Papel dönüşüm oranlarını yönetin.",
-      "save": "Kaydet",
-      "undo": "Geri Al",
-      "save_success": "Play & Earn ayarları kaydedildi.",
-      "save_error": "Kaydetme başarısız.",
-      "load_error": "Ayarlar yüklenemedi.",
-      "default": "Varsayılan",
-      "field_enabled": "Oyun açık",
-      "field_jeton_per_papel": "Jeton başına 1 Papel (kaç jeton = 1 papel)",
-      "field_daily_cap": "Günlük max Papel dönüşümü",
-      "field_min_convert": "Minimum dönüşüm (jeton)",
-      "field_session_duration": "Tur süresi (sn)",
-      "field_cooldown": "Turlar arası bekleme (sn)",
-      "field_max_sessions": "Günlük max tur",
-      "field_ramp_interval": "Zorluk artış aralığı (sn)",
-      "field_speed_ramp": "Hız artışı (% / faz)",
-      "field_spawn_ramp": "Spawn sıkılığı artışı (% / faz)"
     },
     "menu": {
       "group_general": "Genel",

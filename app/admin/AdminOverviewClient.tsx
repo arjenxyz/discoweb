@@ -21,7 +21,6 @@ import {
   LuSettings,
   LuBell,
   LuStore,
-  LuFish,
 } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
 import { getLocaleTag } from '@/lib/i18n/languages';
@@ -243,7 +242,6 @@ export default function AdminOverviewClient({
             { href: '/admin/store/discounts/new', label: t('admin.dashboard.action_discount'), icon: <LuCoins className="h-5 w-5" />, color: 'text-amber-300' },
             { href: '/admin/log-channels', label: t('admin.dashboard.action_log_channels'), icon: <LuDatabase className="h-5 w-5" />, color: 'text-cyan-300' },
             { href: '/admin/earn-settings', label: t('admin.dashboard.earn_settings'), icon: <LuSettings className="h-5 w-5" />, color: 'text-indigo-300' },
-            { href: '/admin/play-earn-settings', label: t('sidebar.play_earn_settings'), icon: <LuFish className="h-5 w-5" />, color: 'text-cyan-300' },
             { href: '/admin/guide', label: t('admin.dashboard.action_guide'), icon: <LuStore className="h-5 w-5" />, color: 'text-white/50' },
           ].map((action) => (
             <Link
