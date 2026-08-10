@@ -7,7 +7,7 @@ import { useTranslation } from '@/lib/i18nContext';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { siteConfig } from '@/config/site';
-import { LuCode } from 'react-icons/lu';
+import { LuCode, LuLogOut } from 'react-icons/lu';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -337,6 +337,28 @@ export default function CuteNavbar() {
     };
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      localStorage.clear();
+      if (typeof document !== 'undefined') {
+        document.cookie.split(';').forEach((c) => {
+          const name = c.split('=')[0].trim();
+          try {
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
+          } catch {
+            // ignore
+          }
+        });
+      }
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      window.location.href = '/';
+    } catch {
+      localStorage.clear();
+      window.location.href = '/';
+    }
+  };
+
   const onFabPointerDown = (e: ReactPointerEvent<HTMLButtonElement>) => {
     if (!fabPos) return;
     e.preventDefault();
@@ -579,40 +601,53 @@ export default function CuteNavbar() {
 
           {onSelectServer && <div className="hidden flex-1 md:block" aria-hidden />}
 
-          <div className="flex items-center gap-2 lg:gap-3 shrink-0 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0 min-w-0">
             {/* Home: always show language. Elsewhere: desktop only (mobile sheet has it). */}
             <div className={onHome ? 'block' : 'hidden md:block'}>
               <LanguageSwitcher />
             </div>
-            {isDeveloper && onSelectServer && (
+
+            {onSelectServer && isDeveloper && (
               <Link
                 href="/developer"
-                className="hidden md:inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-3 text-xs font-semibold text-white/85 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/20 hover:text-white lg:px-3.5"
+                className="hidden md:inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-3 text-xs font-semibold text-white/85 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/20 hover:text-white"
               >
                 <LuCode className="h-3.5 w-3.5 shrink-0 opacity-90" />
                 {t('navbar.developer')}
               </Link>
             )}
+
+            {onSelectServer && isLoggedIn && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="hidden md:inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/10 px-3 text-xs font-semibold text-white/55 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
+              >
+                <LuLogOut className="h-3.5 w-3.5 shrink-0" />
+                {t('navbar.logout')}
+              </button>
+            )}
+
             {isLoggedIn ? (
               onSelectServer ? (
                 <a
                   href={botInviteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hidden md:inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300 lg:px-5"
+                  className="hidden md:inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#4752c4] lg:px-5 lg:text-sm"
                 >
                   {t('navbar.add_bot')}
                 </a>
               ) : (
                 <Link
                   href="/auth/select-server"
-                  className="hidden md:inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300 lg:px-5"
+                  className="hidden md:inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#4752c4] lg:px-5 lg:text-sm"
                 >
                   {t('navbar.continue')}
                 </Link>
               )
             ) : (
-              <Link 
+              <Link
                 href={DISCORD_LOGIN_URL}
                 onMouseEnter={() => setOpenMenu('login')}
                 onMouseLeave={() => setOpenMenu(null)}
@@ -624,7 +659,7 @@ export default function CuteNavbar() {
                     return;
                   }
                 }}
-                className={`hidden md:inline-flex items-center justify-center gap-2 whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full transition-all duration-300 lg:px-5 ${
+                className={`hidden md:inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-xs font-bold transition-all duration-300 lg:px-5 lg:text-sm ${
                   openMenu === 'login'
                     ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
                     : 'text-white hover:bg-white/10'
@@ -741,20 +776,33 @@ export default function CuteNavbar() {
               )}
             </nav>
 
-            <div className="mt-6 shrink-0 space-y-5">
+            <div className="mt-6 shrink-0 space-y-3">
               {!onHome && <LanguageSwitcher variant="menu" />}
 
               {isLoggedIn ? (
                 onSelectServer ? (
-                  <a
-                    href={botInviteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMobileOpen(false)}
-                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
-                  >
-                    {t('navbar.add_bot')}
-                  </a>
+                  <>
+                    <a
+                      href={botInviteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileOpen(false)}
+                      className="inline-flex w-full items-center justify-center rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
+                    >
+                      {t('navbar.add_bot')}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        void handleLogout();
+                      }}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 py-3.5 text-sm font-semibold text-white/60 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
+                    >
+                      <LuLogOut className="h-4 w-4" />
+                      {t('navbar.logout')}
+                    </button>
+                  </>
                 ) : (
                   <Link
                     href="/auth/select-server"

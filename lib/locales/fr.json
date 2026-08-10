@@ -25,6 +25,7 @@
     "continue": "Continuer",
     "add_bot": "Ajouter le bot au serveur",
     "back_home_hint": "Cliquez pour revenir à l’accueil",
+    "logout": "Se déconnecter",
     "login": "Connexion",
     "connect_discord": "Se connecter avec Discord",
     "login_error": "Échec de la connexion : l'ID client Discord ou l'URI de redirection n'est pas configuré. Vérifiez NEXT_PUBLIC_DISCORD_CLIENT_ID et NEXT_PUBLIC_REDIRECT_URI.",

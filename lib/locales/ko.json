@@ -25,6 +25,7 @@
     "continue": "계속",
     "add_bot": "서버에 봇 추가",
     "back_home_hint": "홈으로 가려면 클릭하세요",
+    "logout": "로그아웃",
     "login": "로그인",
     "connect_discord": "Discord로 연결",
     "login_error": "로그인 실패: Discord 클라이언트 ID 또는 리다이렉트 URI가 설정되지 않았습니다. NEXT_PUBLIC_DISCORD_CLIENT_ID와 NEXT_PUBLIC_REDIRECT_URI를 확인하세요.",

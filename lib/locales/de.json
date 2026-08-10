@@ -25,6 +25,7 @@
     "continue": "Weiter",
     "add_bot": "Bot zum Server hinzufügen",
     "back_home_hint": "Klicken, um zur Startseite zu gehen",
+    "logout": "Abmelden",
     "login": "Anmelden",
     "connect_discord": "Mit Discord verbinden",
     "login_error": "Anmeldung fehlgeschlagen: Discord-Client-ID oder Redirect-URI ist nicht konfiguriert. Prüfe NEXT_PUBLIC_DISCORD_CLIENT_ID und NEXT_PUBLIC_REDIRECT_URI.",
