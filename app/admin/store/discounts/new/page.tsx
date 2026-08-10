@@ -43,9 +43,9 @@ export default function AdminStoreDiscountCreatePage() {
     const payload = {
       code: code.toUpperCase(),
       percent: Number(percent),
-      maxUses: maxUses ? Number(maxUses) : null,
-      minSpend: minSpend ? Number(minSpend) : 0,
-      perUserLimit: perUserLimit ? Number(perUserLimit) : 1,
+      maxUses: activeTab === 'welcome' ? null : maxUses ? Number(maxUses) : null,
+      minSpend: activeTab === 'welcome' ? 0 : minSpend ? Number(minSpend) : 0,
+      perUserLimit: activeTab === 'welcome' ? 1 : perUserLimit ? Number(perUserLimit) : 1,
       status: 'active' as const,
       expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
       is_special: false,
@@ -170,7 +170,7 @@ export default function AdminStoreDiscountCreatePage() {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className={`grid gap-3 ${activeTab === 'welcome' ? '' : 'sm:grid-cols-2'}`}>
             <div>
               <label className={labelClass}>Oran (%)</label>
               <input
@@ -183,41 +183,45 @@ export default function AdminStoreDiscountCreatePage() {
                 className={fieldClass}
               />
             </div>
-            <div>
-              <label className={labelClass}>Kullanım limiti</label>
-              <input
-                type="number"
-                value={maxUses}
-                onChange={(e) => setMaxUses(e.target.value)}
-                placeholder="Sınırsız"
-                className={fieldClass}
-              />
-            </div>
+            {activeTab !== 'welcome' && (
+              <div>
+                <label className={labelClass}>Kullanım limiti</label>
+                <input
+                  type="number"
+                  value={maxUses}
+                  onChange={(e) => setMaxUses(e.target.value)}
+                  placeholder="Sınırsız"
+                  className={fieldClass}
+                />
+              </div>
+            )}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Min. sepet</label>
-              <input
-                type="number"
-                value={minSpend}
-                onChange={(e) => setMinSpend(e.target.value)}
-                placeholder="0"
-                className={fieldClass}
-              />
+          {activeTab !== 'welcome' && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className={labelClass}>Min. sepet</label>
+                <input
+                  type="number"
+                  value={minSpend}
+                  onChange={(e) => setMinSpend(e.target.value)}
+                  placeholder="0"
+                  className={fieldClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Kişi başı limit</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={perUserLimit}
+                  onChange={(e) => setPerUserLimit(e.target.value)}
+                  placeholder="1"
+                  className={fieldClass}
+                />
+              </div>
             </div>
-            <div>
-              <label className={labelClass}>Kişi başı limit</label>
-              <input
-                type="number"
-                min="1"
-                value={perUserLimit}
-                onChange={(e) => setPerUserLimit(e.target.value)}
-                placeholder="1"
-                className={fieldClass}
-              />
-            </div>
-          </div>
+          )}
 
           <div>
             <label className={labelClass}>Bitiş</label>
