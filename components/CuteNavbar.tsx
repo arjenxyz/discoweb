@@ -794,9 +794,6 @@ export default function CuteNavbar() {
                       </li>
                     ))}
                   </ol>
-                  <p className="mt-4 text-[11px] leading-4 text-white/35">
-                    {t('navbar.select_menu_note')}
-                  </p>
                 </>
               ) : (
                 <>

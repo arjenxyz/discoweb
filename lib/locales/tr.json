@@ -53,7 +53,6 @@
     "select_menu_step_2_body": "Yetkileri senkron için Yenile’ye basın veya botu o Discord sunucusuna ekleyin.",
     "select_menu_step_3_title": "Kurulum, sonra panel",
     "select_menu_step_3_body": "İlk kez girilen sunucularda kısa kurulum gerekir. Sonra admin paneline geçersiniz.",
-    "select_menu_note": "Admin yetkisi olmayan üyeler burada sunucu yönetemez.",
     "home_overview": "Genel Bakış",
     "home_features": "Özellikler",
     "home_panel_title": "Yalnızca sunucu adminleri",
