@@ -311,6 +311,8 @@ export default function SetupPage() {
   const [tagBonusVoice, setTagBonusVoice] = useState('0.25');
   const [boosterBonusMessage, setBoosterBonusMessage] = useState('1');
   const [boosterBonusVoice, setBoosterBonusVoice] = useState('0.5');
+  const [tagBonusEnabled, setTagBonusEnabled] = useState(true);
+  const [boosterBonusEnabled, setBoosterBonusEnabled] = useState(true);
 
   // Flow control
   const [loading, setLoading] = useState(true);
@@ -567,6 +569,14 @@ export default function SetupPage() {
               if (setupStatus.tag_bonus_voice != null) setTagBonusVoice(String(setupStatus.tag_bonus_voice));
               if (setupStatus.booster_bonus_message != null) setBoosterBonusMessage(String(setupStatus.booster_bonus_message));
               if (setupStatus.booster_bonus_voice != null) setBoosterBonusVoice(String(setupStatus.booster_bonus_voice));
+              setTagBonusEnabled(
+                Number(setupStatus.tag_bonus_message ?? 0) > 0 ||
+                  Number(setupStatus.tag_bonus_voice ?? 0) > 0,
+              );
+              setBoosterBonusEnabled(
+                Number(setupStatus.booster_bonus_message ?? 0) > 0 ||
+                  Number(setupStatus.booster_bonus_voice ?? 0) > 0,
+              );
             }
           }
         }
@@ -654,10 +664,10 @@ export default function SetupPage() {
           voiceEarnEnabled,
           earnPerMessage: messageEarnEnabled ? Number(earnPerMessage) : 0,
           earnPerVoiceMinute: voiceEarnEnabled ? Number(earnPerVoiceMinute) : 0,
-          tagBonusMessage: Number(tagBonusMessage),
-          tagBonusVoice: Number(tagBonusVoice),
-          boosterBonusMessage: Number(boosterBonusMessage),
-          boosterBonusVoice: Number(boosterBonusVoice),
+          tagBonusMessage: tagBonusEnabled ? Number(tagBonusMessage) : 0,
+          tagBonusVoice: tagBonusEnabled ? Number(tagBonusVoice) : 0,
+          boosterBonusMessage: boosterBonusEnabled ? Number(boosterBonusMessage) : 0,
+          boosterBonusVoice: boosterBonusEnabled ? Number(boosterBonusVoice) : 0,
         }),
       });
 
@@ -1101,20 +1111,46 @@ export default function SetupPage() {
                   <p className="mb-4 text-sm text-white/50">Tag ve boost için ekstra papel.</p>
 
                   <div className="space-y-2.5">
-                    <div className="rounded-xl border border-purple-500/30 bg-purple-500/5 px-3.5 py-3">
+                    <div
+                      className={`rounded-xl border px-3.5 py-3 transition-all duration-200 ${
+                        tagBonusEnabled
+                          ? 'border-purple-500/30 bg-purple-500/5'
+                          : 'border-white/10 bg-white/5'
+                      }`}
+                    >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-400">
+                        <div
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                            tagBonusEnabled
+                              ? 'bg-purple-500/20 text-purple-400'
+                              : 'bg-white/10 text-white/40'
+                          }`}
+                        >
                           <LuTag className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="text-sm font-semibold text-white">Tag Bonusu</h3>
                           <p className="text-[11px] text-white/45">İsminde sunucu tagı olanlar</p>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => setTagBonusEnabled(!tagBonusEnabled)}
+                          className={`relative h-5 w-9 shrink-0 overflow-hidden rounded-full transition-colors ${
+                            tagBonusEnabled ? 'bg-purple-500' : 'bg-white/20'
+                          }`}
+                          aria-pressed={tagBonusEnabled}
+                        >
+                          <span
+                            className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                              tagBonusEnabled ? 'translate-x-4' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
                       </div>
-                      <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
-                        <div>
-                          <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
-                          <div className="flex items-center gap-1.5">
+                      {tagBonusEnabled && (
+                        <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
+                          <div>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
                             <input
                               type="number"
                               min="0"
@@ -1123,12 +1159,9 @@ export default function SetupPage() {
                               onChange={(e) => setTagBonusMessage(e.target.value)}
                               className="w-full rounded-lg border border-purple-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-purple-300 focus:border-purple-500 focus:outline-none"
                             />
-                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
-                        </div>
-                        <div>
-                          <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
-                          <div className="flex items-center gap-1.5">
+                          <div>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
                             <input
                               type="number"
                               min="0"
@@ -1137,26 +1170,51 @@ export default function SetupPage() {
                               onChange={(e) => setTagBonusVoice(e.target.value)}
                               className="w-full rounded-lg border border-purple-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-purple-300 focus:border-purple-500 focus:outline-none"
                             />
-                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
 
-                    <div className="rounded-xl border border-pink-500/30 bg-pink-500/5 px-3.5 py-3">
+                    <div
+                      className={`rounded-xl border px-3.5 py-3 transition-all duration-200 ${
+                        boosterBonusEnabled
+                          ? 'border-pink-500/30 bg-pink-500/5'
+                          : 'border-white/10 bg-white/5'
+                      }`}
+                    >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pink-500/20 text-pink-400">
+                        <div
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                            boosterBonusEnabled
+                              ? 'bg-pink-500/20 text-pink-400'
+                              : 'bg-white/10 text-white/40'
+                          }`}
+                        >
                           <LuRocket className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="text-sm font-semibold text-white">Boost Bonusu</h3>
                           <p className="text-[11px] text-white/45">Sunucuyu boostlayanlar</p>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => setBoosterBonusEnabled(!boosterBonusEnabled)}
+                          className={`relative h-5 w-9 shrink-0 overflow-hidden rounded-full transition-colors ${
+                            boosterBonusEnabled ? 'bg-pink-500' : 'bg-white/20'
+                          }`}
+                          aria-pressed={boosterBonusEnabled}
+                        >
+                          <span
+                            className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                              boosterBonusEnabled ? 'translate-x-4' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
                       </div>
-                      <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
-                        <div>
-                          <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
-                          <div className="flex items-center gap-1.5">
+                      {boosterBonusEnabled && (
+                        <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
+                          <div>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
                             <input
                               type="number"
                               min="0"
@@ -1165,12 +1223,9 @@ export default function SetupPage() {
                               onChange={(e) => setBoosterBonusMessage(e.target.value)}
                               className="w-full rounded-lg border border-pink-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-pink-300 focus:border-pink-500 focus:outline-none"
                             />
-                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
-                        </div>
-                        <div>
-                          <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
-                          <div className="flex items-center gap-1.5">
+                          <div>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
                             <input
                               type="number"
                               min="0"
@@ -1179,10 +1234,9 @@ export default function SetupPage() {
                               onChange={(e) => setBoosterBonusVoice(e.target.value)}
                               className="w-full rounded-lg border border-pink-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-pink-300 focus:border-pink-500 focus:outline-none"
                             />
-                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
