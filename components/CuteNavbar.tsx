@@ -473,69 +473,73 @@ export default function CuteNavbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex flex-1 items-center justify-center gap-0.5 lg:gap-2 min-w-0">
-            {/* --- ANA SAYFA --- */}
-            <div
-              className="relative group shrink-0"
-              onMouseEnter={() => setOpenMenu('home')}
-              onMouseLeave={() => setOpenMenu(null)}
-            >
-              <button
-                className={`flex items-center whitespace-nowrap px-3 py-2.5 font-medium transition-all duration-200 rounded-full lg:px-5 ${
-                  openMenu === 'home'
-                    ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
-                    : 'text-white/80 hover:text-white hover:bg-white/5'
-                }`}
+          {!isLoggedIn && (
+            <div className="hidden md:flex flex-1 items-center justify-center gap-0.5 lg:gap-2 min-w-0">
+              {/* --- ANA SAYFA --- */}
+              <div
+                className="relative group shrink-0"
+                onMouseEnter={() => setOpenMenu('home')}
+                onMouseLeave={() => setOpenMenu(null)}
               >
-                {t('navbar.home')}
-                <ChevronIcon isOpen={openMenu === 'home'} />
-              </button>
+                <button
+                  className={`flex items-center whitespace-nowrap px-3 py-2.5 font-medium transition-all duration-200 rounded-full lg:px-5 ${
+                    openMenu === 'home'
+                      ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
+                      : 'text-white/80 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {t('navbar.home')}
+                  <ChevronIcon isOpen={openMenu === 'home'} />
+                </button>
 
-              {openMenu === 'home' && (
-                <NavInfoPanel
-                  title={t('navbar.home_panel_title')}
-                  body={t('navbar.home_panel_body')}
-                  note={t('navbar.home_panel_note')}
-                  gifSrc="/gif/from.gif"
-                />
-              )}
-            </div>
+                {openMenu === 'home' && (
+                  <NavInfoPanel
+                    title={t('navbar.home_panel_title')}
+                    body={t('navbar.home_panel_body')}
+                    note={t('navbar.home_panel_note')}
+                    gifSrc="/gif/from.gif"
+                  />
+                )}
+              </div>
 
-            {/* --- DEVELOPER --- */}
-            <div
-              className="relative group shrink-0"
-              onMouseEnter={() => setOpenMenu('developer')}
-              onMouseLeave={() => setOpenMenu(null)}
-            >
-              <button
-                className={`flex items-center whitespace-nowrap px-3 py-2.5 font-medium transition-all duration-200 rounded-full lg:px-5 ${
-                  openMenu === 'developer'
-                    ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
-                    : 'text-white/80 hover:text-white hover:bg-white/5'
-                }`}
+              {/* --- DEVELOPER --- */}
+              <div
+                className="relative group shrink-0"
+                onMouseEnter={() => setOpenMenu('developer')}
+                onMouseLeave={() => setOpenMenu(null)}
               >
-                {t('navbar.developer')}
-                <ChevronIcon isOpen={openMenu === 'developer'} />
-              </button>
+                <button
+                  className={`flex items-center whitespace-nowrap px-3 py-2.5 font-medium transition-all duration-200 rounded-full lg:px-5 ${
+                    openMenu === 'developer'
+                      ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
+                      : 'text-white/80 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {t('navbar.developer')}
+                  <ChevronIcon isOpen={openMenu === 'developer'} />
+                </button>
 
-              {openMenu === 'developer' && (
-                <NavInfoPanel
-                  title={t('navbar.developer_panel_title')}
-                  body={t('navbar.developer_panel_body')}
-                  note={t('navbar.developer_panel_note')}
-                  gifSrc="/gif/sungoandpato.gif"
-                />
-              )}
+                {openMenu === 'developer' && (
+                  <NavInfoPanel
+                    title={t('navbar.developer_panel_title')}
+                    body={t('navbar.developer_panel_body')}
+                    note={t('navbar.developer_panel_note')}
+                    gifSrc="/gif/sungoandpato.gif"
+                  />
+                )}
+              </div>
+
+              {/* --- STATUS --- */}
+              <Link
+                href="/status"
+                className="shrink-0 whitespace-nowrap px-3 py-2.5 font-medium text-white/80 hover:text-white hover:bg-white/5 rounded-full transition-all duration-200 lg:px-5"
+              >
+                {t('navbar.status')}
+              </Link>
             </div>
+          )}
 
-            {/* --- STATUS --- */}
-            <Link
-              href="/status"
-              className="shrink-0 whitespace-nowrap px-3 py-2.5 font-medium text-white/80 hover:text-white hover:bg-white/5 rounded-full transition-all duration-200 lg:px-5"
-            >
-              {t('navbar.status')}
-            </Link>
-          </div>
+          {isLoggedIn && <div className="hidden flex-1 md:block" aria-hidden />}
 
           <div className="flex items-center gap-2 lg:gap-3 shrink-0 min-w-0">
             <LanguageSwitcher />
@@ -625,32 +629,36 @@ export default function CuteNavbar() {
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
-              <button
-                type="button"
-                onClick={() => setMobileSubmenu('home')}
-                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left text-white/70 transition-colors hover:text-white"
-              >
-                <span className="text-lg font-semibold">{t('navbar.home')}</span>
-                <span className="text-sm text-white/25">→</span>
-              </button>
+              {!isLoggedIn && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setMobileSubmenu('home')}
+                    className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left text-white/70 transition-colors hover:text-white"
+                  >
+                    <span className="text-lg font-semibold">{t('navbar.home')}</span>
+                    <span className="text-sm text-white/25">→</span>
+                  </button>
 
-              <button
-                type="button"
-                onClick={() => setMobileSubmenu('developer')}
-                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left text-white/70 transition-colors hover:text-white"
-              >
-                <span className="text-lg font-semibold">{t('navbar.developer')}</span>
-                <span className="text-sm text-white/25">→</span>
-              </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileSubmenu('developer')}
+                    className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left text-white/70 transition-colors hover:text-white"
+                  >
+                    <span className="text-lg font-semibold">{t('navbar.developer')}</span>
+                    <span className="text-sm text-white/25">→</span>
+                  </button>
 
-              <Link
-                href="/status"
-                onClick={() => setMobileOpen(false)}
-                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-lg font-semibold text-white/70 transition-colors hover:text-white"
-              >
-                {t('navbar.status')}
-                <span className="text-sm text-white/25">→</span>
-              </Link>
+                  <Link
+                    href="/status"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-lg font-semibold text-white/70 transition-colors hover:text-white"
+                  >
+                    {t('navbar.status')}
+                    <span className="text-sm text-white/25">→</span>
+                  </Link>
+                </>
+              )}
             </nav>
 
             <div className="mt-6 shrink-0">
