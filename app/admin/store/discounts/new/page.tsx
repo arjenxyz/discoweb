@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { LuWand } from 'react-icons/lu';
+import { LuStore, LuWand } from 'react-icons/lu';
 
 type TabType = 'single' | 'welcome';
 
@@ -253,18 +253,42 @@ export default function AdminStoreDiscountCreatePage() {
           )}
 
           {activeTab !== 'welcome' && (
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-black/20 px-3.5 py-3">
-              <input
-                type="checkbox"
-                checked={isSpecial}
-                onChange={(e) => setIsSpecial(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black/50 text-[#5865F2] focus:ring-[#5865F2]"
-              />
-              <span className="min-w-0">
-                <span className="block text-sm font-medium text-white/80">Sepette göster</span>
-                <span className="text-xs text-white/40">Sepette herkese görünür.</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isSpecial}
+              onClick={() => setIsSpecial((prev) => !prev)}
+              className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition ${
+                isSpecial
+                  ? 'border-[#5865F2]/40 bg-[#5865F2]/15'
+                  : 'border-white/10 bg-black/20 hover:border-white/20'
+              }`}
+            >
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                  isSpecial ? 'bg-[#5865F2]/30 text-[#a5b4ff]' : 'bg-white/[0.06] text-white/45'
+                }`}
+              >
+                <LuStore className="h-4 w-4" />
               </span>
-            </label>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-medium text-white">Sepette göster</span>
+                <span className="mt-0.5 block text-xs leading-snug text-white/40">
+                  Üyeler kuponu yazmadan sepette görür ve seçebilir.
+                </span>
+              </span>
+              <span
+                className={`relative h-5 w-9 shrink-0 rounded-full transition ${
+                  isSpecial ? 'bg-[#5865F2]' : 'bg-white/15'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition ${
+                    isSpecial ? 'left-[18px]' : 'left-0.5'
+                  }`}
+                />
+              </span>
+            </button>
           )}
 
           <div className="pt-1">
