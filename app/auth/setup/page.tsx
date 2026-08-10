@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown } from 'react-icons/lu';
+import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 
 interface DiscordRole {
   id: string;
@@ -28,26 +29,27 @@ const STEPS = [
   { id: 'confirm', title: 'Kurulum',           icon: LuCheck,       description: 'Sistemi devreye al' },
 ];
 
+function readSelectedGuildId(): string | null {
+  if (typeof window === 'undefined') return null;
+  const cookies = document.cookie.split('; ');
+  const guildCookie = cookies.find((row) => row.startsWith('selected_guild_id='));
+  if (guildCookie) return guildCookie.split('=')[1] || null;
+  return localStorage.getItem('selectedGuildId');
+}
+
 export default function SetupPage() {
   const router = useRouter();
-  const [user] = useState<DiscordUser | null>(() => {
+  const [user, setUser] = useState<DiscordUser | null>(() => {
     if (typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('discordUser');
       if (storedUser) {
-        try { return JSON.parse(storedUser); } catch (error) { return null; }
+        try { return JSON.parse(storedUser); } catch { return null; }
       }
     }
     return null;
   });
 
-  const [guildId] = useState<string | null>(() => {
-    if (typeof window !== 'undefined') {
-      const cookies = document.cookie.split('; ');
-      const guildCookie = cookies.find(row => row.startsWith('selected_guild_id='));
-      return guildCookie ? guildCookie.split('=')[1] : null;
-    }
-    return null;
-  });
+  const [guildId, setGuildId] = useState<string | null>(() => readSelectedGuildId());
 
   const [guildName, setGuildName] = useState<string>('');
   const [guildIcon, setGuildIcon] = useState<string | null>(null);
@@ -110,48 +112,124 @@ export default function SetupPage() {
 
   useEffect(() => {
     const checkPermissionsAndLoadData = async () => {
-      if (!guildId || !user) {
+      let resolvedGuildId = guildId ?? readSelectedGuildId();
+      if (resolvedGuildId && resolvedGuildId !== guildId) {
+        document.cookie = `selected_guild_id=${resolvedGuildId}; path=/`;
+        setGuildId(resolvedGuildId);
+      }
+
+      let resolvedUser = user;
+      let localBypass = isLocalDevBypassClient();
+
+      try {
+        const meResponse = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+        if (meResponse.ok) {
+          const me = (await meResponse.json()) as {
+            id?: string;
+            username?: string | null;
+            avatar?: string | null;
+            localDevBypass?: boolean;
+          };
+          if (me.id) {
+            resolvedUser = {
+              id: me.id,
+              username: me.username ?? 'User',
+              avatar: me.avatar ?? null,
+              discriminator: '0',
+            };
+            setUser(resolvedUser);
+            localStorage.setItem('discordUser', JSON.stringify(resolvedUser));
+            if (me.localDevBypass) localBypass = true;
+          }
+        }
+      } catch {
+        // keep stored user if available
+      }
+
+      if (!resolvedGuildId || !resolvedUser) {
         router.replace('/auth/select-server');
         return;
       }
 
       try {
-        const guildResponse = await fetch(`/api/discord/guild/${guildId}`, { method: 'GET' });
-        if (!guildResponse.ok) throw new Error('Sunucu bilgileri alınamadı');
-
-        const guildData = await guildResponse.json();
-        setGuildName(guildData.name);
-        setGuildIcon(guildData.icon ?? null);
-
-        const rolesResponse = await fetch(`/api/discord/guild/${guildId}/roles`, { method: 'GET' });
-        if (!rolesResponse.ok) throw new Error('Sunucu rolleri alınamadı');
-
-        const rolesData = await rolesResponse.json();
-        setRoles(rolesData);
-
-        const isServerOwner = Boolean(user?.id) && guildData.owner_id === user?.id;
-        const adminRoles = rolesData.filter((role: DiscordRole) => {
-          const perms = parseInt(role.permissions);
-          return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
+        const guildResponse = await fetch(`/api/discord/guild/${resolvedGuildId}`, {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
         });
 
-        const userRolesResponse = await fetch(`/api/discord/guild/${guildId}/members/${user?.id}`, { method: 'GET' });
+        if (!guildResponse.ok) {
+          if (localBypass) {
+            try {
+              const stored = localStorage.getItem('adminGuilds');
+              const parsed = stored
+                ? (JSON.parse(stored) as Array<{ id: string; name?: string; iconUrl?: string | null }>)
+                : [];
+              const match = parsed.find((g) => g.id === resolvedGuildId);
+              setGuildName(match?.name ?? 'Local Development');
+              setGuildIcon(match?.iconUrl ?? null);
+            } catch {
+              setGuildName('Local Development');
+            }
+            setRoles([]);
+            setIsAdmin(true);
+          } else {
+            throw new Error('Sunucu bilgileri alınamadı');
+          }
+        } else {
+          const guildData = (await guildResponse.json()) as {
+            name?: string;
+            icon?: string | null;
+            owner_id?: string | null;
+          };
+          setGuildName(guildData.name ?? '');
+          setGuildIcon(guildData.icon ?? null);
 
-        let userHasAdminRole = false;
-        if (userRolesResponse.ok) {
-          const userData = await userRolesResponse.json();
-          userHasAdminRole = userData.roles.some((roleId: string) =>
-            adminRoles.some((adminRole: DiscordRole) => adminRole.id === roleId)
-          );
+          const rolesResponse = await fetch(`/api/discord/guild/${resolvedGuildId}/roles`, {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+          });
+          if (!rolesResponse.ok) throw new Error('Sunucu rolleri alınamadı');
+
+          const rolesData = (await rolesResponse.json()) as DiscordRole[];
+          setRoles(rolesData);
+
+          if (localBypass) {
+            setIsAdmin(true);
+          } else {
+            const isServerOwner = Boolean(resolvedUser.id) && guildData.owner_id === resolvedUser.id;
+            const adminRoles = rolesData.filter((role) => {
+              const perms = parseInt(role.permissions, 10);
+              return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
+            });
+
+            const userRolesResponse = await fetch(
+              `/api/discord/guild/${resolvedGuildId}/members/${resolvedUser.id}`,
+              { method: 'GET', credentials: 'include', cache: 'no-store' },
+            );
+
+            let userHasAdminRole = false;
+            if (userRolesResponse.ok) {
+              const userData = (await userRolesResponse.json()) as { roles?: string[] };
+              userHasAdminRole = (userData.roles ?? []).some((roleId) =>
+                adminRoles.some((adminRole) => adminRole.id === roleId),
+              );
+            }
+
+            setIsAdmin(isServerOwner || userHasAdminRole);
+
+            if (!isServerOwner && adminRoles.length === 0) {
+              setError('Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.');
+            }
+          }
         }
 
-        setIsAdmin(isServerOwner || userHasAdminRole);
-
-        if (!isServerOwner && adminRoles.length === 0) {
-          setError('Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.');
-        }
-
-        const setupStatusResponse = await fetch('/api/setup/server', { method: 'GET' });
+        const setupStatusResponse = await fetch('/api/setup/server', {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
+        });
         if (setupStatusResponse.ok) {
           const setupStatus = await setupStatusResponse.json();
           if (setupStatus?.is_setup) {
@@ -177,16 +255,12 @@ export default function SetupPage() {
       }
     };
 
-    checkPermissionsAndLoadData();
-  }, [guildId, user, router]);
+    void checkPermissionsAndLoadData();
+    // Resolve auth + guild once on mount; user/guildId are refreshed inside.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
 
   const handleSetup = async () => {
-    if (alreadySetup) {
-      setError('Bu sunucu zaten kurulmuş. Yönlendiriliyorsunuz...');
-      setTerminalLines((prev) => [...prev, 'setup: already completed', 'redirect: admin in 5s']);
-      setRedirectCountdown(3);
-      return;
-    }
     if (!selectedAdminRole || !selectedVerifyRole) {
       setError('Lütfen hem admin hem de verify rolünü seçin.');
       return;

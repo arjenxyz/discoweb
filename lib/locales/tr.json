@@ -447,7 +447,7 @@
     "role_admin": "Yönetici",
     "role_member": "Üye",
     "setup_required": "Kurulum gerekli — tıklayarak başlatın",
-    "setup_owner_only": "Kurulum yalnızca sunucu sahibi tarafından yapılabilir",
+    "setup_owner_only": "Kurulum için sahip veya admin olmalısınız",
     "update_settings": "Sunucu ayarlarını güncelle",
     "developer_section": "Geliştirici",
     "developer_panel": "Developer paneli",

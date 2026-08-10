@@ -447,7 +447,7 @@
     "role_admin": "Admin",
     "role_member": "Member",
     "setup_required": "Setup required — click to start",
-    "setup_owner_only": "Setup can only be done by the server owner",
+    "setup_owner_only": "Setup requires owner or admin access",
     "update_settings": "Update server settings",
     "developer_section": "Developer",
     "developer_panel": "Developer panel",

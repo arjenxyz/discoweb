@@ -266,7 +266,16 @@ export default function SelectServerPage() {
       try {
         const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
         if (response.ok) {
-          return (await response.json()) as UserInfo;
+          const data = (await response.json()) as UserInfo;
+          localStorage.setItem(
+            'discordUser',
+            JSON.stringify({
+              id: data.id,
+              username: data.username,
+              avatar: data.avatar,
+            }),
+          );
+          return data;
         }
 
         localStorage.removeItem('discordUser');
@@ -294,7 +303,7 @@ export default function SelectServerPage() {
   const handleSetupGuild = (guildId: string) => {
     document.cookie = `selected_guild_id=${guildId}; path=/`;
     localStorage.setItem('selectedGuildId', guildId);
-    router.replace('/auth/setup');
+    router.push('/auth/setup');
   };
 
   const handleGuildSelect = async (guildId: string) => {
@@ -404,8 +413,9 @@ export default function SelectServerPage() {
                 </div>
               ) : (
                 guilds.map((guild) => {
-                  const canSetup = !guild.isSetup && guild.isOwner;
+                  const canSetup = !guild.isSetup && (guild.isOwner || guild.isAdmin);
                   const canEnter = guild.isSetup || canSetup;
+                  const canOpenSetup = guild.isOwner || guild.isAdmin;
                   const roleLabel = guild.isOwner
                     ? t('select_server.role_owner')
                     : guild.isAdmin
@@ -476,7 +486,7 @@ export default function SelectServerPage() {
                         )}
                       </button>
 
-                      {guild.isSetup && (guild.isOwner || guild.isAdmin) && (
+                      {canOpenSetup && (
                         <button
                           type="button"
                           onClick={() => handleSetupGuild(guild.id)}

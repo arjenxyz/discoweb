@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireSessionUser } from '@/lib/auth';
+import { isLocalDevBypassFromRequest, LOCAL_DEV_USER_ID } from '@/lib/localDevBypass';
 
 export async function GET(
   request: Request,
@@ -16,11 +17,16 @@ export async function GET(
     }
 
     const { guildId } = await params;
-    const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${auth.userId}`, {
-      headers: { Authorization: `Bot ${botToken}` },
-    });
-    if (!memberResponse.ok) {
-      return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+    const skipMemberCheck =
+      isLocalDevBypassFromRequest(request) || auth.userId === LOCAL_DEV_USER_ID;
+
+    if (!skipMemberCheck) {
+      const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${auth.userId}`, {
+        headers: { Authorization: `Bot ${botToken}` },
+      });
+      if (!memberResponse.ok) {
+        return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+      }
     }
 
     // Discord API'den sunucu rollerini al
@@ -35,7 +41,7 @@ export async function GET(
     const roles = await response.json();
 
     // Rollerı pozisyonuna göre sırala (en yüksekten en düşüğe)
-    const sortedRoles = roles.sort((a: any, b: any) => b.position - a.position);
+    const sortedRoles = roles.sort((a: { position: number }, b: { position: number }) => b.position - a.position);
 
     return NextResponse.json(sortedRoles);
   } catch (error) {
