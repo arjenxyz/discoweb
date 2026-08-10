@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { LuTrophy, LuPlus, LuRefreshCw, LuBrain, LuPencil, LuTrash2, LuX } from 'react-icons/lu';
+import Link from 'next/link';
+import { LuTrophy, LuPlus, LuRefreshCw, LuBrain, LuPencil, LuTrash2, LuX, LuMonitor } from 'react-icons/lu';
 import { apiErrorMessage } from '@/lib/apiError';
 
 type QuizEvent = {
@@ -44,38 +45,60 @@ export default function AdminQuizPage() {
   const [tab, setTab] = useState<'events' | 'questions'>('events');
 
   return (
-    <div className="min-w-0 text-white">
-      <div className="mb-5 flex items-start gap-3 sm:mb-6 sm:items-center">
-        <LuTrophy className="mt-0.5 h-6 w-6 shrink-0 text-amber-400 sm:mt-0" />
-        <h1 className="text-xl font-bold leading-tight sm:text-2xl">Quiz Etkinlikleri (Sunucu)</h1>
+    <>
+      <div className="lg:hidden">
+        <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-2 text-center">
+          <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-[#a5b4ff]">
+            <LuMonitor className="h-7 w-7" />
+          </span>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Quiz Etkinlikleri</p>
+          <h1 className="mt-2 text-xl font-semibold text-white">Mobil desteklenmiyor</h1>
+          <p className="mt-2 text-sm leading-relaxed text-white/50">
+            Bu sayfa yalnızca bilgisayarda kullanılabilir. Quiz etkinliklerini yönetmek için lütfen bir
+            masaüstü veya dizüstü bilgisayardan giriş yapın.
+          </p>
+          <Link
+            href="/admin"
+            className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-white/70 transition hover:border-white/20 hover:text-white"
+          >
+            Panele dön
+          </Link>
+        </div>
       </div>
 
-      <div className="mb-5 flex w-full gap-1 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-1 sm:mb-6 sm:inline-flex sm:w-auto sm:overflow-visible">
-        <button
-          type="button"
-          onClick={() => setTab('events')}
-          className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition sm:flex-none sm:justify-start sm:px-4 ${
-            tab === 'events' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'
-          }`}
-        >
-          <LuTrophy className="h-4 w-4 shrink-0" />
-          <span className="truncate">Etkinlikler</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab('questions')}
-          className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition sm:flex-none sm:justify-start sm:px-4 ${
-            tab === 'questions' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'
-          }`}
-        >
-          <LuBrain className="h-4 w-4 shrink-0" />
-          <span className="truncate">Özel Sorular</span>
-        </button>
-      </div>
+      <div className="hidden min-w-0 text-white lg:block">
+        <div className="mb-5 flex items-start gap-3 sm:mb-6 sm:items-center">
+          <LuTrophy className="mt-0.5 h-6 w-6 shrink-0 text-amber-400 sm:mt-0" />
+          <h1 className="text-xl font-bold leading-tight sm:text-2xl">Quiz Etkinlikleri (Sunucu)</h1>
+        </div>
 
-      {tab === 'events' && <EventsPanel />}
-      {tab === 'questions' && <CustomQuestionsPanel />}
-    </div>
+        <div className="mb-5 flex w-full gap-1 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-1 sm:mb-6 sm:inline-flex sm:w-auto sm:overflow-visible">
+          <button
+            type="button"
+            onClick={() => setTab('events')}
+            className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition sm:flex-none sm:justify-start sm:px-4 ${
+              tab === 'events' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <LuTrophy className="h-4 w-4 shrink-0" />
+            <span className="truncate">Etkinlikler</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('questions')}
+            className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition sm:flex-none sm:justify-start sm:px-4 ${
+              tab === 'questions' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <LuBrain className="h-4 w-4 shrink-0" />
+            <span className="truncate">Özel Sorular</span>
+          </button>
+        </div>
+
+        {tab === 'events' && <EventsPanel />}
+        {tab === 'questions' && <CustomQuestionsPanel />}
+      </div>
+    </>
   );
 }
 
