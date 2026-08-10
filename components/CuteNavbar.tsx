@@ -65,41 +65,59 @@ function NavInfoPanel({
   );
 }
 
-function MobileInfoDropdown({
+function MobileInfoModal({
   title,
   body,
   note,
   gifSrc,
+  onClose,
 }: {
   title: string;
   body: string;
   note: string;
   gifSrc: string;
+  onClose: () => void;
 }) {
   return (
-    <div className="animate-slideUp origin-top pb-4 pt-2">
-      <div className="relative overflow-hidden rounded-[24px] border border-white/20 bg-[#5865F2] shadow-[0_16px_40px_rgba(88,101,242,0.35)]">
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
-        <div className="relative z-10 flex gap-3 p-4 pb-3">
-          <div className="min-w-0 flex-1 space-y-2.5">
+    <div className="fixed inset-0 z-[10050] flex items-center justify-center px-5 animate-fadeIn">
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-md"
+        onClick={onClose}
+        aria-hidden
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className="relative z-10 w-full max-w-sm animate-slideUp overflow-visible"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute -top-3 -right-2 z-30 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#0d0f14]/95 text-white/80 shadow-lg backdrop-blur-md"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="relative overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-5 pb-16 shadow-[0_28px_70px_rgba(88,101,242,0.55)]">
+          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
+          <div className="relative z-20 space-y-3 pr-2">
             <div>
-              <div className="mb-2 h-1 w-8 rounded-full bg-white/80" />
-              <h3 className="text-lg font-black leading-tight tracking-tight text-white">
+              <div className="mb-2.5 h-1 w-10 rounded-full bg-white/80" />
+              <h3 className="text-[1.45rem] font-black leading-[1.15] tracking-tight text-white">
                 {title}
               </h3>
             </div>
-            <p className="text-[13px] leading-5 text-white/80">{body}</p>
-            <p className="border-l-2 border-white/35 pl-2.5 text-[11px] leading-4 text-white/60">
+            <p className="text-[13.5px] leading-6 text-white/85">{body}</p>
+            <p className="border-l-2 border-white/35 pl-3 text-[12px] leading-5 text-white/65">
               {note}
             </p>
           </div>
-          <div className="w-[7.5rem] shrink-0 self-end">
-            <img
-              src={gifSrc}
-              alt=""
-              draggable={false}
-              className="h-28 w-full object-contain drop-shadow-xl"
-            />
+          <div className="pointer-events-none absolute -bottom-6 -right-4 z-10 h-40 w-40 -rotate-[8deg] drop-shadow-2xl">
+            <img src={gifSrc} alt="" className="h-full w-full object-contain" draggable={false} />
           </div>
         </div>
       </div>
@@ -201,10 +219,6 @@ export default function CuteNavbar() {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
-
-  function toggleMobileSubmenu(menu: string) {
-    setMobileSubmenu((prev) => (prev === menu ? null : menu));
-  }
 
   return (
     <>
@@ -436,49 +450,23 @@ export default function CuteNavbar() {
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
-              <div>
-                <button
-                  type="button"
-                  onClick={() => toggleMobileSubmenu('home')}
-                  className={`flex w-full items-center justify-between py-4 text-left transition-colors ${
-                    mobileSubmenu === 'home' ? 'text-white' : 'text-white/70'
-                  }`}
-                >
-                  <span className="text-lg font-semibold">{t('navbar.home')}</span>
-                  <ChevronIcon isOpen={mobileSubmenu === 'home'} />
-                </button>
-                {mobileSubmenu === 'home' && (
-                  <MobileInfoDropdown
-                    title={t('navbar.home_panel_title')}
-                    body={t('navbar.home_panel_body')}
-                    note={t('navbar.home_panel_note')}
-                    gifSrc="/gif/from.gif"
-                  />
-                )}
-                <div className="border-b border-white/[0.06]" />
-              </div>
+              <button
+                type="button"
+                onClick={() => setMobileSubmenu('home')}
+                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left text-white/70 transition-colors hover:text-white"
+              >
+                <span className="text-lg font-semibold">{t('navbar.home')}</span>
+                <span className="text-sm text-white/25">→</span>
+              </button>
 
-              <div>
-                <button
-                  type="button"
-                  onClick={() => toggleMobileSubmenu('developer')}
-                  className={`flex w-full items-center justify-between py-4 text-left transition-colors ${
-                    mobileSubmenu === 'developer' ? 'text-white' : 'text-white/70'
-                  }`}
-                >
-                  <span className="text-lg font-semibold">{t('navbar.developer')}</span>
-                  <ChevronIcon isOpen={mobileSubmenu === 'developer'} />
-                </button>
-                {mobileSubmenu === 'developer' && (
-                  <MobileInfoDropdown
-                    title={t('navbar.developer_panel_title')}
-                    body={t('navbar.developer_panel_body')}
-                    note={t('navbar.developer_panel_note')}
-                    gifSrc="/gif/sungoandpato.gif"
-                  />
-                )}
-                <div className="border-b border-white/[0.06]" />
-              </div>
+              <button
+                type="button"
+                onClick={() => setMobileSubmenu('developer')}
+                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left text-white/70 transition-colors hover:text-white"
+              >
+                <span className="text-lg font-semibold">{t('navbar.developer')}</span>
+                <span className="text-sm text-white/25">→</span>
+              </button>
 
               <Link
                 href="/status"
@@ -519,6 +507,25 @@ export default function CuteNavbar() {
               <p className="mt-4 text-center text-[11px] text-white/25">Copyright Discoweb 2026</p>
             </div>
           </div>
+
+          {mobileSubmenu === 'home' && (
+            <MobileInfoModal
+              title={t('navbar.home_panel_title')}
+              body={t('navbar.home_panel_body')}
+              note={t('navbar.home_panel_note')}
+              gifSrc="/gif/from.gif"
+              onClose={() => setMobileSubmenu(null)}
+            />
+          )}
+          {mobileSubmenu === 'developer' && (
+            <MobileInfoModal
+              title={t('navbar.developer_panel_title')}
+              body={t('navbar.developer_panel_body')}
+              note={t('navbar.developer_panel_note')}
+              gifSrc="/gif/sungoandpato.gif"
+              onClose={() => setMobileSubmenu(null)}
+            />
+          )}
         </div>
       )}
 
