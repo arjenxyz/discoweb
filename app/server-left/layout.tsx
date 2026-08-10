@@ -1,9 +1,13 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { getServerTranslation } from '@/lib/i18n.server';
 
-export const metadata: Metadata = {
-  title: 'Sunucudan Ayrıldınız',
-  description: 'Seçili sunucudan ayrıldığınız için erişim kısıtlandı.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerTranslation();
+  return {
+    title: t('server_left.badge'),
+    description: t('server_left.body_1'),
+  };
+}
 
 export default function ServerLeftLayout({
   children,
