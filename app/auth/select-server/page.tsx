@@ -43,7 +43,7 @@ interface Guild {
   isSetup: boolean;
   verifyRoleId: string | null;
   isOwner: boolean;
-  iconUrl?: string | null;
+  iconUrl: string | null;
 }
 
 interface UserInfo {
@@ -137,7 +137,7 @@ export default function SelectServerPage() {
               if (!data.isMember) return null;
 
               let isOwner = Boolean(guild.isOwner);
-              let iconUrl = guild.iconUrl ?? null;
+              let iconUrl: string | null = guild.iconUrl ?? null;
               let name = guild.name;
 
               const guildResponse = await fetch(`/api/discord/guild/${guild.id}`, {
@@ -157,7 +157,8 @@ export default function SelectServerPage() {
                 if (guildData.name) name = guildData.name;
               }
 
-              return { ...guild, name, isOwner, iconUrl };
+              const next: Guild = { ...guild, name, isOwner, iconUrl };
+              return next;
             } catch {
               return null;
             }
