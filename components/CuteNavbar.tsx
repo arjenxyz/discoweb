@@ -440,11 +440,11 @@ export default function CuteNavbar() {
         {/* Navbar Container: overflow-visible önemli */}
         <nav className="relative flex items-center justify-between gap-4 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl shadow-2xl transition-colors duration-300 overflow-visible">
           
-          {/* Logo / kullanıcı */}
+          {/* Logo / kullanıcı — home keeps DiscoWeb brand; other signed-in pages show identity */}
           <div className="flex min-w-0 items-center gap-3">
             <div className="relative z-50 h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#5865F2] p-0.5 shadow-lg shadow-[#5865F2]/20 transition-transform hover:scale-110">
               <div className="h-full w-full overflow-hidden rounded-[10px] bg-[#1e1f22]">
-                {isLoggedIn && user?.avatar ? (
+                {!onHome && isLoggedIn && user?.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={user.avatar}
@@ -452,7 +452,7 @@ export default function CuteNavbar() {
                     className="h-full w-full object-cover"
                     draggable={false}
                   />
-                ) : isLoggedIn && user ? (
+                ) : !onHome && isLoggedIn && user ? (
                   <div className="flex h-full w-full items-center justify-center bg-[#5865F2] text-sm font-black text-white">
                     {user.username.charAt(0).toUpperCase()}
                   </div>
@@ -468,17 +468,17 @@ export default function CuteNavbar() {
               onMouseEnter={() => setIsLogoHovered(true)}
               onMouseLeave={() => setIsLogoHovered(false)}
             >
-              {isLoggedIn && user ? (
+              {!onHome && isLoggedIn && user ? (
                 <Link
                   href="/"
                   className="relative z-50 block min-w-0 max-w-[11rem] sm:max-w-[14rem] md:max-w-[16rem]"
-                  aria-label={onHome ? 'DiscoWeb' : t('navbar.back_home_hint')}
+                  aria-label={t('navbar.back_home_hint')}
                 >
                   <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
                     {user.username}
                   </div>
                   <div className="truncate text-[10px] font-medium text-white/40 transition-colors hover:text-white/70">
-                    {onHome ? 'DiscoWeb' : t('navbar.back_home_hint')}
+                    {t('navbar.back_home_hint')}
                   </div>
                 </Link>
               ) : (
@@ -487,7 +487,7 @@ export default function CuteNavbar() {
                 </Link>
               )}
 
-              {!isLoggedIn && (
+              {(onHome || !isLoggedIn) && (
                 <div
                   className={`absolute left-1/2 top-[60%] z-0 -translate-x-1/2 transition-all duration-500 ${
                     isLogoHovered
@@ -580,7 +580,8 @@ export default function CuteNavbar() {
           {onSelectServer && <div className="hidden flex-1 md:block" aria-hidden />}
 
           <div className="flex items-center gap-2 lg:gap-3 shrink-0 min-w-0">
-            <div className="hidden md:block">
+            {/* Home: always show language. Elsewhere: desktop only (mobile sheet has it). */}
+            <div className={onHome ? 'block' : 'hidden md:block'}>
               <LanguageSwitcher />
             </div>
             {isDeveloper && (
@@ -741,7 +742,7 @@ export default function CuteNavbar() {
             </nav>
 
             <div className="mt-6 shrink-0 space-y-5">
-              <LanguageSwitcher variant="menu" />
+              {!onHome && <LanguageSwitcher variant="menu" />}
 
               {isLoggedIn ? (
                 onSelectServer ? (
