@@ -292,6 +292,14 @@ export default function SetupPage() {
   const [targetGuildId, setTargetGuildId] = useState<string>(() =>
     typeof window !== 'undefined' && isLocalDevBypassClient() ? LOCAL_DEV_MOCK_LOG_GUILD_ID : '',
   );
+  const [targetGuildStatus, setTargetGuildStatus] = useState<
+    'idle' | 'checking' | 'ok' | 'invalid' | 'not_found'
+  >(() =>
+    typeof window !== 'undefined' && isLocalDevBypassClient() ? 'ok' : 'idle',
+  );
+  const [targetGuildName, setTargetGuildName] = useState<string | null>(() =>
+    typeof window !== 'undefined' && isLocalDevBypassClient() ? 'Local Log Server' : null,
+  );
 
   // Default economy settings for premium feel (pre-filled)
   const [messageEarnEnabled, setMessageEarnEnabled] = useState(true);
@@ -333,6 +341,70 @@ export default function SetupPage() {
       setSelectedVerifyRole('');
     }
   }, [memberRoles, selectedVerifyRole]);
+
+  useEffect(() => {
+    if (logMode !== 'dedicated') {
+      setTargetGuildStatus('idle');
+      setTargetGuildName(null);
+      return;
+    }
+
+    const trimmed = targetGuildId.trim();
+    if (!trimmed) {
+      setTargetGuildStatus('idle');
+      setTargetGuildName(null);
+      return;
+    }
+
+    if (!/^\d{17,20}$/.test(trimmed)) {
+      setTargetGuildStatus('invalid');
+      setTargetGuildName(null);
+      return;
+    }
+
+    let cancelled = false;
+    setTargetGuildStatus('checking');
+    setTargetGuildName(null);
+
+    const timer = window.setTimeout(async () => {
+      try {
+        if (isLocalDevBypassClient()) {
+          if (cancelled) return;
+          setTargetGuildStatus('ok');
+          setTargetGuildName(
+            trimmed === LOCAL_DEV_MOCK_LOG_GUILD_ID ? 'Local Log Server' : 'Local Development',
+          );
+          return;
+        }
+
+        const response = await fetch(`/api/discord/guild/${trimmed}?mode=bot`, {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
+        });
+        if (cancelled) return;
+
+        if (!response.ok) {
+          setTargetGuildStatus(response.status === 400 ? 'invalid' : 'not_found');
+          setTargetGuildName(null);
+          return;
+        }
+
+        const data = (await response.json()) as { name?: string };
+        setTargetGuildStatus('ok');
+        setTargetGuildName(data.name?.trim() || trimmed);
+      } catch {
+        if (cancelled) return;
+        setTargetGuildStatus('not_found');
+        setTargetGuildName(null);
+      }
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [logMode, targetGuildId]);
 
   useEffect(() => {
     const checkPermissionsAndLoadData = async () => {
@@ -641,7 +713,7 @@ export default function SetupPage() {
     currentStep === 0
       ? Boolean(selectedAdminRole && selectedVerifyRole)
       : currentStep === 1 && logMode === 'dedicated'
-        ? Boolean(targetGuildId.trim())
+        ? targetGuildStatus === 'ok'
         : true;
 
   const handleNext = () => {
@@ -835,7 +907,7 @@ export default function SetupPage() {
 
                         <div
                           className={`overflow-hidden transition-all duration-300 ${
-                            logMode === 'dedicated' ? 'mt-3 max-h-28 opacity-100' : 'max-h-0 opacity-0'
+                            logMode === 'dedicated' ? 'mt-3 max-h-40 opacity-100' : 'max-h-0 opacity-0'
                           }`}
                         >
                           <label className="mb-1.5 block text-[11px] font-medium text-indigo-300">
@@ -847,10 +919,51 @@ export default function SetupPage() {
                             value={targetGuildId}
                             onChange={(e) => setTargetGuildId(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full rounded-lg border border-indigo-500/30 bg-black/40 px-3 py-2 font-mono text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            className={`w-full rounded-lg border bg-black/40 px-3 py-2 font-mono text-sm text-white focus:outline-none focus:ring-1 ${
+                              targetGuildStatus === 'ok'
+                                ? 'border-emerald-500/40 focus:border-emerald-500 focus:ring-emerald-500'
+                                : targetGuildStatus === 'invalid' || targetGuildStatus === 'not_found'
+                                  ? 'border-red-500/40 focus:border-red-500 focus:ring-red-500'
+                                  : 'border-indigo-500/30 focus:border-indigo-500 focus:ring-indigo-500'
+                            }`}
                           />
-                          <p className="mt-1.5 flex items-center gap-1 text-[10px] text-indigo-300/60">
-                            <LuCheck className="h-3 w-3" /> Bot o sunucuda olmalı.
+                          <p
+                            className={`mt-1.5 flex items-center gap-1 text-[10px] ${
+                              targetGuildStatus === 'ok'
+                                ? 'text-emerald-400/90'
+                                : targetGuildStatus === 'invalid' || targetGuildStatus === 'not_found'
+                                  ? 'text-red-400/90'
+                                  : targetGuildStatus === 'checking'
+                                    ? 'text-indigo-300/70'
+                                    : 'text-indigo-300/60'
+                            }`}
+                          >
+                            {targetGuildStatus === 'checking' && (
+                              <>
+                                <LuLoader className="h-3 w-3 animate-spin" /> Kontrol ediliyor…
+                              </>
+                            )}
+                            {targetGuildStatus === 'ok' && (
+                              <>
+                                <LuCheck className="h-3 w-3" /> Sunucu bulundu
+                                {targetGuildName ? `: ${targetGuildName}` : ''}
+                              </>
+                            )}
+                            {targetGuildStatus === 'invalid' && (
+                              <>
+                                <LuX className="h-3 w-3" /> Geçersiz sunucu ID
+                              </>
+                            )}
+                            {targetGuildStatus === 'not_found' && (
+                              <>
+                                <LuX className="h-3 w-3" /> Bu ID ile sunucu bulunamadı veya bot o sunucuda değil
+                              </>
+                            )}
+                            {targetGuildStatus === 'idle' && (
+                              <>
+                                <LuCheck className="h-3 w-3" /> Bot o sunucuda olmalı.
+                              </>
+                            )}
                           </p>
                         </div>
                       </div>
