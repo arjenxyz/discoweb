@@ -1,11 +1,16 @@
-"use client";
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuArrowRight, LuCode, LuDatabase, LuLoader, LuLock, LuShield, LuSettings } from 'react-icons/lu';
+import { Ubuntu } from 'next/font/google';
+import { LuArrowRight, LuCode, LuDatabase, LuLock, LuShield, LuSettings } from 'react-icons/lu';
+import CuteNavbar from '@/components/CuteNavbar';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
+import { lockBodyScroll } from '@/lib/lockBodyScroll';
+
+const ubuntu = Ubuntu({ subsets: ['latin'], weight: ['400', '700'] });
 
 const AGREEMENT_OVERVIEW = [
   {
@@ -66,44 +71,49 @@ export default function SelectServerPage() {
   const [agreementTargetHref, setAgreementTargetHref] = useState<string | null>(null);
   const [isProcessingAgreement, setIsProcessingAgreement] = useState(false);
   const [isDeveloper, setIsDeveloper] = useState(false);
+  const localBypass = isLocalDevBypassClient();
 
-  const ensureAgreementAndRedirect = useCallback((href: string) => {
-    if (typeof window !== 'undefined' && localStorage.getItem('discord_agreement_accepted') === 'true') {
-      router.replace(href);
-      return;
-    }
-    setAgreementTargetHref(href);
-    setShowAgreementModal(true);
-  }, [router]);
+  const ensureAgreementAndRedirect = useCallback(
+    (href: string) => {
+      if (typeof window !== 'undefined' && localStorage.getItem('discord_agreement_accepted') === 'true') {
+        router.replace(href);
+        return;
+      }
+      setAgreementTargetHref(href);
+      setShowAgreementModal(true);
+    },
+    [router],
+  );
 
   const loginUrl = useMemo(() => {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? '';
-    const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI ?? process.env.NEXT_PUBLIC_REDIRECT_URI ?? '';
+    const redirectUri =
+      process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI ?? process.env.NEXT_PUBLIC_REDIRECT_URI ?? '';
     return `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
       redirectUri,
     )}&response_type=code&scope=identify%20guilds`;
   }, []);
 
   useEffect(() => {
+    if (!showAgreementModal) return undefined;
+    return lockBodyScroll();
+  }, [showAgreementModal]);
+
+  useEffect(() => {
     const fetchUserInfo = async (): Promise<UserInfo | null> => {
       try {
         const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
-        console.log('SelectServer: /api/auth/me status:', response.status);
-
         if (response.ok) {
           const userData = (await response.json()) as UserInfo;
-          console.log('SelectServer: User data received:', userData);
           setUser(userData);
           return userData;
         }
 
-        console.error('SelectServer: Failed to fetch user data:', response.status);
         localStorage.removeItem('discordUser');
         localStorage.removeItem('adminGuilds');
         localStorage.removeItem('adminGuildsUpdatedAt');
         router.replace(loginUrl);
-      } catch (error) {
-        console.error('SelectServer: Failed to fetch user info:', error);
+      } catch {
         localStorage.removeItem('discordUser');
         localStorage.removeItem('adminGuilds');
         localStorage.removeItem('adminGuildsUpdatedAt');
@@ -113,14 +123,13 @@ export default function SelectServerPage() {
     };
 
     const loadGuilds = async (currentUserId?: string | null) => {
-      const localBypass = isLocalDevBypassClient();
+      const bypass = isLocalDevBypassClient();
       const adminGuilds = localStorage.getItem('adminGuilds');
       const updatedAt = localStorage.getItem('adminGuildsUpdatedAt');
       setLastUpdatedAt(updatedAt);
 
       if (!adminGuilds) {
-        console.log('No adminGuilds found in localStorage');
-        if (localBypass) {
+        if (bypass) {
           setGuilds([LOCAL_DEV_GUILD]);
           setIsDeveloper(true);
           setLoading(false);
@@ -132,9 +141,8 @@ export default function SelectServerPage() {
 
       try {
         const parsedGuilds = JSON.parse(adminGuilds) as Guild[];
-        console.log('Loaded adminGuilds from localStorage:', parsedGuilds);
-
         const filteredGuilds: Guild[] = [];
+
         for (const guild of parsedGuilds) {
           try {
             const response = await fetch(`/api/discord/guild/${guild.id}/member-check`, {
@@ -143,16 +151,10 @@ export default function SelectServerPage() {
               cache: 'no-store',
             });
 
-            if (!response.ok) {
-              console.warn(`Membership check failed for guild ${guild.id}, status=${response.status}`);
-              continue;
-            }
+            if (!response.ok) continue;
 
             const data = (await response.json()) as { isMember: boolean };
-            if (!data.isMember) {
-              console.log(`User is no longer a member of guild ${guild.name} (${guild.id})`);
-              continue;
-            }
+            if (!data.isMember) continue;
 
             let isOwner = Boolean(guild.isOwner);
             let iconUrl = guild.iconUrl ?? null;
@@ -164,14 +166,17 @@ export default function SelectServerPage() {
             });
 
             if (guildResponse.ok) {
-              const guildData = (await guildResponse.json()) as { owner_id?: string; icon?: string | null };
+              const guildData = (await guildResponse.json()) as {
+                owner_id?: string;
+                icon?: string | null;
+              };
               isOwner = Boolean(currentUserId) && guildData.owner_id === currentUserId;
               iconUrl = guildData.icon ?? null;
             }
 
             filteredGuilds.push({ ...guild, isOwner, iconUrl });
-          } catch (error) {
-            console.error(`Error checking membership for guild ${guild.id}:`, error);
+          } catch {
+            // skip guild on membership errors
           }
         }
 
@@ -184,18 +189,16 @@ export default function SelectServerPage() {
                 return { ...guild, isSetup: !!status.is_setup };
               }
             } catch {
-              // ignore status fetch errors
+              // ignore
             }
             return guild;
           }),
         );
 
-        // Sadece Admin veya Sahip olunan sunucuları filtrele (Developer yetkisi zaten altta bypass ediliyor)
         const adminOnlyGuilds = withSetupStatus.filter((g) => g.isAdmin || g.isOwner);
-        console.log('Filtered admin guilds:', adminOnlyGuilds);
-        setGuilds(localBypass && adminOnlyGuilds.length === 0 ? [LOCAL_DEV_GUILD] : adminOnlyGuilds);
+        setGuilds(bypass && adminOnlyGuilds.length === 0 ? [LOCAL_DEV_GUILD] : adminOnlyGuilds);
 
-        let developerAccess = localBypass;
+        let developerAccess = bypass;
         try {
           const developerResponse = await fetch('/api/developer/check-access', {
             credentials: 'include',
@@ -205,22 +208,18 @@ export default function SelectServerPage() {
             developerAccess = true;
             setIsDeveloper(true);
           }
-        } catch (error) {
-          console.error('Developer access check failed:', error);
+        } catch {
+          // ignore
         }
 
-        if (localBypass) {
-          setIsDeveloper(true);
-        }
+        if (bypass) setIsDeveloper(true);
 
         if (filteredGuilds.length === 0 && !developerAccess) {
-          console.log('User is not a member of any guilds, redirecting to bot invite');
           router.replace('/auth/bot-invite');
           return;
         }
-      } catch (error) {
-        console.error('Sunucu bilgileri parse edilemedi:', error);
-        if (localBypass) {
+      } catch {
+        if (bypass) {
           setGuilds([LOCAL_DEV_GUILD]);
           setIsDeveloper(true);
           setLoading(false);
@@ -242,301 +241,354 @@ export default function SelectServerPage() {
   }, [ensureAgreementAndRedirect, loginUrl, router]);
 
   const handleSetupGuild = (guildId: string) => {
-    console.log('Setting up guild:', guildId);
     document.cookie = `selected_guild_id=${guildId}; path=/`;
     localStorage.setItem('selectedGuildId', guildId);
     router.replace('/auth/setup');
   };
 
   const handleGuildSelect = async (guildId: string) => {
-    console.log('Selecting guild:', guildId);
-    console.log('Available guilds:', guilds);
-
     document.cookie = `selected_guild_id=${guildId}; path=/`;
     localStorage.setItem('selectedGuildId', guildId);
-
-    const selectedGuild = guilds.find((guild) => guild.id === guildId);
-    console.log('Selected guild:', selectedGuild);
-
-    const isAdmin = selectedGuild?.isAdmin || false;
-    const verifyRoleId = selectedGuild?.verifyRoleId;
-
-    console.log('isAdmin:', isAdmin, 'verifyRoleId:', verifyRoleId);
-
-    if (isAdmin) {
-      console.log('Redirecting to admin panel');
-      router.replace('/admin');
-      return;
-    }
-
     router.replace('/admin');
   };
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0d12] text-white">
-        <div className="text-center">
-          <LuLoader className="mx-auto mb-4 h-8 w-8 animate-spin text-blue-500" />
-          <p className="text-sm text-white/70">Sunucular yükleniyor...</p>
+      <div className="relative flex h-screen items-center justify-center overflow-hidden bg-black text-white">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#5865F2]/10 to-[#7289DA]/10" />
+        <div className="absolute left-1/4 top-1/4 h-32 w-32 animate-pulse rounded-full bg-[#5865F2]/20 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 h-48 w-48 animate-pulse rounded-full bg-[#7289DA]/15 blur-3xl" />
+        <div className="relative z-10 text-center">
+          <img
+            src="/gif/BM.gif"
+            alt=""
+            draggable={false}
+            className="mx-auto mb-6 h-28 w-auto object-contain"
+          />
+          <div className="mx-auto mb-3 h-1.5 w-48 overflow-hidden rounded-full bg-white/10">
+            <div className="h-full w-2/3 animate-pulse rounded-full bg-[#5865F2]" />
+          </div>
+          <p className={`text-sm text-white/60 ${ubuntu.className}`}>Sunucular yükleniyor...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0b0d12] text-white">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute left-[-80px] top-[-40px] h-[320px] w-[320px] rounded-full bg-[#5865F2]/18 blur-[140px]" />
-        <div className="absolute bottom-[-120px] right-[-60px] h-[360px] w-[360px] rounded-full bg-sky-400/12 blur-[150px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.06),_transparent_50%)]" />
-      </div>
+    <div className={`relative min-h-screen overflow-hidden bg-black text-white ${ubuntu.className}`}>
+      <CuteNavbar />
 
-      <nav className="border-b border-white/10 bg-[#0b0d12]/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            {user?.avatar ? (
-              <Image
-                src={user.avatar}
-                alt={user.username}
-                width={44}
-                height={44}
-                className="h-11 w-11 rounded-full border-2 border-white/20"
-              />
-            ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white/20 bg-slate-600">
-                <span className="text-base font-bold text-white">{user?.username?.charAt(0).toUpperCase() ?? 'U'}</span>
+      <div className="pointer-events-none absolute left-10 top-20 h-72 w-72 rounded-full bg-[#5865F2]/20 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-20 right-10 h-96 w-96 rounded-full bg-[#7289DA]/15 blur-3xl" />
+
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 pb-16 pt-32 md:px-8 lg:px-12">
+        <div className="grid flex-1 items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+          {/* Left: copy + actions */}
+          <section className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
+              DiscoWeb
+            </p>
+            <h1 className="mt-3 text-balance text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+              Sunucu seçin
+            </h1>
+            <p className="mt-3 max-w-lg text-pretty text-sm leading-relaxed text-[#cbd5db] md:text-base">
+              Yönetmek istediğiniz Discord sunucusunu seçin. Yalnızca sahip olduğunuz veya admin
+              olduğunuz sunucular listelenir.
+            </p>
+
+            {/* User chip */}
+            <div className="mt-6 inline-flex max-w-full items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-2 backdrop-blur-md">
+              {user?.avatar ? (
+                <Image
+                  src={user.avatar}
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 shrink-0 rounded-full object-cover"
+                  unoptimized
+                />
+              ) : (
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5865F2] text-xs font-bold">
+                  {(user?.username ?? 'D').charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-white">
+                  {user?.username ?? 'Discord Kullanıcısı'}
+                </p>
+                <p className="truncate text-[11px] text-white/45">
+                  {localBypass ? 'Localhost geliştirme modu' : 'Discord ile giriş yapıldı'}
+                </p>
               </div>
+            </div>
+
+            {isDeveloper && (
+              <button
+                type="button"
+                onClick={() => router.replace('/developer')}
+                className="group relative mt-8 w-full overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-5 text-left shadow-[0_20px_50px_rgba(88,101,242,0.35)] transition-transform hover:scale-[1.01]"
+              >
+                <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
+                <div className="relative z-10 flex items-center gap-4 pr-16">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white">
+                    <LuCode className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="truncate text-lg font-black tracking-tight text-white">
+                      Developer Panele Git
+                    </h2>
+                    <p className="mt-0.5 truncate text-sm text-white/70">
+                      Sistem yönetimi ve geliştirici araçları
+                    </p>
+                  </div>
+                  <LuArrowRight className="h-5 w-5 shrink-0 text-white/80 transition-transform group-hover:translate-x-0.5" />
+                </div>
+                <div className="pointer-events-none absolute -bottom-4 -right-3 z-0 h-24 w-24 -rotate-[8deg] drop-shadow-2xl transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105 md:h-28 md:w-28">
+                  <img
+                    src="/gif/sungoandpato.gif"
+                    alt=""
+                    draggable={false}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              </button>
             )}
-            <div>
-              <p className="text-sm font-semibold text-white">{user?.username ?? 'Discord Kullanıcısı'}</p>
-              <p className="text-xs text-white/50">
-                {isLocalDevBypassClient()
-                  ? 'Localhost geliştirme modu (Discord girişi yok)'
-                  : 'Discord hesabınızla giriş yaptınız'}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => router.replace('/')}
-            className="text-xs text-white/50 transition-colors hover:text-white/70"
-          >
-            Ana sayfaya dön
-          </button>
-        </div>
-      </nav>
 
-      <main className="mx-auto w-full max-w-5xl px-4 py-8">
-        {isDeveloper && (
-          <button
-            type="button"
-            onClick={() => router.replace('/developer')}
-            className="mb-6 w-full rounded-[24px] border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-5 text-left transition-all hover:border-emerald-500/50 hover:bg-emerald-500/15"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-300">
-                  <LuCode className="h-6 w-6" />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-white">Developer Panele Git</h2>
-                  <p className="text-sm text-white/60">Sistem yönetimi ve geliştirici araçları</p>
-                </div>
+            <div className="mt-8 flex items-end justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-semibold text-white/90">Sunucularınız</h2>
+                {lastUpdatedAt && (
+                  <p className="mt-1 text-[11px] text-white/35">
+                    Son güncelleme: {new Date(lastUpdatedAt).toLocaleString('tr-TR')}
+                  </p>
+                )}
               </div>
-              <LuArrowRight className="h-5 w-5 shrink-0 text-emerald-300" />
-            </div>
-          </button>
-        )}
-
-        <div className="mb-6 rounded-[28px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_18px_50px_rgba(15,23,42,0.25)]">
-          <h1 className="mb-2 text-2xl font-bold text-white">Sunucu seçin</h1>
-          <p className="text-sm text-white/70">İşlem yapmak istediğiniz sunucuyu seçin.</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/50">
-            {lastUpdatedAt && <span>Son güncelleme: {new Date(lastUpdatedAt).toLocaleString('tr-TR')}</span>}
-            <button
-              onClick={() => ensureAgreementAndRedirect(loginUrl)}
-              className="text-xs text-blue-400 transition-colors hover:text-blue-300"
-              disabled={isLocalDevBypassClient()}
-            >
-              {isLocalDevBypassClient() ? 'Localhost bypass aktif' : 'Sunucuları yenile'}
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {guilds.length === 0 ? (
-            <div className="rounded-[24px] border border-white/10 bg-[#1a1d23] p-8 text-center">
-              <p className="mb-4 text-white/70">Erişilebilir hiç sunucu bulunamadı.</p>
-              <p className="text-sm text-white/50">Botun bulunduğu sunucularda üye olduğunuzdan emin olun.</p>
-            </div>
-          ) : (
-            guilds.map((guild) => {
-              const canSetup = !guild.isSetup && guild.isOwner;
-              const canEnter = guild.isSetup || canSetup;
-              const roleBadgeClass = guild.isOwner
-                ? 'bg-fuchsia-500/85'
-                : guild.isAdmin
-                  ? 'bg-emerald-500/85'
-                  : 'bg-sky-500/85';
-
-              return (
+              {!localBypass && (
                 <button
-                  key={guild.id}
-                  onClick={() => {
-                    if (guild.isSetup) {
-                      handleGuildSelect(guild.id);
-                      return;
-                    }
-                    if (canSetup) {
-                      handleSetupGuild(guild.id);
-                    }
-                  }}
-                  disabled={!canEnter}
-                  className={`w-full rounded-[24px] border p-4 text-left transition-all ${
-                    guild.isSetup
-                      ? 'border-white/10 bg-white/[0.05] hover:-translate-y-0.5 hover:bg-white/[0.08]'
-                      : canSetup
-                        ? 'border-orange-500/30 bg-orange-500/10 hover:bg-orange-500/15'
-                        : 'cursor-not-allowed border-white/5 bg-[#14171d] opacity-70'
-                  }`}
+                  type="button"
+                  onClick={() => ensureAgreementAndRedirect(loginUrl)}
+                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium text-[#9eb0ff] transition hover:bg-white/5 hover:text-white"
                 >
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      {guild.iconUrl ? (
-                        <Image
-                          src={guild.iconUrl}
-                          alt={guild.name}
-                          width={56}
-                          height={56}
-                          className="h-14 w-14 rounded-2xl border border-white/10 object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-lg font-semibold text-white/80">
-                          {guild.name.charAt(0).toUpperCase()}
+                  Yenile
+                </button>
+              )}
+            </div>
+
+            <div className="mt-4 space-y-2">
+              {guilds.length === 0 ? (
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center backdrop-blur-md">
+                  <p className="text-sm text-white/70">Erişilebilir sunucu bulunamadı.</p>
+                  <p className="mt-2 text-xs text-white/40">
+                    Botun bulunduğu sunucularda üye olduğunuzdan emin olun.
+                  </p>
+                </div>
+              ) : (
+                guilds.map((guild) => {
+                  const canSetup = !guild.isSetup && guild.isOwner;
+                  const canEnter = guild.isSetup || canSetup;
+                  const roleLabel = guild.isOwner ? 'Sahip' : guild.isAdmin ? 'Yönetici' : 'Üye';
+
+                  return (
+                    <div
+                      key={guild.id}
+                      className={`group relative flex w-full items-center gap-3 rounded-2xl border px-4 py-3.5 text-left transition-all ${
+                        guild.isSetup
+                          ? 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.08]'
+                          : canSetup
+                            ? 'border-[#5865F2]/35 bg-[#5865F2]/10 hover:bg-[#5865F2]/15'
+                            : 'cursor-not-allowed border-white/5 bg-white/[0.02] opacity-55'
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        disabled={!canEnter}
+                        onClick={() => {
+                          if (guild.isSetup) {
+                            handleGuildSelect(guild.id);
+                            return;
+                          }
+                          if (canSetup) handleSetupGuild(guild.id);
+                        }}
+                        className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                      >
+                        {guild.iconUrl ? (
+                          <Image
+                            src={guild.iconUrl}
+                            alt=""
+                            width={48}
+                            height={48}
+                            className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#5865F2]/25 text-base font-bold text-white">
+                            {guild.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="truncate font-semibold text-white">{guild.name}</h3>
+                            <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/70">
+                              {roleLabel}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 truncate text-[11px] text-white/35">ID: {guild.id}</p>
+                          {!guild.isSetup && canSetup && (
+                            <p className="mt-1 text-xs text-[#c5cbff]">
+                              Kurulum gerekli — tıklayarak başlatın
+                            </p>
+                          )}
+                          {!guild.isSetup && !canSetup && (
+                            <p className="mt-1 text-xs text-white/40">
+                              Kurulum yalnızca sunucu sahibi tarafından yapılabilir
+                            </p>
+                          )}
                         </div>
-                      )}
 
-                      <div>
-                        <h3 className="font-medium text-white">{guild.name}</h3>
-                        <p className="text-xs text-white/50">ID: {guild.id}</p>
-                        {!guild.isSetup && canSetup && (
-                          <p className="mt-1 text-xs text-orange-300">Bu sunucu kurulmamış. Tıklayarak kurulumu başlatabilirsiniz.</p>
+                        {canEnter && (
+                          <LuArrowRight className="hidden h-4 w-4 shrink-0 text-white/40 transition group-hover:translate-x-0.5 group-hover:text-white sm:block" />
                         )}
-                        {!guild.isSetup && !canSetup && (
-                          <p className="mt-1 text-xs text-white/50">Kurulum sadece sunucu sahibi tarafından yapılabilir.</p>
-                        )}
-                      </div>
-                    </div>
+                      </button>
 
-                    <div className="flex items-center gap-2">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white ${roleBadgeClass}`}>
-                        {guild.isOwner ? 'Sahip' : guild.isAdmin ? 'Yönetici' : 'Üye'}
-                      </span>
                       {guild.isSetup && (guild.isOwner || guild.isAdmin) && (
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSetupGuild(guild.id);
-                          }}
-                          className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
-                          title="Sunucu Ayarlarını Güncelle"
+                          type="button"
+                          onClick={() => handleSetupGuild(guild.id)}
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/50 transition hover:bg-white/10 hover:text-white"
+                          title="Sunucu ayarlarını güncelle"
+                          aria-label="Sunucu ayarlarını güncelle"
                         >
                           <LuSettings className="h-4 w-4" />
                         </button>
                       )}
                     </div>
-                  </div>
-                </button>
-              );
-            })
-          )}
+                  );
+                })
+              )}
+            </div>
+
+            <div className="mt-8 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => router.replace('/')}
+                className="rounded-full px-4 py-2 text-sm text-white/50 transition hover:bg-white/5 hover:text-white"
+              >
+                Ana sayfaya dön
+              </button>
+            </div>
+          </section>
+
+          {/* Right: visual */}
+          <section className="relative hidden min-h-[320px] lg:block">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative h-[420px] w-full max-w-md">
+                <Image
+                  src="/gif/from.gif"
+                  alt=""
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  unoptimized
+                  priority
+                  draggable={false}
+                />
+              </div>
+            </div>
+          </section>
         </div>
+
+        <p className="mt-10 text-center text-xs text-[#99AAB5]/75">Copyright Discoweb 2026</p>
       </main>
 
       {showAgreementModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-md">
-          <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0a1020]/95 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:p-6">
-            <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#cbd5ff]">
-              Güvenli Giriş Onayı
-            </div>
-
-            <h3 className="mt-3 text-xl font-semibold text-white sm:text-2xl">
-              Veri kullanım onayı
-            </h3>
-            <p className="mt-1.5 text-sm leading-6 text-white/70">
-              Giriş, sunucu doğrulama ve rol kontrolü için gerekli veriler işlenir.
-            </p>
-
-            <div className="mt-4 space-y-2.5">
-              {AGREEMENT_OVERVIEW.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.title}
-                    className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5"
-                  >
-                    <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#5865F2]/15 text-[#d5dbff]">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-white">{item.title}</p>
-                      <p className="text-xs text-white/65">{item.description}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.04] p-3.5">
-              <div className="space-y-1.5 text-xs text-white/72">
-                {AGREEMENT_PROMISES.map((point) => (
-                  <p key={point}>• {point}</p>
-                ))}
-              </div>
-              <p className="mt-2.5 text-xs text-white/60">
-                Detaylar için{' '}
-                <Link href="/privacy" className="text-[#9eb0ff] hover:text-white">
-                  Gizlilik
-                </Link>{' '}
-                ve{' '}
-                <Link href="/terms" className="text-[#9eb0ff] hover:text-white">
-                  Kullanım Koşulları
-                </Link>
-                .
+        <div className="fixed inset-0 z-[10050] flex items-center justify-center px-5">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            onClick={() => {
+              setShowAgreementModal(false);
+              router.replace('/');
+            }}
+            aria-hidden
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Veri kullanım onayı"
+            className="relative z-10 w-full max-w-lg overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-6 shadow-[0_28px_70px_rgba(88,101,242,0.55)]"
+          >
+            <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
+            <div className="relative z-20">
+              <div className="mb-2.5 h-1 w-10 rounded-full bg-white/80" />
+              <h3 className="text-xl font-black tracking-tight text-white">Veri kullanım onayı</h3>
+              <p className="mt-2 text-sm leading-6 text-white/80">
+                Giriş, sunucu doğrulama ve rol kontrolü için gerekli veriler işlenir.
               </p>
-            </div>
 
-            <div className="mt-4 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
-              <button
-                onClick={() => {
-                  setShowAgreementModal(false);
-                  router.replace('/');
-                }}
-                className="inline-flex items-center justify-center rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
-              >
-                Şimdi değil
-              </button>
-              <button
-                onClick={() => {
-                  setIsProcessingAgreement(true);
-                  try {
-                    if (typeof window !== 'undefined') {
-                      localStorage.setItem('discord_agreement_accepted', 'true');
-                    }
-                    if (agreementTargetHref) {
-                      router.replace(agreementTargetHref);
-                    }
-                  } finally {
-                    setIsProcessingAgreement(false);
+              <div className="mt-5 space-y-2.5">
+                {AGREEMENT_OVERVIEW.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title} className="flex items-start gap-3 rounded-xl bg-white/10 px-3 py-2.5">
+                      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white">{item.title}</p>
+                        <p className="text-xs leading-5 text-white/70">{item.description}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 border-l-2 border-white/35 pl-3 text-xs leading-5 text-white/65">
+                {AGREEMENT_PROMISES.map((point) => (
+                  <p key={point}>{point}</p>
+                ))}
+                <p className="mt-2">
+                  Detaylar için{' '}
+                  <Link href="/privacy" className="underline underline-offset-2 hover:text-white">
+                    Gizlilik
+                  </Link>{' '}
+                  ve{' '}
+                  <Link href="/terms" className="underline underline-offset-2 hover:text-white">
+                    Kullanım Koşulları
+                  </Link>
+                  .
+                </p>
+              </div>
+
+              <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
                     setShowAgreementModal(false);
-                    setAgreementTargetHref(null);
-                  }
-                }}
-                disabled={isProcessingAgreement}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#5865F2] to-[#7289DA] px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
-              >
-                {isProcessingAgreement ? 'İşleniyor...' : 'Onayla ve devam et'}
-                {!isProcessingAgreement && <LuArrowRight className="h-4 w-4" />}
-              </button>
+                    router.replace('/');
+                  }}
+                  className="rounded-full border border-white/20 px-4 py-2.5 text-sm font-semibold text-white/85 transition hover:bg-white/10"
+                >
+                  Şimdi değil
+                </button>
+                <button
+                  type="button"
+                  disabled={isProcessingAgreement}
+                  onClick={() => {
+                    setIsProcessingAgreement(true);
+                    try {
+                      localStorage.setItem('discord_agreement_accepted', 'true');
+                      if (agreementTargetHref) router.replace(agreementTargetHref);
+                    } finally {
+                      setIsProcessingAgreement(false);
+                      setShowAgreementModal(false);
+                      setAgreementTargetHref(null);
+                    }
+                  }}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-[#5865F2] transition hover:bg-white/90 disabled:opacity-50"
+                >
+                  {isProcessingAgreement ? 'İşleniyor...' : 'Onayla ve devam et'}
+                  {!isProcessingAgreement && <LuArrowRight className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
