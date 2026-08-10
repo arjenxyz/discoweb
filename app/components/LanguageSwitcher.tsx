@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from '@/lib/i18nContext';
 import { SUPPORTED_LANGUAGES } from '@/lib/i18n/languages';
+import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import FlagIcon from './FlagIcon';
 
 type LanguageSwitcherProps = {
@@ -35,16 +36,16 @@ function useIsCoarsePointer() {
   return coarse;
 }
 
-function useIsMobileNav() {
-  const [mobile, setMobile] = useState(false);
+function useShowLanguageLabel() {
+  const [show, setShow] = useState(false);
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
-    const update = () => setMobile(mq.matches);
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const update = () => setShow(mq.matches);
     update();
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
-  return mobile;
+  return show;
 }
 
 export default function LanguageSwitcher({ compact = false, className = '' }: LanguageSwitcherProps) {
@@ -54,8 +55,8 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
   const isTouch = useIsCoarsePointer();
-  const isMobile = useIsMobileNav();
-  const showLabel = !compact && !isMobile;
+  const wideEnoughForLabel = useShowLanguageLabel();
+  const showLabel = !compact && wideEnoughForLabel;
 
   const current = SUPPORTED_LANGUAGES.find((item) => item.code === language) ?? SUPPORTED_LANGUAGES[0];
 
@@ -91,7 +92,11 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
     };
 
     document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
+    const unlock = lockBodyScroll();
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      unlock();
+    };
   }, [open]);
 
   return (
@@ -139,11 +144,11 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
         createPortal(
           <div
             className={`fixed inset-0 z-[9998] bg-black/60 backdrop-blur-[12px] transition-all duration-500 ${
-              isMobile || isTouch ? 'pointer-events-auto' : 'pointer-events-none'
+              isTouch ? 'pointer-events-auto' : 'pointer-events-none'
             }`}
             aria-hidden
             onClick={() => {
-              if (isMobile || isTouch) setOpen(false);
+              if (isTouch) setOpen(false);
             }}
           />,
           document.body,

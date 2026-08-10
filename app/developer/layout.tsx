@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Ubuntu } from 'next/font/google';
+import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import {
   LuLayoutDashboard,
   LuUsers,
@@ -173,11 +174,8 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (!mobileMenuOpen) return undefined;
+    return lockBodyScroll();
   }, [mobileMenuOpen]);
 
   useEffect(() => {

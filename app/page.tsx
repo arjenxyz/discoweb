@@ -145,10 +145,10 @@ export default function Home() {
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl">
             <div className="w-full flex flex-col md:flex-row md:items-center items-center gap-8">
               <div className="flex-1 text-center md:text-left md:pl-4 lg:pl-6">
-                <h1 className={`text-3xl md:text-5xl lg:text-6xl font-extrabold text-white ${ubuntu.className}`}>
+                <h1 className={`text-3xl md:text-5xl lg:text-6xl font-extrabold text-white text-balance break-words ${ubuntu.className}`}>
                   {t('home.welcome')}
                 </h1>
-                <p className="mt-4 text-sm md:text-lg text-[#cbd5db] leading-relaxed break-words px-2">
+                <p className="mt-4 text-sm md:text-lg text-[#cbd5db] leading-relaxed text-pretty break-words px-2">
                   {t('home.description')}
                 </p>
               </div>

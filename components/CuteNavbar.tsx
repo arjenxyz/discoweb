@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslation } from '@/lib/i18nContext';
+import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -40,20 +41,20 @@ function NavInfoPanel({
   gifSrc: string;
 }) {
   return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[32rem] animate-slideUp origin-top z-50">
+    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[min(32rem,calc(100vw-2rem))] animate-slideUp origin-top z-50">
       <div className="relative overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-6 pr-14 pb-6 shadow-[0_28px_70px_rgba(88,101,242,0.5)]">
         <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
         <div className="relative z-20 space-y-3 pt-0.5">
           <div>
             <div className="mb-2.5 h-1 w-10 rounded-full bg-white/80" />
-            <h3 className="text-[1.55rem] font-black leading-[1.15] tracking-tight text-white">
+            <h3 className="break-words text-[1.55rem] font-black leading-[1.15] tracking-tight text-white">
               {title}
             </h3>
           </div>
-          <p className="max-w-none text-[13.5px] leading-6 text-white/78">
+          <p className="max-w-none break-words text-[13.5px] leading-6 text-white/78">
             {body}
           </p>
-          <p className="border-l-2 border-white/35 pl-3 text-[12px] leading-5 text-white/60">
+          <p className="break-words border-l-2 border-white/35 pl-3 text-[12px] leading-5 text-white/60">
             {note}
           </p>
         </div>
@@ -107,12 +108,12 @@ function MobileInfoModal({
           <div className="relative z-20 space-y-3 pr-2">
             <div>
               <div className="mb-2.5 h-1 w-10 rounded-full bg-white/80" />
-              <h3 className="text-[1.45rem] font-black leading-[1.15] tracking-tight text-white">
+              <h3 className="break-words text-[1.45rem] font-black leading-[1.15] tracking-tight text-white">
                 {title}
               </h3>
             </div>
-            <p className="text-[13.5px] leading-6 text-white/85">{body}</p>
-            <p className="border-l-2 border-white/35 pl-3 text-[12px] leading-5 text-white/65">
+            <p className="break-words text-[13.5px] leading-6 text-white/85">{body}</p>
+            <p className="break-words border-l-2 border-white/35 pl-3 text-[12px] leading-5 text-white/65">
               {note}
             </p>
           </div>
@@ -224,13 +225,10 @@ export default function CuteNavbar() {
   useEffect(() => {
     console.debug('CuteNavbar env', { DISCORD_CLIENT_ID, REDIRECT_RAW, authRedirect, DISCORD_LOGIN_URL });
   }, [DISCORD_CLIENT_ID, REDIRECT_RAW, authRedirect, DISCORD_LOGIN_URL]);
-  // Mobil menü scroll kilidi
+  // Mobil menü / modal: scroll kilidi (scrollbar kayması olmadan)
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (!mobileOpen) return undefined;
+    return lockBodyScroll();
   }, [mobileOpen]);
 
   useEffect(() => {
@@ -417,15 +415,15 @@ export default function CuteNavbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex flex-1 items-center justify-center gap-2">
+          <div className="hidden md:flex flex-1 items-center justify-center gap-0.5 lg:gap-2 min-w-0">
             {/* --- ANA SAYFA --- */}
             <div
-              className="relative group"
+              className="relative group shrink-0"
               onMouseEnter={() => setOpenMenu('home')}
               onMouseLeave={() => setOpenMenu(null)}
             >
               <button
-                className={`flex items-center px-5 py-2.5 font-medium transition-all duration-200 rounded-full ${
+                className={`flex items-center whitespace-nowrap px-3 py-2.5 font-medium transition-all duration-200 rounded-full lg:px-5 ${
                   openMenu === 'home'
                     ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
                     : 'text-white/80 hover:text-white hover:bg-white/5'
@@ -447,12 +445,12 @@ export default function CuteNavbar() {
 
             {/* --- DEVELOPER --- */}
             <div
-              className="relative group"
+              className="relative group shrink-0"
               onMouseEnter={() => setOpenMenu('developer')}
               onMouseLeave={() => setOpenMenu(null)}
             >
               <button
-                className={`flex items-center px-5 py-2.5 font-medium transition-all duration-200 rounded-full ${
+                className={`flex items-center whitespace-nowrap px-3 py-2.5 font-medium transition-all duration-200 rounded-full lg:px-5 ${
                   openMenu === 'developer'
                     ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
                     : 'text-white/80 hover:text-white hover:bg-white/5'
@@ -475,18 +473,18 @@ export default function CuteNavbar() {
             {/* --- STATUS --- */}
             <Link
               href="/status"
-              className="px-5 py-2.5 font-medium text-white/80 hover:text-white hover:bg-white/5 rounded-full transition-all duration-200"
+              className="shrink-0 whitespace-nowrap px-3 py-2.5 font-medium text-white/80 hover:text-white hover:bg-white/5 rounded-full transition-all duration-200 lg:px-5"
             >
               {t('navbar.status')}
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:gap-3 shrink-0 min-w-0">
             <LanguageSwitcher />
             {isLoggedIn ? (
               <Link 
                 href="/auth/select-server"
-                className="hidden md:inline-flex items-center justify-center px-5 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300"
+                className="hidden md:inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300 lg:px-5"
               >
                 {t('navbar.continue')}
               </Link>
@@ -503,7 +501,7 @@ export default function CuteNavbar() {
                     return;
                   }
                 }}
-                className={`hidden md:inline-flex items-center justify-center gap-2 px-5 py-2.5 font-bold text-sm rounded-full transition-all duration-300 ${
+                className={`hidden md:inline-flex items-center justify-center gap-2 whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full transition-all duration-300 lg:px-5 ${
                   openMenu === 'login'
                     ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
                     : 'text-white hover:bg-white/10'
@@ -560,10 +558,10 @@ export default function CuteNavbar() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
                 DiscoWeb
               </p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight text-white">
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-white break-words">
                 {t('navbar.mobile_greeting')}
               </h2>
-              <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-white/45">
+              <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-white/45 break-words">
                 {t('navbar.mobile_welcome')}
               </p>
             </div>
