@@ -14,7 +14,6 @@ import {
   LuPackage,
   LuCoins,
   LuTrophy,
-  LuStore,
 } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
 import { getLocaleTag, type LanguageCode } from '@/lib/i18n/languages';
@@ -199,11 +198,6 @@ export default function AdminOverviewClient({
       href: '/admin/earn-settings',
       label: t('admin.dashboard.earn_settings'),
       icon: LuCoins,
-    },
-    {
-      href: '/admin/guide',
-      label: t('admin.dashboard.action_guide'),
-      icon: LuStore,
     },
   ];
 

@@ -125,7 +125,6 @@
       "action_promo": "Create Promo Code",
       "action_discount": "Create Discount Code",
       "action_log_channels": "Log Channels",
-      "action_guide": "User Guide",
       "access_denied_title": "Access Denied",
       "access_denied_body": "You do not have admin permissions on this server.",
       "back_home": "Back to Home",
@@ -167,24 +166,78 @@
       "success_all": "Applied to all users. Total: {count}",
       "success_single": "Operation successful.",
       "presets": {
-        "add_maintenance": { "label": "Maintenance compensation", "text": "Hello, {amount} papel has been added to your account as compensation for a brief maintenance. Thank you for your understanding." },
-        "add_event": { "label": "Event/achievement reward", "text": "Congratulations! {amount} papel has been credited to your account for your event contribution. Enjoy!" },
-        "add_gift": { "label": "Community thank-you gift", "text": "Thank you for supporting our community. We are gifting you {amount} papel." },
-        "add_refund": { "label": "Error compensation/refund", "text": "We apologize for the disruption. {amount} papel has been added to your balance as compensation." },
-        "add_milestone": { "label": "Level/contribution reward", "text": "Thank you for your community contribution! {amount} papel has been credited to your account." },
-        "add_support": { "label": "Support thank-you", "text": "As a goodwill gift after your support request, {amount} papel has been added to your account." },
-        "remove_penalty": { "label": "Rule violation/penalty", "text": "{amount} papel has been deducted from your account due to a rule violation." },
-        "remove_chargeback": { "label": "Incorrect transaction correction", "text": "{amount} papel has been deducted from your balance as part of an incorrect transaction correction." },
-        "remove_fee": { "label": "Transaction fee", "text": "{amount} papel has been deducted from your balance as a transaction fee." },
-        "remove_refund": { "label": "Refund reversal", "text": "{amount} papel has been deducted from your balance due to a refund reversal." },
-        "all_maintenance": { "label": "Maintenance compensation (all members)", "text": "As compensation for scheduled maintenance, {amount} papel has been added to all member balances. Thank you." },
-        "all_announcement": { "label": "Community incentive (general)", "text": "For community motivation, {amount} papel has been granted to all members. Enjoy!" },
-        "all_event": { "label": "Event reward (general)", "text": "As a thank-you for event participation, {amount} papel has been distributed to all members." },
-        "all_season": { "label": "Season closing bonus", "text": "As a season closing bonus, {amount} papel has been added to all members." },
-        "all_promo": { "label": "Promotion incentive", "text": "For the new term incentive, {amount} papel has been loaded to all member balances." },
-        "all_loyalty": { "label": "Loyalty thank-you", "text": "Thank you for your contributions — {amount} papel has been gifted to all members." },
-        "remove_all_adjustment": { "label": "General balance adjustment", "text": "A deduction of {amount} papel has been applied to all members as part of a general balance adjustment." },
-        "remove_all_fee": { "label": "General transaction fee", "text": "A deduction of {amount} papel has been applied to all members as a general transaction fee." }
+        "add_maintenance": {
+          "label": "Maintenance compensation",
+          "text": "Hello, {amount} papel has been added to your account as compensation for a brief maintenance. Thank you for your understanding."
+        },
+        "add_event": {
+          "label": "Event/achievement reward",
+          "text": "Congratulations! {amount} papel has been credited to your account for your event contribution. Enjoy!"
+        },
+        "add_gift": {
+          "label": "Community thank-you gift",
+          "text": "Thank you for supporting our community. We are gifting you {amount} papel."
+        },
+        "add_refund": {
+          "label": "Error compensation/refund",
+          "text": "We apologize for the disruption. {amount} papel has been added to your balance as compensation."
+        },
+        "add_milestone": {
+          "label": "Level/contribution reward",
+          "text": "Thank you for your community contribution! {amount} papel has been credited to your account."
+        },
+        "add_support": {
+          "label": "Support thank-you",
+          "text": "As a goodwill gift after your support request, {amount} papel has been added to your account."
+        },
+        "remove_penalty": {
+          "label": "Rule violation/penalty",
+          "text": "{amount} papel has been deducted from your account due to a rule violation."
+        },
+        "remove_chargeback": {
+          "label": "Incorrect transaction correction",
+          "text": "{amount} papel has been deducted from your balance as part of an incorrect transaction correction."
+        },
+        "remove_fee": {
+          "label": "Transaction fee",
+          "text": "{amount} papel has been deducted from your balance as a transaction fee."
+        },
+        "remove_refund": {
+          "label": "Refund reversal",
+          "text": "{amount} papel has been deducted from your balance due to a refund reversal."
+        },
+        "all_maintenance": {
+          "label": "Maintenance compensation (all members)",
+          "text": "As compensation for scheduled maintenance, {amount} papel has been added to all member balances. Thank you."
+        },
+        "all_announcement": {
+          "label": "Community incentive (general)",
+          "text": "For community motivation, {amount} papel has been granted to all members. Enjoy!"
+        },
+        "all_event": {
+          "label": "Event reward (general)",
+          "text": "As a thank-you for event participation, {amount} papel has been distributed to all members."
+        },
+        "all_season": {
+          "label": "Season closing bonus",
+          "text": "As a season closing bonus, {amount} papel has been added to all members."
+        },
+        "all_promo": {
+          "label": "Promotion incentive",
+          "text": "For the new term incentive, {amount} papel has been loaded to all member balances."
+        },
+        "all_loyalty": {
+          "label": "Loyalty thank-you",
+          "text": "Thank you for your contributions — {amount} papel has been gifted to all members."
+        },
+        "remove_all_adjustment": {
+          "label": "General balance adjustment",
+          "text": "A deduction of {amount} papel has been applied to all members as part of a general balance adjustment."
+        },
+        "remove_all_fee": {
+          "label": "General transaction fee",
+          "text": "A deduction of {amount} papel has been applied to all members as a general transaction fee."
+        }
       },
       "mail": {
         "title_add": "Balance Added",
@@ -273,7 +326,6 @@
       "panel_label": "Admin Panel",
       "collapse": "Collapse sidebar",
       "expand": "Expand sidebar",
-      "guide": "User Guide",
       "developer": "Developer Panel",
       "open_menu": "Open menu",
       "close_menu": "Close menu",
@@ -287,159 +339,6 @@
       "switch_server_current": "You're on this server",
       "mobile_welcome": "Manage your server, store, and economy from the admin panel.",
       "logout": "Log Out"
-    },
-    "guide": {
-      "eyebrow": "Documentation",
-      "title": "Admin User Guide",
-      "subtitle": "Learn every DiscoWeb admin module step by step. Current features, best practices, and FAQs in one place.",
-      "search_placeholder": "Search modules or topics…",
-      "toc_title": "Table of Contents",
-      "tips_label": "Practical Tips",
-      "open_page": "Open Page",
-      "stat_modules": "modules",
-      "stat_steps": "setup steps",
-      "stat_faq": "FAQs",
-      "no_results": "No sections match your search.",
-      "clear_search": "Clear search",
-      "roadmap_title": "Initial Setup Roadmap",
-      "roadmap_subtitle": "Recommended order to bring your server live.",
-      "quick_title": "Quick Access",
-      "quick_subtitle": "Jump to the most used pages in one click.",
-      "faq_title": "Frequently Asked Questions",
-      "faq_subtitle": "Common issues and suggested fixes.",
-      "cta_title": "Ready to finish setup?",
-      "cta_desc": "Define roles, connect log channels, configure the economy, then monitor your server from the dashboard.",
-      "cta_settings": "Server Settings",
-      "cta_dashboard": "Back to Dashboard",
-      "quick": {
-        "new_product": "Create New Product",
-        "wallet": "Wallet Management",
-        "earn": "Earning Settings",
-        "logs": "Channels & Logs",
-        "settings": "Server Settings",
-        "announce": "Global Announcement"
-      },
-      "roadmap": {
-        "login": {
-          "title": "Sign In & Select Server",
-          "desc": "Sign in with Discord OAuth and choose the server you manage."
-        },
-        "roles": {
-          "title": "Role Configuration",
-          "desc": "Define admin and verified member roles from Panel Settings."
-        },
-        "logs": {
-          "title": "Log Channels",
-          "desc": "Add webhook URLs and test the connection."
-        },
-        "economy": {
-          "title": "Economy & Store",
-          "desc": "Configure earning settings, products, and promotions."
-        },
-        "launch": {
-          "title": "Go Live & Monitor",
-          "desc": "Track stats from the dashboard and monitor your server."
-        }
-      },
-      "sections": {
-        "dashboard": {
-          "title": "Dashboard",
-          "desc": "Central control panel for your server. View message, voice, member, wallet, and tag/booster metrics for the last 24 hours and all time.",
-          "tip1": "Use the refresh button to update stats instantly.",
-          "tip2": "Quick Actions cards provide shortcuts to the most used pages.",
-          "tip3": "Tag owner and booster counts help measure community engagement."
-        },
-        "store": {
-          "title": "Store Management",
-          "desc": "Manage Discord role products, papel promotion codes, and percentage discount codes from one place.",
-          "tip1": "When creating a product, search by role name; the bot fills the role ID automatically.",
-          "tip2": "Promotion codes grant papel with optional usage limits and expiry.",
-          "tip3": "Discount codes are percentage-based and apply to store purchases.",
-          "tip4": "Inactive products stay listed but cannot be purchased — ideal for temporary disable."
-        },
-        "earn": {
-          "title": "Earning Settings",
-          "desc": "Configure message and voice earn rates, tag/booster bonuses, verification role, and channel filters (all/whitelist/blacklist).",
-          "tip1": "If verification role is empty, all members earn; otherwise only members with that role.",
-          "tip2": "Tag requirements need Discord tag configuration on the server.",
-          "tip3": "Channel mode limits earning to specific text/voice channels or categories.",
-          "tip4": "Use Undo before saving to revert to the last saved state."
-        },
-        "wallet": {
-          "title": "Wallet Management",
-          "desc": "Add or remove papel for a single user or all members. Preset message templates, required descriptions, and automatic notification mail are supported.",
-          "tip1": "Description is required when adding papel; the {amount} placeholder is filled automatically.",
-          "tip2": "User search works by nickname or username.",
-          "tip3": "Bulk operations affect every member balance — use with care."
-        },
-        "logs": {
-          "title": "Channels & Logs",
-          "desc": "Route member and admin events to separate webhook channels. Auth, roles, store, wallet, notification, and settings logs can be tracked individually.",
-          "tip1": "The same webhook URL cannot be assigned to multiple channels — the system prevents this.",
-          "tip2": "Use Webhook Test to verify the connection before saving.",
-          "tip3": "Member channels: main, auth, roles, exchange, store. Admin channels: main, wallet, store, notifications, settings.",
-          "tip4": "Inactive channels receive no logs; use is_active for temporary disable."
-        },
-        "community": {
-          "title": "Tag & Booster",
-          "desc": "Define tag badge tiers and booster reward layers. Day/month requirements, papel rewards, earn multipliers, and role assignment are configurable.",
-          "tip1": "On Tag Settings, create tiers with sort order, emoji, and background image.",
-          "tip2": "Booster Settings provides reward tiers based on server boost duration.",
-          "tip3": "Tag/booster bonuses in Earning Settings work together with these tiers."
-        },
-        "settings": {
-          "title": "Server Settings",
-          "desc": "Manage admin role, verified member role, approval threshold, and referral reward. Accessed from the Panel Settings menu.",
-          "tip1": "Admin role controls panel access; the bot role must sit above it.",
-          "tip2": "Verified member role controls store and earning access.",
-          "tip3": "Remove setup resets the server connection — use only when necessary."
-        },
-        "maintenance": {
-          "title": "Maintenance Mode",
-          "desc": "Put site, store, transactions, promotions, discounts, transfers, bot, and activity flows into maintenance separately.",
-          "tip1": "Granular flags let you disable only the affected module.",
-          "tip2": "Each change is recorded with updater and timestamp."
-        },
-        "announcements": {
-          "title": "Global Announcement",
-          "desc": "Create announcements visible to all DiscoWeb users. Title, body, detail URL, and media image are supported.",
-          "tip1": "Title and body are required; image and detail link are optional.",
-          "tip2": "Published announcements are platform-wide — use carefully."
-        },
-        "security": {
-          "title": "Security Center",
-          "desc": "Best practices for role hierarchy, webhook management, service role key, and suspicious event monitoring.",
-          "tip1": "SUPABASE_SERVICE_ROLE_KEY must stay server-side only.",
-          "tip2": "Only trusted admin staff should manage webhook URLs.",
-          "tip3": "The bot role must be positioned above every role it assigns automatically."
-        }
-      },
-      "faq": {
-        "access": {
-          "q": "Who can access the admin panel?",
-          "a": "Discord members with the admin role defined in Server Settings can access the panel. The role can be set in-panel or via DISCORD_ADMIN_ROLE_ID."
-        },
-        "roles": {
-          "q": "Role search returns nothing — what should I do?",
-          "a": "Type at least 2 characters. Ensure the bot can read the guild role list and its role sits above the target role."
-        },
-        "logs": {
-          "q": "Logs are not appearing on Discord — what should I check?",
-          "a": "Verify the webhook URL is valid, the channel is active (is_active), and the URL is not used elsewhere. Test with Webhook Test."
-        },
-        "orders": {
-          "q": "Why do store orders fail?",
-          "a": "The bot may be offline, role hierarchy may be wrong, or the target role may sit above the bot role. Check that store maintenance mode is off."
-        },
-        "earn": {
-          "q": "Members cannot earn papel — what are likely causes?",
-          "a": "Check that message/voice earning is enabled in Earning Settings, verification role requirements, channel filters (whitelist/blacklist), and tag requirements."
-        },
-        "wallet": {
-          "q": "No mail after a wallet operation?",
-          "a": "Removal operations use the admin mail API. Check the API response; addition operations send reward mail via the bot."
-        }
-      }
     }
   },
   "select_server": {
