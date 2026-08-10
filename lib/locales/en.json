@@ -274,6 +274,8 @@
       "role": "Admin",
       "settings": "Panel Settings",
       "change_server": "Change Server",
+      "switch_server_hint": "Choose from the servers you can manage.",
+      "switch_server_current": "You're on this server",
       "mobile_welcome": "Manage your server, store, and economy from the admin panel.",
       "logout": "Log Out"
     },
