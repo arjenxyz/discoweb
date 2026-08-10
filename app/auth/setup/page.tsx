@@ -1013,14 +1013,14 @@ export default function SetupPage() {
                         <button
                           type="button"
                           onClick={() => setMessageEarnEnabled(!messageEarnEnabled)}
-                          className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+                          className={`relative h-5 w-9 shrink-0 overflow-hidden rounded-full transition-colors ${
                             messageEarnEnabled ? 'bg-emerald-500' : 'bg-white/20'
                           }`}
                           aria-pressed={messageEarnEnabled}
                         >
                           <span
-                            className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
-                              messageEarnEnabled ? 'translate-x-4' : 'translate-x-0.5'
+                            className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                              messageEarnEnabled ? 'translate-x-4' : 'translate-x-0'
                             }`}
                           />
                         </button>
@@ -1064,14 +1064,14 @@ export default function SetupPage() {
                         <button
                           type="button"
                           onClick={() => setVoiceEarnEnabled(!voiceEarnEnabled)}
-                          className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+                          className={`relative h-5 w-9 shrink-0 overflow-hidden rounded-full transition-colors ${
                             voiceEarnEnabled ? 'bg-indigo-500' : 'bg-white/20'
                           }`}
                           aria-pressed={voiceEarnEnabled}
                         >
                           <span
-                            className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
-                              voiceEarnEnabled ? 'translate-x-4' : 'translate-x-0.5'
+                            className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                              voiceEarnEnabled ? 'translate-x-4' : 'translate-x-0'
                             }`}
                           />
                         </button>
