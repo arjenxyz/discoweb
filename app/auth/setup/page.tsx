@@ -24,11 +24,8 @@ interface DiscordUser {
 }
 
 type DropdownPos = {
-  left: number;
-  width: number;
   maxHeight: number;
-  top?: number;
-  bottom?: number;
+  width: number;
 };
 
 function roleColorHex(color: number) {
@@ -40,29 +37,11 @@ function isAdminCapableRole(role: DiscordRole) {
   return Boolean((perms & 0x8) || (perms & 0x20) || (perms & 0x10000000));
 }
 
-function measureDropdownPosition(anchor: HTMLElement): DropdownPos {
-  const rect = anchor.getBoundingClientRect();
-  const gap = 10;
-  const viewportPad = 16;
-  const spaceBelow = window.innerHeight - rect.bottom - gap - viewportPad;
-  const spaceAbove = rect.top - gap - viewportPad;
-  const openUp = spaceBelow < 220 && spaceAbove > spaceBelow;
-  const maxHeight = Math.max(160, Math.min(320, openUp ? spaceAbove : spaceBelow));
-
-  if (openUp) {
-    return {
-      left: rect.left,
-      width: rect.width,
-      maxHeight,
-      bottom: window.innerHeight - rect.top + gap,
-    };
-  }
-
+function measureCenteredPanel(): DropdownPos {
+  const viewportPad = 24;
   return {
-    left: rect.left,
-    width: rect.width,
-    maxHeight,
-    top: rect.bottom + gap,
+    width: Math.min(420, window.innerWidth - viewportPad * 2),
+    maxHeight: Math.min(360, window.innerHeight - viewportPad * 2),
   };
 }
 
@@ -108,13 +87,11 @@ function RoleSelectDropdown({
   }, [open]);
 
   useLayoutEffect(() => {
-    if (!open || !anchorRef.current) {
+    if (!open) {
       setPos(null);
       return;
     }
-    const update = () => {
-      if (anchorRef.current) setPos(measureDropdownPosition(anchorRef.current));
-    };
+    const update = () => setPos(measureCenteredPanel());
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
@@ -192,10 +169,11 @@ function RoleSelectDropdown({
               role="listbox"
               style={{
                 position: 'fixed',
-                left: pos.left,
+                top: '50%',
+                left: '50%',
                 width: pos.width,
                 zIndex: 200,
-                ...(pos.top != null ? { top: pos.top } : { bottom: pos.bottom }),
+                transform: 'translate(-50%, -50%)',
               }}
               className="overflow-hidden rounded-2xl border border-white/10 bg-[#12141d]/95 shadow-2xl backdrop-blur-md"
             >
