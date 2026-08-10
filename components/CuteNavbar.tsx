@@ -143,7 +143,7 @@ export default function CuteNavbar() {
   const onSelectServer = pathname?.startsWith('/auth/select-server') ?? false;
   const onHome = pathname === '/' || pathname === '';
   const botInviteUrl = siteConfig.bot.inviteUrl;
-  /** Select-server mobile menu open: hide brand/identity in bar; show language only */
+  /** Select-server mobile menu open → show brand (non-linking); closed → user identity */
   const selectServerMenuOpen = onSelectServer && mobileOpen;
   const showUserIdentity = onSelectServer && isLoggedIn && !!user && !mobileOpen;
 
@@ -448,77 +448,77 @@ export default function CuteNavbar() {
         {/* Navbar Container: overflow-visible önemli */}
         <nav className="relative flex items-center justify-between gap-4 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl shadow-2xl transition-colors duration-300 overflow-visible">
           
-          {/* Logo / kullanıcı — hidden while select-server mobile menu is open */}
-          {!selectServerMenuOpen && (
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="relative z-50 h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#1e1f22] transition-transform hover:scale-110">
-                {showUserIdentity && user?.avatar ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={user.avatar}
-                    alt=""
-                    className="h-full w-full object-cover"
-                    draggable={false}
-                  />
-                ) : showUserIdentity && user ? (
-                  <div className="flex h-full w-full items-center justify-center bg-white/10 text-sm font-black text-white">
-                    {user.username.charAt(0).toUpperCase()}
-                  </div>
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src="/gif/cat.gif" alt="" className="h-full w-full object-cover" draggable={false} />
-                )}
-              </div>
-
-              <div
-                className="relative flex h-full min-w-0 cursor-pointer items-center gap-1 group"
-                onMouseEnter={() => setIsLogoHovered(true)}
-                onMouseLeave={() => setIsLogoHovered(false)}
-              >
-                {showUserIdentity && user ? (
-                  <Link
-                    href="/"
-                    className="relative z-50 block min-w-0 max-w-[11rem] sm:max-w-[14rem] md:max-w-[16rem]"
-                    aria-label={t('navbar.back_home_hint')}
-                  >
-                    <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
-                      {user.username}
-                    </div>
-                    <div className="truncate text-[10px] font-medium text-white/40 transition-colors hover:text-white/70">
-                      {t('navbar.back_home_hint')}
-                    </div>
-                  </Link>
-                ) : (
-                  <Link href="/" className="relative z-50 text-xl font-black tracking-tight text-white">
-                    DiscoWeb
-                  </Link>
-                )}
-
-                {(onHome || !isLoggedIn) && (
-                  <div
-                    className={`absolute left-1/2 top-[60%] z-0 -translate-x-1/2 transition-all duration-500 ${
-                      isLogoHovered
-                        ? 'translate-y-0 rotate-0 opacity-100'
-                        : 'pointer-events-none -translate-y-12 -rotate-12 opacity-0'
-                    }`}
-                    style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
-                  >
-                    <div className="w-[280px] drop-shadow-2xl filter brightness-110">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/gif/asılıpengu.gif"
-                        alt=""
-                        className="h-full w-full object-contain"
-                        draggable={false}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+          {/* Logo / kullanıcı — select-server identity when menu closed; brand mark when menu open (no home link) */}
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="relative z-50 h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#1e1f22] transition-transform hover:scale-110">
+              {showUserIdentity && user?.avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.avatar}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+              ) : showUserIdentity && user ? (
+                <div className="flex h-full w-full items-center justify-center bg-white/10 text-sm font-black text-white">
+                  {user.username.charAt(0).toUpperCase()}
+                </div>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src="/gif/cat.gif" alt="" className="h-full w-full object-cover" draggable={false} />
+              )}
             </div>
-          )}
 
-          {selectServerMenuOpen && <div className="min-w-0 flex-1" aria-hidden />}
+            <div
+              className="relative flex h-full min-w-0 items-center gap-1 group"
+              onMouseEnter={() => setIsLogoHovered(true)}
+              onMouseLeave={() => setIsLogoHovered(false)}
+            >
+              {showUserIdentity && user ? (
+                <Link
+                  href="/"
+                  className="relative z-50 block min-w-0 max-w-[11rem] cursor-pointer sm:max-w-[14rem] md:max-w-[16rem]"
+                  aria-label={t('navbar.back_home_hint')}
+                >
+                  <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
+                    {user.username}
+                  </div>
+                  <div className="truncate text-[10px] font-medium text-white/40 transition-colors hover:text-white/70">
+                    {t('navbar.back_home_hint')}
+                  </div>
+                </Link>
+              ) : selectServerMenuOpen ? (
+                <span className="relative z-50 text-xl font-black tracking-tight text-white">
+                  DiscoWeb
+                </span>
+              ) : (
+                <Link href="/" className="relative z-50 cursor-pointer text-xl font-black tracking-tight text-white">
+                  DiscoWeb
+                </Link>
+              )}
+
+              {(onHome || !isLoggedIn) && (
+                <div
+                  className={`absolute left-1/2 top-[60%] z-0 -translate-x-1/2 transition-all duration-500 ${
+                    isLogoHovered
+                      ? 'translate-y-0 rotate-0 opacity-100'
+                      : 'pointer-events-none -translate-y-12 -rotate-12 opacity-0'
+                  }`}
+                  style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+                >
+                  <div className="w-[280px] drop-shadow-2xl filter brightness-110">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/gif/asılıpengu.gif"
+                      alt=""
+                      className="h-full w-full object-contain"
+                      draggable={false}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Desktop Menu — hide only on select-server */}
           {!onSelectServer && (
