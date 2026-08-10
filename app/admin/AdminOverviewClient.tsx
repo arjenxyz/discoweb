@@ -323,7 +323,7 @@ export default function AdminOverviewClient({
                 fmt={fmt}
               />
               <StatCard
-                icon={<LuBell className="h-5 w-5" />}
+                icon={<LuPackage className="h-5 w-5" />}
                 label={t('admin.dashboard.pending_orders')}
                 value={stats.pendingOrders}
                 sub={t('admin.dashboard.paid_orders', { 0: fmt.format(stats.paidOrders) })}

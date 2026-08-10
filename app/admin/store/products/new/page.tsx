@@ -189,253 +189,151 @@ function AdminStoreProductCreatePageContent() {
     router.push('/admin/store/products');
   };
 
+  const labelClass = 'text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35';
+  const fieldClass =
+    'mt-1.5 w-full rounded-xl border border-white/10 bg-black/25 px-3.5 py-2.5 text-sm text-white/85 placeholder:text-white/25 focus:border-[#5865F2]/50 focus:outline-none';
+
+  const durationLabel =
+    durationDays === ''
+      ? 'Süre yok'
+      : durationDays === '0'
+        ? 'Süresiz'
+        : (() => {
+            const m = Number(durationDays);
+            const d = Math.floor(m / 1440);
+            const h = Math.floor((m % 1440) / 60);
+            const mn = m % 60;
+            const parts: string[] = [];
+            if (d > 0) parts.push(`${d}g`);
+            if (h > 0) parts.push(`${h}sa`);
+            if (mn > 0) parts.push(`${mn}dk`);
+            return parts.join(' ') || `${m}dk`;
+          })();
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Mağaza</p>
-          <h1 className="mt-2 text-2xl font-semibold">
-            {editId ? 'Ürün Düzenle' : 'Yeni Ürün Oluştur'}
+    <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
+          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
+            {editId ? 'Ürün Düzenle' : 'Yeni Ürün'}
           </h1>
-          <p className="mt-1 text-sm text-white/60">Ürün bilgilerini girip kaydedin.</p>
         </div>
         <Link
           href="/admin/store/products"
-          className="rounded-full border border-white/10 px-4 py-2 text-xs text-white/60 transition hover:border-white/30 hover:text-white"
+          className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white"
         >
-          Ürün Listesi
+          Liste
         </Link>
       </div>
 
       {(error || loadingItem) && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70">
-          {loadingItem ? 'Yükleniyor...' : error}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white/60">
+          {loadingItem ? 'Yükleniyor…' : error}
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+          <div className="grid gap-3.5">
             <div>
-              <h2 className="text-lg font-semibold">Ürün Formu</h2>
-              <p className="mt-1 text-sm text-white/60">Temel bilgileri girip rol bağlayın.</p>
-            </div>
-            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/60">
-              Zorunlu: Ürün adı, Rol, Fiyat
-            </span>
-          </div>
-
-          <div className="mt-6 grid gap-4">
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                Ürün Adı
-              </label>
+              <label className={labelClass}>Ürün adı</label>
               <input
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 placeholder="Örn. VIP Rol"
-                className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                className={fieldClass}
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                Rol Adı (Sunucudan)
-              </label>
+              <label className={labelClass}>Rol</label>
               <input
                 value={roleQuery}
                 onChange={(event) => setRoleQuery(event.target.value)}
-                placeholder="Rol adını yazıp seçin"
-                className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                placeholder="Rol adı ara…"
+                className={fieldClass}
               />
-              <div className="mt-3 space-y-2">
-                {roleLoading && <p className="text-xs text-white/50">Roller aranıyor...</p>}
-                {roleError && <p className="text-xs text-rose-200">{roleError}</p>}
-                {roleResults.length > 0 && (
-                  <div className="grid gap-2 rounded-xl border border-white/10 bg-[#0b0d12]/60 p-2">
-                    {roleResults.map((role) => (
-                      <button
-                        key={role.id}
-                        type="button"
-                        onClick={() => {
-                          setRoleId(role.id);
-                          setRoleQuery(role.name);
-                          setSelectedRoleName(role.name);
-                          setRoleResults([]);
-                        }}
-                        className="flex items-center justify-between rounded-lg border border-white/10 px-3 py-2 text-left text-xs text-white/70 transition hover:border-indigo-400/40 hover:text-white"
-                      >
-                        <span className="flex items-center gap-2">
-                          <span
-                            className="h-2 w-2 rounded-full"
-                            style={{ backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, '0')}` : '#6366f1' }}
-                          />
-                          {role.name}
-                        </span>
-                        <span className="text-[10px] text-white/40">{role.id}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                Rol ID (Otomatik doldurulur)
-              </label>
+              {(roleLoading || roleError || roleResults.length > 0) && (
+                <div className="mt-2 space-y-1.5">
+                  {roleLoading && <p className="text-xs text-white/40">Aranıyor…</p>}
+                  {roleError && <p className="text-xs text-rose-300">{roleError}</p>}
+                  {roleResults.length > 0 && (
+                    <div className="max-h-40 space-y-1 overflow-y-auto rounded-xl border border-white/10 bg-black/30 p-1.5">
+                      {roleResults.map((role) => (
+                        <button
+                          key={role.id}
+                          type="button"
+                          onClick={() => {
+                            setRoleId(role.id);
+                            setRoleQuery(role.name);
+                            setSelectedRoleName(role.name);
+                            setRoleResults([]);
+                          }}
+                          className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs text-white/70 transition hover:bg-[#5865F2]/15 hover:text-white"
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span
+                              className="h-2 w-2 shrink-0 rounded-full"
+                              style={{
+                                backgroundColor: role.color
+                                  ? `#${role.color.toString(16).padStart(6, '0')}`
+                                  : '#5865F2',
+                              }}
+                            />
+                            <span className="truncate">{role.name}</span>
+                          </span>
+                          <span className="ml-2 shrink-0 text-[10px] text-white/30">{role.id}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               <input
                 value={roleId}
                 onChange={(event) => {
                   setRoleId(event.target.value);
                   setSelectedRoleName('');
                 }}
-                placeholder="Discord rol ID"
-                className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                placeholder="Rol ID"
+                className={`${fieldClass} mt-2 font-mono text-xs`}
               />
-              <p className="mt-2 text-xs text-white/45">Rol adıyla seçebilir veya ID’yi manuel girebilirsiniz.</p>
+              {(selectedRoleName || roleId) && (
+                <p className="mt-1.5 truncate text-[11px] text-white/40">
+                  {selectedRoleName ? `Seçili: ${selectedRoleName}` : `ID: ${roleId}`}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                Açıklama
-              </label>
+              <label className={labelClass}>Açıklama</label>
               <textarea
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                placeholder="Ürün detayları ve avantajları"
-                rows={4}
-                className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                placeholder="Kısa ürün açıklaması"
+                rows={2}
+                className={`${fieldClass} resize-y`}
               />
             </div>
 
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                  Fiyat (papel)
-                </label>
+                <label className={labelClass}>Fiyat (papel)</label>
                 <input
                   value={price}
                   onChange={(event) => setPrice(event.target.value)}
-                  placeholder="Örn. 250"
+                  placeholder="250"
                   type="number"
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                  className={fieldClass}
                 />
               </div>
-              <div className="md:col-span-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                  Süre
-                </label>
-                <div className="mt-2 grid grid-cols-3 gap-2">
-                  <div>
-                    <div className="relative">
-                      <input
-                        value={(() => { const m = Number(durationDays); return m > 0 ? String(Math.floor(m / 1440)) : '0'; })()}
-                        onChange={(event) => {
-                          const d = Math.max(0, Number(event.target.value) || 0);
-                          const cur = Number(durationDays) || 0;
-                          const h = Math.floor((cur % 1440) / 60);
-                          const mn = cur % 60;
-                          setDurationDays(String(d * 1440 + h * 60 + mn));
-                        }}
-                        type="number"
-                        min="0"
-                        placeholder="0"
-                        className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 pr-10 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30 pointer-events-none">gün</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="relative">
-                      <input
-                        value={(() => { const m = Number(durationDays); return m > 0 ? String(Math.floor((m % 1440) / 60)) : '0'; })()}
-                        onChange={(event) => {
-                          const h = Math.max(0, Math.min(23, Number(event.target.value) || 0));
-                          const cur = Number(durationDays) || 0;
-                          const d = Math.floor(cur / 1440);
-                          const mn = cur % 60;
-                          setDurationDays(String(d * 1440 + h * 60 + mn));
-                        }}
-                        type="number"
-                        min="0"
-                        max="23"
-                        placeholder="0"
-                        className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 pr-12 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30 pointer-events-none">saat</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="relative">
-                      <input
-                        value={(() => { const m = Number(durationDays); return m > 0 ? String(m % 60) : '0'; })()}
-                        onChange={(event) => {
-                          const mn = Math.max(0, Math.min(59, Number(event.target.value) || 0));
-                          const cur = Number(durationDays) || 0;
-                          const d = Math.floor(cur / 1440);
-                          const h = Math.floor((cur % 1440) / 60);
-                          setDurationDays(String(d * 1440 + h * 60 + mn));
-                        }}
-                        type="number"
-                        min="0"
-                        max="59"
-                        placeholder="0"
-                        className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 pr-10 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30 pointer-events-none">dk</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {[
-                    { label: '30dk', value: 30 },
-                    { label: '1 Saat', value: 60 },
-                    { label: '6 Saat', value: 360 },
-                    { label: '12 Saat', value: 720 },
-                    { label: '1 Gün', value: 1440 },
-                    { label: '7 Gün', value: 10080 },
-                    { label: '30 Gün', value: 43200 },
-                    { label: 'Süresiz', value: 0 },
-                  ].map((preset) => (
-                    <button
-                      key={preset.value}
-                      type="button"
-                      onClick={() => setDurationDays(String(preset.value))}
-                      className={`rounded-lg border px-2.5 py-1 text-[10px] font-semibold transition ${
-                        Number(durationDays) === preset.value
-                          ? 'border-indigo-400/50 bg-indigo-500/20 text-indigo-300'
-                          : 'border-white/10 bg-white/5 text-white/50 hover:text-white/80'
-                      }`}
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-                {Number(durationDays) > 0 && (
-                  <p className="mt-1.5 text-[11px] text-white/30">
-                    Toplam: {(() => {
-                      const m = Number(durationDays);
-                      const d = Math.floor(m / 1440);
-                      const h = Math.floor((m % 1440) / 60);
-                      const mn = m % 60;
-                      const p: string[] = [];
-                      if (d > 0) p.push(`${d} gün`);
-                      if (h > 0) p.push(`${h} saat`);
-                      if (mn > 0) p.push(`${mn} dakika`);
-                      return p.join(' ') || '0';
-                    })()} ({durationDays} dakika)
-                  </p>
-                )}
-              </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">
-                  Durum
-                </label>
+                <label className={labelClass}>Durum</label>
                 <select
                   value={itemStatus}
                   onChange={(event) => setItemStatus(event.target.value as 'active' | 'inactive')}
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+                  className={fieldClass}
                 >
                   <option value="active">Aktif</option>
                   <option value="inactive">Pasif</option>
@@ -443,19 +341,116 @@ function AdminStoreProductCreatePageContent() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div>
+              <label className={labelClass}>Süre</label>
+              <div className="mt-1.5 grid grid-cols-3 gap-2">
+                <div className="relative">
+                  <input
+                    value={(() => {
+                      const m = Number(durationDays);
+                      return m > 0 ? String(Math.floor(m / 1440)) : '0';
+                    })()}
+                    onChange={(event) => {
+                      const d = Math.max(0, Number(event.target.value) || 0);
+                      const cur = Number(durationDays) || 0;
+                      const h = Math.floor((cur % 1440) / 60);
+                      const mn = cur % 60;
+                      setDurationDays(String(d * 1440 + h * 60 + mn));
+                    }}
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    className={`${fieldClass} mt-0 pr-9`}
+                  />
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30">
+                    gün
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    value={(() => {
+                      const m = Number(durationDays);
+                      return m > 0 ? String(Math.floor((m % 1440) / 60)) : '0';
+                    })()}
+                    onChange={(event) => {
+                      const h = Math.max(0, Math.min(23, Number(event.target.value) || 0));
+                      const cur = Number(durationDays) || 0;
+                      const d = Math.floor(cur / 1440);
+                      const mn = cur % 60;
+                      setDurationDays(String(d * 1440 + h * 60 + mn));
+                    }}
+                    type="number"
+                    min="0"
+                    max="23"
+                    placeholder="0"
+                    className={`${fieldClass} mt-0 pr-10`}
+                  />
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30">
+                    saat
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    value={(() => {
+                      const m = Number(durationDays);
+                      return m > 0 ? String(m % 60) : '0';
+                    })()}
+                    onChange={(event) => {
+                      const mn = Math.max(0, Math.min(59, Number(event.target.value) || 0));
+                      const cur = Number(durationDays) || 0;
+                      const d = Math.floor(cur / 1440);
+                      const h = Math.floor((cur % 1440) / 60);
+                      setDurationDays(String(d * 1440 + h * 60 + mn));
+                    }}
+                    type="number"
+                    min="0"
+                    max="59"
+                    placeholder="0"
+                    className={`${fieldClass} mt-0 pr-8`}
+                  />
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30">
+                    dk
+                  </span>
+                </div>
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {[
+                  { label: '30dk', value: 30 },
+                  { label: '1sa', value: 60 },
+                  { label: '1g', value: 1440 },
+                  { label: '7g', value: 10080 },
+                  { label: '30g', value: 43200 },
+                  { label: '∞', value: 0 },
+                ].map((preset) => (
+                  <button
+                    key={preset.value}
+                    type="button"
+                    onClick={() => setDurationDays(String(preset.value))}
+                    className={`rounded-lg border px-2.5 py-1 text-[10px] font-semibold transition ${
+                      Number(durationDays) === preset.value
+                        ? 'border-[#5865F2]/45 bg-[#5865F2]/20 text-[#a5b4ff]'
+                        : 'border-white/10 bg-white/[0.03] text-white/45 hover:text-white/80'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 pt-1">
               <button
                 type="button"
                 onClick={editId ? handleUpdateItem : handleCreateItem}
                 disabled={itemSaving || !title || !price || !roleId || durationDays === ''}
-                className="rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {itemSaving ? 'Kaydediliyor...' : editId ? 'Güncelle' : 'Ürünü Kaydet'}
+                {itemSaving ? 'Kaydediliyor…' : editId ? 'Güncelle' : 'Kaydet'}
               </button>
               {editId && (
                 <Link
                   href="/admin/store/products"
-                  className="rounded-xl border border-white/10 px-6 py-3 text-sm text-white/70 transition hover:border-white/30 hover:text-white"
+                  className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white/60 transition hover:border-white/20 hover:text-white"
                 >
                   Vazgeç
                 </Link>
@@ -464,85 +459,38 @@ function AdminStoreProductCreatePageContent() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-white/40">Hızlı İpuçları</h3>
-            <ul className="mt-4 space-y-3 text-sm text-white/60">
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Rol ID doğru olduğunda satın alma otomatik rol atar.
-              </li>
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Süre alanına 0 yazarsanız rol kalıcı olur.
-              </li>
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Pasif ürünler listede görünür ama satın alınamaz.
-              </li>
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Rol adında en az 2 karakter yazınca eşleşmeler listelenir.
-              </li>
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Ürün açıklaması vitrinde görünür, kısa ve net yazın.
-              </li>
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Fiyat 0 veya negatif olamaz; papel cinsinden girin.
-              </li>
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Süre dakika cinsindendir. 1440 = 1 gün, 60 = 1 saat.
-              </li>
-              <li className="flex gap-2">
-                <span className="mt-1 h-2 w-2 rounded-full bg-indigo-400" />
-                Düzenleme modunda rol değiştirirseniz eski rol otomatik güncellenir.
-              </li>
-            </ul>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-500/10 via-white/5 to-transparent p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-white/40">Önizleme</h3>
-            <div className="mt-4 rounded-xl border border-white/10 bg-[#0b0d12]/60 p-4">
-              <p className="text-sm font-semibold text-white/80">{title || 'Ürün adı'}</p>
-              <p className="mt-2 text-xs text-white/50">
-                {description || 'Ürün açıklaması burada görünecek.'}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-white/50">
-                <span className="rounded-full border border-white/10 px-2 py-1">
-                  {price ? `${price} papel` : 'Fiyat belirlenmedi'}
+        <div className="space-y-3 lg:space-y-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Önizleme</p>
+            <div className="mt-3 rounded-xl border border-white/10 bg-black/25 p-3.5">
+              <p className="truncate text-sm font-semibold text-white">{title || 'Ürün adı'}</p>
+              {description ? (
+                <p className="mt-1 line-clamp-2 text-xs text-white/45">{description}</p>
+              ) : null}
+              <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] text-white/50">
+                <span className="rounded-lg border border-white/10 px-2 py-0.5">
+                  {price ? `${price} papel` : 'Fiyat yok'}
                 </span>
-                <span className="rounded-full border border-white/10 px-2 py-1">
-                  {durationDays === ''
-                    ? 'Süre girilmedi'
-                    : durationDays === '0'
-                      ? 'Süresiz'
-                      : (() => {
-                          const m = Number(durationDays);
-                          const d = Math.floor(m / 1440);
-                          const h = Math.floor((m % 1440) / 60);
-                          const mn = m % 60;
-                          const p: string[] = [];
-                          if (d > 0) p.push(`${d}g`);
-                          if (h > 0) p.push(`${h}sa`);
-                          if (mn > 0) p.push(`${mn}dk`);
-                          return p.join(' ') || `${m}dk`;
-                        })()}
-                </span>
-                <span className="rounded-full border border-white/10 px-2 py-1">
+                <span className="rounded-lg border border-white/10 px-2 py-0.5">{durationLabel}</span>
+                <span className="rounded-lg border border-white/10 px-2 py-0.5">
                   {itemStatus === 'active' ? 'Aktif' : 'Pasif'}
                 </span>
-                <span className="rounded-full border border-white/10 px-2 py-1">
-                  {selectedRoleName
-                    ? `Rol: ${selectedRoleName}`
-                    : roleId
-                      ? `Rol ID: ${roleId}`
-                      : 'Rol seçilmedi'}
-                </span>
+                {(selectedRoleName || roleId) && (
+                  <span className="max-w-full truncate rounded-lg border border-white/10 px-2 py-0.5">
+                    {selectedRoleName || roleId}
+                  </span>
+                )}
               </div>
             </div>
+          </div>
+
+          <div className="hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:block">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">İpuçları</p>
+            <ul className="mt-3 space-y-2 text-xs text-white/45">
+              <li>Rol seçilince satın alma otomatik rol verir.</li>
+              <li>Süre 0 = kalıcı rol.</li>
+              <li>Pasif ürünler satın alınamaz.</li>
+            </ul>
           </div>
         </div>
       </div>
