@@ -65,6 +65,48 @@ function NavInfoPanel({
   );
 }
 
+function MobileInfoDropdown({
+  title,
+  body,
+  note,
+  gifSrc,
+}: {
+  title: string;
+  body: string;
+  note: string;
+  gifSrc: string;
+}) {
+  return (
+    <div className="animate-slideUp origin-top pb-4 pt-2">
+      <div className="relative overflow-hidden rounded-[24px] border border-white/20 bg-[#5865F2] shadow-[0_16px_40px_rgba(88,101,242,0.35)]">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
+        <div className="relative z-10 flex gap-3 p-4 pb-3">
+          <div className="min-w-0 flex-1 space-y-2.5">
+            <div>
+              <div className="mb-2 h-1 w-8 rounded-full bg-white/80" />
+              <h3 className="text-lg font-black leading-tight tracking-tight text-white">
+                {title}
+              </h3>
+            </div>
+            <p className="text-[13px] leading-5 text-white/80">{body}</p>
+            <p className="border-l-2 border-white/35 pl-2.5 text-[11px] leading-4 text-white/60">
+              {note}
+            </p>
+          </div>
+          <div className="w-[7.5rem] shrink-0 self-end">
+            <img
+              src={gifSrc}
+              alt=""
+              draggable={false}
+              className="h-28 w-full object-contain drop-shadow-xl"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CuteNavbar() {
   const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -393,48 +435,50 @@ export default function CuteNavbar() {
               </p>
             </div>
 
-            <nav className="flex-1 space-y-1 overflow-y-auto">
-              <button
-                type="button"
-                onClick={() => toggleMobileSubmenu('home')}
-                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left"
-              >
-                <span className={`text-lg font-semibold transition-colors ${mobileSubmenu === 'home' ? 'text-white' : 'text-white/70'}`}>
-                  {t('navbar.home')}
-                </span>
-                <ChevronIcon isOpen={mobileSubmenu === 'home'} />
-              </button>
-              {mobileSubmenu === 'home' && (
-                <div className="animate-fadeIn space-y-3 pb-5 pt-1 pl-0.5">
-                  <div className="h-1 w-9 rounded-full bg-white/80" />
-                  <p className="text-xl font-black leading-tight text-white">{t('navbar.home_panel_title')}</p>
-                  <p className="text-sm leading-relaxed text-white/60">{t('navbar.home_panel_body')}</p>
-                  <p className="border-l-2 border-[#5865F2]/70 pl-3 text-xs leading-relaxed text-white/40">
-                    {t('navbar.home_panel_note')}
-                  </p>
-                </div>
-              )}
+            <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => toggleMobileSubmenu('home')}
+                  className={`flex w-full items-center justify-between py-4 text-left transition-colors ${
+                    mobileSubmenu === 'home' ? 'text-white' : 'text-white/70'
+                  }`}
+                >
+                  <span className="text-lg font-semibold">{t('navbar.home')}</span>
+                  <ChevronIcon isOpen={mobileSubmenu === 'home'} />
+                </button>
+                {mobileSubmenu === 'home' && (
+                  <MobileInfoDropdown
+                    title={t('navbar.home_panel_title')}
+                    body={t('navbar.home_panel_body')}
+                    note={t('navbar.home_panel_note')}
+                    gifSrc="/gif/from.gif"
+                  />
+                )}
+                <div className="border-b border-white/[0.06]" />
+              </div>
 
-              <button
-                type="button"
-                onClick={() => toggleMobileSubmenu('developer')}
-                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left"
-              >
-                <span className={`text-lg font-semibold transition-colors ${mobileSubmenu === 'developer' ? 'text-white' : 'text-white/70'}`}>
-                  {t('navbar.developer')}
-                </span>
-                <ChevronIcon isOpen={mobileSubmenu === 'developer'} />
-              </button>
-              {mobileSubmenu === 'developer' && (
-                <div className="animate-fadeIn space-y-3 pb-5 pt-1 pl-0.5">
-                  <div className="h-1 w-9 rounded-full bg-white/80" />
-                  <p className="text-xl font-black leading-tight text-white">{t('navbar.developer_panel_title')}</p>
-                  <p className="text-sm leading-relaxed text-white/60">{t('navbar.developer_panel_body')}</p>
-                  <p className="border-l-2 border-[#5865F2]/70 pl-3 text-xs leading-relaxed text-white/40">
-                    {t('navbar.developer_panel_note')}
-                  </p>
-                </div>
-              )}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => toggleMobileSubmenu('developer')}
+                  className={`flex w-full items-center justify-between py-4 text-left transition-colors ${
+                    mobileSubmenu === 'developer' ? 'text-white' : 'text-white/70'
+                  }`}
+                >
+                  <span className="text-lg font-semibold">{t('navbar.developer')}</span>
+                  <ChevronIcon isOpen={mobileSubmenu === 'developer'} />
+                </button>
+                {mobileSubmenu === 'developer' && (
+                  <MobileInfoDropdown
+                    title={t('navbar.developer_panel_title')}
+                    body={t('navbar.developer_panel_body')}
+                    note={t('navbar.developer_panel_note')}
+                    gifSrc="/gif/sungoandpato.gif"
+                  />
+                )}
+                <div className="border-b border-white/[0.06]" />
+              </div>
 
               <Link
                 href="/status"
@@ -442,7 +486,7 @@ export default function CuteNavbar() {
                 className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-lg font-semibold text-white/70 transition-colors hover:text-white"
               >
                 {t('navbar.status')}
-                <span className="text-white/25 text-sm">→</span>
+                <span className="text-sm text-white/25">→</span>
               </Link>
             </nav>
 
