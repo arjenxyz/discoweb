@@ -42,15 +42,22 @@ function NavLinkItem({
     return (
       <Link
         href={href}
-        className={`flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left transition-colors ${
-          active ? 'text-white' : 'text-white/70 hover:text-white'
+        className={`group flex w-full items-center gap-3 rounded-2xl px-2.5 py-2.5 transition-all duration-200 ${
+          active
+            ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25'
+            : 'text-white/60 hover:bg-white/5 hover:text-white'
         }`}
       >
-        <span className="flex min-w-0 items-center gap-3">
-          <Icon className={`h-5 w-5 shrink-0 ${active ? 'text-[#a5b4ff]' : 'text-white/35'}`} />
-          <span className="truncate text-lg font-semibold">{t(labelKey)}</span>
+        <span
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+            active
+              ? 'bg-white/15 text-white'
+              : 'bg-white/[0.04] text-white/40 group-hover:bg-white/[0.08] group-hover:text-white/75'
+          }`}
+        >
+          <Icon className="h-4 w-4" />
         </span>
-        <span className="text-sm text-white/25">→</span>
+        <span className="truncate text-[15px] font-medium">{t(labelKey)}</span>
       </Link>
     );
   }
@@ -109,21 +116,29 @@ function NavExpandableItem({
 
   if (isMobile) {
     return (
-      <div>
+      <div className="space-y-1">
         <button
           type="button"
           onClick={onToggle}
-          className={`flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left transition-colors ${
-            highlighted ? 'text-white' : 'text-white/70 hover:text-white'
+          className={`group flex w-full items-center gap-3 rounded-2xl px-2.5 py-2.5 transition-all duration-200 ${
+            highlighted
+              ? 'bg-[#5865F2]/15 text-white ring-1 ring-[#5865F2]/35'
+              : 'text-white/60 hover:bg-white/5 hover:text-white'
           }`}
         >
-          <span className="flex min-w-0 items-center gap-3">
-            <item.icon className={`h-5 w-5 shrink-0 ${highlighted ? 'text-[#a5b4ff]' : 'text-white/35'}`} />
-            <span className="truncate text-lg font-semibold">{t(item.labelKey)}</span>
+          <span
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+              highlighted
+                ? styles.chip
+                : 'bg-white/[0.04] text-white/40 group-hover:bg-white/[0.08] group-hover:text-white/75'
+            }`}
+          >
+            <item.icon className="h-4 w-4" />
           </span>
+          <span className="flex-1 truncate text-left text-[15px] font-medium">{t(item.labelKey)}</span>
           <LuChevronDown
-            className={`h-4 w-4 shrink-0 text-white/25 transition-transform duration-200 ${
-              isOpen ? 'rotate-180' : ''
+            className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
+              isOpen ? 'rotate-180 text-[#a5b4ff]' : 'text-white/25'
             }`}
           />
         </button>
@@ -134,7 +149,7 @@ function NavExpandableItem({
           }`}
         >
           <div className="overflow-hidden">
-            <div className="space-y-1 border-b border-white/[0.06] py-2 pl-8">
+            <div className="ml-2 space-y-0.5 rounded-2xl border border-white/10 bg-black/25 p-1.5 backdrop-blur-sm">
               {item.sections.flatMap((section) =>
                 section.items.map((sub) => {
                   const SubIcon = sub.icon;
@@ -143,17 +158,14 @@ function NavExpandableItem({
                     <Link
                       key={sub.href}
                       href={sub.href}
-                      className={`flex items-center justify-between rounded-xl px-3 py-3 text-sm transition-colors ${
+                      className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-sm transition-colors ${
                         subActive
-                          ? 'bg-[#5865F2] font-semibold text-white shadow-md shadow-[#5865F2]/25'
-                          : 'text-white/55 hover:bg-white/5 hover:text-white'
+                          ? 'bg-[#5865F2] font-medium text-white shadow-md shadow-[#5865F2]/25'
+                          : 'text-white/50 hover:bg-white/5 hover:text-white'
                       }`}
                     >
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <SubIcon className="h-4 w-4 shrink-0 opacity-70" />
-                        <span className="truncate">{t(sub.labelKey)}</span>
-                      </span>
-                      <span className="text-xs text-white/25">→</span>
+                      <SubIcon className={`h-3.5 w-3.5 shrink-0 ${subActive ? 'opacity-100' : 'opacity-50'}`} />
+                      <span className="truncate">{t(sub.labelKey)}</span>
                     </Link>
                   );
                 }),
@@ -281,15 +293,18 @@ export default function AdminSidebarNav(props: AdminSidebarNavProps) {
 
   if (props.isMobile) {
     return (
-      <nav className="space-y-1">
+      <nav className="space-y-5">
         {ADMIN_MENU.map((group) => (
           <div key={group.id}>
             {showGroups && (
-              <p className="pb-1 pt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5865F2]/80 first:pt-0">
-                {t(group.titleKey)}
-              </p>
+              <div className="mb-2 flex items-center gap-2 px-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#5865F2]/75">
+                  {t(group.titleKey)}
+                </span>
+                <span className="h-px flex-1 bg-gradient-to-r from-[#5865F2]/25 to-transparent" />
+              </div>
             )}
-            <div>{group.items.map((item) => renderItem(item, props))}</div>
+            <div className="space-y-1">{group.items.map((item) => renderItem(item, props))}</div>
           </div>
         ))}
       </nav>
