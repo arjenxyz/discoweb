@@ -424,26 +424,10 @@ export default function SetupPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {user && (
-              <div className="flex min-w-0 items-center gap-2">
-                {user.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="h-7 w-7 shrink-0 rounded-full border border-white/15 object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/15 bg-[#5865F2]/25 text-[11px] font-bold text-white">
-                    {(user.username ?? '?').charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span className="hidden max-w-[9rem] truncate text-sm font-medium text-white/70 sm:inline">
-                  {user.username}
-                </span>
-              </div>
+            {user?.username && (
+              <span className="hidden max-w-[9rem] truncate text-sm font-medium text-white/70 sm:inline">
+                {user.username}
+              </span>
             )}
             <button
               onClick={() => router.replace('/auth/select-server')}
