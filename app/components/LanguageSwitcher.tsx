@@ -151,11 +151,7 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
 
       {open && (
         <div
-          className={`z-[10002] animate-langSlideUp origin-top ${
-            isMobile
-              ? 'fixed left-1/2 top-[7.5rem] w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2'
-              : 'absolute top-full right-0 w-72 pt-4'
-          }`}
+          className="absolute top-full right-0 z-[10002] w-[min(18rem,calc(100vw-2rem))] pt-2 animate-langSlideUp origin-top md:w-72"
           onMouseEnter={() => {
             if (!isTouch) openMenu();
           }}
