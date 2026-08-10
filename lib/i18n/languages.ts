@@ -29,7 +29,7 @@ export const SUPPORTED_LANGUAGES: readonly LanguageDefinition[] = [
   { code: 'id', label: 'Indonesian', nativeLabel: 'Bahasa Indonesia', country: 'Indonesia' },
   { code: 'es', label: 'Spanish', nativeLabel: 'Español', country: 'Mexico' },
   { code: 'de', label: 'German', nativeLabel: 'Deutsch', country: 'Germany' },
-  { code: 'tr', label: 'Turkish', nativeLabel: 'Türkçe', country: 'Turkey' },
+  { code: 'tr', label: 'Turkish', nativeLabel: 'Türkçe', country: 'Türkiye' },
   { code: 'fr', label: 'French', nativeLabel: 'Français', country: 'France' },
   { code: 'ja', label: 'Japanese', nativeLabel: '日本語', country: 'Japan' },
   { code: 'ko', label: 'Korean', nativeLabel: '한국어', country: 'South Korea' },
