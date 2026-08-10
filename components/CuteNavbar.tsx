@@ -7,6 +7,7 @@ import { useTranslation } from '@/lib/i18nContext';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { siteConfig } from '@/config/site';
+import { LuCode } from 'react-icons/lu';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -138,6 +139,7 @@ export default function CuteNavbar() {
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ username: string; avatar: string | null } | null>(null);
+  const [isDeveloper, setIsDeveloper] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const onSelectServer = pathname?.startsWith('/auth/select-server') ?? false;
   const botInviteUrl = siteConfig.bot.inviteUrl;
@@ -240,6 +242,8 @@ export default function CuteNavbar() {
 
   useEffect(() => {
     const checkLoginStatus = async () => {
+      let signedIn = false;
+
       // Prefer live session (/api/auth/me) — also covers localhost bypass
       try {
         const res = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
@@ -248,54 +252,74 @@ export default function CuteNavbar() {
             username?: string | null;
             avatar?: string | null;
           };
+          signedIn = true;
           setIsLoggedIn(true);
           setUser({
             username: data.username?.trim() || 'Local Dev',
             avatar: data.avatar ?? null,
           });
-          return;
         }
       } catch {
-        // fall through to localStorage heuristics
+        // fall through
       }
 
-      if (isLocalDevBypassClient()) {
+      if (!signedIn && isLocalDevBypassClient()) {
+        signedIn = true;
         setIsLoggedIn(true);
         setUser({ username: 'Local Dev', avatar: null });
-        return;
       }
 
-      const discordUser = localStorage.getItem('discordUser');
-      const adminGuilds = localStorage.getItem('adminGuilds');
-      const hasLocalData = !!(discordUser && adminGuilds);
+      if (!signedIn) {
+        const discordUser = localStorage.getItem('discordUser');
+        const adminGuilds = localStorage.getItem('adminGuilds');
+        const hasLocalData = !!(discordUser && adminGuilds);
 
-      if (!hasLocalData) {
-        setIsLoggedIn(false);
-        setUser(null);
+        if (!hasLocalData) {
+          setIsLoggedIn(false);
+          setUser(null);
+          setIsDeveloper(false);
+          return;
+        }
+
+        try {
+          const parsed = JSON.parse(discordUser!) as {
+            username?: string;
+            global_name?: string;
+            avatar?: string | null;
+            id?: string;
+          };
+          const avatar =
+            parsed.avatar && parsed.id
+              ? parsed.avatar.startsWith('http')
+                ? parsed.avatar
+                : `https://cdn.discordapp.com/avatars/${parsed.id}/${parsed.avatar}.png?size=96`
+              : null;
+          signedIn = true;
+          setIsLoggedIn(true);
+          setUser({
+            username: parsed.global_name || parsed.username || 'Discord User',
+            avatar,
+          });
+        } catch {
+          signedIn = true;
+          setIsLoggedIn(true);
+          setUser(null);
+        }
+      }
+
+      if (!signedIn) {
+        setIsDeveloper(false);
         return;
       }
 
       try {
-        const parsed = JSON.parse(discordUser!) as {
-          username?: string;
-          global_name?: string;
-          avatar?: string | null;
-          id?: string;
-        };
-        const avatar =
-          parsed.avatar && parsed.id
-            ? parsed.avatar.startsWith('http')
-              ? parsed.avatar
-              : `https://cdn.discordapp.com/avatars/${parsed.id}/${parsed.avatar}.png?size=96`
-            : null;
-        setIsLoggedIn(true);
-        setUser({
-          username: parsed.global_name || parsed.username || 'Discord User',
-          avatar,
+        const devRes = await fetch('/api/developer/check-access', {
+          credentials: 'include',
+          cache: 'no-store',
         });
+        setIsDeveloper(devRes.ok);
       } catch {
-        setIsLoggedIn(true);
-        setUser(null);
+        setIsDeveloper(isLocalDevBypassClient());
       }
     };
 
@@ -550,6 +574,15 @@ export default function CuteNavbar() {
             <div className="hidden md:block">
               <LanguageSwitcher />
             </div>
+            {isDeveloper && (
+              <Link
+                href="/developer"
+                className="hidden md:inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-3 text-xs font-semibold text-white/85 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/20 hover:text-white lg:px-3.5"
+              >
+                <LuCode className="h-3.5 w-3.5 shrink-0 opacity-90" />
+                {t('navbar.developer')}
+              </Link>
+            )}
             {isLoggedIn ? (
               onSelectServer ? (
                 <a
@@ -647,6 +680,25 @@ export default function CuteNavbar() {
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
+              {isDeveloper && (
+                <Link
+                  href="/developer"
+                  onClick={() => setMobileOpen(false)}
+                  className="mb-2 flex w-full items-center gap-3 rounded-2xl border border-[#5865F2]/35 bg-[#5865F2]/15 px-4 py-3 text-left transition-colors hover:bg-[#5865F2]/25"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#5865F2]/30 text-white">
+                    <LuCode className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-white">{t('navbar.developer')}</span>
+                    <span className="block truncate text-xs text-white/50">
+                      {t('navbar.developer_panel_note')}
+                    </span>
+                  </span>
+                  <span className="text-sm text-white/35">→</span>
+                </Link>
+              )}
+
               {!onSelectServer && (
                 <>
                   <button

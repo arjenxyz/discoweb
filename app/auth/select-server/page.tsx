@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Ubuntu } from 'next/font/google';
-import { LuArrowRight, LuCode, LuDatabase, LuLock, LuShield, LuSettings } from 'react-icons/lu';
+import { LuArrowRight, LuDatabase, LuLock, LuShield, LuSettings } from 'react-icons/lu';
 import CuteNavbar from '@/components/CuteNavbar';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
@@ -69,7 +69,6 @@ export default function SelectServerPage() {
   const [showAgreementModal, setShowAgreementModal] = useState(false);
   const [agreementTargetHref, setAgreementTargetHref] = useState<string | null>(null);
   const [isProcessingAgreement, setIsProcessingAgreement] = useState(false);
-  const [isDeveloper, setIsDeveloper] = useState(false);
   const localBypass = isLocalDevBypassClient();
 
   const ensureAgreementAndRedirect = useCallback(
@@ -203,13 +202,10 @@ export default function SelectServerPage() {
           });
           if (developerResponse.ok) {
             developerAccess = true;
-            setIsDeveloper(true);
           }
         } catch {
           // ignore
         }
-
-        if (bypass) setIsDeveloper(true);
 
         if (filteredGuilds.length === 0 && !developerAccess) {
           router.replace('/auth/bot-invite');
@@ -218,7 +214,6 @@ export default function SelectServerPage() {
       } catch {
         if (bypass) {
           setGuilds([LOCAL_DEV_GUILD]);
-          setIsDeveloper(true);
           setLoading(false);
           return;
         }
@@ -291,38 +286,6 @@ export default function SelectServerPage() {
               Yönetmek istediğiniz Discord sunucusunu seçin. Yalnızca sahip olduğunuz veya admin
               olduğunuz sunucular listelenir.
             </p>
-
-            {isDeveloper && (
-              <button
-                type="button"
-                onClick={() => router.replace('/developer')}
-                className="group relative mt-8 w-full overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-5 text-left shadow-[0_20px_50px_rgba(88,101,242,0.35)] transition-transform hover:scale-[1.01]"
-              >
-                <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
-                <div className="relative z-10 flex items-center gap-4 pr-16">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white">
-                    <LuCode className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-lg font-black tracking-tight text-white">
-                      Developer Panele Git
-                    </h2>
-                    <p className="mt-0.5 truncate text-sm text-white/70">
-                      Sistem yönetimi ve geliştirici araçları
-                    </p>
-                  </div>
-                  <LuArrowRight className="h-5 w-5 shrink-0 text-white/80 transition-transform group-hover:translate-x-0.5" />
-                </div>
-                <div className="pointer-events-none absolute -bottom-4 -right-3 z-0 h-24 w-24 -rotate-[8deg] drop-shadow-2xl transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105 md:h-28 md:w-28">
-                  <img
-                    src="/gif/sungoandpato.gif"
-                    alt=""
-                    draggable={false}
-                    className="h-full w-full object-contain"
-                  />
-                </div>
-              </button>
-            )}
 
             <div className="mt-8 flex items-end justify-between gap-3">
               <div>
