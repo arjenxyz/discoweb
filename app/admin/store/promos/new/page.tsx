@@ -3,16 +3,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-type PromotionStatus = 'active' | 'disabled' | 'expired';
-
 export default function AdminStorePromoCreatePage() {
   const [code, setCode] = useState('');
   const [value, setValue] = useState('');
   const [maxUses, setMaxUses] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
-  const [promoStatus, setPromoStatus] = useState<PromotionStatus>('active');
   const [promoSaving, setPromoSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const labelClass = 'text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35';
+  const fieldClass =
+    'mt-1.5 w-full rounded-xl border border-white/10 bg-black/25 px-3.5 py-2.5 text-sm text-white/85 placeholder:text-white/25 focus:border-[#5865F2]/50 focus:outline-none';
 
   const handleCreatePromo = async () => {
     setPromoSaving(true);
@@ -22,7 +23,7 @@ export default function AdminStorePromoCreatePage() {
       code,
       value: Number(value),
       maxUses: maxUses ? Number(maxUses) : null,
-      status: promoStatus,
+      status: 'active' as const,
       expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
     };
 
@@ -51,81 +52,85 @@ export default function AdminStorePromoCreatePage() {
     setValue('');
     setMaxUses('');
     setExpiresAt('');
-    setPromoStatus('active');
     setPromoSaving(false);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Mağaza</p>
-          <h1 className="mt-2 text-2xl font-semibold">Promosyon Kodu Oluştur</h1>
-          <p className="mt-1 text-sm text-white/60">Yeni promosyon kodu ve papel paketi tanımlayın.</p>
+    <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
+          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">Yeni Promosyon Ekle</h1>
         </div>
         <Link
           href="/admin/store/promos"
-          className="rounded-full border border-white/10 px-4 py-2 text-xs text-white/60 transition hover:border-white/30 hover:text-white"
+          className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white"
         >
-          Promosyon Listesi
+          Liste
         </Link>
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-rose-200">
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.08] px-3.5 py-2.5 text-sm text-rose-200">
           {error}
         </div>
       )}
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h2 className="text-lg font-semibold">Promosyon Formu</h2>
-        <div className="mt-4 grid gap-3">
-          <input
-            value={code}
-            onChange={(event) => setCode(event.target.value)}
-            placeholder="Kod"
-            className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-          />
-          <div className="grid gap-3 md:grid-cols-2">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+        <div className="grid gap-3.5">
+          <div>
+            <label className={labelClass}>Kod</label>
             <input
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              placeholder="Papel paketi (papel)"
-              type="number"
-              className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+              placeholder="Örn. WELCOME100"
+              className={fieldClass}
             />
-            <input
-              value={maxUses}
-              onChange={(event) => setMaxUses(event.target.value)}
-              placeholder="Limit (opsiyonel)"
-              type="number"
-              className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-            />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={labelClass}>Papel paketi</label>
+              <input
+                value={value}
+                onChange={(event) => setValue(event.target.value)}
+                placeholder="100"
+                type="number"
+                className={fieldClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Limit</label>
+              <input
+                value={maxUses}
+                onChange={(event) => setMaxUses(event.target.value)}
+                placeholder="Opsiyonel"
+                type="number"
+                className={fieldClass}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelClass}>Bitiş</label>
             <input
               value={expiresAt}
               onChange={(event) => setExpiresAt(event.target.value)}
-              placeholder="Bitiş (opsiyonel)"
               type="datetime-local"
-              className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
+              className={fieldClass}
             />
           </div>
-          <select
-            value={promoStatus}
-            onChange={(event) => setPromoStatus(event.target.value as PromotionStatus)}
-            className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-          >
-            <option value="active">Aktif</option>
-            <option value="disabled">Pasif</option>
-            <option value="expired">Süresi Doldu</option>
-          </select>
-          <button
-            type="button"
-            onClick={handleCreatePromo}
-            disabled={promoSaving || !code || !value}
-            className="rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {promoSaving ? 'Kaydediliyor...' : 'Promosyonu Kaydet'}
-          </button>
+
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={handleCreatePromo}
+              disabled={promoSaving || !code || !value}
+              className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {promoSaving ? 'Kaydediliyor…' : 'Kaydet'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
