@@ -93,7 +93,7 @@ export default function AdminStoreDiscountCreatePage() {
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
           <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
-            {activeTab === 'welcome' ? 'Hoşgeldin İndirimi' : 'Yeni İndirim Ekle'}
+            {activeTab === 'welcome' ? 'Hoş Geldin İndirimi' : 'Yeni İndirim Ekle'}
           </h1>
         </div>
         <Link
@@ -135,7 +135,7 @@ export default function AdminStoreDiscountCreatePage() {
               : 'text-white/45 hover:text-white'
           }`}
         >
-          Hoşgeldin
+          Hoş Geldin
         </button>
       </div>
 
@@ -154,7 +154,7 @@ export default function AdminStoreDiscountCreatePage() {
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
         {activeTab === 'welcome' && (
           <p className="mb-3.5 rounded-xl border border-[#5865F2]/25 bg-[#5865F2]/10 px-3.5 py-2.5 text-xs leading-relaxed text-[#c7d0ff]">
-            Hoşgeldin indirim kodları, her kullanıcı tarafından o sunucuda yalnızca 1 kez kullanılabilir.
+            Hoş geldin indirim kodları, her kullanıcı tarafından o sunucuda yalnızca 1 kez kullanılabilir.
           </p>
         )}
         <div className="grid gap-3.5">
