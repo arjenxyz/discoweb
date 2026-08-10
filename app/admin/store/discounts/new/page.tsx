@@ -152,6 +152,11 @@ export default function AdminStoreDiscountCreatePage() {
       )}
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+        {activeTab === 'welcome' && (
+          <p className="mb-3.5 rounded-xl border border-[#5865F2]/25 bg-[#5865F2]/10 px-3.5 py-2.5 text-xs leading-relaxed text-[#c7d0ff]">
+            Hoşgeldin indirim kodları kullanıcı başına 1 kez kullanılabilir. Her kullanıcı o sunucuda bu kodu yalnızca bir kez kullanabilir.
+          </p>
+        )}
         <div className="grid gap-3.5">
           <div>
             <label className={labelClass}>İndirim kodu</label>
