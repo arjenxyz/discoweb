@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18nContext';
 
 export default function AdminStorePromoCreatePage() {
+  const { t } = useTranslation();
   const [code, setCode] = useState('');
   const [value, setValue] = useState('');
   const [maxUses, setMaxUses] = useState('');
@@ -38,13 +40,17 @@ export default function AdminStorePromoCreatePage() {
     if (!response.ok) {
       const data = (await response.json().catch(() => ({}))) as { error?: string; details?: string };
       if (data.error === 'invalid_payload') {
-        setError('Kod ve papel paketi zorunlu.');
+        setError(t('admin.store_promo_new.error_required'));
       } else if (data.error === 'invalid_value') {
-        setError('Papel paketi 0 olamaz.');
+        setError(t('admin.store_promo_new.error_zero'));
       } else if (data.error === 'save_failed') {
-        setError(`Promosyon kaydedilemedi: ${data.details ?? 'Sunucu hatası'}`);
+        setError(
+          t('admin.store_promo_new.error_save_detail', {
+            details: data.details ?? t('admin.store_promo_new.server_error'),
+          }),
+        );
       } else {
-        setError('Promosyon kaydedilemedi.');
+        setError(t('admin.store_promo_new.error_save'));
       }
       setPromoSaving(false);
       return;
@@ -62,14 +68,18 @@ export default function AdminStorePromoCreatePage() {
     <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
-          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">Yeni Promosyon Ekle</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+            {t('admin.store_promo_new.eyebrow')}
+          </p>
+          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
+            {t('admin.store_promo_new.title')}
+          </h1>
         </div>
         <Link
           href="/admin/store/promos"
           className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white"
         >
-          Liste
+          {t('admin.store_promo_new.list')}
         </Link>
       </div>
 
@@ -82,17 +92,17 @@ export default function AdminStorePromoCreatePage() {
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
         <div className="grid gap-3.5">
           <div>
-            <label className={labelClass}>Kod</label>
+            <label className={labelClass}>{t('admin.store_promo_new.code')}</label>
             <input
               value={code}
               onChange={(event) => setCode(event.target.value)}
-              placeholder="Örn. WELCOME100"
+              placeholder={t('admin.store_promo_new.code_placeholder')}
               className={fieldClass}
             />
           </div>
 
           <div>
-            <label className={labelClass}>Papel paketi</label>
+            <label className={labelClass}>{t('admin.store_promo_new.papel_pack')}</label>
             <input
               value={value}
               onChange={(event) => setValue(event.target.value)}
@@ -104,18 +114,18 @@ export default function AdminStorePromoCreatePage() {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Kullanım limiti</label>
+              <label className={labelClass}>{t('admin.store_promo_new.max_uses')}</label>
               <input
                 value={maxUses}
                 onChange={(event) => setMaxUses(event.target.value)}
-                placeholder="Sınırsız"
+                placeholder={t('admin.store_promo_new.max_uses_placeholder')}
                 type="number"
                 className={fieldClass}
               />
-              <p className="mt-1 text-[11px] text-white/35">Kodun toplam kaç kez kullanılabileceği.</p>
+              <p className="mt-1 text-[11px] text-white/35">{t('admin.store_promo_new.max_uses_hint')}</p>
             </div>
             <div>
-              <label className={labelClass}>Kişi başı limit</label>
+              <label className={labelClass}>{t('admin.store_promo_new.per_user_limit')}</label>
               <input
                 value={perUserLimit}
                 onChange={(event) => setPerUserLimit(event.target.value)}
@@ -124,12 +134,12 @@ export default function AdminStorePromoCreatePage() {
                 min="1"
                 className={fieldClass}
               />
-              <p className="mt-1 text-[11px] text-white/35">Bir kullanıcının bu kodu kaç kez kullanabileceği.</p>
+              <p className="mt-1 text-[11px] text-white/35">{t('admin.store_promo_new.per_user_hint')}</p>
             </div>
           </div>
 
           <div>
-            <label className={labelClass}>Bitiş</label>
+            <label className={labelClass}>{t('admin.store_promo_new.expires')}</label>
             <input
               value={expiresAt}
               onChange={(event) => setExpiresAt(event.target.value)}
@@ -145,7 +155,7 @@ export default function AdminStorePromoCreatePage() {
               disabled={promoSaving || !code || !value}
               className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {promoSaving ? 'Kaydediliyor…' : 'Kaydet'}
+              {promoSaving ? t('admin.store_promo_new.saving') : t('admin.store_promo_new.save')}
             </button>
           </div>
         </div>

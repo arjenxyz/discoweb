@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LuPackage } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 import { StoreListPanel, StoreListRow } from '../StoreListRow';
 
 type StoreItem = {
@@ -17,16 +18,19 @@ type StoreItem = {
   created_at: string;
 };
 
-function formatDuration(minutes: number) {
-  if (minutes === 0) return 'Süresiz';
+function formatDuration(
+  minutes: number,
+  t: (key: string, params?: Record<string, string | number>) => string,
+) {
+  if (minutes === 0) return t('admin.store_products.unlimited');
   const d = Math.floor(minutes / 1440);
   const h = Math.floor((minutes % 1440) / 60);
   const mn = minutes % 60;
   const parts: string[] = [];
-  if (d > 0) parts.push(`${d}g`);
-  if (h > 0) parts.push(`${h}sa`);
-  if (mn > 0) parts.push(`${mn}dk`);
-  return parts.join(' ') || `${minutes}dk`;
+  if (d > 0) parts.push(t('admin.store_products.duration_days', { count: d }));
+  if (h > 0) parts.push(t('admin.store_products.duration_hours', { count: h }));
+  if (mn > 0) parts.push(t('admin.store_products.duration_minutes', { count: mn }));
+  return parts.join(' ') || t('admin.store_products.duration_minutes', { count: minutes });
 }
 
 function shortenId(id: string) {
@@ -35,6 +39,7 @@ function shortenId(id: string) {
 }
 
 export default function AdminStoreProductsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [items, setItems] = useState<StoreItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,22 +73,32 @@ export default function AdminStoreProductsPage() {
     <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
-          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">Ürün Listesi</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+            {t('admin.store_products.eyebrow')}
+          </p>
+          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
+            {t('admin.store_products.title')}
+          </h1>
         </div>
         <Link
           href="/admin/store/products/new"
           className="shrink-0 rounded-xl bg-[#5865F2] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#4752c4]"
         >
-          Yeni Ürün Ekle
+          {t('admin.store_products.add_new')}
         </Link>
       </div>
 
-      <StoreListPanel loading={loading} isEmpty={items.length === 0} emptyMessage="Henüz ürün yok.">
+      <StoreListPanel
+        loading={loading}
+        isEmpty={items.length === 0}
+        emptyMessage={t('admin.store_products.empty')}
+      >
         {items.map((item) => {
-          const meta = [{ label: 'Süre', value: formatDuration(item.duration_days) }];
+          const meta = [
+            { label: t('admin.store_products.duration'), value: formatDuration(item.duration_days, t) },
+          ];
           if (item.role_id) {
-            meta.push({ label: 'Rol', value: shortenId(item.role_id) });
+            meta.push({ label: t('admin.store_products.role'), value: shortenId(item.role_id) });
           }
 
           return (
@@ -93,7 +108,7 @@ export default function AdminStoreProductsPage() {
               title={item.title}
               subtitle={item.description}
               meta={meta}
-              value={`${item.price} papel`}
+              value={t('admin.store_products.price_papel', { amount: item.price })}
               onEdit={() => router.push(`/admin/store/products/new?edit=${item.id}`)}
               onDelete={() => handleDeleteItem(item.id)}
             />

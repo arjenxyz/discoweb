@@ -1,45 +1,52 @@
-import Link from 'next/link';
+'use client';
 
-const QUICK_LINKS = [
-  {
-    href: '/admin/store/products/new',
-    title: 'Yeni Ürün Oluştur',
-    description: 'Ürün başlığı, rol ID ve fiyat bilgisini tanımlayın.',
-  },
-  {
-    href: '/admin/store/promos/new',
-    title: 'Promosyon Kodu Oluştur',
-    description: 'Papel paketlerini ve kullanım limitlerini yönetin.',
-  },
-  {
-    href: '/admin/store/discounts/new',
-    title: 'İndirim Kodu Oluştur',
-    description: 'Yüzde indirim ve kampanya süresi ayarlayın.',
-  },
-  {
-    href: '/admin/store/products',
-    title: 'Ürün Listesi',
-    description: 'Mevcut ürünleri düzenleyin ve silin.',
-  },
-  {
-    href: '/admin/store/promos',
-    title: 'Promosyon Listesi',
-    description: 'Aktif/pasif promosyon kodlarını yönetin.',
-  },
-  {
-    href: '/admin/store/discounts',
-    title: 'İndirim Listesi',
-    description: 'Tüm indirim kodlarının durumunu görün.',
-  },
-];
+import Link from 'next/link';
+import { useTranslation } from '@/lib/i18nContext';
 
 export default function AdminStorePage() {
+  const { t } = useTranslation();
+
+  const QUICK_LINKS = [
+    {
+      href: '/admin/store/products/new',
+      title: t('admin.store.create_product'),
+      description: t('admin.store.create_product_desc'),
+    },
+    {
+      href: '/admin/store/promos/new',
+      title: t('admin.store.create_promo'),
+      description: t('admin.store.create_promo_desc'),
+    },
+    {
+      href: '/admin/store/discounts/new',
+      title: t('admin.store.create_discount'),
+      description: t('admin.store.create_discount_desc'),
+    },
+    {
+      href: '/admin/store/products',
+      title: t('admin.store.products_list'),
+      description: t('admin.store.products_list_desc'),
+    },
+    {
+      href: '/admin/store/promos',
+      title: t('admin.store.promos_list'),
+      description: t('admin.store.promos_list_desc'),
+    },
+    {
+      href: '/admin/store/discounts',
+      title: t('admin.store.discounts_list'),
+      description: t('admin.store.discounts_list_desc'),
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Admin</p>
-        <h1 className="mt-2 text-2xl font-semibold">Mağaza Yönetimi</h1>
-        <p className="mt-1 text-sm text-white/60">Her özelliğe ayrı sayfadan erişin.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">
+          {t('admin.store.eyebrow')}
+        </p>
+        <h1 className="mt-2 text-2xl font-semibold">{t('admin.store.title')}</h1>
+        <p className="mt-1 text-sm text-white/60">{t('admin.store.subtitle')}</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -54,7 +61,7 @@ export default function AdminStorePage() {
               <p className="mt-2 text-sm text-white/60">{link.description}</p>
             </div>
             <span className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300/80">
-              Sayfaya Git
+              {t('admin.store.go_to_page')}
             </span>
           </Link>
         ))}

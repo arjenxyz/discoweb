@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import type { IconType } from 'react-icons';
 import { LuPencil, LuTrash2 } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 
 export type StoreListMetaItem = {
   label: string;
@@ -17,10 +18,14 @@ type StoreListPanelProps = {
 };
 
 export function StoreListPanel({ loading, emptyMessage, isEmpty, children }: StoreListPanelProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
       {loading ? (
-        <p className="px-4 py-8 text-center text-sm text-white/45 sm:px-5">Yükleniyor…</p>
+        <p className="px-4 py-8 text-center text-sm text-white/45 sm:px-5">
+          {t('admin.store_row.loading')}
+        </p>
       ) : isEmpty ? (
         <p className="px-4 py-8 text-center text-sm text-white/45 sm:px-5">{emptyMessage}</p>
       ) : (
@@ -55,6 +60,8 @@ export function StoreListRow({
   onEdit,
   onDelete,
 }: StoreListRowProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="group px-4 py-3.5 transition hover:bg-white/[0.03] sm:px-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
@@ -124,8 +131,8 @@ export function StoreListRow({
                 type="button"
                 onClick={onEdit}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-white/45 transition hover:border-white/20 hover:bg-white/[0.04] hover:text-white"
-                aria-label="Düzenle"
-                title="Düzenle"
+                aria-label={t('admin.store_row.edit')}
+                title={t('admin.store_row.edit')}
               >
                 <LuPencil className="h-3.5 w-3.5" />
               </button>
@@ -135,8 +142,8 @@ export function StoreListRow({
                 type="button"
                 onClick={onDelete}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-500/20 text-rose-300/70 transition hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-200"
-                aria-label="Sil"
-                title="Sil"
+                aria-label={t('admin.store_row.delete')}
+                title={t('admin.store_row.delete')}
               >
                 <LuTrash2 className="h-3.5 w-3.5" />
               </button>

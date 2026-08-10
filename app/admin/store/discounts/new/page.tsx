@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { LuStore, LuWand } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 
 type TabType = 'single' | 'welcome';
 
 export default function AdminStoreDiscountCreatePage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('single');
   const [code, setCode] = useState('');
   const [percent, setPercent] = useState('');
@@ -36,7 +38,7 @@ export default function AdminStoreDiscountCreatePage() {
     setMessage(null);
 
     if (!code || !percent) {
-      setMessage({ type: 'error', text: 'Kod ve indirim oranı zorunlu.' });
+      setMessage({ type: 'error', text: t('admin.store_discount_new.error_required') });
       setSaving(false);
       return;
     }
@@ -63,10 +65,10 @@ export default function AdminStoreDiscountCreatePage() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Bir hata oluştu.');
+        throw new Error(data.error || t('admin.store_discount_new.error_generic'));
       }
 
-      setMessage({ type: 'success', text: 'İndirim kodu oluşturuldu.' });
+      setMessage({ type: 'success', text: t('admin.store_discount_new.success') });
 
       if (activeTab !== 'welcome') {
         setCode('');
@@ -80,7 +82,7 @@ export default function AdminStoreDiscountCreatePage() {
     } catch (err: unknown) {
       setMessage({
         type: 'error',
-        text: err instanceof Error ? err.message : 'Bir hata oluştu.',
+        text: err instanceof Error ? err.message : t('admin.store_discount_new.error_generic'),
       });
     } finally {
       setSaving(false);
@@ -91,16 +93,20 @@ export default function AdminStoreDiscountCreatePage() {
     <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+            {t('admin.store_discount_new.eyebrow')}
+          </p>
           <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
-            {activeTab === 'welcome' ? 'Hoş Geldin İndirimi' : 'Yeni İndirim Ekle'}
+            {activeTab === 'welcome'
+              ? t('admin.store_discount_new.title_welcome')
+              : t('admin.store_discount_new.title_new')}
           </h1>
         </div>
         <Link
           href="/admin/store/discounts"
           className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white"
         >
-          Liste
+          {t('admin.store_discount_new.list')}
         </Link>
       </div>
 
@@ -118,7 +124,7 @@ export default function AdminStoreDiscountCreatePage() {
               : 'text-white/45 hover:text-white'
           }`}
         >
-          Tekil Kod
+          {t('admin.store_discount_new.tab_single')}
         </button>
         <button
           type="button"
@@ -135,7 +141,7 @@ export default function AdminStoreDiscountCreatePage() {
               : 'text-white/45 hover:text-white'
           }`}
         >
-          Hoş Geldin
+          {t('admin.store_discount_new.tab_welcome')}
         </button>
       </div>
 
@@ -154,17 +160,17 @@ export default function AdminStoreDiscountCreatePage() {
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
         {activeTab === 'welcome' && (
           <p className="mb-3.5 rounded-xl border border-[#5865F2]/25 bg-[#5865F2]/10 px-3.5 py-2.5 text-xs leading-relaxed text-[#c7d0ff]">
-            Hoş geldin indirim kodları, her kullanıcı tarafından o sunucuda yalnızca 1 kez kullanılabilir.
+            {t('admin.store_discount_new.welcome_hint')}
           </p>
         )}
         <div className="grid gap-3.5">
           <div>
-            <label className={labelClass}>İndirim kodu</label>
+            <label className={labelClass}>{t('admin.store_discount_new.code')}</label>
             <div className="mt-1.5 flex gap-2">
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="Örn: YAZ2026"
+                placeholder={t('admin.store_discount_new.code_placeholder')}
                 className={`${fieldClass} mt-0 flex-1 font-mono tracking-wide`}
               />
               {activeTab !== 'welcome' && (
@@ -172,7 +178,7 @@ export default function AdminStoreDiscountCreatePage() {
                   type="button"
                   onClick={generateRandomCode}
                   className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black/25 text-[#a5b4ff] transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/15"
-                  title="Rastgele kod"
+                  title={t('admin.store_discount_new.random_code')}
                 >
                   <LuWand className="h-4 w-4" />
                 </button>
@@ -182,7 +188,7 @@ export default function AdminStoreDiscountCreatePage() {
 
           <div className={`grid gap-3 ${activeTab === 'welcome' ? '' : 'sm:grid-cols-2'}`}>
             <div>
-              <label className={labelClass}>Oran (%)</label>
+              <label className={labelClass}>{t('admin.store_discount_new.percent')}</label>
               <input
                 type="number"
                 min="1"
@@ -195,15 +201,17 @@ export default function AdminStoreDiscountCreatePage() {
             </div>
             {activeTab !== 'welcome' && (
               <div>
-                <label className={labelClass}>Kullanım limiti</label>
+                <label className={labelClass}>{t('admin.store_discount_new.max_uses')}</label>
                 <input
                   type="number"
                   value={maxUses}
                   onChange={(e) => setMaxUses(e.target.value)}
-                  placeholder="Sınırsız"
+                  placeholder={t('admin.store_discount_new.max_uses_placeholder')}
                   className={fieldClass}
                 />
-                <p className="mt-1 text-[11px] text-white/35">Kodun toplam kaç kez kullanılabileceği.</p>
+                <p className="mt-1 text-[11px] text-white/35">
+                  {t('admin.store_discount_new.max_uses_hint')}
+                </p>
               </div>
             )}
           </div>
@@ -211,7 +219,7 @@ export default function AdminStoreDiscountCreatePage() {
           {activeTab !== 'welcome' && (
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className={labelClass}>Min. sepet</label>
+                <label className={labelClass}>{t('admin.store_discount_new.min_spend')}</label>
                 <input
                   type="number"
                   value={minSpend}
@@ -219,10 +227,12 @@ export default function AdminStoreDiscountCreatePage() {
                   placeholder="0"
                   className={fieldClass}
                 />
-                <p className="mt-1 text-[11px] text-white/35">İndirimin geçerli olması için gereken minimum sepet tutarı.</p>
+                <p className="mt-1 text-[11px] text-white/35">
+                  {t('admin.store_discount_new.min_spend_hint')}
+                </p>
               </div>
               <div>
-                <label className={labelClass}>Kişi başı limit</label>
+                <label className={labelClass}>{t('admin.store_discount_new.per_user_limit')}</label>
                 <input
                   type="number"
                   min="1"
@@ -231,19 +241,23 @@ export default function AdminStoreDiscountCreatePage() {
                   placeholder="1"
                   className={fieldClass}
                 />
-                <p className="mt-1 text-[11px] text-white/35">Bir kullanıcının bu kodu kaç kez kullanabileceği.</p>
+                <p className="mt-1 text-[11px] text-white/35">
+                  {t('admin.store_discount_new.per_user_hint')}
+                </p>
               </div>
             </div>
           )}
 
           {activeTab === 'welcome' ? (
             <div>
-              <label className={labelClass}>Geçerlilik</label>
-              <div className={`${fieldClass} text-white/55`}>Bitiş tarihi yok</div>
+              <label className={labelClass}>{t('admin.store_discount_new.validity')}</label>
+              <div className={`${fieldClass} text-white/55`}>
+                {t('admin.store_discount_new.no_expiry')}
+              </div>
             </div>
           ) : (
             <div>
-              <label className={labelClass}>Bitiş</label>
+              <label className={labelClass}>{t('admin.store_discount_new.expires')}</label>
               <input
                 type="datetime-local"
                 value={expiresAt}
@@ -273,9 +287,11 @@ export default function AdminStoreDiscountCreatePage() {
                 <LuStore className="h-4 w-4" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-medium text-white">Sepette göster</span>
+                <span className="block text-sm font-medium text-white">
+                  {t('admin.store_discount_new.show_in_cart')}
+                </span>
                 <span className="mt-0.5 block text-xs leading-snug text-white/40">
-                  Üyeler kuponu yazmadan sepette görür ve seçebilir.
+                  {t('admin.store_discount_new.show_in_cart_desc')}
                 </span>
               </span>
               <span
@@ -299,7 +315,11 @@ export default function AdminStoreDiscountCreatePage() {
               disabled={saving}
               className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {saving ? 'Kaydediliyor…' : activeTab === 'welcome' ? 'Kaydet' : 'Oluştur'}
+              {saving
+                ? t('admin.store_discount_new.saving')
+                : activeTab === 'welcome'
+                  ? t('admin.store_discount_new.save')
+                  : t('admin.store_discount_new.create')}
             </button>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18nContext';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,6 +24,7 @@ type RoleOption = {
 };
 
 function AdminStoreProductCreatePageContent() {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('edit');
@@ -59,16 +61,16 @@ function AdminStoreProductCreatePageContent() {
           setDurationDays(String(item.duration_days));
           setItemStatus(item.status);
         } else {
-          setError('Düzenlenecek ürün bulunamadı.');
+          setError(t('admin.store_product_new.not_found'));
         }
       } else {
-        setError('Ürün bilgisi alınamadı.');
+        setError(t('admin.store_product_new.fetch_error'));
       }
       setLoadingItem(false);
     };
 
     void loadItem();
-  }, [editId]);
+  }, [editId, t]);
 
   useEffect(() => {
     if (!roleId) {
@@ -109,7 +111,7 @@ function AdminStoreProductCreatePageContent() {
         credentials: 'include'
       });
       if (!response.ok) {
-        setRoleError('Roller alınamadı.');
+        setRoleError(t('admin.store_product_new.roles_fetch_error'));
         setRoleResults([]);
         setRoleLoading(false);
         return;
@@ -121,7 +123,7 @@ function AdminStoreProductCreatePageContent() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [roleQuery]);
+  }, [roleQuery, t]);
 
   const handleCreateItem = async () => {
     setItemSaving(true);
@@ -144,7 +146,7 @@ function AdminStoreProductCreatePageContent() {
     });
 
     if (!response.ok) {
-      setError('Ürün kaydedilemedi.');
+      setError(t('admin.store_product_new.save_error'));
       setItemSaving(false);
       return;
     }
@@ -180,7 +182,7 @@ function AdminStoreProductCreatePageContent() {
     });
 
     if (!response.ok) {
-      setError('Ürün güncellenemedi.');
+      setError(t('admin.store_product_new.update_error'));
       setItemSaving(false);
       return;
     }
@@ -193,26 +195,37 @@ function AdminStoreProductCreatePageContent() {
   const fieldClass =
     'mt-1.5 w-full rounded-xl border border-white/10 bg-black/25 px-3.5 py-2.5 text-sm text-white/85 placeholder:text-white/25 focus:border-[#5865F2]/50 focus:outline-none';
 
+  const durationPresets = [
+    { label: t('admin.store_product_new.preset_30m'), value: 30 },
+    { label: t('admin.store_product_new.preset_1h'), value: 60 },
+    { label: t('admin.store_product_new.preset_1d'), value: 1440 },
+    { label: t('admin.store_product_new.preset_7d'), value: 10080 },
+    { label: t('admin.store_product_new.preset_30d'), value: 43200 },
+    { label: '∞', value: 0 },
+  ];
+
   return (
     <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+            {t('admin.store_product_new.eyebrow')}
+          </p>
           <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
-            {editId ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
+            {editId ? t('admin.store_product_new.title_edit') : t('admin.store_product_new.title_new')}
           </h1>
         </div>
         <Link
           href="/admin/store/products"
           className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white"
         >
-          Liste
+          {t('admin.store_product_new.list')}
         </Link>
       </div>
 
       {(error || loadingItem) && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white/60">
-          {loadingItem ? 'Yükleniyor…' : error}
+          {loadingItem ? t('admin.store_product_new.loading') : error}
         </div>
       )}
 
@@ -220,26 +233,28 @@ function AdminStoreProductCreatePageContent() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
           <div className="grid gap-3.5">
             <div>
-              <label className={labelClass}>Ürün adı</label>
+              <label className={labelClass}>{t('admin.store_product_new.product_name')}</label>
               <input
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="Örn. VIP Rol"
+                placeholder={t('admin.store_product_new.product_name_placeholder')}
                 className={fieldClass}
               />
             </div>
 
             <div>
-              <label className={labelClass}>Rol</label>
+              <label className={labelClass}>{t('admin.store_product_new.role')}</label>
               <input
                 value={roleQuery}
                 onChange={(event) => setRoleQuery(event.target.value)}
-                placeholder="Rol adı ara…"
+                placeholder={t('admin.store_product_new.role_search_placeholder')}
                 className={fieldClass}
               />
               {(roleLoading || roleError || roleResults.length > 0) && (
                 <div className="mt-2 space-y-1.5">
-                  {roleLoading && <p className="text-xs text-white/40">Aranıyor…</p>}
+                  {roleLoading && (
+                    <p className="text-xs text-white/40">{t('admin.store_product_new.searching')}</p>
+                  )}
                   {roleError && <p className="text-xs text-rose-300">{roleError}</p>}
                   {roleResults.length > 0 && (
                     <div className="max-h-40 space-y-1 overflow-y-auto rounded-xl border border-white/10 bg-black/30 p-1.5">
@@ -279,29 +294,31 @@ function AdminStoreProductCreatePageContent() {
                   setRoleId(event.target.value);
                   setSelectedRoleName('');
                 }}
-                placeholder="Rol ID"
+                placeholder={t('admin.store_product_new.role_id_placeholder')}
                 className={`${fieldClass} mt-2 font-mono text-xs`}
               />
               {(selectedRoleName || roleId) && (
                 <p className="mt-1.5 truncate text-[11px] text-white/40">
-                  {selectedRoleName ? `Seçili: ${selectedRoleName}` : `ID: ${roleId}`}
+                  {selectedRoleName
+                    ? t('admin.store_product_new.selected', { name: selectedRoleName })
+                    : t('admin.store_product_new.id_label', { id: roleId })}
                 </p>
               )}
             </div>
 
             <div>
-              <label className={labelClass}>Açıklama</label>
+              <label className={labelClass}>{t('admin.store_product_new.description')}</label>
               <textarea
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                placeholder="Kısa ürün açıklaması"
+                placeholder={t('admin.store_product_new.description_placeholder')}
                 rows={2}
                 className={`${fieldClass} resize-y`}
               />
             </div>
 
             <div>
-              <label className={labelClass}>Fiyat (papel)</label>
+              <label className={labelClass}>{t('admin.store_product_new.price_papel')}</label>
               <input
                 value={price}
                 onChange={(event) => setPrice(event.target.value)}
@@ -312,7 +329,7 @@ function AdminStoreProductCreatePageContent() {
             </div>
 
             <div>
-              <label className={labelClass}>Süre</label>
+              <label className={labelClass}>{t('admin.store_product_new.duration')}</label>
               <div className="mt-1.5 grid grid-cols-3 gap-2">
                 <div className="relative">
                   <input
@@ -333,7 +350,7 @@ function AdminStoreProductCreatePageContent() {
                     className={`${fieldClass} mt-0 pr-9`}
                   />
                   <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30">
-                    gün
+                    {t('admin.store_product_new.unit_day')}
                   </span>
                 </div>
                 <div className="relative">
@@ -356,7 +373,7 @@ function AdminStoreProductCreatePageContent() {
                     className={`${fieldClass} mt-0 pr-10`}
                   />
                   <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30">
-                    saat
+                    {t('admin.store_product_new.unit_hour')}
                   </span>
                 </div>
                 <div className="relative">
@@ -379,19 +396,12 @@ function AdminStoreProductCreatePageContent() {
                     className={`${fieldClass} mt-0 pr-8`}
                   />
                   <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30">
-                    dk
+                    {t('admin.store_product_new.unit_minute')}
                   </span>
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5">
-                {[
-                  { label: '30dk', value: 30 },
-                  { label: '1sa', value: 60 },
-                  { label: '1g', value: 1440 },
-                  { label: '7g', value: 10080 },
-                  { label: '30g', value: 43200 },
-                  { label: '∞', value: 0 },
-                ].map((preset) => (
+                {durationPresets.map((preset) => (
                   <button
                     key={preset.value}
                     type="button"
@@ -415,14 +425,18 @@ function AdminStoreProductCreatePageContent() {
                 disabled={itemSaving || !title || !price || !roleId || durationDays === ''}
                 className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {itemSaving ? 'Kaydediliyor…' : editId ? 'Güncelle' : 'Kaydet'}
+                {itemSaving
+                  ? t('admin.store_product_new.saving')
+                  : editId
+                    ? t('admin.store_product_new.update')
+                    : t('admin.store_product_new.save')}
               </button>
               {editId && (
                 <Link
                   href="/admin/store/products"
                   className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white/60 transition hover:border-white/20 hover:text-white"
                 >
-                  Vazgeç
+                  {t('admin.store_product_new.cancel')}
                 </Link>
               )}
             </div>
@@ -430,11 +444,13 @@ function AdminStoreProductCreatePageContent() {
         </div>
 
         <div className="hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:block">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">İpuçları</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
+            {t('admin.store_product_new.tips')}
+          </p>
           <ul className="mt-3 space-y-2 text-xs text-white/45">
-            <li>Rol seçilince satın alma otomatik rol verir.</li>
-            <li>Süre 0 = kalıcı rol.</li>
-            <li>Pasif ürünler satın alınamaz.</li>
+            <li>{t('admin.store_product_new.tip_auto_role')}</li>
+            <li>{t('admin.store_product_new.tip_permanent')}</li>
+            <li>{t('admin.store_product_new.tip_inactive')}</li>
           </ul>
         </div>
       </div>
@@ -443,8 +459,10 @@ function AdminStoreProductCreatePageContent() {
 }
 
 export default function AdminStoreProductCreatePage() {
+  const { t } = useTranslation();
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>{t('admin.store_product_new.loading_fallback')}</div>}>
       <AdminStoreProductCreatePageContent />
     </Suspense>
   );

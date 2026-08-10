@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { LuTicket } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 import { StoreListPanel, StoreListRow } from '../StoreListRow';
 
 type Promotion = {
@@ -16,9 +17,13 @@ type Promotion = {
   expires_at: string | null;
 };
 
-function formatExpiry(expiresAt: string | null) {
-  if (!expiresAt) return 'Bitiş tarihi yok';
-  return new Date(expiresAt).toLocaleString('tr-TR', {
+function formatExpiry(
+  expiresAt: string | null,
+  language: string,
+  t: (key: string, params?: Record<string, string | number>) => string,
+) {
+  if (!expiresAt) return t('admin.store_promos.no_expiry');
+  return new Date(expiresAt).toLocaleString(language, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -28,6 +33,7 @@ function formatExpiry(expiresAt: string | null) {
 }
 
 export default function AdminStorePromosPage() {
+  const { t, language } = useTranslation();
   const [promos, setPromos] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -60,18 +66,26 @@ export default function AdminStorePromosPage() {
     <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
-          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">Promosyon Listesi</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+            {t('admin.store_promos.eyebrow')}
+          </p>
+          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
+            {t('admin.store_promos.title')}
+          </h1>
         </div>
         <Link
           href="/admin/store/promos/new"
           className="shrink-0 rounded-xl bg-[#5865F2] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#4752c4]"
         >
-          Yeni Promosyon Ekle
+          {t('admin.store_promos.add_new')}
         </Link>
       </div>
 
-      <StoreListPanel loading={loading} isEmpty={promos.length === 0} emptyMessage="Henüz promosyon yok.">
+      <StoreListPanel
+        loading={loading}
+        isEmpty={promos.length === 0}
+        emptyMessage={t('admin.store_promos.empty')}
+      >
         {promos.map((promo) => (
           <StoreListRow
             key={promo.id}
@@ -81,15 +95,18 @@ export default function AdminStorePromosPage() {
             titleMono
             meta={[
               {
-                label: 'Kullanım',
+                label: t('admin.store_promos.usage'),
                 value: promo.max_uses
                   ? `${promo.used_count}/${promo.max_uses}`
-                  : `${promo.used_count} (sınırsız)`,
+                  : t('admin.store_promos.usage_unlimited', { count: promo.used_count }),
               },
-              { label: 'Kişi başı', value: String(promo.per_user_limit ?? 1) },
-              { label: 'Geçerlilik', value: formatExpiry(promo.expires_at) },
+              { label: t('admin.store_promos.per_user'), value: String(promo.per_user_limit ?? 1) },
+              {
+                label: t('admin.store_promos.validity'),
+                value: formatExpiry(promo.expires_at, language, t),
+              },
             ]}
-            value={`${promo.value} papel`}
+            value={t('admin.store_promos.value_papel', { amount: promo.value })}
             onDelete={() => handleDeletePromo(promo.id)}
           />
         ))}
