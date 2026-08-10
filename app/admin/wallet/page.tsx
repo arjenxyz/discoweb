@@ -42,18 +42,29 @@ export default function AdminWalletPage() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [selectedMember, setSelectedMember] = useState<MemberResult | null>(null);
 
-  const sendWalletChangeMail = async (userId: string | null, mode: 'add' | 'remove', amount: number, message: string, scope: 'user' | 'all') => {
+  const sendWalletChangeMail = async (
+    userId: string | null,
+    mode: 'add' | 'remove',
+    amount: number,
+    message: string,
+    scope: 'user' | 'all',
+  ) => {
     try {
-      const mailTitle = scope === 'all'
-        ? t(mode === 'add' ? 'admin.wallet.mail.title_add_all' : 'admin.wallet.mail.title_remove_all')
-        : t(mode === 'add' ? 'admin.wallet.mail.title_add' : 'admin.wallet.mail.title_remove');
-      // replace {amount} placeholders in the message with the actual amount
+      const mailTitle =
+        scope === 'all'
+          ? t(mode === 'add' ? 'admin.wallet.mail.title_add_all' : 'admin.wallet.mail.title_remove_all')
+          : t(mode === 'add' ? 'admin.wallet.mail.title_add' : 'admin.wallet.mail.title_remove');
       const filledMessage = (message || '').replace(/\{amount\}/g, String(amount));
 
       const sign = mode === 'add' ? '+' : '-';
-      const headingKey = scope === 'all'
-        ? (mode === 'add' ? 'admin.wallet.mail.heading_add_all' : 'admin.wallet.mail.heading_remove_all')
-        : (mode === 'add' ? 'admin.wallet.mail.heading_add' : 'admin.wallet.mail.heading_remove');
+      const headingKey =
+        scope === 'all'
+          ? mode === 'add'
+            ? 'admin.wallet.mail.heading_add_all'
+            : 'admin.wallet.mail.heading_remove_all'
+          : mode === 'add'
+            ? 'admin.wallet.mail.heading_add'
+            : 'admin.wallet.mail.heading_remove';
       const footerKey = scope === 'all' ? 'admin.wallet.mail.footer_all' : 'admin.wallet.mail.footer_single';
       const headingColor = mode === 'add' ? '#10b981' : '#ef4444';
 
@@ -108,9 +119,14 @@ export default function AdminWalletPage() {
   const allPresets = useMemo(() => buildPresets(t, ALL_ADD_PRESET_KEYS), [t]);
   const removeAllPresets = useMemo(() => buildPresets(t, ALL_REMOVE_PRESET_KEYS), [t]);
 
-  const presets = mode === 'remove'
-    ? (scope === 'all' ? removeAllPresets : removeUserPresets)
-    : (scope === 'all' ? allPresets : userPresets);
+  const presets =
+    mode === 'remove'
+      ? scope === 'all'
+        ? removeAllPresets
+        : removeUserPresets
+      : scope === 'all'
+        ? allPresets
+        : userPresets;
 
   useEffect(() => {
     if (!preset) {
@@ -174,7 +190,6 @@ export default function AdminWalletPage() {
       setSuccess(t('admin.wallet.success_single'));
     }
 
-    // Mail gönderme işlemi (sadece papel düşme için - ekleme API tarafından reward mail olarak gönderiliyor)
     if (mode === 'remove') {
       if (scope === 'user') {
         await sendWalletChangeMail(userId.trim(), mode, value, message.trim(), 'user');
@@ -190,8 +205,6 @@ export default function AdminWalletPage() {
     setLoading(false);
   };
 
-  // DÜZELTME 1: Temizleme işlemi useEffect'ten çıkarıldı, aşağıda onChange içine taşındı.
-  // useEffect artık sadece arama (search) işlemiyle ilgileniyor.
   useEffect(() => {
     if (scope !== 'user') {
       return;
@@ -206,7 +219,7 @@ export default function AdminWalletPage() {
     const timer = setTimeout(async () => {
       setSearchLoading(true);
       const response = await fetch(`/api/admin/members/search?q=${encodeURIComponent(query)}`, {
-        credentials: 'include'
+        credentials: 'include',
       });
       const data = (await response.json().catch(() => [])) as MemberResult[];
       if (active) {
@@ -221,235 +234,262 @@ export default function AdminWalletPage() {
     };
   }, [searchQuery, scope]);
 
+  const labelClass = 'text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35';
+  const fieldClass =
+    'mt-1.5 w-full rounded-xl border border-white/10 bg-black/25 px-3.5 py-2.5 text-sm text-white/85 placeholder:text-white/25 focus:border-[#5865F2]/50 focus:outline-none';
+
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">{t('admin.wallet.eyebrow')}</p>
-        <h1 className="mt-2 text-2xl font-semibold">{t('admin.wallet.title')}</h1>
-        <p className="mt-1 text-sm text-white/60">{t('admin.wallet.subtitle')}</p>
+    <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
+      <div className="min-w-0">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+          {t('admin.wallet.eyebrow')}
+        </p>
+        <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
+          {t('admin.wallet.title')}
+        </h1>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <label className="text-xs text-white/50">{t('admin.wallet.operation')}</label>
-            <select
-              value={mode}
-              onChange={(event) => setMode(event.target.value as 'add' | 'remove')}
-              className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-            >
-              <option value="add">{t('admin.wallet.mode_add')}</option>
-              <option value="remove">{t('admin.wallet.mode_remove')}</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs text-white/50">{t('admin.wallet.scope')}</label>
-            <select
-              value={scope}
-              // DÜZELTME 2: Temizleme işlemi buraya (event handler'a) taşındı.
-              onChange={(event) => {
-                const newScope = event.target.value as 'user' | 'all';
-                setScope(newScope);
-                if (newScope !== 'user') {
-                  setSearchResults([]);
-                  setSearchQuery('');
-                  setSelectedMember(null);
-                }
-              }}
-              className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-            >
-              <option value="user">{t('admin.wallet.scope_user')}</option>
-              <option value="all">{t('admin.wallet.scope_all')}</option>
-            </select>
-          </div>
+      {(error || success) && (
+        <div
+          className={`rounded-2xl border px-3.5 py-2.5 text-sm ${
+            error
+              ? 'border-rose-500/20 bg-rose-500/[0.08] text-rose-200'
+              : 'border-emerald-500/20 bg-emerald-500/[0.08] text-emerald-300'
+          }`}
+        >
+          {error ?? success}
         </div>
+      )}
 
-        {scope === 'user' && (
-          <div className="mt-4 space-y-4">
-            <div className="space-y-2">
-              <label className="text-xs text-white/50">{t('admin.wallet.search_label')}</label>
-              <input
-                value={searchQuery}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+        <div className="grid gap-3.5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={labelClass}>{t('admin.wallet.operation')}</label>
+              <select
+                value={mode}
+                onChange={(event) => setMode(event.target.value as 'add' | 'remove')}
+                className={fieldClass}
+              >
+                <option value="add">{t('admin.wallet.mode_add')}</option>
+                <option value="remove">{t('admin.wallet.mode_remove')}</option>
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{t('admin.wallet.scope')}</label>
+              <select
+                value={scope}
                 onChange={(event) => {
-                  const value = event.target.value;
-                  setSearchQuery(value);
-                  if (value.trim().length < 2) {
+                  const newScope = event.target.value as 'user' | 'all';
+                  setScope(newScope);
+                  if (newScope !== 'user') {
                     setSearchResults([]);
+                    setSearchQuery('');
+                    setSelectedMember(null);
                   }
                 }}
-                placeholder={t('admin.wallet.search_placeholder')}
-                className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-              />
-              {searchLoading && <p className="text-xs text-white/50">{t('admin.wallet.searching')}</p>}
-              {!searchLoading && searchQuery.trim().length >= 2 && searchResults.length === 0 && (
-                <p className="text-xs text-white/50">{t('admin.wallet.no_results')}</p>
-              )}
-              {searchResults.length > 0 && (
-                <div className="grid gap-2 rounded-xl border border-white/10 bg-[#0b0d12]/60 p-2">
-                  {searchResults.map((member) => {
-                    const label = member.nickname || member.displayName || member.username;
-                    return (
-                      <button
-                        key={member.id}
-                        type="button"
-                        onClick={() => {
-                          setUserId(member.id);
-                          setSelectedMember(member);
-                          setSearchQuery(label);
-                          setSearchResults([]);
-                        }}
-                        className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 px-3 py-2 text-left text-sm text-white/80 transition hover:border-indigo-400/40"
-                      >
-                        <Image
-                          src={member.avatarUrl}
-                          alt="avatar"
-                          width={28}
-                          height={28}
-                          unoptimized
-                          className="h-7 w-7 rounded-full border border-white/10"
-                        />
-                        <div>
-                          <p className="text-sm text-white">{label}</p>
-                          <p className="text-xs text-white/50">
-                            @{member.username} · {member.id}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+                className={fieldClass}
+              >
+                <option value="user">{t('admin.wallet.scope_user')}</option>
+                <option value="all">{t('admin.wallet.scope_all')}</option>
+              </select>
             </div>
-
-            <div className="space-y-2">
-              <label className="text-xs text-white/50">{t('admin.wallet.user_id_label')}</label>
-              <input
-                value={userId}
-                onChange={(event) => {
-                  setUserId(event.target.value);
-                  setSelectedMember(null);
-                }}
-                placeholder={t('admin.wallet.user_id_placeholder')}
-                className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-              />
-            </div>
-
-            {selectedMember && (
-              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src={selectedMember.avatarUrl}
-                    alt="avatar"
-                    width={32}
-                    height={32}
-                    unoptimized
-                    className="h-8 w-8 rounded-full border border-white/10"
-                  />
-                  <div>
-                    <p className="text-white">
-                      {selectedMember.nickname || selectedMember.displayName || selectedMember.username}
-                    </p>
-                    <p className="text-xs text-white/50">{selectedMember.id}</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedMember(null);
-                    setUserId('');
-                    setSearchQuery('');
-                  }}
-                  className="text-xs text-white/60 transition hover:text-white"
-                >
-                  {t('admin.wallet.clear_selection')}
-                </button>
-              </div>
-            )}
           </div>
-        )}
 
-        <div className="mt-4 space-y-2">
-          <label className="text-xs text-white/50">{t('admin.wallet.amount_label')}</label>
-          <input
-            value={amount}
-            onChange={(event) => setAmount(event.target.value)}
-            placeholder={t('admin.wallet.amount_placeholder')}
-            type="number"
-            className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-          />
-        </div>
+          {scope === 'user' && (
+            <>
+              <div>
+                <label className={labelClass}>{t('admin.wallet.search_label')}</label>
+                <input
+                  value={searchQuery}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setSearchQuery(value);
+                    if (value.trim().length < 2) {
+                      setSearchResults([]);
+                    }
+                  }}
+                  placeholder={t('admin.wallet.search_placeholder')}
+                  className={fieldClass}
+                />
+                {searchLoading && (
+                  <p className="mt-1.5 text-xs text-white/40">{t('admin.wallet.searching')}</p>
+                )}
+                {!searchLoading && searchQuery.trim().length >= 2 && searchResults.length === 0 && (
+                  <p className="mt-1.5 text-xs text-white/40">{t('admin.wallet.no_results')}</p>
+                )}
+                {searchResults.length > 0 && (
+                  <div className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-xl border border-white/10 bg-black/30 p-1.5">
+                    {searchResults.map((member) => {
+                      const label = member.nickname || member.displayName || member.username;
+                      return (
+                        <button
+                          key={member.id}
+                          type="button"
+                          onClick={() => {
+                            setUserId(member.id);
+                            setSelectedMember(member);
+                            setSearchQuery(label);
+                            setSearchResults([]);
+                          }}
+                          className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition hover:bg-[#5865F2]/15"
+                        >
+                          <Image
+                            src={member.avatarUrl}
+                            alt=""
+                            width={28}
+                            height={28}
+                            unoptimized
+                            className="h-7 w-7 rounded-full border border-white/10 object-cover"
+                          />
+                          <div className="min-w-0">
+                            <p className="truncate text-sm text-white">{label}</p>
+                            <p className="truncate text-[11px] text-white/40">
+                              @{member.username} · {member.id}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
 
-        <div className="mt-4 space-y-2">
-          <label className="text-xs text-white/50">{t('admin.wallet.presets_label')}</label>
-          <select
-            value={preset}
-            onChange={(event) => {
-              const selected = event.target.value;
-              setPreset(selected);
-              const found = presets.find((item) => item.value === selected);
-              if (found) {
-                setMessage(found.text);
-              }
-            }}
-            className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-          >
-            <option value="">{t('admin.wallet.presets_select')}</option>
-            {presets.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-          <p className="text-xs text-white/40">{t('admin.wallet.amount_hint')}</p>
-        </div>
-
-        <div className="mt-4 space-y-2">
-          <label className="text-xs text-white/50">{mode === 'add' ? t('admin.wallet.description_required') : t('admin.wallet.description_optional')}</label>
-          <textarea
-            value={message}
-            onChange={(event) => setMessage(event.target.value)}
-            rows={4}
-            placeholder={t('admin.wallet.description_placeholder')}
-            className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-          />
-        </div>
-
-        {mode === 'add' && (
-          <div className="mt-4 space-y-2">
-            <label className="text-xs text-white/50">{t('admin.wallet.image_label')}</label>
-            <input
-              value={imageUrl}
-              onChange={(event) => setImageUrl(event.target.value)}
-              placeholder={t('admin.wallet.image_placeholder')}
-              className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
-            />
-            {imageUrl.trim().length > 0 && (
-              <div className="mt-2 rounded-xl border border-white/10 bg-black/20 p-2">
-                <Image
-                  src={imageUrl}
-                  alt="preview"
-                  width={960}
-                  height={480}
-                  unoptimized
-                  className="max-h-64 w-full object-contain"
+              <div>
+                <label className={labelClass}>{t('admin.wallet.user_id_label')}</label>
+                <input
+                  value={userId}
+                  onChange={(event) => {
+                    setUserId(event.target.value);
+                    setSelectedMember(null);
+                  }}
+                  placeholder={t('admin.wallet.user_id_placeholder')}
+                  className={`${fieldClass} font-mono text-xs`}
                 />
               </div>
-            )}
+
+              {selectedMember && (
+                <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-3.5 py-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Image
+                      src={selectedMember.avatarUrl}
+                      alt=""
+                      width={32}
+                      height={32}
+                      unoptimized
+                      className="h-8 w-8 shrink-0 rounded-full border border-white/10 object-cover"
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-white">
+                        {selectedMember.nickname ||
+                          selectedMember.displayName ||
+                          selectedMember.username}
+                      </p>
+                      <p className="truncate text-[11px] text-white/40">{selectedMember.id}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedMember(null);
+                      setUserId('');
+                      setSearchQuery('');
+                    }}
+                    className="shrink-0 text-xs text-white/45 transition hover:text-white"
+                  >
+                    {t('admin.wallet.clear_selection')}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          <div>
+            <label className={labelClass}>{t('admin.wallet.amount_label')}</label>
+            <input
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              placeholder={t('admin.wallet.amount_placeholder')}
+              type="number"
+              className={fieldClass}
+            />
           </div>
-        )}
 
-        {error && <p className="mt-3 text-sm text-rose-300">{error}</p>}
-        {success && <p className="mt-3 text-sm text-emerald-300">{success}</p>}
+          <div>
+            <label className={labelClass}>{t('admin.wallet.presets_label')}</label>
+            <select
+              value={preset}
+              onChange={(event) => {
+                const selected = event.target.value;
+                setPreset(selected);
+                const found = presets.find((item) => item.value === selected);
+                if (found) {
+                  setMessage(found.text);
+                }
+              }}
+              className={fieldClass}
+            >
+              <option value="">{t('admin.wallet.presets_select')}</option>
+              {presets.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-[11px] text-white/35">{t('admin.wallet.amount_hint')}</p>
+          </div>
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={loading}
-          className="mt-4 rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {loading ? t('admin.wallet.submit_loading') : t('admin.wallet.submit')}
-        </button>
+          <div>
+            <label className={labelClass}>
+              {mode === 'add'
+                ? t('admin.wallet.description_required')
+                : t('admin.wallet.description_optional')}
+            </label>
+            <textarea
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              rows={3}
+              placeholder={t('admin.wallet.description_placeholder')}
+              className={`${fieldClass} resize-y`}
+            />
+          </div>
+
+          {mode === 'add' && (
+            <div>
+              <label className={labelClass}>{t('admin.wallet.image_label')}</label>
+              <input
+                value={imageUrl}
+                onChange={(event) => setImageUrl(event.target.value)}
+                placeholder={t('admin.wallet.image_placeholder')}
+                className={fieldClass}
+              />
+              {imageUrl.trim().length > 0 && (
+                <div className="mt-2 overflow-hidden rounded-xl border border-white/10 bg-black/25 p-2">
+                  <Image
+                    src={imageUrl}
+                    alt=""
+                    width={960}
+                    height={480}
+                    unoptimized
+                    className="max-h-48 w-full object-contain"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? t('admin.wallet.submit_loading') : t('admin.wallet.submit')}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
