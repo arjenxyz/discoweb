@@ -38,6 +38,39 @@ function isAdminCapableRole(role: DiscordRole) {
   return Boolean((perms & 0x8) || (perms & 0x20) || (perms & 0x10000000));
 }
 
+/** Localhost design mocks — Discord API olmadan setup UI’sini doldurur */
+const LOCAL_DEV_MOCK_ROLES: DiscordRole[] = [
+  { id: 'local-role-everyone', name: '@everyone', color: 0, permissions: '0', position: 0 },
+  { id: 'local-role-owner', name: 'Owner', color: 0xe74c3c, permissions: '8', position: 100 },
+  { id: 'local-role-admin', name: 'Admin', color: 0x5865f2, permissions: '8', position: 90 },
+  {
+    id: 'local-role-mod',
+    name: 'Moderator',
+    color: 0x57f287,
+    permissions: String(0x20 | 0x10000000),
+    position: 80,
+  },
+  {
+    id: 'local-role-staff',
+    name: 'Staff',
+    color: 0xfee75c,
+    permissions: String(0x10000000),
+    position: 70,
+  },
+  { id: 'local-role-member', name: 'Üye', color: 0x3498db, permissions: '0', position: 50 },
+  { id: 'local-role-verified', name: 'Doğrulanmış', color: 0x1abc9c, permissions: '0', position: 40 },
+  { id: 'local-role-booster', name: 'Booster', color: 0xf47fff, permissions: '0', position: 30 },
+  { id: 'local-role-vip', name: 'VIP', color: 0xe67e22, permissions: '0', position: 20 },
+  { id: 'local-role-muted', name: 'Muted', color: 0x95a5a6, permissions: '0', position: 10 },
+];
+
+const LOCAL_DEV_MOCK_LOG_GUILD_ID = '987654321098765432';
+const LOCAL_DEV_MOCK_GUILD_NAME = 'Local Development';
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function measureCenteredPanel(): DropdownPos {
   const viewportPad = 24;
   return {
@@ -274,7 +307,9 @@ export default function SetupPage() {
   const [selectedVerifyRole, setSelectedVerifyRole] = useState<string>('');
   
   const [logMode, setLogMode] = useState<'current' | 'dedicated'>('current');
-  const [targetGuildId, setTargetGuildId] = useState<string>('');
+  const [targetGuildId, setTargetGuildId] = useState<string>(() =>
+    typeof window !== 'undefined' && isLocalDevBypassClient() ? LOCAL_DEV_MOCK_LOG_GUILD_ID : '',
+  );
 
   // Default economy settings for premium feel (pre-filled)
   const [messageEarnEnabled, setMessageEarnEnabled] = useState(true);
@@ -371,13 +406,14 @@ export default function SetupPage() {
                 ? (JSON.parse(stored) as Array<{ id: string; name?: string; iconUrl?: string | null }>)
                 : [];
               const match = parsed.find((g) => g.id === resolvedGuildId);
-              setGuildName(match?.name ?? 'Local Development');
+              setGuildName(match?.name ?? LOCAL_DEV_MOCK_GUILD_NAME);
               setGuildIcon(match?.iconUrl ?? null);
             } catch {
-              setGuildName('Local Development');
+              setGuildName(LOCAL_DEV_MOCK_GUILD_NAME);
             }
-            setRoles([]);
+            setRoles(LOCAL_DEV_MOCK_ROLES);
             setIsAdmin(true);
+            if (!targetGuildId) setTargetGuildId(LOCAL_DEV_MOCK_LOG_GUILD_ID);
           } else {
             throw new Error('Sunucu bilgileri alınamadı');
           }
@@ -395,34 +431,42 @@ export default function SetupPage() {
             credentials: 'include',
             cache: 'no-store',
           });
-          if (!rolesResponse.ok) throw new Error('Sunucu rolleri alınamadı');
-
-          const rolesData = (await rolesResponse.json()) as DiscordRole[];
-          setRoles(rolesData);
-
-          if (localBypass) {
-            setIsAdmin(true);
-          } else {
-            const isServerOwner = Boolean(resolvedUser.id) && guildData.owner_id === resolvedUser.id;
-            const adminRolesForPerm = rolesData.filter(isAdminCapableRole);
-
-            const userRolesResponse = await fetch(
-              `/api/discord/guild/${resolvedGuildId}/members/${resolvedUser.id}`,
-              { method: 'GET', credentials: 'include', cache: 'no-store' },
-            );
-
-            let userHasAdminRole = false;
-            if (userRolesResponse.ok) {
-              const userData = (await userRolesResponse.json()) as { roles?: string[] };
-              userHasAdminRole = (userData.roles ?? []).some((roleId) =>
-                adminRolesForPerm.some((adminRole) => adminRole.id === roleId),
-              );
+          if (!rolesResponse.ok) {
+            if (localBypass) {
+              setRoles(LOCAL_DEV_MOCK_ROLES);
+              setIsAdmin(true);
+            } else {
+              throw new Error('Sunucu rolleri alınamadı');
             }
+          } else {
+            const rolesData = (await rolesResponse.json()) as DiscordRole[];
+            setRoles(rolesData.length > 0 || !localBypass ? rolesData : LOCAL_DEV_MOCK_ROLES);
 
-            setIsAdmin(isServerOwner || userHasAdminRole);
+            if (localBypass) {
+              setIsAdmin(true);
+              if (!targetGuildId) setTargetGuildId(LOCAL_DEV_MOCK_LOG_GUILD_ID);
+            } else {
+              const isServerOwner = Boolean(resolvedUser.id) && guildData.owner_id === resolvedUser.id;
+              const adminRolesForPerm = rolesData.filter(isAdminCapableRole);
 
-            if (!isServerOwner && adminRolesForPerm.length === 0) {
-              setError('Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.');
+              const userRolesResponse = await fetch(
+                `/api/discord/guild/${resolvedGuildId}/members/${resolvedUser.id}`,
+                { method: 'GET', credentials: 'include', cache: 'no-store' },
+              );
+
+              let userHasAdminRole = false;
+              if (userRolesResponse.ok) {
+                const userData = (await userRolesResponse.json()) as { roles?: string[] };
+                userHasAdminRole = (userData.roles ?? []).some((roleId) =>
+                  adminRolesForPerm.some((adminRole) => adminRole.id === roleId),
+                );
+              }
+
+              setIsAdmin(isServerOwner || userHasAdminRole);
+
+              if (!isServerOwner && adminRolesForPerm.length === 0) {
+                setError('Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.');
+              }
             }
           }
         }
@@ -475,7 +519,7 @@ export default function SetupPage() {
     setSettingUp(true);
     setSetupStarted(true);
     setError('');
-    
+
     setTerminalLines([
       '> İzinler doğrulanıyor...',
       '> Bot API entegrasyonu başlatılıyor...',
@@ -484,6 +528,35 @@ export default function SetupPage() {
 
     try {
       setTerminalLines((prev) => [...prev, '> Log sunucusu yapılandırılıyor...']);
+
+      if (isLocalDevBypassClient()) {
+        await sleep(500);
+        setTerminalLines((prev) => [...prev, '> Örnek roller bağlanıyor...']);
+        await sleep(450);
+        setTerminalLines((prev) => [...prev, '> Ekonomi ayarları yazılıyor...']);
+        await sleep(450);
+        setTerminalLines((prev) => [...prev, '> Bonus kuralları uygulanıyor...']);
+        await sleep(450);
+        setTerminalLines((prev) => [
+          ...prev,
+          '> Localhost mock kurulum tamamlandı.',
+          '> KURULUM BAŞARILI!',
+        ]);
+        setSetupCompleted(true);
+        setAlreadySetup(true);
+        try {
+          const stored = localStorage.getItem('adminGuilds');
+          if (stored) {
+            const parsed = JSON.parse(stored) as Array<{ id: string; isSetup?: boolean }>;
+            const updated = parsed.map((g) => (g.id === guildId ? { ...g, isSetup: true } : g));
+            localStorage.setItem('adminGuilds', JSON.stringify(updated));
+          }
+        } catch {
+          // ignore
+        }
+        setRedirectCountdown(3);
+        return;
+      }
 
       const response = await fetch('/api/setup/server', {
         method: 'POST',
