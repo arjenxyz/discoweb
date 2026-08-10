@@ -761,10 +761,6 @@ export default function CuteNavbar() {
                     </div>
                   </div>
 
-                  <p className="mt-4 text-sm leading-relaxed text-white/55">
-                    {t('navbar.select_menu_intro')}
-                  </p>
-
                   <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/35">
                     {t('navbar.select_menu_guide_title')}
                   </p>

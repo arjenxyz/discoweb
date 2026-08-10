@@ -45,7 +45,6 @@
     "mobile_welcome": "DiscoWeb dünyasına hoş geldin.",
     "select_menu_hello": "Merhaba, {name}",
     "select_menu_eyebrow": "Sunucu seçimi",
-    "select_menu_intro": "Botun olduğu ve admin olduğunuz sunucular burada. Yönetmek istediğinizi seçin.",
     "select_menu_guide_title": "Nasıl ilerlersin?",
     "select_menu_step_1_title": "Sunucunu seç",
     "select_menu_step_1_body": "Listeden bir sunucuya dokunun. Yalnızca admin olduğunuzlar görünür.",

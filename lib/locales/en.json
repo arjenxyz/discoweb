@@ -45,7 +45,6 @@
     "mobile_welcome": "Welcome to the DiscoWeb universe.",
     "select_menu_hello": "Hello, {name}",
     "select_menu_eyebrow": "Server selection",
-    "select_menu_intro": "Servers where you’re admin and the bot is present. Pick one to manage.",
     "select_menu_guide_title": "How it works",
     "select_menu_step_1_title": "Choose your server",
     "select_menu_step_1_body": "Tap a server in the list. Only admin servers appear.",
