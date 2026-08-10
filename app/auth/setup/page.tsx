@@ -164,56 +164,67 @@ function RoleSelectDropdown({
               className="fixed inset-0 z-[190] cursor-default bg-black/70 backdrop-blur-md"
               onClick={() => setOpen(false)}
             />
-            <div
-              ref={menuRef}
-              role="listbox"
-              style={{
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                width: pos.width,
-                zIndex: 200,
-                transform: 'translate(-50%, -50%)',
-              }}
-              className="overflow-hidden rounded-2xl border border-white/10 bg-[#12141d]/95 shadow-2xl backdrop-blur-md"
-            >
+            <div className="pointer-events-none fixed inset-0 z-[200] flex flex-col items-center justify-center px-6">
+              <div className="mb-5 flex max-w-full items-center justify-center gap-2.5 px-4">
+                {iconSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={iconSrc}
+                    alt=""
+                    draggable={false}
+                    className="h-6 w-6 shrink-0 object-contain"
+                  />
+                ) : Icon ? (
+                  <Icon className={`h-5 w-5 shrink-0 ${accentIcon}`} />
+                ) : null}
+                <p className="truncate text-center text-base font-semibold tracking-wide text-white/90 sm:text-lg">
+                  {label}
+                </p>
+              </div>
               <div
-                className="custom-scrollbar space-y-1 overflow-y-auto overscroll-contain p-2"
-                style={{ maxHeight: pos.maxHeight }}
+                ref={menuRef}
+                role="listbox"
+                style={{ width: pos.width }}
+                className="pointer-events-auto max-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#12141d]/95 shadow-2xl backdrop-blur-md"
               >
-                {options.length === 0 ? (
-                  <p className="px-3 py-6 text-center text-xs text-white/40">Rol bulunamadı</p>
-                ) : (
-                  options.map((role) => {
-                    const isSelected = role.id === value;
-                    return (
-                      <button
-                        key={role.id}
-                        type="button"
-                        role="option"
-                        aria-selected={isSelected}
-                        onClick={() => {
-                          onChange(role.id);
-                          setOpen(false);
-                        }}
-                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                          isSelected
-                            ? 'bg-[#5865F2]/30 text-white'
-                            : 'text-white/75 hover:bg-white/5 hover:text-white'
-                        }`}
-                      >
-                        <span
-                          className="h-3 w-3 shrink-0 rounded-full"
-                          style={{ backgroundColor: roleColorHex(role.color) }}
-                        />
-                        <span className="min-w-0 flex-1 truncate font-medium">{role.name}</span>
-                        {isSelected && (
-                          <span className="h-2 w-2 shrink-0 rounded-full bg-[#5865F2]" />
-                        )}
-                      </button>
-                    );
-                  })
-                )}
+                <div
+                  className="custom-scrollbar space-y-1 overflow-y-auto overscroll-contain p-2"
+                  style={{ maxHeight: pos.maxHeight }}
+                >
+                  {options.length === 0 ? (
+                    <p className="px-3 py-6 text-center text-xs text-white/40">Rol bulunamadı</p>
+                  ) : (
+                    options.map((role) => {
+                      const isSelected = role.id === value;
+                      return (
+                        <button
+                          key={role.id}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          onClick={() => {
+                            onChange(role.id);
+                            setOpen(false);
+                          }}
+                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                            isSelected
+                              ? 'bg-[#5865F2]/30 text-white'
+                              : 'text-white/75 hover:bg-white/5 hover:text-white'
+                          }`}
+                        >
+                          <span
+                            className="h-3 w-3 shrink-0 rounded-full"
+                            style={{ backgroundColor: roleColorHex(role.color) }}
+                          />
+                          <span className="min-w-0 flex-1 truncate font-medium">{role.name}</span>
+                          {isSelected && (
+                            <span className="h-2 w-2 shrink-0 rounded-full bg-[#5865F2]" />
+                          )}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </div>
           </>,
