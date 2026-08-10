@@ -26,6 +26,7 @@ type PromoRow = {
   expires_at: string | null;
   max_uses: number | null;
   used_count: number;
+  per_user_limit: number | null;
   server_id: string;
 };
 
@@ -63,7 +64,7 @@ export async function redeemPromoCode(params: {
 
   const { data: promo, error: promoError } = await supabase
     .from('promotions')
-    .select('id,code,value,status,expires_at,max_uses,used_count,server_id')
+    .select('id,code,value,status,expires_at,max_uses,used_count,per_user_limit,server_id')
     .eq('server_id', server.id)
     .eq('code', normalizedCode)
     .is('deleted_at', null)
@@ -97,15 +98,25 @@ export async function redeemPromoCode(params: {
     return fail('usage_limit_exceeded', 'Promosyon kodunun kullanım limiti dolmuş.', 400);
   }
 
-  const { data: existingUsage } = await supabase
+  const { data: usageRows } = await supabase
     .from('promotion_usages')
     .select('id')
     .eq('promotion_id', promotion.id)
-    .eq('user_id', userId)
-    .maybeSingle();
+    .eq('user_id', userId);
 
-  if (existingUsage) {
-    return fail('already_used', 'Bu promosyon kodunu zaten kullandınız.', 400);
+  const userUsageCount = usageRows?.length ?? 0;
+  const perUserLimit = promotion.per_user_limit && promotion.per_user_limit > 0
+    ? promotion.per_user_limit
+    : 1;
+
+  if (userUsageCount >= perUserLimit) {
+    return fail(
+      'already_used',
+      perUserLimit === 1
+        ? 'Bu promosyon kodunu zaten kullandınız.'
+        : `Bu promosyon kodunu en fazla ${perUserLimit} kez kullanabilirsiniz.`,
+      400,
+    );
   }
 
   const { error: usageError } = await supabase.from('promotion_usages').insert({

@@ -7,6 +7,7 @@ export default function AdminStorePromoCreatePage() {
   const [code, setCode] = useState('');
   const [value, setValue] = useState('');
   const [maxUses, setMaxUses] = useState('');
+  const [perUserLimit, setPerUserLimit] = useState('1');
   const [expiresAt, setExpiresAt] = useState('');
   const [promoSaving, setPromoSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +24,7 @@ export default function AdminStorePromoCreatePage() {
       code,
       value: Number(value),
       maxUses: maxUses ? Number(maxUses) : null,
+      perUserLimit: perUserLimit ? Number(perUserLimit) : 1,
       status: 'active' as const,
       expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
     };
@@ -51,6 +53,7 @@ export default function AdminStorePromoCreatePage() {
     setCode('');
     setValue('');
     setMaxUses('');
+    setPerUserLimit('1');
     setExpiresAt('');
     setPromoSaving(false);
   };
@@ -88,26 +91,40 @@ export default function AdminStorePromoCreatePage() {
             />
           </div>
 
+          <div>
+            <label className={labelClass}>Papel paketi</label>
+            <input
+              value={value}
+              onChange={(event) => setValue(event.target.value)}
+              placeholder="100"
+              type="number"
+              className={fieldClass}
+            />
+          </div>
+
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Papel paketi</label>
-              <input
-                value={value}
-                onChange={(event) => setValue(event.target.value)}
-                placeholder="100"
-                type="number"
-                className={fieldClass}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Limit</label>
+              <label className={labelClass}>Kullanım limiti</label>
               <input
                 value={maxUses}
                 onChange={(event) => setMaxUses(event.target.value)}
-                placeholder="Opsiyonel"
+                placeholder="Sınırsız"
                 type="number"
                 className={fieldClass}
               />
+              <p className="mt-1 text-[11px] text-white/35">Kodun toplam kaç kez kullanılabileceği.</p>
+            </div>
+            <div>
+              <label className={labelClass}>Kişi başı limit</label>
+              <input
+                value={perUserLimit}
+                onChange={(event) => setPerUserLimit(event.target.value)}
+                placeholder="1"
+                type="number"
+                min="1"
+                className={fieldClass}
+              />
+              <p className="mt-1 text-[11px] text-white/35">Bir kullanıcının bu kodu kaç kez kullanabileceği.</p>
             </div>
           </div>
 
@@ -117,7 +134,7 @@ export default function AdminStorePromoCreatePage() {
               value={expiresAt}
               onChange={(event) => setExpiresAt(event.target.value)}
               type="datetime-local"
-              className={fieldClass}
+              className={`${fieldClass} [color-scheme:dark]`}
             />
           </div>
 

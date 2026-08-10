@@ -37,7 +37,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('promotions')
-    .select('id,code,value,max_uses,used_count,status,expires_at,created_at')
+    .select('id,code,value,max_uses,used_count,per_user_limit,status,expires_at,created_at')
     .eq('server_id', resolved.serverId)
     .order('created_at', { ascending: false });
 
@@ -69,6 +69,7 @@ export async function POST(request: Request) {
     code?: string;
     value?: number;
     maxUses?: number | null;
+    perUserLimit?: number | null;
     status?: 'active' | 'disabled' | 'expired';
     expiresAt?: string | null;
   };
@@ -86,11 +87,17 @@ export async function POST(request: Request) {
       ? Math.floor(payload.maxUses)
       : null;
 
+  const perUserLimit =
+    typeof payload.perUserLimit === 'number' && payload.perUserLimit > 0
+      ? Math.floor(payload.perUserLimit)
+      : 1;
+
   const { error } = await supabase.from('promotions').insert({
     server_id: resolved.serverId,
     code: payload.code.trim().toUpperCase(),
     value: payload.value,
     max_uses: maxUses,
+    per_user_limit: perUserLimit,
     status: payload.status ?? 'active',
     expires_at: payload.expiresAt ?? null,
   });
@@ -108,6 +115,7 @@ export async function POST(request: Request) {
       code: payload.code,
       value: payload.value,
       maxUses,
+      perUserLimit,
       status: payload.status ?? 'active',
       expiresAt: payload.expiresAt ?? null,
     },

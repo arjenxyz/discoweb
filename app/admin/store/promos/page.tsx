@@ -9,6 +9,7 @@ type Promotion = {
   value: number;
   max_uses: number | null;
   used_count: number;
+  per_user_limit?: number | null;
   status: 'active' | 'disabled' | 'expired';
   expires_at: string | null;
 };
@@ -85,6 +86,9 @@ export default function AdminStorePromosPage() {
                         {promo.max_uses
                           ? `${promo.used_count}/${promo.max_uses}`
                           : `${promo.used_count} kullanım`}
+                      </span>
+                      <span className="rounded-lg border border-white/10 px-2 py-0.5">
+                        Kişi başı: {promo.per_user_limit ?? 1}
                       </span>
                     </div>
                   </div>
