@@ -382,5 +382,59 @@
     "agreement_not_now": "Not now",
     "agreement_processing": "Processing...",
     "agreement_accept": "Accept and continue"
+  },
+  "auth": {
+    "callback": {
+      "verifying": "Verifying sign-in...",
+      "verifying_discord": "Verifying Discord connection...",
+      "no_guilds": "No accessible servers found. Redirecting...",
+      "success": "Sign-in successful. Redirecting...",
+      "loading": "Loading..."
+    },
+    "error": {
+      "title": "Discord connection failed",
+      "body": "The sign-in request could not be completed. Please try again or check the redirect URI. If the problem continues, contact our support team.",
+      "discord_unreachable": "Could not reach the Discord API. Make sure you are online and that Discord access is allowed on your network.",
+      "reason": "Error: {reason}",
+      "back_home": "Back to home",
+      "retry": "Try again"
+    }
+  },
+  "agreement": {
+    "title": "User agreement and data use",
+    "lead": "In short: your account will be verified and basic information needed to access our service will be collected.",
+    "close": "Close",
+    "intro": "This service uses the following information to work with your Discord account and server data:",
+    "item_identity": "Your Discord user ID, username, and avatar (to identify your account).",
+    "item_guilds": "Your server list and which servers you administer — to show where you can take action.",
+    "item_roles": "Your membership status and roles (for permission checks).",
+    "item_join": "Server join information — some features may require server access.",
+    "item_email": "Your email address — used for account verification, important notices, and support.",
+    "item_activity": "In-panel activity; e.g. wallet balance, transactions, and purchase history.",
+    "privacy_prefix": "This data is used only to provide the service, verify your account, and run the features you request. OAuth scopes requested during Discord sign-in (e.g. identify, email, guilds, guilds.join) are used only for necessary operations. For our full privacy policy, please visit the",
+    "privacy_link": "Privacy",
+    "privacy_suffix": "page.",
+    "decline_note": "If you do not accept, sign-in will not complete and you will be redirected home.",
+    "dont_show_again": "Don't show again",
+    "decline": "I won't continue without signing in",
+    "decline_home": "I decline — back to home",
+    "accept": "I accept",
+    "processing": "Processing...",
+    "aria_decline": "Decline",
+    "aria_accept": "Accept and continue"
+  },
+  "bot_invite": {
+    "success_toast": "Invite link opened!",
+    "body": "To verify your access to platform data, the bot must be active in a server you belong to. We found no server configuration matching your account in our records.",
+    "how_title": "How to proceed",
+    "how_1": "To start using our services, add the bot to the relevant server and complete setup.",
+    "how_2_before": "To review the technical reasons for required permissions and the setup guide, use the",
+    "how_2_strong": "Documentation",
+    "how_2_after": "button below.",
+    "how_3": "After that, sign in again to activate your panel.",
+    "invite": "Add bot to server",
+    "opening": "Opening...",
+    "docs": "Documentation",
+    "back": "Go back"
   }
 }

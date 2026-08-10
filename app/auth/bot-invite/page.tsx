@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import { LuBot, LuExternalLink, LuArrowLeft, LuFileText, LuChevronDown, LuShieldCheck, LuList, LuMail, LuUser } from 'react-icons/lu';
 import Image from 'next/image';
+import { useTranslation } from '@/lib/i18nContext';
 
 // Extend window interface for gtag
 declare global {
@@ -22,6 +23,7 @@ interface DiscordUser {
 
 export default function BotInvitePage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [user] = useState<DiscordUser | null>(() => {
     if (typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('discordUser');
@@ -168,7 +170,7 @@ export default function BotInvitePage() {
           {showSuccess && (
             <div className="fixed top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 bg-green-500/20 border border-green-500/50 rounded-lg p-3 sm:p-4 backdrop-blur-sm animate-slideInRight shadow-lg shadow-green-500/20 z-50">
               <div className="flex items-center gap-2 sm:gap-3">
-                <p className="text-xs sm:text-sm font-medium text-green-400">Davet bağlantısı açıldı!</p>
+                <p className="text-xs sm:text-sm font-medium text-green-400">{t('bot_invite.success_toast')}</p>
               </div>
             </div>
           )}
@@ -207,33 +209,33 @@ export default function BotInvitePage() {
               <div className="bg-white/5 border border-white/10 rounded-lg p-4 sm:p-5 md:p-6 hover:bg-white/10 transition-all duration-300 animate-slideInLeft">
                 <div className="flex items-start gap-2 sm:gap-3">
                   <p className="text-sm sm:text-base leading-relaxed">
-                    Platform verilerine erişim yetkinizin doğrulanabilmesi için botun, üyesi olduğunuz bir sunucuda aktif durumda bulunması şarttır. Mevcut kayıtlarımızda hesabınızla eşleşen bir sunucu konfigürasyonuna rastlanmamıştır.
+                    {t('bot_invite.body')}
                   </p>
                 </div>
               </div>
 
               <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4 hover:from-blue-500/15 hover:to-purple-500/15 transition-all duration-300 animate-slideInRight">
                 <h3 className="text-blue-400 font-semibold text-base sm:text-lg border-b border-blue-500/30 pb-2 flex items-center justify-between gap-2 cursor-pointer md:cursor-default" onClick={() => setIsExpanded(!isExpanded)}>
-                  Nasıl İlerleyebilirsiniz?
+                  {t('bot_invite.how_title')}
                   <LuChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform ${isExpanded ? 'rotate-180' : ''} md:hidden`} />
                 </h3>
                 <div className={`space-y-2 sm:space-y-3 ${isExpanded ? 'block' : 'hidden'} md:block`}>
                   <div className="flex items-start gap-2 sm:gap-3 group">
                     <div className="mt-0.5 sm:mt-1 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-blue-400 flex-shrink-0 group-hover:scale-150 transition-transform" />
                     <p className="text-xs sm:text-sm leading-relaxed">
-                      Hizmetlerimizi kullanmaya başlamak için botu ilgili sunucuya eklemeniz ve kurulumu tamamlamanız gerekmektedir.
+                      {t('bot_invite.how_1')}
                     </p>
                   </div>
                   <div className="flex items-start gap-2 sm:gap-3 group">
                     <div className="mt-0.5 sm:mt-1 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-blue-400 flex-shrink-0 group-hover:scale-150 transition-transform" />
                     <p className="text-xs sm:text-sm leading-relaxed">
-                      Gerekli izinlerin teknik gerekçelerini ve kurulum rehberini incelemek için aşağıdaki <strong className="text-blue-400">Dokümantasyon</strong> butonunu kullanabilirsiniz.
+                      {t('bot_invite.how_2_before')} <strong className="text-blue-400">{t('bot_invite.how_2_strong')}</strong> {t('bot_invite.how_2_after')}
                     </p>
                   </div>
                   <div className="flex items-start gap-2 sm:gap-3 group">
                     <div className="mt-0.5 sm:mt-1 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-blue-400 flex-shrink-0 group-hover:scale-150 transition-transform" />
                     <p className="text-xs sm:text-sm leading-relaxed">
-                      İşlem sonrası tekrar giriş yaparak panelinizi aktifleştirebilirsiniz.
+                      {t('bot_invite.how_3')}
                     </p>
                   </div>
                 </div>
@@ -250,12 +252,12 @@ export default function BotInvitePage() {
                 {isInviting ? (
                   <>
                     <div className="h-3 w-3 sm:h-4 sm:w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span className="text-xs sm:text-sm">Açılıyor...</span>
+                    <span className="text-xs sm:text-sm">{t('bot_invite.opening')}</span>
                   </>
                 ) : (
                   <>
                     <LuExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span className="text-xs sm:text-sm">Botu Sunucuya Ekle</span>
+                    <span className="text-xs sm:text-sm">{t('bot_invite.invite')}</span>
                   </>
                 )}
               </button>
@@ -266,7 +268,7 @@ export default function BotInvitePage() {
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 <LuFileText className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="text-xs sm:text-sm">Dokümantasyon</span>
+                <span className="text-xs sm:text-sm">{t('bot_invite.docs')}</span>
               </button>
             </div>
           </div>
@@ -278,7 +280,7 @@ export default function BotInvitePage() {
               className="inline-flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-all duration-200 hover:gap-2 sm:hover:gap-3 group text-sm sm:text-base"
             >
               <LuArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 group-hover:-translate-x-1 transition-transform" />
-              Geri Dön
+              {t('bot_invite.back')}
             </button>
           </div>
         </div>
@@ -300,38 +302,38 @@ export default function BotInvitePage() {
                 <LuShieldCheck className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <h3 id="discord-agreement-title-bot" className="text-lg font-semibold text-white">Kullanıcı Sözleşmesi ve Veri Kullanımı</h3>
-                <p className="text-sm text-white/70 mt-2">Kısaca: Hesabınız doğrulanacak ve hizmetimize erişim için gerekli temel bilgiler toplanacaktır.</p>
+                <h3 id="discord-agreement-title-bot" className="text-lg font-semibold text-white">{t('agreement.title')}</h3>
+                <p className="text-sm text-white/70 mt-2">{t('agreement.lead')}</p>
               </div>
             </div>
 
               <div className="mt-4 space-y-3 text-sm text-white/70">
-                <p>Bu hizmet, Discord hesabınız ve sunucu verilerinizle entegre çalışmak için aşağıdaki bilgileri kullanacaktır:</p>
+                <p>{t('agreement.intro')}</p>
                 <ul className="ml-0 mt-2 grid gap-2 text-sm">
-                  <li className="flex items-start gap-2"><LuUser className="mt-1 text-white/60"/> <span>Discord kullanıcı kimliğiniz, takma adınız ve avatar bilgileri (hesap tanımlama için).</span></li>
-                  <li className="flex items-start gap-2"><LuList className="mt-1 text-white/60"/> <span>Sunucularınızın listesi ve hangi sunucularda yönetici olduğunuz — hangi sunucularda işlem yapabileceğinizi göstermek için.</span></li>
-                  <li className="flex items-start gap-2"><LuShieldCheck className="mt-1 text-white/60"/> <span>Sunucu üyelik durumunuz ve rolleriniz (yetki kontrolleri için).</span></li>
-                  <li className="flex items-start gap-2"><LuList className="mt-1 text-white/60"/> <span>Sunucuya katılma bilgisi — bazı özellikler için sunucu erişimi gerekebilir.</span></li>
-                  <li className="flex items-start gap-2"><LuMail className="mt-1 text-white/60"/> <span>E-posta adresiniz — hesap doğrulama, önemli bildirimler ve destek için kullanılır.</span></li>
-                  <li className="flex items-start gap-2"><LuShieldCheck className="mt-1 text-white/60"/> <span>Panel içi işlemleriniz; ör. cüzdan bakiyesi, işlemler ve satın alma geçmişi.</span></li>
+                  <li className="flex items-start gap-2"><LuUser className="mt-1 text-white/60"/> <span>{t('agreement.item_identity')}</span></li>
+                  <li className="flex items-start gap-2"><LuList className="mt-1 text-white/60"/> <span>{t('agreement.item_guilds')}</span></li>
+                  <li className="flex items-start gap-2"><LuShieldCheck className="mt-1 text-white/60"/> <span>{t('agreement.item_roles')}</span></li>
+                  <li className="flex items-start gap-2"><LuList className="mt-1 text-white/60"/> <span>{t('agreement.item_join')}</span></li>
+                  <li className="flex items-start gap-2"><LuMail className="mt-1 text-white/60"/> <span>{t('agreement.item_email')}</span></li>
+                  <li className="flex items-start gap-2"><LuShieldCheck className="mt-1 text-white/60"/> <span>{t('agreement.item_activity')}</span></li>
                 </ul>
 
-                <p className="mt-2">Bu veriler yalnızca hizmet sağlamak, hesap doğrulaması ve talep ettiğiniz özellikleri çalıştırmak için kullanılacaktır. Discord OAuth sırasında talep edilecek scope'lar (ör: identify, email, guilds, guilds.join) sadece gerekli işlemler için kullanılacaktır. Ayrıntılı gizlilik politikamız için lütfen <a href="/privacy" className="text-blue-400 underline">Gizlilik</a> sayfasını ziyaret edin.</p>
+                <p className="mt-2">{t('agreement.privacy_prefix')}{' '}<a href="/privacy" className="text-blue-400 underline">{t('agreement.privacy_link')}</a>{' '}{t('agreement.privacy_suffix')}</p>
 
-                <div className="mt-2 text-sm text-white/60">Kabul etmezseniz, giriş işlemi tamamlanmayacak ve ana sayfaya yönlendirileceksiniz.</div>
+                <div className="mt-2 text-sm text-white/60">{t('agreement.decline_note')}</div>
 
                 <label className="mt-3 inline-flex items-center gap-2 text-sm text-white/80">
                   <input type="checkbox" checked={dontShowAgain} onChange={(e) => setDontShowAgain(e.target.checked)} className="h-4 w-4 rounded border-white/10 bg-black/10" />
-                  <span>Bir daha gösterme</span>
+                  <span>{t('agreement.dont_show_again')}</span>
                 </label>
               </div>
 
             <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
-              <button onClick={declineAgreement} className="sm:w-auto w-full rounded-md px-4 py-3 bg-white/5 border border-white/10 text-sm text-white/80 hover:bg-white/10" aria-label="Kabul etmiyorum">
-                Kabul Etmiyorum — Ana Sayfaya Dön
+              <button onClick={declineAgreement} className="sm:w-auto w-full rounded-md px-4 py-3 bg-white/5 border border-white/10 text-sm text-white/80 hover:bg-white/10" aria-label={t('agreement.aria_decline')}>
+                {t('agreement.decline_home')}
               </button>
-              <button onClick={acceptAgreement} disabled={isProcessingAgreement} className="sm:w-auto w-full rounded-md px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-medium hover:from-blue-700 hover:to-blue-600 disabled:opacity-50 flex items-center justify-center gap-2" aria-label="Kabul ediyorum ve devam et">
-                {isProcessingAgreement ? 'İşleniyor...' : 'Kabul Ediyorum'}
+              <button onClick={acceptAgreement} disabled={isProcessingAgreement} className="sm:w-auto w-full rounded-md px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-medium hover:from-blue-700 hover:to-blue-600 disabled:opacity-50 flex items-center justify-center gap-2" aria-label={t('agreement.aria_accept')}>
+                {isProcessingAgreement ? t('agreement.processing') : t('agreement.accept')}
               </button>
             </div>
           </div>

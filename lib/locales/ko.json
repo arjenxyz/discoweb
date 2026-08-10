@@ -382,5 +382,59 @@
       "mobile_welcome": "관리자 패널에서 서버, 스토어, 경제를 관리하세요.",
       "logout": "로그아웃"
     }
+  },
+  "auth": {
+    "callback": {
+      "verifying": "로그인 확인 중...",
+      "verifying_discord": "Discord 연결 확인 중...",
+      "no_guilds": "접근 가능한 서버가 없습니다. 이동 중...",
+      "success": "로그인 성공. 이동 중...",
+      "loading": "로딩 중..."
+    },
+    "error": {
+      "title": "Discord 연결 실패",
+      "body": "로그인 요청을 완료할 수 없습니다. 다시 시도하거나 리디렉션 URI를 확인하세요. 문제가 계속되면 지원팀에 문의하세요.",
+      "discord_unreachable": "Discord API에 연결할 수 없습니다. 온라인 상태인지, 네트워크에서 Discord 접근이 허용되는지 확인하세요.",
+      "reason": "오류: {reason}",
+      "back_home": "홈으로 돌아가기",
+      "retry": "다시 시도"
+    }
+  },
+  "agreement": {
+    "title": "이용 약관 및 데이터 사용",
+    "lead": "요약: 계정이 확인되며 서비스 이용에 필요한 기본 정보가 수집됩니다.",
+    "close": "닫기",
+    "intro": "이 서비스는 Discord 계정 및 서버 데이터와 함께 작동하기 위해 다음 정보를 사용합니다:",
+    "item_identity": "Discord 사용자 ID, 사용자명, 아바타(계정 식별용).",
+    "item_guilds": "서버 목록과 관리하는 서버 — 작업할 수 있는 곳을 표시하기 위함.",
+    "item_roles": "멤버십 상태 및 역할(권한 확인용).",
+    "item_join": "서버 참가 정보 — 일부 기능은 서버 접근이 필요할 수 있습니다.",
+    "item_email": "이메일 주소 — 계정 확인, 중요 알림, 지원에 사용.",
+    "item_activity": "패널 내 활동; 예: 지갑 잔액, 거래, 구매 기록.",
+    "privacy_prefix": "이 데이터는 서비스 제공, 계정 확인, 요청한 기능 실행에만 사용됩니다. Discord 로그인 시 요청되는 OAuth 스코프(예: identify, email, guilds, guilds.join)는 필요한 작업에만 사용됩니다. 전체 개인정보 처리방침은",
+    "privacy_link": "개인정보",
+    "privacy_suffix": "페이지를 방문하세요.",
+    "decline_note": "동의하지 않으면 로그인이 완료되지 않고 홈으로 이동합니다.",
+    "dont_show_again": "다시 표시하지 않음",
+    "decline": "로그인 없이 진행하지 않음",
+    "decline_home": "거부 — 홈으로",
+    "accept": "동의합니다",
+    "processing": "처리 중...",
+    "aria_decline": "거부",
+    "aria_accept": "동의하고 계속"
+  },
+  "bot_invite": {
+    "success_toast": "초대 링크가 열렸습니다!",
+    "body": "플랫폼 데이터 접근을 확인하려면 소속된 서버에서 봇이 활성 상태여야 합니다. 계정과 일치하는 서버 구성을 찾지 못했습니다.",
+    "how_title": "진행 방법",
+    "how_1": "서비스를 사용하려면 해당 서버에 봇을 추가하고 Setup을 완료하세요.",
+    "how_2_before": "필요한 권한의 기술적 이유와 Setup 가이드는 아래",
+    "how_2_strong": "문서",
+    "how_2_after": "버튼을 사용하세요.",
+    "how_3": "이후 다시 로그인하여 패널을 활성화하세요.",
+    "invite": "서버에 봇 추가",
+    "opening": "여는 중...",
+    "docs": "문서",
+    "back": "돌아가기"
   }
 }

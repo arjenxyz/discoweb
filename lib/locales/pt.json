@@ -382,5 +382,59 @@
       "mobile_welcome": "Gerencie servidor, loja e economia pelo painel admin.",
       "logout": "Sair"
     }
+  },
+  "auth": {
+    "callback": {
+      "verifying": "Verificando login...",
+      "verifying_discord": "Verificando conexão com o Discord...",
+      "no_guilds": "Nenhum servidor acessível encontrado. Redirecionando...",
+      "success": "Login bem-sucedido. Redirecionando...",
+      "loading": "Carregando..."
+    },
+    "error": {
+      "title": "Falha na conexão com o Discord",
+      "body": "A solicitação de login não pôde ser concluída. Tente novamente ou verifique o URI de redirecionamento. Se o problema continuar, fale com o suporte.",
+      "discord_unreachable": "Não foi possível conectar à API do Discord. Verifique se você está online e se o acesso ao Discord é permitido na sua rede.",
+      "reason": "Erro: {reason}",
+      "back_home": "Voltar ao início",
+      "retry": "Tentar de novo"
+    }
+  },
+  "agreement": {
+    "title": "Acordo do usuário e uso de dados",
+    "lead": "Em resumo: sua conta será verificada e serão coletadas as informações básicas necessárias para acessar o serviço.",
+    "close": "Fechar",
+    "intro": "Este serviço usa as informações abaixo para funcionar com sua conta Discord e dados do servidor:",
+    "item_identity": "Seu ID de usuário Discord, nome de usuário e avatar (para identificar a conta).",
+    "item_guilds": "Sua lista de servidores e em quais você é administrador — para mostrar onde pode agir.",
+    "item_roles": "Seu status de membro e cargos (para checagens de permissão).",
+    "item_join": "Informação de entrada no servidor — alguns recursos podem exigir acesso ao servidor.",
+    "item_email": "Seu e-mail — usado para verificação da conta, avisos importantes e suporte.",
+    "item_activity": "Atividade no painel; p.ex. saldo da carteira, transações e histórico de compras.",
+    "privacy_prefix": "Esses dados são usados apenas para prestar o serviço, verificar sua conta e executar os recursos solicitados. Os scopes OAuth pedidos no login Discord (ex.: identify, email, guilds, guilds.join) são usados só para operações necessárias. Para a política de privacidade completa, visite a página de",
+    "privacy_link": "Privacidade",
+    "privacy_suffix": ".",
+    "decline_note": "Se não aceitar, o login não será concluído e você voltará ao início.",
+    "dont_show_again": "Não mostrar de novo",
+    "decline": "Não continuo sem entrar",
+    "decline_home": "Não aceito — voltar ao início",
+    "accept": "Aceito",
+    "processing": "Processando...",
+    "aria_decline": "Recusar",
+    "aria_accept": "Aceitar e continuar"
+  },
+  "bot_invite": {
+    "success_toast": "Link de convite aberto!",
+    "body": "Para verificar seu acesso aos dados da plataforma, o bot precisa estar ativo em um servidor do qual você faz parte. Não encontramos nenhuma configuração de servidor correspondente à sua conta.",
+    "how_title": "Como seguir",
+    "how_1": "Para começar a usar nossos serviços, adicione o bot ao servidor relevante e conclua a configuração.",
+    "how_2_before": "Para ver os motivos técnicos das permissões necessárias e o guia de configuração, use o botão",
+    "how_2_strong": "Documentação",
+    "how_2_after": "abaixo.",
+    "how_3": "Depois, entre novamente para ativar seu painel.",
+    "invite": "Adicionar bot ao servidor",
+    "opening": "Abrindo...",
+    "docs": "Documentação",
+    "back": "Voltar"
   }
 }

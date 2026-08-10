@@ -382,5 +382,59 @@
     "agreement_not_now": "Şimdi değil",
     "agreement_processing": "İşleniyor...",
     "agreement_accept": "Onayla ve devam et"
+  },
+  "auth": {
+    "callback": {
+      "verifying": "Giriş doğrulanıyor...",
+      "verifying_discord": "Discord bağlantısı doğrulanıyor...",
+      "no_guilds": "Erişilebilir sunucu bulunamadı. Yönlendiriliyor...",
+      "success": "Giriş başarılı. Yönlendiriliyor...",
+      "loading": "Yükleniyor..."
+    },
+    "error": {
+      "title": "Discord bağlantısı başarısız oldu",
+      "body": "Oturum açma isteği tamamlanamadı. Lütfen tekrar deneyin veya yönlendirme adresini kontrol edin. Sorun devam ederse destek ekibimizle iletişime geçebilirsiniz.",
+      "discord_unreachable": "Discord API ile bağlantı kurulamadı. İnternete bağlı olduğunuzdan ve sunucunuza Discord erişimine izin verdiğinizden emin olun.",
+      "reason": "Hata: {reason}",
+      "back_home": "Ana sayfaya dön",
+      "retry": "Tekrar dene"
+    }
+  },
+  "agreement": {
+    "title": "Kullanıcı Sözleşmesi ve Veri Kullanımı",
+    "lead": "Kısaca: Hesabınız doğrulanacak ve hizmetimize erişim için gerekli temel bilgiler toplanacaktır.",
+    "close": "Kapat",
+    "intro": "Bu hizmet, Discord hesabınız ve sunucu verilerinizle entegre çalışmak için aşağıdaki bilgileri kullanacaktır:",
+    "item_identity": "Discord kullanıcı kimliğiniz, takma adınız ve avatar bilgileri (hesap tanımlama için).",
+    "item_guilds": "Sunucularınızın listesi ve hangi sunucularda yönetici olduğunuz — hangi sunucularda işlem yapabileceğinizi göstermek için.",
+    "item_roles": "Sunucu üyelik durumunuz ve rolleriniz (yetki kontrolleri için).",
+    "item_join": "Sunucuya katılma bilgisi — bazı özellikler için sunucu erişimi gerekebilir.",
+    "item_email": "E-posta adresiniz — hesap doğrulama, önemli bildirimler ve destek için kullanılır.",
+    "item_activity": "Panel içi işlemleriniz; ör. cüzdan bakiyesi, işlemler ve satın alma geçmişi.",
+    "privacy_prefix": "Bu veriler yalnızca hizmet sağlamak, hesap doğrulaması ve talep ettiğiniz özellikleri çalıştırmak için kullanılacaktır. Discord OAuth sırasında talep edilecek scope'lar (ör: identify, email, guilds, guilds.join) sadece gerekli işlemler için kullanılacaktır. Ayrıntılı gizlilik politikamız için lütfen",
+    "privacy_link": "Gizlilik",
+    "privacy_suffix": "sayfasını ziyaret edin.",
+    "decline_note": "Kabul etmezseniz, giriş işlemi tamamlanmayacak ve ana sayfaya yönlendirileceksiniz.",
+    "dont_show_again": "Bir daha gösterme",
+    "decline": "Giriş Yapmadan Devam Etmiyorum",
+    "decline_home": "Kabul Etmiyorum — Ana Sayfaya Dön",
+    "accept": "Kabul Ediyorum",
+    "processing": "İşleniyor...",
+    "aria_decline": "Kabul etmiyorum",
+    "aria_accept": "Kabul ediyorum ve devam et"
+  },
+  "bot_invite": {
+    "success_toast": "Davet bağlantısı açıldı!",
+    "body": "Platform verilerine erişim yetkinizin doğrulanabilmesi için botun, üyesi olduğunuz bir sunucuda aktif durumda bulunması şarttır. Mevcut kayıtlarımızda hesabınızla eşleşen bir sunucu konfigürasyonuna rastlanmamıştır.",
+    "how_title": "Nasıl İlerleyebilirsiniz?",
+    "how_1": "Hizmetlerimizi kullanmaya başlamak için botu ilgili sunucuya eklemeniz ve kurulumu tamamlamanız gerekmektedir.",
+    "how_2_before": "Gerekli izinlerin teknik gerekçelerini ve kurulum rehberini incelemek için aşağıdaki",
+    "how_2_strong": "Dokümantasyon",
+    "how_2_after": "butonunu kullanabilirsiniz.",
+    "how_3": "İşlem sonrası tekrar giriş yaparak panelinizi aktifleştirebilirsiniz.",
+    "invite": "Botu Sunucuya Ekle",
+    "opening": "Açılıyor...",
+    "docs": "Dokümantasyon",
+    "back": "Geri Dön"
   }
 }

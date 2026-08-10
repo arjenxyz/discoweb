@@ -382,5 +382,59 @@
       "mobile_welcome": "Verwalte Server, Shop und Wirtschaft über das Admin-Panel.",
       "logout": "Abmelden"
     }
+  },
+  "auth": {
+    "callback": {
+      "verifying": "Anmeldung wird geprüft...",
+      "verifying_discord": "Discord-Verbindung wird geprüft...",
+      "no_guilds": "Keine zugänglichen Server gefunden. Weiterleitung...",
+      "success": "Anmeldung erfolgreich. Weiterleitung...",
+      "loading": "Wird geladen..."
+    },
+    "error": {
+      "title": "Discord-Verbindung fehlgeschlagen",
+      "body": "Die Anmeldeanfrage konnte nicht abgeschlossen werden. Bitte erneut versuchen oder die Redirect-URI prüfen. Bei anhaltenden Problemen den Support kontaktieren.",
+      "discord_unreachable": "Die Discord-API war nicht erreichbar. Stelle sicher, dass du online bist und Discord in deinem Netzwerk erlaubt ist.",
+      "reason": "Fehler: {reason}",
+      "back_home": "Zur Startseite",
+      "retry": "Erneut versuchen"
+    }
+  },
+  "agreement": {
+    "title": "Nutzungsvereinbarung und Datenverwendung",
+    "lead": "Kurz gesagt: Dein Konto wird verifiziert und grundlegende Informationen für den Dienstzugriff werden erhoben.",
+    "close": "Schließen",
+    "intro": "Dieser Dienst verwendet die folgenden Informationen für dein Discord-Konto und Serverdaten:",
+    "item_identity": "Deine Discord-Benutzer-ID, dein Benutzername und Avatar (zur Kontoerkennung).",
+    "item_guilds": "Deine Serverliste und auf welchen Servern du Admin bist — um zu zeigen, wo du handeln kannst.",
+    "item_roles": "Dein Mitgliedsstatus und deine Rollen (für Berechtigungsprüfungen).",
+    "item_join": "Server-Beitrittsinformationen — einige Funktionen können Serverzugriff erfordern.",
+    "item_email": "Deine E-Mail-Adresse — für Kontoverifizierung, wichtige Hinweise und Support.",
+    "item_activity": "Aktivitäten im Panel; z. B. Wallet-Guthaben, Transaktionen und Kaufhistorie.",
+    "privacy_prefix": "Diese Daten werden nur zur Bereitstellung des Dienstes, zur Kontoverifizierung und für angeforderte Funktionen verwendet. Während der Discord-Anmeldung angeforderte OAuth-Scopes (z. B. identify, email, guilds, guilds.join) dienen nur notwendigen Vorgängen. Unsere vollständige Datenschutzrichtlinie findest du auf der Seite",
+    "privacy_link": "Datenschutz",
+    "privacy_suffix": ".",
+    "decline_note": "Wenn du nicht zustimmst, wird die Anmeldung nicht abgeschlossen und du wirst zur Startseite weitergeleitet.",
+    "dont_show_again": "Nicht mehr anzeigen",
+    "decline": "Ohne Anmeldung fahre ich nicht fort",
+    "decline_home": "Ablehnen — zur Startseite",
+    "accept": "Ich stimme zu",
+    "processing": "Wird verarbeitet...",
+    "aria_decline": "Ablehnen",
+    "aria_accept": "Zustimmen und fortfahren"
+  },
+  "bot_invite": {
+    "success_toast": "Einladungslink geöffnet!",
+    "body": "Um deinen Zugriff auf Plattformdaten zu prüfen, muss der Bot auf einem Server aktiv sein, dem du angehörst. In unseren Aufzeichnungen wurde keine passende Serverkonfiguration gefunden.",
+    "how_title": "So gehst du vor",
+    "how_1": "Um unsere Dienste zu nutzen, füge den Bot dem entsprechenden Server hinzu und schließe das Setup ab.",
+    "how_2_before": "Technische Gründe für die erforderlichen Berechtigungen und die Setup-Anleitung findest du über die Schaltfläche",
+    "how_2_strong": "Dokumentation",
+    "how_2_after": "unten.",
+    "how_3": "Melde dich danach erneut an, um dein Panel zu aktivieren.",
+    "invite": "Bot zum Server hinzufügen",
+    "opening": "Wird geöffnet...",
+    "docs": "Dokumentation",
+    "back": "Zurück"
   }
 }

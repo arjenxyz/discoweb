@@ -382,5 +382,59 @@
       "mobile_welcome": "Kelola server, toko, dan ekonomi dari panel admin.",
       "logout": "Keluar"
     }
+  },
+  "auth": {
+    "callback": {
+      "verifying": "Memverifikasi masuk...",
+      "verifying_discord": "Memverifikasi koneksi Discord...",
+      "no_guilds": "Tidak ada server yang dapat diakses. Mengalihkan...",
+      "success": "Berhasil masuk. Mengalihkan...",
+      "loading": "Memuat..."
+    },
+    "error": {
+      "title": "Koneksi Discord gagal",
+      "body": "Permintaan masuk tidak dapat diselesaikan. Coba lagi atau periksa URI pengalihan. Jika masalah berlanjut, hubungi dukungan.",
+      "discord_unreachable": "Tidak dapat terhubung ke API Discord. Pastikan Anda online dan akses Discord diizinkan di jaringan Anda.",
+      "reason": "Kesalahan: {reason}",
+      "back_home": "Kembali ke beranda",
+      "retry": "Coba lagi"
+    }
+  },
+  "agreement": {
+    "title": "Perjanjian pengguna dan penggunaan data",
+    "lead": "Singkatnya: akun Anda akan diverifikasi dan informasi dasar yang diperlukan untuk mengakses layanan akan dikumpulkan.",
+    "close": "Tutup",
+    "intro": "Layanan ini menggunakan informasi berikut untuk bekerja dengan akun Discord dan data server Anda:",
+    "item_identity": "ID pengguna Discord, nama pengguna, dan avatar Anda (untuk mengidentifikasi akun).",
+    "item_guilds": "Daftar server Anda dan server mana yang Anda kelola — untuk menunjukkan di mana Anda dapat bertindak.",
+    "item_roles": "Status keanggotaan dan peran Anda (untuk pemeriksaan izin).",
+    "item_join": "Informasi bergabung ke server — beberapa fitur mungkin memerlukan akses server.",
+    "item_email": "Alamat email Anda — digunakan untuk verifikasi akun, pemberitahuan penting, dan dukungan.",
+    "item_activity": "Aktivitas di dalam panel; mis. saldo dompet, transaksi, dan riwayat pembelian.",
+    "privacy_prefix": "Data ini hanya digunakan untuk menyediakan layanan, memverifikasi akun, dan menjalankan fitur yang Anda minta. Scope OAuth yang diminta saat masuk Discord (mis. identify, email, guilds, guilds.join) hanya digunakan untuk operasi yang diperlukan. Untuk kebijakan privasi lengkap, kunjungi halaman",
+    "privacy_link": "Privasi",
+    "privacy_suffix": ".",
+    "decline_note": "Jika Anda tidak menerima, masuk tidak akan selesai dan Anda akan diarahkan ke beranda.",
+    "dont_show_again": "Jangan tampilkan lagi",
+    "decline": "Saya tidak melanjutkan tanpa masuk",
+    "decline_home": "Saya menolak — kembali ke beranda",
+    "accept": "Saya menerima",
+    "processing": "Memproses...",
+    "aria_decline": "Menolak",
+    "aria_accept": "Terima dan lanjutkan"
+  },
+  "bot_invite": {
+    "success_toast": "Tautan undangan dibuka!",
+    "body": "Untuk memverifikasi akses Anda ke data platform, bot harus aktif di server tempat Anda menjadi anggota. Kami tidak menemukan konfigurasi server yang cocok dengan akun Anda.",
+    "how_title": "Cara melanjutkan",
+    "how_1": "Untuk mulai menggunakan layanan kami, tambahkan bot ke server terkait dan selesaikan setup.",
+    "how_2_before": "Untuk meninjau alasan teknis izin yang diperlukan dan panduan setup, gunakan tombol",
+    "how_2_strong": "Dokumentasi",
+    "how_2_after": "di bawah.",
+    "how_3": "Setelah itu, masuk lagi untuk mengaktifkan panel Anda.",
+    "invite": "Tambahkan bot ke server",
+    "opening": "Membuka...",
+    "docs": "Dokumentasi",
+    "back": "Kembali"
   }
 }

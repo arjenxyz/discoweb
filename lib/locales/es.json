@@ -382,5 +382,59 @@
       "mobile_welcome": "Gestiona el servidor, la tienda y la economía desde el panel admin.",
       "logout": "Cerrar sesión"
     }
+  },
+  "auth": {
+    "callback": {
+      "verifying": "Verificando el inicio de sesión...",
+      "verifying_discord": "Verificando la conexión con Discord...",
+      "no_guilds": "No se encontraron servidores accesibles. Redirigiendo...",
+      "success": "Inicio de sesión correcto. Redirigiendo...",
+      "loading": "Cargando..."
+    },
+    "error": {
+      "title": "Falló la conexión con Discord",
+      "body": "No se pudo completar la solicitud de inicio de sesión. Inténtalo de nuevo o revisa el URI de redirección. Si el problema continúa, contacta con soporte.",
+      "discord_unreachable": "No se pudo conectar con la API de Discord. Asegúrate de estar en línea y de que el acceso a Discord esté permitido en tu red.",
+      "reason": "Error: {reason}",
+      "back_home": "Volver al inicio",
+      "retry": "Reintentar"
+    }
+  },
+  "agreement": {
+    "title": "Acuerdo de usuario y uso de datos",
+    "lead": "En resumen: se verificará tu cuenta y se recopilará la información básica necesaria para acceder al servicio.",
+    "close": "Cerrar",
+    "intro": "Este servicio usa la siguiente información para trabajar con tu cuenta de Discord y los datos del servidor:",
+    "item_identity": "Tu ID de usuario de Discord, nombre de usuario y avatar (para identificar la cuenta).",
+    "item_guilds": "Tu lista de servidores y en cuáles administras — para mostrar dónde puedes actuar.",
+    "item_roles": "Tu estado de miembro y roles (para comprobaciones de permisos).",
+    "item_join": "Información de unión al servidor — algunas funciones pueden requerir acceso al servidor.",
+    "item_email": "Tu correo electrónico — se usa para verificación de cuenta, avisos importantes y soporte.",
+    "item_activity": "Actividad en el panel; p. ej. saldo de cartera, transacciones e historial de compras.",
+    "privacy_prefix": "Estos datos se usan solo para prestar el servicio, verificar tu cuenta y ejecutar las funciones que solicitas. Los scopes OAuth solicitados al iniciar sesión en Discord (p. ej. identify, email, guilds, guilds.join) se usan solo para operaciones necesarias. Para la política de privacidad completa, visita la página de",
+    "privacy_link": "Privacidad",
+    "privacy_suffix": ".",
+    "decline_note": "Si no aceptas, el inicio de sesión no se completará y volverás al inicio.",
+    "dont_show_again": "No volver a mostrar",
+    "decline": "No continúo sin iniciar sesión",
+    "decline_home": "No acepto — volver al inicio",
+    "accept": "Acepto",
+    "processing": "Procesando...",
+    "aria_decline": "Rechazar",
+    "aria_accept": "Aceptar y continuar"
+  },
+  "bot_invite": {
+    "success_toast": "¡Enlace de invitación abierto!",
+    "body": "Para verificar tu acceso a los datos de la plataforma, el bot debe estar activo en un servidor al que pertenezcas. No encontramos ninguna configuración de servidor que coincida con tu cuenta.",
+    "how_title": "Cómo continuar",
+    "how_1": "Para empezar a usar nuestros servicios, añade el bot al servidor correspondiente y completa la configuración.",
+    "how_2_before": "Para revisar los motivos técnicos de los permisos necesarios y la guía de configuración, usa el botón",
+    "how_2_strong": "Documentación",
+    "how_2_after": "de abajo.",
+    "how_3": "Después, vuelve a iniciar sesión para activar tu panel.",
+    "invite": "Añadir bot al servidor",
+    "opening": "Abriendo...",
+    "docs": "Documentación",
+    "back": "Volver"
   }
 }

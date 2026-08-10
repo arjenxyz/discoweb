@@ -382,5 +382,59 @@
       "mobile_welcome": "Kezeld a szervert, az áruházat és a gazdaságot az admin panelről.",
       "logout": "Kijelentkezés"
     }
+  },
+  "auth": {
+    "callback": {
+      "verifying": "Bejelentkezés ellenőrzése...",
+      "verifying_discord": "Discord kapcsolat ellenőrzése...",
+      "no_guilds": "Nem található elérhető szerver. Átirányítás...",
+      "success": "Sikeres bejelentkezés. Átirányítás...",
+      "loading": "Betöltés..."
+    },
+    "error": {
+      "title": "Sikertelen Discord kapcsolat",
+      "body": "A bejelentkezési kérés nem fejeződött be. Próbáld újra, vagy ellenőrizd az átirányítási URI-t. Ha a gond továbbra is fennáll, írj a támogatónak.",
+      "discord_unreachable": "Nem sikerült kapcsolódni a Discord API-hoz. Ellenőrizd, hogy online vagy-e, és hogy a Discord hozzáférés engedélyezett-e a hálózatodon.",
+      "reason": "Hiba: {reason}",
+      "back_home": "Vissza a főoldalra",
+      "retry": "Újra"
+    }
+  },
+  "agreement": {
+    "title": "Felhasználói szerződés és adatkezelés",
+    "lead": "Röviden: a fiókodat ellenőrizzük, és összegyűjtjük a szolgáltatáshoz szükséges alapadatokat.",
+    "close": "Bezárás",
+    "intro": "Ez a szolgáltatás a következő adatokat használja a Discord-fiókoddal és a szerveradatokkal való működéshez:",
+    "item_identity": "Discord felhasználói azonosítód, felhasználóneved és avatarod (a fiók azonosításához).",
+    "item_guilds": "Szerverlistád és hogy melyeken vagy admin — hogy láthasd, hol léphetsz.",
+    "item_roles": "Tagsági állapotod és szerepeid (jogosultság-ellenőrzéshez).",
+    "item_join": "Szervercsatlakozási információ — egyes funkciókhoz szerverhozzáférés kellhet.",
+    "item_email": "E-mail címed — fiókellenőrzéshez, fontos értesítésekhez és támogatáshoz.",
+    "item_activity": "Panelbeli tevékenység; pl. pénztárcaegyenleg, tranzakciók és vásárlási előzmények.",
+    "privacy_prefix": "Ezeket az adatokat csak a szolgáltatás nyújtására, a fiók ellenőrzésére és a kért funkciók futtatására használjuk. A Discord bejelentkezéskor kért OAuth scope-ok (pl. identify, email, guilds, guilds.join) csak a szükséges műveletekhez kellenek. A teljes adatvédelmi irányelvhez látogasd meg a",
+    "privacy_link": "Adatvédelem",
+    "privacy_suffix": "oldalt.",
+    "decline_note": "Ha nem fogadod el, a bejelentkezés nem fejeződik be, és a főoldalra kerülsz.",
+    "dont_show_again": "Ne mutassa újra",
+    "decline": "Bejelentkezés nélkül nem folytatom",
+    "decline_home": "Elutasítom — vissza a főoldalra",
+    "accept": "Elfogadom",
+    "processing": "Feldolgozás...",
+    "aria_decline": "Elutasítás",
+    "aria_accept": "Elfogadás és folytatás"
+  },
+  "bot_invite": {
+    "success_toast": "Megnyílt a meghívó link!",
+    "body": "A platformadatokhoz való hozzáférés ellenőrzéséhez a botnak aktívnak kell lennie egy szerveren, ahol tag vagy. Nem találtunk a fiókodhoz illő szerverbeállítást.",
+    "how_title": "Hogyan továbbléphetsz",
+    "how_1": "A szolgáltatásaink használatához add hozzá a botot a megfelelő szerverhez, és fejezd be a Setupot.",
+    "how_2_before": "A szükséges jogosultságok műszaki indoklásához és a Setup útmutatóhoz használd az alábbi",
+    "how_2_strong": "Dokumentáció",
+    "how_2_after": "gombot.",
+    "how_3": "Ezután jelentkezz be újra a panel aktiválásához.",
+    "invite": "Bot hozzáadása a szerverhez",
+    "opening": "Megnyitás...",
+    "docs": "Dokumentáció",
+    "back": "Vissza"
   }
 }

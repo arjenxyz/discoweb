@@ -2,16 +2,18 @@
 
 import Link from 'next/link';
 import DiscordAgreementButton from '@/components/DiscordAgreementButton';
+import { useTranslation } from '@/lib/i18nContext';
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
 const loginUrl = CLIENT_ID && REDIRECT_URI
   ? `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
-      REDIRECT_URI,
-    )}&response_type=code&scope=identify%20email%20guilds%20guilds.join`
+    REDIRECT_URI,
+  )}&response_type=code&scope=identify%20email%20guilds%20guilds.join`
   : '/';
 
 export default function DiscordAuthErrorPage() {
+  const { t } = useTranslation();
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const reason = searchParams.get('reason');
 
@@ -22,9 +24,9 @@ export default function DiscordAuthErrorPage() {
       case 'user_fetch_error':
       case 'guilds_fetch_error':
       case 'discord_unreachable':
-        return 'Discord API ile bağlantı kurulamadı. İnternete bağlı olduğunuzdan ve sunucunuza Discord erişimine izin verdiğinizden emin olun.';
+        return t('auth.error.discord_unreachable');
       default:
-        return `Hata: ${reason}`;
+        return t('auth.error.reason', { reason });
     }
   };
 
@@ -43,10 +45,9 @@ export default function DiscordAuthErrorPage() {
           <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-rose-500/15 text-rose-300">
             <span className="text-2xl">!</span>
           </div>
-          <h1 className="text-3xl font-semibold">Discord bağlantısı başarısız oldu</h1>
+          <h1 className="text-3xl font-semibold">{t('auth.error.title')}</h1>
           <p className="mt-4 text-sm text-white/60">
-            Oturum açma isteği tamamlanamadı. Lütfen tekrar deneyin veya yönlendirme adresini
-            kontrol edin. Sorun devam ederse destek ekibimizle iletişime geçebilirsiniz.
+            {t('auth.error.body')}
           </p>
           {reasonText && (
             <p className="mt-2 text-sm text-yellow-300">
@@ -58,14 +59,14 @@ export default function DiscordAuthErrorPage() {
               href="/"
               className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
             >
-              Ana sayfaya dön
+              {t('auth.error.back_home')}
             </Link>
             <DiscordAgreementButton
               href={loginUrl}
               className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b0d12] transition hover:bg-white/90"
               targetBlank={false}
             >
-              Tekrar dene
+              {t('auth.error.retry')}
             </DiscordAgreementButton>
           </div>
         </div>

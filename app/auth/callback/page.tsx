@@ -3,12 +3,13 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LuLoader } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 
-// 1. Mantığı yürüten ana içeriği ayrı bir fonksiyon (component) haline getiriyoruz.
 function DiscordAuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState('Giriş doğrulanıyor...');
+  const { t } = useTranslation();
+  const [status, setStatus] = useState(() => t('auth.callback.verifying'));
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -32,7 +33,7 @@ function DiscordAuthCallbackContent() {
 
     const exchange = async () => {
       try {
-        setStatus('Discord bağlantısı doğrulanıyor...');
+        setStatus(t('auth.callback.verifying_discord'));
         const response = await fetch('/api/discord/exchange', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -53,7 +54,6 @@ function DiscordAuthCallbackContent() {
             }
           }
 
-          // log both parsed body and raw text so we can troubleshoot missing data
           console.error('Discord exchange failed - status:', response.status,
             'statusText:', response.statusText,
             'body:', body,
@@ -67,7 +67,6 @@ function DiscordAuthCallbackContent() {
             );
           } catch {}
 
-          // include reason in query so error page and logs can surface it
           const reason = body?.reason || (text ? text : 'unknown');
           router.replace(`/auth/error?reason=${encodeURIComponent(reason)}`);
           return;
@@ -81,7 +80,7 @@ function DiscordAuthCallbackContent() {
         };
 
         if (payload.status === 'no_guilds') {
-          setStatus('Erişilebilir sunucu bulunamadı. Yönlendiriliyor...');
+          setStatus(t('auth.callback.no_guilds'));
           if (payload.user) {
             localStorage.setItem('discordUser', JSON.stringify(payload.user));
           }
@@ -92,27 +91,23 @@ function DiscordAuthCallbackContent() {
         }
 
         if (payload.status === 'ok') {
-          setStatus('Giriş başarılı. Yönlendiriliyor...');
-          
-          console.log('OAuth payload:', payload); // Debug log
-          
-          // Kullanıcı bilgilerini localStorage'a kaydet
+          setStatus(t('auth.callback.success'));
+
+          console.log('OAuth payload:', payload);
+
           if (payload.user) {
             localStorage.setItem('discordUser', JSON.stringify(payload.user));
           }
-          
-          // Tüm erişilebilir sunucuları say (setup olup olmamasına bakmadan)
+
           const totalGuilds = payload.adminGuilds?.length || 0;
-          
-          // Her zaman sunucu seçtirmeye git (eğer erişilebilir sunucu varsa)
+
           if (totalGuilds > 0) {
-            // Sunucu bilgilerini localStorage'a kaydet
             localStorage.setItem('adminGuilds', JSON.stringify(payload.adminGuilds));
             localStorage.setItem('adminGuildsUpdatedAt', new Date().toISOString());
             setTimeout(() => router.replace('/auth/select-server'), 1200);
             return;
           }
-          
+
           localStorage.setItem('adminGuilds', JSON.stringify([]));
           localStorage.setItem('adminGuildsUpdatedAt', new Date().toISOString());
           setTimeout(() => router.replace('/auth/select-server'), 1200);
@@ -127,7 +122,7 @@ function DiscordAuthCallbackContent() {
     };
 
     exchange();
-  }, [router, searchParams]);
+  }, [router, searchParams, t]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0b0d12] text-white">
@@ -139,20 +134,22 @@ function DiscordAuthCallbackContent() {
   );
 }
 
-// 2. Default export edilen ana sayfa bileşeni sadece Suspense ile sarmalıyor.
+function CallbackFallback() {
+  const { t } = useTranslation();
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#0b0d12] text-white">
+      <div className="text-center">
+        <LuLoader className="mx-auto mb-4 h-8 w-8 animate-spin text-blue-500" />
+        <p className="text-sm text-white/70">{t('auth.callback.loading')}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function DiscordAuthCallbackPage() {
   return (
     <div className="bg-[#0b0d12]">
-      <Suspense
-        fallback={
-          <div className="flex min-h-screen items-center justify-center bg-[#0b0d12] text-white">
-            <div className="text-center">
-              <LuLoader className="mx-auto mb-4 h-8 w-8 animate-spin text-blue-500" />
-              <p className="text-sm text-white/70">Yükleniyor...</p>
-            </div>
-          </div>
-        }
-      >
+      <Suspense fallback={<CallbackFallback />}>
         <DiscordAuthCallbackContent />
       </Suspense>
     </div>
