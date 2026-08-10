@@ -349,9 +349,6 @@ export default function SelectServerPage() {
             <h1 className="mt-3 max-w-3xl text-balance text-3xl font-extrabold tracking-tight text-white md:text-5xl">
               {t('select_server.title')}
             </h1>
-            <p className="mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-[#cbd5db] md:text-base">
-              {t('select_server.description')}
-            </p>
 
             <div className="mt-10 flex items-center justify-between gap-3">
               <div className="min-w-0">
