@@ -300,9 +300,19 @@ export default function SetupPage() {
 
   const adminRoles = useMemo(() => roles.filter(isAdminCapableRole), [roles]);
   const memberRoles = useMemo(
-    () => roles.filter((role) => role.name !== '@everyone'),
+    () =>
+      roles.filter(
+        (role) => role.name !== '@everyone' && !isAdminCapableRole(role),
+      ),
     [roles],
   );
+
+  useEffect(() => {
+    if (!selectedVerifyRole) return;
+    if (!memberRoles.some((role) => role.id === selectedVerifyRole)) {
+      setSelectedVerifyRole('');
+    }
+  }, [memberRoles, selectedVerifyRole]);
 
   useEffect(() => {
     const checkPermissionsAndLoadData = async () => {
