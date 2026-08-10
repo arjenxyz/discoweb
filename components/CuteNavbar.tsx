@@ -346,7 +346,13 @@ export default function CuteNavbar() {
             {/* Mobile hamburger */}
             <button
               className="md:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 transition-all hover:bg-white/10"
-              onClick={() => setMobileOpen(v => !v)}
+              onClick={() => {
+                setMobileOpen((v) => {
+                  if (v) setMobileSubmenu(null);
+                  return !v;
+                });
+              }}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             >
               <div className="w-5 h-4 flex flex-col justify-between">
                 <span className={`w-full h-0.5 bg-white rounded transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
@@ -358,88 +364,115 @@ export default function CuteNavbar() {
         </nav>
       </div>
 
-      {/* Mobile menu panel */}
+      {/* Mobile menu — full-screen glass sheet */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-[9990]">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-xl animate-fadeIn" onClick={() => setMobileOpen(false)}></div>
-          <div className="absolute top-24 left-4 right-4 bottom-8 bg-[#1e1f22] border border-white/10 rounded-[32px] shadow-2xl overflow-hidden animate-slideUp">
-            <div className="h-full overflow-y-auto p-6 space-y-6">
-              
-              <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                <div className="w-14 h-14 rounded-xl bg-[#5865F2] p-1">
-                   <img src="/gif/cat.gif" alt="avatar" className="w-full h-full rounded-lg object-cover" />
+        <div className="md:hidden fixed inset-0 z-[9990] animate-fadeIn">
+          <div
+            className="absolute inset-0 bg-[#05060a]/90 backdrop-blur-2xl"
+            onClick={() => {
+              setMobileOpen(false);
+              setMobileSubmenu(null);
+            }}
+          />
+
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-16 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[#5865F2]/25 blur-[90px]" />
+            <div className="absolute bottom-10 -right-10 h-56 w-56 rounded-full bg-[#7289DA]/15 blur-[80px]" />
+          </div>
+
+          <div className="relative z-10 flex h-full flex-col px-6 pb-8 pt-28">
+            <div className="mb-10">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
+                DiscoWeb
+              </p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-white">
+                {t('navbar.mobile_greeting')}
+              </h2>
+              <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-white/45">
+                {t('navbar.mobile_welcome')}
+              </p>
+            </div>
+
+            <nav className="flex-1 space-y-1 overflow-y-auto">
+              <button
+                type="button"
+                onClick={() => toggleMobileSubmenu('home')}
+                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left"
+              >
+                <span className={`text-lg font-semibold transition-colors ${mobileSubmenu === 'home' ? 'text-white' : 'text-white/70'}`}>
+                  {t('navbar.home')}
+                </span>
+                <ChevronIcon isOpen={mobileSubmenu === 'home'} />
+              </button>
+              {mobileSubmenu === 'home' && (
+                <div className="animate-fadeIn space-y-3 pb-5 pt-1 pl-0.5">
+                  <div className="h-1 w-9 rounded-full bg-white/80" />
+                  <p className="text-xl font-black leading-tight text-white">{t('navbar.home_panel_title')}</p>
+                  <p className="text-sm leading-relaxed text-white/60">{t('navbar.home_panel_body')}</p>
+                  <p className="border-l-2 border-[#5865F2]/70 pl-3 text-xs leading-relaxed text-white/40">
+                    {t('navbar.home_panel_note')}
+                  </p>
                 </div>
-                <div>
-                  <h3 className="text-white font-bold">{t('navbar.mobile_greeting')}</h3>
-                  <p className="text-white/40 text-xs">{t('navbar.mobile_welcome')}</p>
+              )}
+
+              <button
+                type="button"
+                onClick={() => toggleMobileSubmenu('developer')}
+                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left"
+              >
+                <span className={`text-lg font-semibold transition-colors ${mobileSubmenu === 'developer' ? 'text-white' : 'text-white/70'}`}>
+                  {t('navbar.developer')}
+                </span>
+                <ChevronIcon isOpen={mobileSubmenu === 'developer'} />
+              </button>
+              {mobileSubmenu === 'developer' && (
+                <div className="animate-fadeIn space-y-3 pb-5 pt-1 pl-0.5">
+                  <div className="h-1 w-9 rounded-full bg-white/80" />
+                  <p className="text-xl font-black leading-tight text-white">{t('navbar.developer_panel_title')}</p>
+                  <p className="text-sm leading-relaxed text-white/60">{t('navbar.developer_panel_body')}</p>
+                  <p className="border-l-2 border-[#5865F2]/70 pl-3 text-xs leading-relaxed text-white/40">
+                    {t('navbar.developer_panel_note')}
+                  </p>
                 </div>
-              </div>
+              )}
 
-              {/* Mobil Menü Linkleri */}
-              <div className="space-y-3">
-                <button
-                  onClick={() => toggleMobileSubmenu('home')}
-                  className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl text-white font-semibold"
-                >
-                  <span>🏠 {t('navbar.home')}</span>
-                  <span className={`transition-transform ${mobileSubmenu === 'home' ? 'rotate-180' : ''}`}>▼</span>
-                </button>
-                {mobileSubmenu === 'home' && (
-                  <div className="space-y-3 px-1 animate-fadeIn">
-                    <div className="h-1 w-8 rounded-full bg-[#5865F2]" />
-                    <p className="text-lg font-black text-white leading-tight">{t('navbar.home_panel_title')}</p>
-                    <p className="text-sm text-white/65 leading-relaxed">{t('navbar.home_panel_body')}</p>
-                    <p className="border-l-2 border-white/20 pl-3 text-xs text-white/40">{t('navbar.home_panel_note')}</p>
-                  </div>
-                )}
+              <Link
+                href="/status"
+                onClick={() => setMobileOpen(false)}
+                className="flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-lg font-semibold text-white/70 transition-colors hover:text-white"
+              >
+                {t('navbar.status')}
+                <span className="text-white/25 text-sm">→</span>
+              </Link>
+            </nav>
 
-                <button
-                  onClick={() => toggleMobileSubmenu('developer')}
-                  className="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl text-white font-semibold"
-                >
-                  <span>👨🏻‍💻 {t('navbar.developer')}</span>
-                  <span className={`transition-transform ${mobileSubmenu === 'developer' ? 'rotate-180' : ''}`}>▼</span>
-                </button>
-                {mobileSubmenu === 'developer' && (
-                  <div className="space-y-3 px-1 animate-fadeIn">
-                    <div className="h-1 w-8 rounded-full bg-[#5865F2]" />
-                    <p className="text-lg font-black text-white leading-tight">{t('navbar.developer_panel_title')}</p>
-                    <p className="text-sm text-white/65 leading-relaxed">{t('navbar.developer_panel_body')}</p>
-                    <p className="border-l-2 border-white/20 pl-3 text-xs text-white/40">{t('navbar.developer_panel_note')}</p>
-                  </div>
-                )}
-
+            <div className="mt-6 shrink-0">
+              {isLoggedIn ? (
                 <Link
-                  href="/status"
+                  href="/auth/select-server"
                   onClick={() => setMobileOpen(false)}
-                  className="w-full block p-4 bg-white/5 rounded-2xl text-white font-semibold"
+                  className="inline-flex w-full items-center justify-center rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
                 >
-                  📊 {t('navbar.status')}
+                  {t('navbar.continue')}
                 </Link>
-
-                {isLoggedIn ? (
-                  <Link href="/auth/select-server" className="w-full block text-center bg-[#5865F2] text-white font-bold py-4 rounded-2xl">
-                    {t('navbar.continue')}
-                  </Link>
-                ) : (
-                  <Link
-                    href={DISCORD_LOGIN_URL}
-                    onClick={(e) => {
-                      if (!DISCORD_CLIENT_ID || !DISCORD_LOGIN_URL || DISCORD_LOGIN_URL === '/') {
-                        e.preventDefault();
-                        console.warn('DISCORD login blocked (mobile): missing env vars', { DISCORD_CLIENT_ID, DISCORD_LOGIN_URL });
-                        alert(t('navbar.login_error'));
-                        return;
-                      }
-                    }}
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#5865F2] text-white font-bold py-4 rounded-2xl"
-                  >
-                    <DiscordIcon className="h-5 w-5 shrink-0" />
-                    {t('navbar.connect_discord')}
-                  </Link>
-                )}
-              </div>
-
+              ) : (
+                <Link
+                  href={DISCORD_LOGIN_URL}
+                  onClick={(e) => {
+                    if (!DISCORD_CLIENT_ID || !DISCORD_LOGIN_URL || DISCORD_LOGIN_URL === '/') {
+                      e.preventDefault();
+                      console.warn('DISCORD login blocked (mobile): missing env vars', { DISCORD_CLIENT_ID, DISCORD_LOGIN_URL });
+                      alert(t('navbar.login_error'));
+                      return;
+                    }
+                  }}
+                  className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
+                >
+                  <DiscordIcon className="h-5 w-5 shrink-0" />
+                  {t('navbar.connect_discord')}
+                </Link>
+              )}
+              <p className="mt-4 text-center text-[11px] text-white/25">Copyright Discoweb 2026</p>
             </div>
           </div>
         </div>
