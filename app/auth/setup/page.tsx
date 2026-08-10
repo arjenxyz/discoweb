@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { createPortal } from 'react-dom';
 import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown } from 'react-icons/lu';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 
@@ -19,6 +20,40 @@ interface DiscordUser {
   username: string;
   avatar: string | null;
   discriminator: string;
+}
+
+type DropdownPos = {
+  left: number;
+  width: number;
+  maxHeight: number;
+  top?: number;
+  bottom?: number;
+};
+
+function measureDropdownPosition(anchor: HTMLElement): DropdownPos {
+  const rect = anchor.getBoundingClientRect();
+  const gap = 8;
+  const viewportPad = 12;
+  const spaceBelow = window.innerHeight - rect.bottom - gap - viewportPad;
+  const spaceAbove = rect.top - gap - viewportPad;
+  const openUp = spaceBelow < 200 && spaceAbove > spaceBelow;
+  const maxHeight = Math.max(140, Math.min(280, openUp ? spaceAbove : spaceBelow));
+
+  if (openUp) {
+    return {
+      left: rect.left,
+      width: rect.width,
+      maxHeight,
+      bottom: window.innerHeight - rect.top + gap,
+    };
+  }
+
+  return {
+    left: rect.left,
+    width: rect.width,
+    maxHeight,
+    top: rect.bottom + gap,
+  };
 }
 
 const STEPS = [
@@ -94,17 +129,56 @@ export default function SetupPage() {
 
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
   const [verifyDropdownOpen, setVerifyDropdownOpen] = useState(false);
+  const [adminMenuPos, setAdminMenuPos] = useState<DropdownPos | null>(null);
+  const [verifyMenuPos, setVerifyMenuPos] = useState<DropdownPos | null>(null);
   const adminDropdownRef = useRef<HTMLDivElement>(null);
   const verifyDropdownRef = useRef<HTMLDivElement>(null);
+  const adminMenuRef = useRef<HTMLDivElement>(null);
+  const verifyMenuRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!adminDropdownOpen || !adminDropdownRef.current) {
+      setAdminMenuPos(null);
+      return;
+    }
+    const update = () => {
+      if (adminDropdownRef.current) setAdminMenuPos(measureDropdownPosition(adminDropdownRef.current));
+    };
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, true);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update, true);
+    };
+  }, [adminDropdownOpen]);
+
+  useLayoutEffect(() => {
+    if (!verifyDropdownOpen || !verifyDropdownRef.current) {
+      setVerifyMenuPos(null);
+      return;
+    }
+    const update = () => {
+      if (verifyDropdownRef.current) setVerifyMenuPos(measureDropdownPosition(verifyDropdownRef.current));
+    };
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, true);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update, true);
+    };
+  }, [verifyDropdownOpen]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (adminDropdownRef.current && !adminDropdownRef.current.contains(e.target as Node)) {
-        setAdminDropdownOpen(false);
-      }
-      if (verifyDropdownRef.current && !verifyDropdownRef.current.contains(e.target as Node)) {
-        setVerifyDropdownOpen(false);
-      }
+      const target = e.target as Node;
+      const inAdmin =
+        adminDropdownRef.current?.contains(target) || adminMenuRef.current?.contains(target);
+      const inVerify =
+        verifyDropdownRef.current?.contains(target) || verifyMenuRef.current?.contains(target);
+      if (!inAdmin) setAdminDropdownOpen(false);
+      if (!inVerify) setVerifyDropdownOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -399,7 +473,7 @@ export default function SetupPage() {
 
   // --- MAIN SETUP PAGE ---
   return (
-    <div className="min-h-screen bg-[#020204] text-white relative overflow-hidden flex flex-col font-sans">
+    <div className="min-h-screen bg-[#020204] text-white relative overflow-x-hidden flex flex-col font-sans">
       {/* Background glow effects - Professional Glassmorphism */}
       <div className="absolute top-0 left-1/4 w-[800px] h-[600px] rounded-full bg-[#5865F2]/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full bg-[#7289DA]/10 blur-[120px] pointer-events-none" />
@@ -486,22 +560,72 @@ export default function SetupPage() {
                           )}
                           <LuChevronDown className={`w-5 h-5 text-white/40 transition-transform duration-300 ${adminDropdownOpen ? 'rotate-180 text-[#5865F2]' : ''}`} />
                         </button>
-                        {adminDropdownOpen && (
-                          <div className="absolute z-50 mt-2 w-full rounded-2xl border border-white/10 bg-[#12141d] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideDown_0.2s_ease-out]">
-                            <div className="max-h-[240px] overflow-y-auto custom-scrollbar p-2 space-y-1">
-                              {roles.filter(role => {
-                                const perms = parseInt(role.permissions);
-                                return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
-                              }).map((role) => (
-                                <button key={role.id} type="button" onClick={() => { setSelectedAdminRole(role.id); setAdminDropdownOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${selectedAdminRole === role.id ? 'bg-[#5865F2] text-white shadow-md' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}>
-                                  <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: selectedAdminRole === role.id ? '#fff' : roleColorHex(role.color) }} />
-                                  <span className="font-medium">{role.name}</span>
-                                  {selectedAdminRole === role.id && <LuCheck className="w-4 h-4 ml-auto" />}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                        {adminDropdownOpen &&
+                          adminMenuPos &&
+                          createPortal(
+                            <div
+                              ref={adminMenuRef}
+                              style={{
+                                position: 'fixed',
+                                left: adminMenuPos.left,
+                                width: adminMenuPos.width,
+                                zIndex: 200,
+                                ...(adminMenuPos.top != null
+                                  ? { top: adminMenuPos.top }
+                                  : { bottom: adminMenuPos.bottom }),
+                              }}
+                              className="rounded-2xl border border-white/10 bg-[#12141d] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden"
+                            >
+                              <div
+                                className="overflow-y-auto custom-scrollbar p-2 space-y-1"
+                                style={{ maxHeight: adminMenuPos.maxHeight }}
+                              >
+                                {roles
+                                  .filter((role) => {
+                                    const perms = parseInt(role.permissions, 10);
+                                    return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
+                                  })
+                                  .map((role) => (
+                                    <button
+                                      key={role.id}
+                                      type="button"
+                                      onClick={() => {
+                                        setSelectedAdminRole(role.id);
+                                        setAdminDropdownOpen(false);
+                                      }}
+                                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${
+                                        selectedAdminRole === role.id
+                                          ? 'bg-[#5865F2] text-white shadow-md'
+                                          : 'text-white/70 hover:bg-white/5 hover:text-white'
+                                      }`}
+                                    >
+                                      <span
+                                        className="h-3 w-3 rounded-full shrink-0"
+                                        style={{
+                                          backgroundColor:
+                                            selectedAdminRole === role.id
+                                              ? '#fff'
+                                              : roleColorHex(role.color),
+                                        }}
+                                      />
+                                      <span className="font-medium truncate">{role.name}</span>
+                                      {selectedAdminRole === role.id && (
+                                        <LuCheck className="w-4 h-4 ml-auto shrink-0" />
+                                      )}
+                                    </button>
+                                  ))}
+                                {roles.filter((role) => {
+                                  const perms = parseInt(role.permissions, 10);
+                                  return (perms & 0x8) || (perms & 0x20) || (perms & 0x10000000);
+                                }).length === 0 && (
+                                  <p className="px-3 py-4 text-center text-xs text-white/40">
+                                    Uygun admin rolü bulunamadı
+                                  </p>
+                                )}
+                              </div>
+                            </div>,
+                            document.body,
+                          )}
                       </div>
                       <p className="mt-2 text-xs text-white/30 ml-2">Bu rolle Admin Paneline girilir.</p>
                     </div>
@@ -524,19 +648,64 @@ export default function SetupPage() {
                           )}
                           <LuChevronDown className={`w-5 h-5 text-white/40 transition-transform duration-300 ${verifyDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`} />
                         </button>
-                        {verifyDropdownOpen && (
-                          <div className="absolute z-50 mt-2 w-full rounded-2xl border border-white/10 bg-[#12141d] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideDown_0.2s_ease-out]">
-                            <div className="max-h-[240px] overflow-y-auto custom-scrollbar p-2 space-y-1">
-                              {roles.map((role) => (
-                                <button key={role.id} type="button" onClick={() => { setSelectedVerifyRole(role.id); setVerifyDropdownOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${selectedVerifyRole === role.id ? 'bg-emerald-500 text-white shadow-md' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}>
-                                  <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: selectedVerifyRole === role.id ? '#fff' : roleColorHex(role.color) }} />
-                                  <span className="font-medium">{role.name}</span>
-                                  {selectedVerifyRole === role.id && <LuCheck className="w-4 h-4 ml-auto" />}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                        {verifyDropdownOpen &&
+                          verifyMenuPos &&
+                          createPortal(
+                            <div
+                              ref={verifyMenuRef}
+                              style={{
+                                position: 'fixed',
+                                left: verifyMenuPos.left,
+                                width: verifyMenuPos.width,
+                                zIndex: 200,
+                                ...(verifyMenuPos.top != null
+                                  ? { top: verifyMenuPos.top }
+                                  : { bottom: verifyMenuPos.bottom }),
+                              }}
+                              className="rounded-2xl border border-white/10 bg-[#12141d] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden"
+                            >
+                              <div
+                                className="overflow-y-auto custom-scrollbar p-2 space-y-1"
+                                style={{ maxHeight: verifyMenuPos.maxHeight }}
+                              >
+                                {roles.map((role) => (
+                                  <button
+                                    key={role.id}
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedVerifyRole(role.id);
+                                      setVerifyDropdownOpen(false);
+                                    }}
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${
+                                      selectedVerifyRole === role.id
+                                        ? 'bg-emerald-500 text-white shadow-md'
+                                        : 'text-white/70 hover:bg-white/5 hover:text-white'
+                                    }`}
+                                  >
+                                    <span
+                                      className="h-3 w-3 rounded-full shrink-0"
+                                      style={{
+                                        backgroundColor:
+                                          selectedVerifyRole === role.id
+                                            ? '#fff'
+                                            : roleColorHex(role.color),
+                                      }}
+                                    />
+                                    <span className="font-medium truncate">{role.name}</span>
+                                    {selectedVerifyRole === role.id && (
+                                      <LuCheck className="w-4 h-4 ml-auto shrink-0" />
+                                    )}
+                                  </button>
+                                ))}
+                                {roles.length === 0 && (
+                                  <p className="px-3 py-4 text-center text-xs text-white/40">
+                                    Rol listesi boş
+                                  </p>
+                                )}
+                              </div>
+                            </div>,
+                            document.body,
+                          )}
                       </div>
                       <p className="mt-2 text-xs text-white/30 ml-2">Kayıtlı üyelerin temel rolü; papel kazanır.</p>
                     </div>
