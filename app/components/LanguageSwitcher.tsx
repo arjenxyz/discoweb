@@ -108,12 +108,13 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
         }`}
       >
         <FlagIcon code={current.code} size={showLabel ? 18 : 18} title={current.country} />
-        {showLabel && (
+        {showLabel ? (
           <span className="ml-0.5 max-w-[9rem] truncate">{current.nativeLabel}</span>
+        ) : (
+          <span className="max-w-[6.5rem] truncate text-xs font-semibold text-white/85">
+            {current.country}
+          </span>
         )}
-        <span className="md:hidden text-[10px] font-bold uppercase tracking-wide text-white/70">
-          {current.code}
-        </span>
         <ChevronIcon isOpen={open} />
       </button>
 
