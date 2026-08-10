@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Произошла ошибка",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "success": "Успешно"
+  },
+  "home": {
+    "loading": "Загрузка...",
+    "loading_progress": "Загрузка... {progress}%",
+    "welcome": "Добро пожаловать в DiscoWeb",
+    "description": "Панель управления Discord для админов серверов — войти и управлять сообществом могут только владельцы и администраторы.",
+    "copyright": "DiscoWeb | 2026 © Все права защищены",
+    "banner_alt": "Баннер Discord",
+    "decorative_cat": "Декоративный кот"
+  },
+  "navbar": {
+    "beta": "Бета",
+    "home": "Главная",
+    "store": "Магазин",
+    "developer": "Developer",
+    "status": "Статус",
+    "discover": "Обзор",
+    "continue": "Продолжить",
+    "login": "Войти",
+    "connect_discord": "Войти через Discord",
+    "login_error": "Ошибка входа: не настроен Discord client ID или redirect URI. Проверьте NEXT_PUBLIC_DISCORD_CLIENT_ID и NEXT_PUBLIC_REDIRECT_URI.",
+    "mobile_greeting": "Привет!",
+    "mobile_welcome": "Добро пожаловать во вселенную DiscoWeb.",
+    "home_overview": "Обзор",
+    "home_features": "Возможности",
+    "home_panel_title": "Только админы сервера",
+    "home_panel_body": "DiscoWeb создан для владельцев и администраторов Discord-серверов. Обычные участники войти не могут — только те, у кого есть права админа, могут управлять инструментами.",
+    "home_panel_note": "Войдите через Discord и выберите сервер, которым вы управляете.",
+    "store_products": "Товары",
+    "store_campaigns": "Акции",
+    "developer_about": "О проекте",
+    "developer_support": "Онлайн-поддержка",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Фанат Invincible и Губки Боба. DiscoWeb полностью волонтёрский — я не зарабатываю на нём. Я делаю системы, которые нужны сообществам, добавляю любимых персонажей и хочу, чтобы люди их видели, пока всё работает как надо.",
+    "developer_panel_note": "Бесплатно. Волонтёрски. Полно персонажей.",
+    "status_system": "Состояние системы",
+    "status_incidents": "Инциденты",
+    "status_history": "История",
+    "discover_community": "Сообщество",
+    "discover_blog": "Блог",
+    "discover_support": "Поддержка"
+  }
+}

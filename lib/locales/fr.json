@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "success": "Succès"
+  },
+  "home": {
+    "loading": "Chargement...",
+    "loading_progress": "Chargement... {progress}%",
+    "welcome": "Bienvenue sur DiscoWeb",
+    "description": "Un panneau de gestion Discord conçu pour les admins de serveurs — seuls les propriétaires et administrateurs peuvent se connecter et gérer leurs communautés.",
+    "copyright": "DiscoWeb | 2026 © Tous droits réservés",
+    "banner_alt": "Bannière Discord",
+    "decorative_cat": "Chat décoratif"
+  },
+  "navbar": {
+    "beta": "Bêta",
+    "home": "Accueil",
+    "store": "Boutique",
+    "developer": "Developer",
+    "status": "Statut",
+    "discover": "Découvrir",
+    "continue": "Continuer",
+    "login": "Connexion",
+    "connect_discord": "Se connecter avec Discord",
+    "login_error": "Échec de la connexion : l'ID client Discord ou l'URI de redirection n'est pas configuré. Vérifiez NEXT_PUBLIC_DISCORD_CLIENT_ID et NEXT_PUBLIC_REDIRECT_URI.",
+    "mobile_greeting": "Bonjour !",
+    "mobile_welcome": "Bienvenue dans l'univers DiscoWeb.",
+    "home_overview": "Aperçu",
+    "home_features": "Fonctionnalités",
+    "home_panel_title": "Admins du serveur uniquement",
+    "home_panel_body": "DiscoWeb est fait pour les propriétaires et administrateurs de serveurs Discord. Les membres ordinaires ne peuvent pas entrer — seuls ceux avec des permissions admin peuvent se connecter et gérer les outils.",
+    "home_panel_note": "Connecte-toi avec Discord, puis choisis un serveur que tu administres.",
+    "store_products": "Produits",
+    "store_campaigns": "Campagnes",
+    "developer_about": "À propos",
+    "developer_support": "Support en direct",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Fan d'Invincible et de Bob l'éponge. DiscoWeb est entièrement bénévole — je n'en gagne pas d'argent. Je construis les systèmes dont les communautés ont besoin, j'y mets les personnages que j'aime, et je veux que les gens les voient pendant que tout fonctionne.",
+    "developer_panel_note": "Gratuit. Bénévole. Plein de personnages.",
+    "status_system": "État du système",
+    "status_incidents": "Incidents",
+    "status_history": "Historique",
+    "discover_community": "Communauté",
+    "discover_blog": "Blog",
+    "discover_support": "Support"
+  }
+}

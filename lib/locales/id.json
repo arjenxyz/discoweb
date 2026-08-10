@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "success": "Berhasil"
+  },
+  "home": {
+    "loading": "Memuat...",
+    "loading_progress": "Memuat... {progress}%",
+    "welcome": "Selamat datang di DiscoWeb",
+    "description": "Panel manajemen Discord untuk admin server — hanya pemilik dan administrator yang dapat masuk dan mengelola komunitas mereka.",
+    "copyright": "DiscoWeb | 2026 © Hak cipta dilindungi",
+    "banner_alt": "Banner Discord",
+    "decorative_cat": "Kucing dekoratif"
+  },
+  "navbar": {
+    "beta": "Beta",
+    "home": "Beranda",
+    "store": "Toko",
+    "developer": "Developer",
+    "status": "Status",
+    "discover": "Jelajahi",
+    "continue": "Lanjutkan",
+    "login": "Masuk",
+    "connect_discord": "Hubungkan dengan Discord",
+    "login_error": "Gagal masuk: Discord client ID atau redirect URI belum dikonfigurasi. Periksa NEXT_PUBLIC_DISCORD_CLIENT_ID dan NEXT_PUBLIC_REDIRECT_URI.",
+    "mobile_greeting": "Halo!",
+    "mobile_welcome": "Selamat datang di dunia DiscoWeb.",
+    "home_overview": "Ikhtisar",
+    "home_features": "Fitur",
+    "home_panel_title": "Hanya admin server",
+    "home_panel_body": "DiscoWeb dibuat untuk pemilik dan administrator server Discord. Anggota biasa tidak bisa masuk — hanya yang punya izin admin yang dapat login dan mengelola alat.",
+    "home_panel_note": "Masuk dengan Discord, lalu pilih server yang kamu kelola.",
+    "store_products": "Produk",
+    "store_campaigns": "Kampanye",
+    "developer_about": "Tentang",
+    "developer_support": "Dukungan langsung",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Penggemar Invincible dan SpongeBob. DiscoWeb sepenuhnya sukarela — saya tidak mendapat uang darinya. Saya membangun sistem yang dibutuhkan komunitas, memasukkan karakter favorit saya, dan ingin orang melihatnya saat semuanya berjalan lancar.",
+    "developer_panel_note": "Gratis. Sukarela. Penuh karakter.",
+    "status_system": "Status sistem",
+    "status_incidents": "Insiden",
+    "status_history": "Riwayat",
+    "discover_community": "Komunitas",
+    "discover_blog": "Blog",
+    "discover_support": "Dukungan"
+  }
+}

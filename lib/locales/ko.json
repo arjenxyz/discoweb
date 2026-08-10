@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "save": "저장",
+    "cancel": "취소",
+    "success": "성공"
+  },
+  "home": {
+    "loading": "로딩 중...",
+    "loading_progress": "로딩 중... {progress}%",
+    "welcome": "DiscoWeb에 오신 것을 환영합니다",
+    "description": "서버 관리자를 위한 Discord 관리 패널입니다. 소유자와 관리자만 로그인하여 커뮤니티를 관리할 수 있습니다.",
+    "copyright": "DiscoWeb | 2026 © All rights reserved",
+    "banner_alt": "Discord 배너",
+    "decorative_cat": "장식용 고양이"
+  },
+  "navbar": {
+    "beta": "베타",
+    "home": "홈",
+    "store": "스토어",
+    "developer": "Developer",
+    "status": "상태",
+    "discover": "탐색",
+    "continue": "계속",
+    "login": "로그인",
+    "connect_discord": "Discord로 연결",
+    "login_error": "로그인 실패: Discord 클라이언트 ID 또는 리다이렉트 URI가 설정되지 않았습니다. NEXT_PUBLIC_DISCORD_CLIENT_ID와 NEXT_PUBLIC_REDIRECT_URI를 확인하세요.",
+    "mobile_greeting": "안녕하세요!",
+    "mobile_welcome": "DiscoWeb 세계에 오신 것을 환영합니다.",
+    "home_overview": "개요",
+    "home_features": "기능",
+    "home_panel_title": "서버 관리자 전용",
+    "home_panel_body": "DiscoWeb은 Discord 서버 소유자와 관리자를 위해 만들어졌습니다. 일반 멤버는 들어갈 수 없으며, 관리자 권한이 있는 사람만 로그인하여 도구를 관리할 수 있습니다.",
+    "home_panel_note": "Discord로 로그인한 뒤, 관리하는 서버를 선택하세요.",
+    "store_products": "상품",
+    "store_campaigns": "캠페인",
+    "developer_about": "소개",
+    "developer_support": "실시간 지원",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Invincible와 스폰지밥 팬입니다. DiscoWeb은 완전히 자원봉사로 운영되며 수익을 내지 않습니다. 커뮤니티에 필요한 시스템을 만들고, 좋아하는 캐릭터를 넣으며, 모든 것이 잘 돌아가는 동안 사람들이 그걸 보길 바랍니다.",
+    "developer_panel_note": "무료. 자원봉사. 캐릭터 가득.",
+    "status_system": "시스템 상태",
+    "status_incidents": "장애",
+    "status_history": "기록",
+    "discover_community": "커뮤니티",
+    "discover_blog": "블로그",
+    "discover_support": "지원"
+  }
+}

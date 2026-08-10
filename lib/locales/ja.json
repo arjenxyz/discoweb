@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "success": "成功"
+  },
+  "home": {
+    "loading": "読み込み中...",
+    "loading_progress": "読み込み中... {progress}%",
+    "welcome": "DiscoWebへようこそ",
+    "description": "サーバー管理者向けのDiscord管理パネルです。オーナーと管理者だけがログインしてコミュニティを管理できます。",
+    "copyright": "DiscoWeb | 2026 © All rights reserved",
+    "banner_alt": "Discordバナー",
+    "decorative_cat": "装飾用の猫"
+  },
+  "navbar": {
+    "beta": "ベータ",
+    "home": "ホーム",
+    "store": "ストア",
+    "developer": "Developer",
+    "status": "ステータス",
+    "discover": "発見",
+    "continue": "続ける",
+    "login": "ログイン",
+    "connect_discord": "Discordで接続",
+    "login_error": "ログインに失敗しました。DiscordクライアントIDまたはリダイレクトURIが設定されていません。NEXT_PUBLIC_DISCORD_CLIENT_ID と NEXT_PUBLIC_REDIRECT_URI を確認してください。",
+    "mobile_greeting": "こんにちは！",
+    "mobile_welcome": "DiscoWebの世界へようこそ。",
+    "home_overview": "概要",
+    "home_features": "機能",
+    "home_panel_title": "サーバー管理者のみ",
+    "home_panel_body": "DiscoWebはDiscordサーバーのオーナーと管理者向けです。一般メンバーは入れません。管理者権限がある人だけがログインしてツールを管理できます。",
+    "home_panel_note": "Discordでログインし、管理しているサーバーを選んでください。",
+    "store_products": "商品",
+    "store_campaigns": "キャンペーン",
+    "developer_about": "について",
+    "developer_support": "ライブサポート",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Invincibleとスポンジ・ボブのファンです。DiscoWebは完全にボランティアで、ここからお金は得ていません。コミュニティに必要なシステムを作り、好きなキャラクターを入れて、すべてが動く中でそれらを見てもらいたいと思っています。",
+    "developer_panel_note": "無料。ボランティア。キャラクター盛りだくさん。",
+    "status_system": "システム状態",
+    "status_incidents": "インシデント",
+    "status_history": "履歴",
+    "discover_community": "コミュニティ",
+    "discover_blog": "ブログ",
+    "discover_support": "サポート"
+  }
+}

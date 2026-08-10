@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "success": "Erfolg"
+  },
+  "home": {
+    "loading": "Laden...",
+    "loading_progress": "Laden... {progress}%",
+    "welcome": "Willkommen bei DiscoWeb",
+    "description": "Ein Discord-Verwaltungspanel für Server-Admins — nur Eigentümer und Administratoren können sich anmelden und ihre Communitys verwalten.",
+    "copyright": "DiscoWeb | 2026 © Alle Rechte vorbehalten",
+    "banner_alt": "Discord-Banner",
+    "decorative_cat": "Dekorative Katze"
+  },
+  "navbar": {
+    "beta": "Beta",
+    "home": "Startseite",
+    "store": "Shop",
+    "developer": "Developer",
+    "status": "Status",
+    "discover": "Entdecken",
+    "continue": "Weiter",
+    "login": "Anmelden",
+    "connect_discord": "Mit Discord verbinden",
+    "login_error": "Anmeldung fehlgeschlagen: Discord-Client-ID oder Redirect-URI ist nicht konfiguriert. Prüfe NEXT_PUBLIC_DISCORD_CLIENT_ID und NEXT_PUBLIC_REDIRECT_URI.",
+    "mobile_greeting": "Hallo!",
+    "mobile_welcome": "Willkommen im DiscoWeb-Universum.",
+    "home_overview": "Übersicht",
+    "home_features": "Funktionen",
+    "home_panel_title": "Nur Server-Admins",
+    "home_panel_body": "DiscoWeb ist für Discord-Serverbesitzer und Administratoren gemacht. Normale Mitglieder kommen nicht rein — nur wer Admin-Rechte hat, kann sich anmelden und die Tools verwalten.",
+    "home_panel_note": "Melde dich mit Discord an und wähle einen Server, den du verwaltest.",
+    "store_products": "Produkte",
+    "store_campaigns": "Kampagnen",
+    "developer_about": "Über",
+    "developer_support": "Live-Support",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Großer Fan von Invincible und SpongeBob. DiscoWeb ist komplett ehrenamtlich — ich verdiene nichts damit. Ich baue Systeme, die Communities brauchen, bringe meine Lieblingscharaktere ein und möchte, dass man sie sieht, während alles einfach funktioniert.",
+    "developer_panel_note": "Kostenlos. Ehrenamtlich. Voller Charaktere.",
+    "status_system": "Systemstatus",
+    "status_incidents": "Vorfälle",
+    "status_history": "Verlauf",
+    "discover_community": "Community",
+    "discover_blog": "Blog",
+    "discover_support": "Support"
+  }
+}

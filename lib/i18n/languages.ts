@@ -1,5 +1,13 @@
 import tr from '../locales/tr.json';
 import en from '../locales/en.json';
+import pt from '../locales/pt.json';
+import id from '../locales/id.json';
+import es from '../locales/es.json';
+import de from '../locales/de.json';
+import fr from '../locales/fr.json';
+import ja from '../locales/ja.json';
+import ko from '../locales/ko.json';
+import ru from '../locales/ru.json';
 
 export type LanguageCode =
   | 'en'
@@ -51,17 +59,33 @@ const LOCALE_TAGS: Record<LanguageCode, string> = {
   ru: 'ru-RU',
 };
 
+/** Merge section overlays onto English so missing keys still resolve. */
+function mergeLocale(base: Translations, overlay: Translations): Translations {
+  const result: Translations = { ...base };
+  for (const [section, value] of Object.entries(overlay)) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      result[section] = {
+        ...((base[section] as Record<string, unknown>) ?? {}),
+        ...(value as Record<string, unknown>),
+      };
+    } else {
+      result[section] = value;
+    }
+  }
+  return result;
+}
+
 export const translations: Record<LanguageCode, Translations> = {
   en,
-  pt: en,
-  id: en,
-  es: en,
-  de: en,
   tr,
-  fr: en,
-  ja: en,
-  ko: en,
-  ru: en,
+  pt: mergeLocale(en, pt),
+  id: mergeLocale(en, id),
+  es: mergeLocale(en, es),
+  de: mergeLocale(en, de),
+  fr: mergeLocale(en, fr),
+  ja: mergeLocale(en, ja),
+  ko: mergeLocale(en, ko),
+  ru: mergeLocale(en, ru),
 };
 
 export function isLanguageCode(value: string | null | undefined): value is LanguageCode {

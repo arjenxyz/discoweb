@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "success": "Sucesso"
+  },
+  "home": {
+    "loading": "Carregando...",
+    "loading_progress": "Carregando... {progress}%",
+    "welcome": "Bem-vindo ao DiscoWeb",
+    "description": "Um painel de gerenciamento do Discord feito para administradores — apenas donos e admins podem entrar e gerenciar suas comunidades.",
+    "copyright": "DiscoWeb | 2026 © Todos os direitos reservados",
+    "banner_alt": "Banner do Discord",
+    "decorative_cat": "Gato decorativo"
+  },
+  "navbar": {
+    "beta": "Beta",
+    "home": "Início",
+    "store": "Loja",
+    "developer": "Developer",
+    "status": "Status",
+    "discover": "Descobrir",
+    "continue": "Continuar",
+    "login": "Entrar",
+    "connect_discord": "Conectar com Discord",
+    "login_error": "Falha no login: o client ID ou o redirect URI do Discord não está configurado. Verifique NEXT_PUBLIC_DISCORD_CLIENT_ID e NEXT_PUBLIC_REDIRECT_URI.",
+    "mobile_greeting": "Olá!",
+    "mobile_welcome": "Bem-vindo ao universo DiscoWeb.",
+    "home_overview": "Visão geral",
+    "home_features": "Recursos",
+    "home_panel_title": "Somente admins do servidor",
+    "home_panel_body": "O DiscoWeb foi feito para donos e administradores de servidores Discord. Membros comuns não entram — só quem tem permissão de admin pode fazer login e gerenciar as ferramentas.",
+    "home_panel_note": "Entre com Discord e escolha um servidor que você administra.",
+    "store_products": "Produtos",
+    "store_campaigns": "Campanhas",
+    "developer_about": "Sobre",
+    "developer_support": "Suporte ao vivo",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Fã de Invincible e Bob Esponja. O DiscoWeb é 100% voluntário — não ganho dinheiro com isso. Construo sistemas que as comunidades precisam, coloco os personagens que amo e quero que as pessoas os vejam enquanto tudo funciona bem.",
+    "developer_panel_note": "Grátis. Voluntário. Cheio de personagens.",
+    "status_system": "Status do sistema",
+    "status_incidents": "Incidentes",
+    "status_history": "Histórico",
+    "discover_community": "Comunidade",
+    "discover_blog": "Blog",
+    "discover_support": "Suporte"
+  }
+}

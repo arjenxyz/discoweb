@@ -1,0 +1,50 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "success": "Éxito"
+  },
+  "home": {
+    "loading": "Cargando...",
+    "loading_progress": "Cargando... {progress}%",
+    "welcome": "Bienvenido a DiscoWeb",
+    "description": "Un panel de administración de Discord para admins de servidores: solo propietarios y administradores pueden iniciar sesión y gestionar sus comunidades.",
+    "copyright": "DiscoWeb | 2026 © Todos los derechos reservados",
+    "banner_alt": "Banner de Discord",
+    "decorative_cat": "Gato decorativo"
+  },
+  "navbar": {
+    "beta": "Beta",
+    "home": "Inicio",
+    "store": "Tienda",
+    "developer": "Developer",
+    "status": "Estado",
+    "discover": "Descubrir",
+    "continue": "Continuar",
+    "login": "Iniciar sesión",
+    "connect_discord": "Conectar con Discord",
+    "login_error": "Error de inicio de sesión: el client ID o el redirect URI de Discord no está configurado. Revisa NEXT_PUBLIC_DISCORD_CLIENT_ID y NEXT_PUBLIC_REDIRECT_URI.",
+    "mobile_greeting": "¡Hola!",
+    "mobile_welcome": "Bienvenido al universo DiscoWeb.",
+    "home_overview": "Resumen",
+    "home_features": "Funciones",
+    "home_panel_title": "Solo admins del servidor",
+    "home_panel_body": "DiscoWeb está hecho para dueños y administradores de servidores de Discord. Los miembros normales no pueden entrar: solo quienes tienen permisos de admin pueden iniciar sesión y gestionar las herramientas.",
+    "home_panel_note": "Inicia sesión con Discord y elige un servidor que administras.",
+    "store_products": "Productos",
+    "store_campaigns": "Campañas",
+    "developer_about": "Acerca de",
+    "developer_support": "Soporte en vivo",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Fan de Invincible y Bob Esponja. DiscoWeb es totalmente voluntario: no gano dinero con esto. Construyo sistemas que las comunidades necesitan, meto a los personajes que amo y quiero que la gente los vea mientras todo funciona bien.",
+    "developer_panel_note": "Gratis. Voluntario. Lleno de personajes.",
+    "status_system": "Estado del sistema",
+    "status_incidents": "Incidentes",
+    "status_history": "Historial",
+    "discover_community": "Comunidad",
+    "discover_blog": "Blog",
+    "discover_support": "Soporte"
+  }
+}
