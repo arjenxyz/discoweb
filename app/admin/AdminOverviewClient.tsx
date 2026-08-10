@@ -13,7 +13,6 @@ import {
   LuRefreshCw,
   LuPackage,
   LuCoins,
-  LuBell,
   LuTrophy,
   LuStore,
 } from 'react-icons/lu';
@@ -192,9 +191,9 @@ export default function AdminOverviewClient({
       icon: LuTrophy,
     },
     {
-      href: '/admin/notifications/send',
-      label: t('admin.dashboard.action_notify'),
-      icon: LuBell,
+      href: '/admin/badges',
+      label: t('admin.menu.tag_settings'),
+      icon: LuTag,
     },
     {
       href: '/admin/earn-settings',
