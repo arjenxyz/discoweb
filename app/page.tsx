@@ -1,6 +1,5 @@
 "use client";
 import Image from 'next/image';
-import Link from 'next/link';
 import CuteNavbar from '../components/CuteNavbar';
 import { Ubuntu } from "next/font/google";
 import { useState, useEffect } from 'react';
@@ -188,14 +187,8 @@ export default function Home() {
 
       {/* Developer Credits - Bottom */}
       <div className="absolute bottom-4 left-0 right-0 z-20 px-6">
-        <div className="flex items-center justify-center gap-3 text-xs text-[#99AAB5] opacity-75">
+        <div className="text-center text-xs text-[#99AAB5] opacity-75">
           <span>Copyright Discoweb 2026</span>
-          <Link
-            href="/status"
-            className="text-[#99AAB5] hover:text-white underline underline-offset-2 transition-colors"
-          >
-            Discoweb Status
-          </Link>
         </div>
       </div>
     </div>
