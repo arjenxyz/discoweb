@@ -83,33 +83,33 @@ export default function AdminTopBar({
           <button
             type="button"
             onClick={onAccountMenuToggle}
-            className={`flex items-center gap-2 rounded-full border p-1 pr-3 transition-all ${
-              accountMenuOpen
-                ? 'border-indigo-400/30 bg-indigo-500/10'
-                : 'border-transparent hover:border-white/10 hover:bg-white/5'
-            }`}
+            className="flex items-center gap-2 rounded-full bg-transparent p-0 transition-opacity hover:opacity-90"
           >
-            <div className="h-8 w-8 overflow-hidden rounded-full border border-white/10 ring-2 ring-transparent transition group-hover:ring-indigo-500/20">
+            <div
+              className={`h-9 w-9 overflow-hidden rounded-full border transition ${
+                accountMenuOpen ? 'border-[#5865F2]/50' : 'border-white/15'
+              }`}
+            >
               {profile ? (
                 <Image
                   src={profile.avatarUrl}
                   alt=""
-                  width={32}
-                  height={32}
+                  width={36}
+                  height={36}
                   unoptimized
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-white/5 text-[10px] text-white/40">
+                <div className="flex h-full w-full items-center justify-center bg-[#5865F2]/25 text-[10px] font-bold text-white">
                   ?
                 </div>
               )}
             </div>
-            <div className="hidden md:block text-left">
-              <p className="max-w-[110px] truncate text-sm font-semibold text-white leading-tight">
+            <div className="hidden text-left md:block">
+              <p className="max-w-[110px] truncate text-sm font-semibold leading-tight text-white">
                 {profile?.nickname ?? profile?.username ?? t('admin.shell.admin_fallback')}
               </p>
-              <p className="text-[10px] text-indigo-300/70 leading-tight">{t('admin.shell.role')}</p>
+              <p className="text-[10px] leading-tight text-[#a5b4ff]/70">{t('admin.shell.role')}</p>
             </div>
           </button>
 
