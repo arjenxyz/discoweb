@@ -7,7 +7,7 @@ import { useTranslation } from '@/lib/i18nContext';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { siteConfig } from '@/config/site';
-import { LuCode, LuLogOut } from 'react-icons/lu';
+import { LuLogOut } from 'react-icons/lu';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -139,7 +139,6 @@ export default function CuteNavbar() {
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ username: string; avatar: string | null } | null>(null);
-  const [isDeveloper, setIsDeveloper] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const onSelectServer = pathname?.startsWith('/auth/select-server') ?? false;
   const onHome = pathname === '/' || pathname === '';
@@ -278,7 +277,6 @@ export default function CuteNavbar() {
         if (!hasLocalData) {
           setIsLoggedIn(false);
           setUser(null);
-          setIsDeveloper(false);
           return;
         }
 
@@ -306,21 +304,6 @@ export default function CuteNavbar() {
           setIsLoggedIn(true);
           setUser(null);
         }
-      }
-
-      if (!signedIn) {
-        setIsDeveloper(false);
-        return;
-      }
-
-      try {
-        const devRes = await fetch('/api/developer/check-access', {
-          credentials: 'include',
-          cache: 'no-store',
-        });
-        setIsDeveloper(devRes.ok);
-      } catch {
-        setIsDeveloper(isLocalDevBypassClient());
       }
     };
 
@@ -607,47 +590,27 @@ export default function CuteNavbar() {
               <LanguageSwitcher />
             </div>
 
-            {onSelectServer && (
+            {onSelectServer && isLoggedIn && (
               <>
                 <span className="hidden h-5 w-px shrink-0 bg-white/15 md:block" aria-hidden />
-
-                {/* Workflow actions */}
-                <div className="hidden items-center gap-2 md:flex">
-                  {isDeveloper && (
-                    <Link
-                      href="/developer"
-                      className="inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-3 text-xs font-semibold text-white/85 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/20 hover:text-white"
-                    >
-                      <LuCode className="h-3.5 w-3.5 shrink-0 opacity-90" />
-                      {t('navbar.developer')}
-                    </Link>
-                  )}
-                  {isLoggedIn && (
-                    <a
-                      href={botInviteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#4752c4] lg:px-5 lg:text-sm"
-                    >
-                      {t('navbar.add_bot')}
-                    </a>
-                  )}
-                </div>
-
-                {isLoggedIn && (
-                  <>
-                    <span className="hidden h-5 w-px shrink-0 bg-white/15 md:block" aria-hidden />
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      title={t('navbar.logout')}
-                      aria-label={t('navbar.logout')}
-                      className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/50 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
-                    >
-                      <LuLogOut className="h-4 w-4" />
-                    </button>
-                  </>
-                )}
+                <a
+                  href={botInviteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden md:inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#4752c4] lg:px-5 lg:text-sm"
+                >
+                  {t('navbar.add_bot')}
+                </a>
+                <span className="hidden h-5 w-px shrink-0 bg-white/15 md:block" aria-hidden />
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  title={t('navbar.logout')}
+                  aria-label={t('navbar.logout')}
+                  className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/50 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
+                >
+                  <LuLogOut className="h-4 w-4" />
+                </button>
               </>
             )}
 
@@ -738,25 +701,6 @@ export default function CuteNavbar() {
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
-              {isDeveloper && onSelectServer && (
-                <Link
-                  href="/developer"
-                  onClick={() => setMobileOpen(false)}
-                  className="mb-2 flex w-full items-center gap-3 rounded-2xl border border-[#5865F2]/35 bg-[#5865F2]/15 px-4 py-3 text-left transition-colors hover:bg-[#5865F2]/25"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#5865F2]/30 text-white">
-                    <LuCode className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-white">{t('navbar.developer')}</span>
-                    <span className="block truncate text-xs text-white/50">
-                      {t('navbar.developer_panel_note')}
-                    </span>
-                  </span>
-                  <span className="text-sm text-white/35">→</span>
-                </Link>
-              )}
-
               {!onSelectServer && (
                 <>
                   <button

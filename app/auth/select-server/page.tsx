@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Ubuntu } from 'next/font/google';
-import { LuArrowRight, LuDatabase, LuLock, LuShield, LuSettings } from 'react-icons/lu';
+import { LuArrowRight, LuCode, LuDatabase, LuLock, LuShield, LuSettings } from 'react-icons/lu';
 import CuteNavbar from '@/components/CuteNavbar';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
@@ -66,6 +66,7 @@ export default function SelectServerPage() {
   const [guilds, setGuilds] = useState<Guild[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+  const [hasDeveloperAccess, setHasDeveloperAccess] = useState(false);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
   const [agreementTargetHref, setAgreementTargetHref] = useState<string | null>(null);
   const [isProcessingAgreement, setIsProcessingAgreement] = useState(false);
@@ -205,6 +206,7 @@ export default function SelectServerPage() {
         } catch {
           // ignore
         }
+        setHasDeveloperAccess(developerAccess);
 
         if (filteredGuilds.length === 0 && !developerAccess) {
           router.replace('/auth/bot-invite');
@@ -404,6 +406,29 @@ export default function SelectServerPage() {
                 })
               )}
             </div>
+
+            {hasDeveloperAccess && (
+              <div className="mt-12 border-t border-white/10 pt-8">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+                  Geliştirici
+                </p>
+                <Link
+                  href="/developer"
+                  className="group mt-4 flex max-w-xl items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/10"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#5865F2]/30 bg-[#5865F2]/20 text-white transition group-hover:bg-[#5865F2]/35">
+                    <LuCode className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-white">Developer paneli</span>
+                    <span className="mt-0.5 block text-xs leading-5 text-white/45">
+                      Sistem yönetimi, sunucular ve araçlar
+                    </span>
+                  </span>
+                  <LuArrowRight className="h-4 w-4 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white" />
+                </Link>
+              </div>
+            )}
         </section>
 
         <p className="mt-10 text-center text-xs text-[#99AAB5]/75">Copyright Discoweb 2026</p>
