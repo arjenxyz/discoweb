@@ -207,24 +207,27 @@ export function AdminMobileDrawer({
         aria-hidden
       />
       <aside
-        className={`absolute top-0 bottom-0 left-0 flex w-[min(300px,88vw)] flex-col border-r border-white/[0.08] bg-[#090b10] shadow-[24px_0_80px_rgba(0,0,0,0.55)] transition-transform duration-300 ease-out ${
+        className={`absolute top-0 bottom-0 left-0 flex w-[min(300px,88vw)] flex-col border-r border-white/10 bg-[#090b10]/95 shadow-[24px_0_80px_rgba(0,0,0,0.55)] backdrop-blur-xl transition-transform duration-300 ease-out ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.06] px-4">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-8 top-16 h-36 w-36 rounded-full bg-[#5865F2]/20 blur-3xl" />
+        </div>
+        <div className="relative flex h-14 shrink-0 items-center justify-between border-b border-white/10 px-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#5865F2]">
             {t('admin.shell.menu_title')}
           </span>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-white/40 transition hover:bg-white/5 hover:text-white"
+            className="rounded-xl p-1.5 text-white/40 transition hover:bg-white/10 hover:text-white"
             aria-label={t('admin.shell.close_menu')}
           >
             <LuX className="h-4 w-4" />
           </button>
         </div>
-        {children}
+        <div className="relative flex min-h-0 flex-1 flex-col">{children}</div>
       </aside>
     </div>
   );

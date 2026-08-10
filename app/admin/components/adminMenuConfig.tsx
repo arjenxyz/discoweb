@@ -134,24 +134,24 @@ export const ADMIN_MENU: MenuGroup[] = [
 
 export const ACCENT_STYLES: Record<string, { chip: string; active: string; glow: string }> = {
   indigo: {
-    chip: 'bg-indigo-500/15 text-indigo-300',
-    active: 'bg-indigo-500/12 text-indigo-200',
-    glow: 'shadow-[inset_3px_0_0_0_#818cf8]',
+    chip: 'bg-[#5865F2]/25 text-[#a5b4ff]',
+    active: 'bg-[#5865F2]/20 text-white',
+    glow: 'shadow-[0_0_20px_rgba(88,101,242,0.25)]',
   },
   emerald: {
-    chip: 'bg-emerald-500/15 text-emerald-300',
-    active: 'bg-emerald-500/12 text-emerald-200',
-    glow: 'shadow-[inset_3px_0_0_0_#34d399]',
+    chip: 'bg-[#5865F2]/25 text-[#a5b4ff]',
+    active: 'bg-[#5865F2]/20 text-white',
+    glow: 'shadow-[0_0_20px_rgba(88,101,242,0.25)]',
   },
   violet: {
-    chip: 'bg-violet-500/15 text-violet-300',
-    active: 'bg-violet-500/12 text-violet-200',
-    glow: 'shadow-[inset_3px_0_0_0_#a78bfa]',
+    chip: 'bg-[#5865F2]/25 text-[#a5b4ff]',
+    active: 'bg-[#5865F2]/20 text-white',
+    glow: 'shadow-[0_0_20px_rgba(88,101,242,0.25)]',
   },
   cyan: {
-    chip: 'bg-cyan-500/15 text-cyan-300',
-    active: 'bg-cyan-500/12 text-cyan-200',
-    glow: 'shadow-[inset_3px_0_0_0_#22d3ee]',
+    chip: 'bg-[#5865F2]/25 text-[#a5b4ff]',
+    active: 'bg-[#5865F2]/20 text-white',
+    glow: 'shadow-[0_0_20px_rgba(88,101,242,0.25)]',
   },
 };
 

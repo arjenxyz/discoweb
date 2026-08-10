@@ -140,16 +140,22 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <div className="flex h-full">
         {/* Desktop sidebar */}
         <aside
-          className={`sticky top-0 hidden lg:flex h-screen flex-col border-r border-white/[0.06] bg-[#090b10] transition-[width] duration-300 ease-out ${
+          className={`sticky top-0 hidden h-screen flex-col border-r border-white/10 bg-[#090b10]/95 backdrop-blur-xl transition-[width] duration-300 ease-out lg:flex ${
             collapsed ? 'w-[76px]' : 'w-[268px]'
           }`}
         >
-          <AdminSidebar
-            {...sidebarProps}
-            collapsed={collapsed}
-            onToggleCollapse={() => setCollapsed((p) => !p)}
-            variant="desktop"
-          />
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute -left-10 top-20 h-40 w-40 rounded-full bg-[#5865F2]/10 blur-3xl" />
+            <div className="absolute bottom-24 -right-12 h-36 w-36 rounded-full bg-[#7289DA]/10 blur-3xl" />
+          </div>
+          <div className="relative flex h-full flex-col">
+            <AdminSidebar
+              {...sidebarProps}
+              collapsed={collapsed}
+              onToggleCollapse={() => setCollapsed((p) => !p)}
+              variant="desktop"
+            />
+          </div>
         </aside>
 
         {/* Main column */}

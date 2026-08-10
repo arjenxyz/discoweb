@@ -36,16 +36,17 @@ export default function AdminSidebar({
 
   return (
     <>
-      {/* Server card */}
       <div className={`shrink-0 ${isMobile ? 'px-4 pt-4' : 'px-3 pt-4'}`}>
         <div
-          className={`relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] ${
+          className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-md ${
             showExpanded ? 'p-3' : 'p-2'
           }`}
         >
-          <div className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-indigo-500/10 blur-2xl" />
+          <div className="pointer-events-none absolute -right-8 -top-10 h-24 w-24 rounded-full bg-[#5865F2]/25 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-8 -left-6 h-20 w-20 rounded-full bg-[#7289DA]/15 blur-2xl" />
+
           <div className={`relative flex items-center ${showExpanded ? 'gap-3' : 'justify-center'}`}>
-            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#0f1116] shadow-lg shadow-black/20">
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#1e1f22] shadow-md shadow-black/30">
               {profile?.guildIcon ? (
                 <Image
                   src={profile.guildIcon}
@@ -56,25 +57,29 @@ export default function AdminSidebar({
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-indigo-500/20 text-sm font-bold text-indigo-200">
+                <div className="flex h-full w-full items-center justify-center bg-[#5865F2]/25 text-sm font-bold text-white">
                   {profile?.guildName?.charAt(0) ?? '#'}
                 </div>
               )}
-              <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0b0d12] bg-emerald-400" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0c0e14] bg-emerald-400" />
             </div>
+
             {showExpanded && (
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-white">
                   {profile?.guildName ?? t('admin.shell.default_server')}
                 </p>
-                <p className="text-[11px] text-white/40">{t('admin.shell.panel_label')}</p>
+                <p className="text-[11px] font-medium tracking-wide text-[#5865F2]/80">
+                  {t('admin.shell.panel_label')}
+                </p>
               </div>
             )}
+
             {showExpanded && !isMobile && (
               <button
                 type="button"
                 onClick={onToggleCollapse}
-                className="shrink-0 rounded-lg p-1.5 text-white/30 transition hover:bg-white/5 hover:text-white/70"
+                className="shrink-0 rounded-xl p-1.5 text-white/35 transition hover:bg-white/10 hover:text-white/80"
                 aria-label={t('admin.shell.collapse')}
               >
                 <LuPanelLeftClose className="h-4 w-4" />
@@ -87,7 +92,7 @@ export default function AdminSidebar({
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="mt-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/50 transition hover:bg-white/[0.06] hover:text-white mx-auto"
+            className="mx-auto mt-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/50 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
             aria-label={t('admin.shell.expand')}
           >
             <LuPanelLeftOpen className="h-4 w-4" />
@@ -95,8 +100,7 @@ export default function AdminSidebar({
         )}
       </div>
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 custom-scrollbar">
+      <div className="custom-scrollbar flex-1 overflow-y-auto px-3 py-4">
         <AdminSidebarNav
           collapsed={collapsed && !isMobile}
           isMobile={isMobile}
