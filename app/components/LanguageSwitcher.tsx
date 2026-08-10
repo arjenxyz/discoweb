@@ -111,7 +111,7 @@ export function LanguagePickerModal({
   if (!mounted || !open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[10060] flex items-end justify-center p-4 sm:items-center">
+    <div className="fixed inset-0 z-[10060] flex items-center justify-center p-4">
       <button
         type="button"
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
