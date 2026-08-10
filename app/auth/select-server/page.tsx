@@ -343,11 +343,7 @@ export default function SelectServerPage() {
 
       <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 pb-16 pt-32 md:px-8 lg:px-12">
         <section className="w-full min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
-              DiscoWeb
-            </p>
-
-            <div className="mt-10 flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <h2 className="text-sm font-semibold text-white/90">{t('select_server.your_servers')}</h2>
                 {lastUpdatedAt && (
