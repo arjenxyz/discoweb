@@ -300,28 +300,15 @@ function AdminStoreProductCreatePageContent() {
               />
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className={labelClass}>Fiyat (papel)</label>
-                <input
-                  value={price}
-                  onChange={(event) => setPrice(event.target.value)}
-                  placeholder="250"
-                  type="number"
-                  className={fieldClass}
-                />
-              </div>
-              <div>
-                <label className={labelClass}>Durum</label>
-                <select
-                  value={itemStatus}
-                  onChange={(event) => setItemStatus(event.target.value as 'active' | 'inactive')}
-                  className={fieldClass}
-                >
-                  <option value="active">Aktif</option>
-                  <option value="inactive">Pasif</option>
-                </select>
-              </div>
+            <div>
+              <label className={labelClass}>Fiyat (papel)</label>
+              <input
+                value={price}
+                onChange={(event) => setPrice(event.target.value)}
+                placeholder="250"
+                type="number"
+                className={fieldClass}
+              />
             </div>
 
             <div>
