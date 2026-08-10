@@ -10,6 +10,19 @@ import { siteConfig } from '@/config/site';
 import { LuLogOut } from 'react-icons/lu';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
+const NICKET_EMOJIS = [
+  '/nicket/421918-cat.png',
+  '/nicket/96311-dog.png',
+  '/nicket/422848-bunny.png',
+  '/nicket/391926-frog.png',
+  '/nicket/605187-goat.png',
+  '/nicket/528345-bee.png',
+  '/nicket/364660-butterfly.png',
+  '/nicket/285823-snail.png',
+  '/nicket/783730-caterpillar.png',
+  '/nicket/845183-spider.png',
+] as const;
+
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
   <svg
     className={`w-3 h-3 ml-1.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
@@ -477,11 +490,25 @@ export default function CuteNavbar() {
               {showUserIdentity && user ? (
                 <Link
                   href="/"
-                  className="relative z-50 block min-w-0 max-w-[11rem] cursor-pointer sm:max-w-[14rem] md:max-w-[16rem]"
+                  className="relative z-50 block min-w-0 max-w-[min(100%,18rem)] cursor-pointer sm:max-w-[20rem] md:max-w-[22rem]"
                   aria-label={t('navbar.back_home_hint')}
                 >
-                  <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
-                    {user.username}
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate text-lg font-black tracking-tight text-white md:text-xl">
+                      {user.username}
+                    </span>
+                    <span className="flex shrink-0 items-center gap-0.5" aria-hidden>
+                      {NICKET_EMOJIS.map((src) => (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          key={src}
+                          src={src}
+                          alt=""
+                          className="h-3.5 w-3.5 object-contain sm:h-4 sm:w-4"
+                          draggable={false}
+                        />
+                      ))}
+                    </span>
                   </div>
                   <div className="truncate text-[10px] font-medium text-white/40 transition-colors hover:text-white/70">
                     {t('navbar.back_home_hint')}
