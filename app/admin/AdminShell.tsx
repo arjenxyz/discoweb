@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import AdminSidebar, { type AdminProfile } from './components/AdminSidebar';
-import AdminTopBar, { AdminMobileDrawer } from './components/AdminTopBar';
+import AdminTopBar from './components/AdminTopBar';
+import AdminMobileDrawer from './components/AdminMobileDrawer';
 import { ADMIN_MENU, isExpandableActive } from './components/adminMenuConfig';
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -177,7 +178,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </div>
 
       {/* Mobile drawer */}
-      <AdminMobileDrawer open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)}>
+      <AdminMobileDrawer
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        onLogout={handleLogout}
+        profile={profile}
+      >
         <AdminSidebar
           {...sidebarProps}
           collapsed={false}

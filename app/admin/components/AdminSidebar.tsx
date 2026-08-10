@@ -102,7 +102,7 @@ export default function AdminSidebar({
         </div>
       )}
 
-      <div className={`custom-scrollbar flex-1 overflow-y-auto px-3 py-4 ${isMobile ? 'pt-2' : ''}`}>
+      <div className={`custom-scrollbar flex-1 overflow-y-auto ${isMobile ? 'px-0 py-0' : 'px-3 py-4'}`}>
         <AdminSidebarNav
           collapsed={collapsed && !isMobile}
           isMobile={isMobile}

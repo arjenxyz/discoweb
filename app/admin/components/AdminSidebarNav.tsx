@@ -38,12 +38,29 @@ function NavLinkItem({
   const active = isPathActive(pathname, href);
   const showLabel = !collapsed || isMobile;
 
+  if (isMobile) {
+    return (
+      <Link
+        href={href}
+        className={`flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left transition-colors ${
+          active ? 'text-white' : 'text-white/70 hover:text-white'
+        }`}
+      >
+        <span className="flex min-w-0 items-center gap-3">
+          <Icon className={`h-5 w-5 shrink-0 ${active ? 'text-[#a5b4ff]' : 'text-white/35'}`} />
+          <span className="truncate text-lg font-semibold">{t(labelKey)}</span>
+        </span>
+        <span className="text-sm text-white/25">→</span>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={href}
-      title={collapsed && !isMobile ? t(labelKey) : undefined}
+      title={collapsed ? t(labelKey) : undefined}
       className={`group relative flex items-center rounded-2xl transition-all duration-200 ${
-        collapsed && !isMobile ? 'mx-auto h-11 w-11 justify-center' : 'gap-3 px-2.5 py-2'
+        collapsed ? 'mx-auto h-11 w-11 justify-center' : 'gap-3 px-2.5 py-2'
       } ${
         active
           ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30'
@@ -52,7 +69,7 @@ function NavLinkItem({
     >
       <span
         className={`flex shrink-0 items-center justify-center rounded-xl transition-colors ${
-          collapsed && !isMobile ? 'h-9 w-9' : 'h-8 w-8'
+          collapsed ? 'h-9 w-9' : 'h-8 w-8'
         } ${
           active
             ? 'bg-white/15 text-white'
@@ -90,14 +107,72 @@ function NavExpandableItem({
   const showLabel = !collapsed || isMobile;
   const highlighted = active || isOpen;
 
+  if (isMobile) {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={onToggle}
+          className={`flex w-full items-center justify-between border-b border-white/[0.06] py-4 text-left transition-colors ${
+            highlighted ? 'text-white' : 'text-white/70 hover:text-white'
+          }`}
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <item.icon className={`h-5 w-5 shrink-0 ${highlighted ? 'text-[#a5b4ff]' : 'text-white/35'}`} />
+            <span className="truncate text-lg font-semibold">{t(item.labelKey)}</span>
+          </span>
+          <LuChevronDown
+            className={`h-4 w-4 shrink-0 text-white/25 transition-transform duration-200 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+
+        <div
+          className={`grid transition-all duration-300 ease-out ${
+            isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="space-y-1 border-b border-white/[0.06] py-2 pl-8">
+              {item.sections.flatMap((section) =>
+                section.items.map((sub) => {
+                  const SubIcon = sub.icon;
+                  const subActive = isPathActive(pathname, sub.href);
+                  return (
+                    <Link
+                      key={sub.href}
+                      href={sub.href}
+                      className={`flex items-center justify-between rounded-xl px-3 py-3 text-sm transition-colors ${
+                        subActive
+                          ? 'bg-[#5865F2] font-semibold text-white shadow-md shadow-[#5865F2]/25'
+                          : 'text-white/55 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex min-w-0 items-center gap-2.5">
+                        <SubIcon className="h-4 w-4 shrink-0 opacity-70" />
+                        <span className="truncate">{t(sub.labelKey)}</span>
+                      </span>
+                      <span className="text-xs text-white/25">→</span>
+                    </Link>
+                  );
+                }),
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-1">
       <button
         type="button"
         onClick={onToggle}
-        title={collapsed && !isMobile ? t(item.labelKey) : undefined}
+        title={collapsed ? t(item.labelKey) : undefined}
         className={`group relative flex w-full items-center rounded-2xl transition-all duration-200 ${
-          collapsed && !isMobile ? 'mx-auto h-11 w-11 justify-center' : 'gap-3 px-2.5 py-2'
+          collapsed ? 'mx-auto h-11 w-11 justify-center' : 'gap-3 px-2.5 py-2'
         } ${
           highlighted
             ? 'bg-[#5865F2]/15 text-white ring-1 ring-[#5865F2]/35'
@@ -106,7 +181,7 @@ function NavExpandableItem({
       >
         <span
           className={`flex shrink-0 items-center justify-center rounded-xl transition-colors ${
-            collapsed && !isMobile ? 'h-9 w-9' : 'h-8 w-8'
+            collapsed ? 'h-9 w-9' : 'h-8 w-8'
           } ${
             highlighted
               ? styles.chip
@@ -203,6 +278,23 @@ function renderItem(item: MenuItem, props: AdminSidebarNavProps) {
 export default function AdminSidebarNav(props: AdminSidebarNavProps) {
   const { t } = useTranslation();
   const showGroups = !props.collapsed || props.isMobile;
+
+  if (props.isMobile) {
+    return (
+      <nav className="space-y-1">
+        {ADMIN_MENU.map((group) => (
+          <div key={group.id}>
+            {showGroups && (
+              <p className="pb-1 pt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5865F2]/80 first:pt-0">
+                {t(group.titleKey)}
+              </p>
+            )}
+            <div>{group.items.map((item) => renderItem(item, props))}</div>
+          </div>
+        ))}
+      </nav>
+    );
+  }
 
   return (
     <nav className="space-y-5">

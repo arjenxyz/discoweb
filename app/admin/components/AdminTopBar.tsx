@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LuChevronRight, LuFileText, LuLogOut, LuMenu, LuServer, LuSettings, LuX } from 'react-icons/lu';
+import { LuChevronRight, LuFileText, LuLogOut, LuMenu, LuServer, LuSettings } from 'react-icons/lu';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 import { useTranslation } from '@/lib/i18nContext';
 import type { AdminProfile } from './AdminSidebar';
@@ -228,56 +228,5 @@ export default function AdminTopBar({
         </div>
       </div>
     </header>
-  );
-}
-
-export function AdminMobileDrawer({
-  open,
-  onClose,
-  children,
-}: {
-  open: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}) {
-  const { t } = useTranslation();
-
-  return (
-    <div
-      className={`lg:hidden fixed inset-0 z-[9999] transition-all duration-300 ${
-        open ? 'visible' : 'invisible pointer-events-none'
-      }`}
-    >
-      <div
-        className={`absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${
-          open ? 'opacity-100' : 'opacity-0'
-        }`}
-        onClick={onClose}
-        aria-hidden
-      />
-      <aside
-        className={`absolute top-0 bottom-0 left-0 flex w-[min(300px,88vw)] flex-col border-r border-white/10 bg-[#090b10]/95 shadow-[24px_0_80px_rgba(0,0,0,0.55)] backdrop-blur-xl transition-transform duration-300 ease-out ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-8 top-16 h-36 w-36 rounded-full bg-[#5865F2]/20 blur-3xl" />
-        </div>
-        <div className="relative flex h-14 shrink-0 items-center justify-between border-b border-white/10 px-4">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#5865F2]">
-            {t('admin.shell.menu_title')}
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl p-1.5 text-white/40 transition hover:bg-white/10 hover:text-white"
-            aria-label={t('admin.shell.close_menu')}
-          >
-            <LuX className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="relative flex min-h-0 flex-1 flex-col">{children}</div>
-      </aside>
-    </div>
   );
 }

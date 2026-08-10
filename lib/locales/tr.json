@@ -274,6 +274,7 @@
       "role": "Admin",
       "settings": "Panel Ayarları",
       "change_server": "Sunucu Değiştir",
+      "mobile_welcome": "Yönetim panelinde sunucunu yönet, mağazayı ve ekonomiyi ayarla.",
       "logout": "Çıkış Yap"
     },
     "guide": {
