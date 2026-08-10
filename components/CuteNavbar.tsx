@@ -477,8 +477,8 @@ export default function CuteNavbar() {
             </div>
           </div>
 
-          {/* Desktop Menu */}
-          {!isLoggedIn && (
+          {/* Desktop Menu — hide only on select-server */}
+          {!onSelectServer && (
             <div className="hidden md:flex flex-1 items-center justify-center gap-0.5 lg:gap-2 min-w-0">
               {/* --- ANA SAYFA --- */}
               <div
@@ -544,7 +544,7 @@ export default function CuteNavbar() {
             </div>
           )}
 
-          {isLoggedIn && <div className="hidden flex-1 md:block" aria-hidden />}
+          {onSelectServer && <div className="hidden flex-1 md:block" aria-hidden />}
 
           <div className="flex items-center gap-2 lg:gap-3 shrink-0 min-w-0">
             <LanguageSwitcher />
@@ -645,7 +645,7 @@ export default function CuteNavbar() {
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
-              {!isLoggedIn && (
+              {!onSelectServer && (
                 <>
                   <button
                     type="button"
