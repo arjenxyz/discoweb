@@ -127,7 +127,6 @@ export default function SelectServerPage() {
       if (!adminGuilds) {
         if (bypass) {
           setGuilds([LOCAL_DEV_GUILD]);
-          setIsDeveloper(true);
           setLoading(false);
           return;
         }
