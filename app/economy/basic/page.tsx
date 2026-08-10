@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
 import {
   LuArrowLeft, LuChevronRight, LuCoins, LuShoppingBag, LuGift,
   LuArrowRightLeft, LuUsers, LuZap, LuShield, LuInfo,
 } from 'react-icons/lu';
 
 export default function BasicEconomyPage() {
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState('intro');
 
   useEffect(() => {
-    document.title = 'Basit Ekonomi - DiscoWeb';
+    document.title = t('economy.page_title');
 
     const handleScroll = () => {
       const sections = document.querySelectorAll('section[id]');
@@ -27,13 +29,13 @@ export default function BasicEconomyPage() {
   }, []);
 
   const NAV_ITEMS = [
-    { id: 'intro',     label: 'Giriş',             icon: LuInfo },
-    { id: 'earning',   label: 'Papel Kazanımı',     icon: LuCoins },
-    { id: 'store',     label: 'Mağaza',             icon: LuShoppingBag },
-    { id: 'raffles',   label: 'Çekilişler',         icon: LuGift },
-    { id: 'transfer',  label: 'Transfer',           icon: LuArrowRightLeft },
-    { id: 'admin',     label: 'Admin Araçları',     icon: LuUsers },
-    { id: 'limits',    label: 'Kısıtlamalar',       icon: LuShield },
+    { id: 'intro',     label: t('economy.nav_intro'),             icon: LuInfo },
+    { id: 'earning',   label: t('economy.nav_earning'),     icon: LuCoins },
+    { id: 'store',     label: t('economy.nav_store'),             icon: LuShoppingBag },
+    { id: 'raffles',   label: t('economy.nav_raffles'),         icon: LuGift },
+    { id: 'transfer',  label: t('economy.nav_transfer'),           icon: LuArrowRightLeft },
+    { id: 'admin',     label: t('economy.nav_admin'),     icon: LuUsers },
+    { id: 'limits',    label: t('economy.nav_limits'),       icon: LuShield },
   ];
 
   return (
@@ -44,14 +46,14 @@ export default function BasicEconomyPage() {
           <div className="flex items-center gap-3">
             <img src="/gif/cat.gif" alt="DiscoWeb" className="w-8 h-8 rounded-lg" />
             <span className="font-bold text-base text-white">DiscoWeb</span>
-            <span className="text-[11px] text-white/30 font-medium tracking-wide hidden sm:inline">BASİT EKONOMİ</span>
+            <span className="text-[11px] text-white/30 font-medium tracking-wide hidden sm:inline">{t('economy.badge')}</span>
           </div>
           <button
             onClick={() => window.history.back()}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white/70 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg transition-colors"
           >
             <LuArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Geri Dön</span>
+            <span className="hidden sm:inline">{t('economy.back')}</span>
           </button>
         </div>
       </header>
@@ -60,7 +62,7 @@ export default function BasicEconomyPage() {
         {/* Sidebar */}
         <aside className="hidden lg:block w-72 min-h-screen fixed top-[60px] left-0 lg:left-auto z-40 border-r border-white/[0.04]">
           <nav className="p-6 pt-8">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4 px-3">İçindekiler</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4 px-3">{t('economy.toc')}</p>
             <ul className="space-y-0.5">
               {NAV_ITEMS.map(item => {
                 const Icon = item.icon;
@@ -94,31 +96,29 @@ export default function BasicEconomyPage() {
           <section id="intro" className="mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-semibold tracking-wide mb-6">
               <LuCoins className="w-3.5 h-3.5" />
-              VARSAYILAN SİSTEM
+              {t('economy.hero_badge')}
             </div>
             <h1 className="text-4xl font-bold mb-4 leading-tight">
-              Basit Ekonomi
+              {t('economy.title')}
             </h1>
             <p className="text-white/50 text-lg leading-relaxed mb-6">
-              Her Discord sunucusu DiscoWeb'e katıldığında otomatik olarak <strong className="text-white/80">Basit Ekonomi</strong> ile başlar.
-              Kullanıcılar mesaj atarak ve sesli kanallarda vakit geçirerek <strong className="text-white/80">Papel</strong> kazanır.
-              Kazanılan Papel mağazada harcanabilir, çekilişlere katılım için kullanılabilir ve sunucu içinde transfer edilebilir.
+              {t('economy.intro')}
             </p>
             <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/15 text-[13px] text-emerald-300/80">
-              <strong className="text-emerald-300">Kimler için uygundur?</strong> Yeni kurulan veya büyüyen sunucular, aktivite ekonomisini basit tutmak isteyen topluluklar.
+              {t('economy.suitable')}
             </div>
           </section>
 
           {/* Papel Kazanımı */}
           <section id="earning" className="mb-16">
-            <h2 className="text-2xl font-bold mb-2">Papel Kazanımı</h2>
-            <p className="text-white/40 text-sm mb-6">Papel yalnızca aktivite ile kazanılır. Bedava dağıtılmaz.</p>
+            <h2 className="text-2xl font-bold mb-2">{t('economy.earning_title')}</h2>
+            <p className="text-white/40 text-sm mb-6">{t('economy.earning_sub')}</p>
             <div className="grid sm:grid-cols-2 gap-4">
               {[
-                { icon: LuCoins, title: 'Mesaj Kazanımı', desc: 'Her mesajda belirli bir Papel kazanılır. Admin tarafından yapılandırılır.' },
-                { icon: LuCoins, title: 'Ses Kazanımı', desc: 'Sesli kanalda geçirilen her dakika için Papel kazanılır.' },
-                { icon: LuZap, title: 'Halving', desc: 'Sunucudaki toplam Papel arzı büyüdükçe kazanım oranı otomatik düşer. Ekonomiyi dengede tutar.' },
-                { icon: LuShield, title: 'Spam Koruması', desc: 'Art arda gelen mesajlar azalan oranda kazandırır. Beleş para yolu yok.' },
+                { icon: LuCoins, title: t('economy.earn_msg_t'), desc: t('economy.earn_msg_d') },
+                { icon: LuCoins, title: t('economy.earn_voice_t'), desc: t('economy.earn_voice_d') },
+                { icon: LuZap, title: t('economy.earn_halving_t'), desc: t('economy.earn_halving_d') },
+                { icon: LuShield, title: t('economy.earn_spam_t'), desc: t('economy.earn_spam_d') },
               ].map(item => (
                 <div key={item.title} className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <item.icon className="w-5 h-5 text-emerald-400 mb-3" />
@@ -131,15 +131,15 @@ export default function BasicEconomyPage() {
 
           {/* Mağaza */}
           <section id="store" className="mb-16">
-            <h2 className="text-2xl font-bold mb-2">Mağaza</h2>
-            <p className="text-white/40 text-sm mb-6">Kazanılan Papel sunucu mağazasında harcanabilir.</p>
+            <h2 className="text-2xl font-bold mb-2">{t('economy.store_title')}</h2>
+            <p className="text-white/40 text-sm mb-6">{t('economy.store_sub')}</p>
             <ul className="space-y-3 text-[14px] text-white/60">
               {[
-                'Admin, mağazaya Discord rolleri ekler (fiyat + süre ile).',
-                'Kullanıcı satın alırken Papel anında düşer.',
-                'Satın alınan rol süresi dolunca otomatik geri alınır.',
-                'Promosyon kodu desteği: belirli ürünlerde indirim.',
-                'Mağaza web panelinden ve Discord botundan yönetilir.',
+                t('economy.store_1'),
+                t('economy.store_2'),
+                t('economy.store_3'),
+                t('economy.store_4'),
+                t('economy.store_5'),
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <span className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
@@ -151,14 +151,14 @@ export default function BasicEconomyPage() {
 
           {/* Çekilişler */}
           <section id="raffles" className="mb-16">
-            <h2 className="text-2xl font-bold mb-2">Çekilişler</h2>
-            <p className="text-white/40 text-sm mb-6">Papel biriktirmenin ötesinde eğlenceli bir kullanım alanı.</p>
+            <h2 className="text-2xl font-bold mb-2">{t('economy.raffles_title')}</h2>
+            <p className="text-white/40 text-sm mb-6">{t('economy.raffles_sub')}</p>
             <ul className="space-y-3 text-[14px] text-white/60">
               {[
-                'Admin çekilişler oluşturur (Papel ödülü, rol veya özel ödül).',
-                'Kullanıcılar belirli bir eşiği geçen Papel ile katılabilir.',
-                'Rozet günü gereksinimi olan çekilişler de tanımlanabilir.',
-                'Kazananlar otomatik belirlenir ve rol/Papel otomatik dağıtılır.',
+                t('economy.raffles_1'),
+                t('economy.raffles_2'),
+                t('economy.raffles_3'),
+                t('economy.raffles_4'),
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <span className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
@@ -170,13 +170,13 @@ export default function BasicEconomyPage() {
 
           {/* Transfer */}
           <section id="transfer" className="mb-16">
-            <h2 className="text-2xl font-bold mb-2">Kullanıcıdan Kullanıcıya Transfer</h2>
-            <p className="text-white/40 text-sm mb-6">Papel sunucu içinde ve sunucular arası transfer edilebilir.</p>
+            <h2 className="text-2xl font-bold mb-2">{t('economy.transfer_title')}</h2>
+            <p className="text-white/40 text-sm mb-6">{t('economy.transfer_sub')}</p>
             <div className="space-y-3 text-[14px] text-white/60">
               {[
-                { label: 'Vergi', desc: 'Her transferden küçük bir vergi kesilir. Admin tarafından ayarlanır.' },
-                { label: 'Günlük Limit', desc: 'Spam transferi önlemek için günlük maksimum transfer miktarı belirlenir.' },
-                { label: 'Sunucular Arası', desc: 'Farklı sunuculara transfer edilebilir. Papel değer çarpanı otomatik uygulanır.' },
+                { label: t('economy.transfer_tax_t'), desc: t('economy.transfer_tax_d') },
+                { label: t('economy.transfer_limit_t'), desc: t('economy.transfer_limit_d') },
+                { label: t('economy.transfer_cross_t'), desc: t('economy.transfer_cross_d') },
               ].map(item => (
                 <div key={item.label} className="flex gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <span className="text-emerald-400 font-semibold text-sm flex-shrink-0">{item.label}</span>
@@ -188,15 +188,15 @@ export default function BasicEconomyPage() {
 
           {/* Admin Araçları */}
           <section id="admin" className="mb-16">
-            <h2 className="text-2xl font-bold mb-2">Admin Araçları</h2>
-            <p className="text-white/40 text-sm mb-6">Sunucu yöneticileri için temel kontrol araçları.</p>
+            <h2 className="text-2xl font-bold mb-2">{t('economy.admin_title')}</h2>
+            <p className="text-white/40 text-sm mb-6">{t('economy.admin_sub')}</p>
             <ul className="space-y-2 text-[14px] text-white/60">
               {[
-                'Kullanıcı bakiyesi görüntüleme ve düzenleme',
-                'Mağaza ürünü ekleme / kaldırma',
-                'Çekiliş oluşturma ve yönetme',
-                'Kazanım oranlarını yapılandırma',
-                'Duyuru ve bildirim gönderme',
+                t('economy.admin_1'),
+                t('economy.admin_2'),
+                t('economy.admin_3'),
+                t('economy.admin_4'),
+                t('economy.admin_5'),
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-2.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
@@ -208,15 +208,15 @@ export default function BasicEconomyPage() {
 
           {/* Kısıtlamalar */}
           <section id="limits" className="mb-16">
-            <h2 className="text-2xl font-bold mb-2">Kısıtlamalar</h2>
-            <p className="text-white/40 text-sm mb-6">Basit Ekonomi'de aşağıdaki özellikler <strong className="text-white/70">bulunmaz</strong>.</p>
+            <h2 className="text-2xl font-bold mb-2">{t('economy.limits_title')}</h2>
+            <p className="text-white/40 text-sm mb-6">{t('economy.limits_sub')}</p>
             <div className="space-y-2">
               {[
-                'Sunucu hazinesi ve yakma mekanizması',
-                'Yatırım borsası (IPO / lot alım-satım)',
-                'Referral / pasif gelir sistemi',
-                'Temettü dağıtımı',
-                'Developer piyasa müdahalesi',
+                t('economy.limits_1'),
+                t('economy.limits_2'),
+                t('economy.limits_3'),
+                t('economy.limits_4'),
+                t('economy.limits_5'),
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-[13px] text-white/40">
                   <span className="text-red-400/70 text-lg leading-none">×</span>

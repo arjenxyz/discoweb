@@ -8,6 +8,7 @@ import {
 import Image from 'next/image';
 import { useCart } from '../lib/cart';
 import { PromoRedeemPanel } from './PromoRedeemWidget';
+import { useTranslation } from '@/lib/i18nContext';
 
 type Coupon = {
   id: string | number;
@@ -23,6 +24,7 @@ type Coupon = {
 };
 
 export default function CartDrawer() {
+  const { t } = useTranslation();
   const { 
     items, subtotal, discountAmount, total, 
     updateQty, removeFromCart, clearCart,
@@ -86,7 +88,7 @@ export default function CartDrawer() {
     
     setTimeout(async () => {
       if (items.length === 0) {
-        setMessage({ text: 'Sepette ürün yok', type: 'error' });
+        setMessage({ text: t('cart.err_empty_cart'), type: 'error' });
         setApplying(false);
         return;
       }
@@ -104,11 +106,11 @@ export default function CartDrawer() {
         if (!resp.ok || data?.error) {
            // Hata yönetimi
            if (data?.error === 'MIN_SPEND_NOT_MET') {
-             setMessage({ text: `${data.remaining} Papel daha ekle`, type: 'error' });
+             setMessage({ text: t('cart.err_add_more', { amount: data.remaining }), type: 'error' });
            } else if (data?.error === 'ALREADY_USED') {
-             setMessage({ text: 'Bu kodu zaten kullandınız', type: 'error' });
+             setMessage({ text: t('cart.err_already_used'), type: 'error' });
            } else {
-             setMessage({ text: data?.error || 'Kod geçersiz', type: 'error' });
+             setMessage({ text: data?.error || t('cart.err_invalid_code'), type: 'error' });
            }
            // Eğer yerelde uygulandıysa geri al
            removeCoupon();
@@ -122,16 +124,16 @@ export default function CartDrawer() {
         const res = applyCoupon(couponCode, data.discount);
         
         if (res.ok) {
-            setMessage({ text: 'Kupon aktif!', type: 'success' });
+            setMessage({ text: t('cart.err_coupon_active'), type: 'success' });
             setCode('');
             setShowCouponInput(false);
         } else {
-            setMessage({ text: res.message || 'Hata', type: 'error' });
+            setMessage({ text: res.message || t('cart.err_generic'), type: 'error' });
         }
 
       } catch (err) {
         console.error(err);
-        setMessage({ text: 'Bağlantı hatası', type: 'error' });
+        setMessage({ text: t('cart.err_connection'), type: 'error' });
       }
 
       setApplying(false);
@@ -167,13 +169,13 @@ export default function CartDrawer() {
         
         // Backend tarafındaki limit kontrolü (Güvenlik için çift kontrol)
         if (data.error === 'MIN_SPEND_NOT_MET') {
-            setMessage({ text: `Sepet limiti için ${data.remaining} Papel daha gerekli`, type: 'error' });
+            setMessage({ text: t('cart.err_cart_limit', { amount: data.remaining }), type: 'error' });
             setCheckoutErrorType('other');
         } else if (data.error === 'insufficient_balance') {
-            setMessage({ text: `Yetersiz bakiye! (Eksik: ${data.required - data.available})`, type: 'error' });
+            setMessage({ text: t('cart.err_balance_short', { amount: data.required - data.available }), type: 'error' });
             setCheckoutErrorType('insufficient_balance');
         } else {
-            setMessage({ text: data.error || 'Ödeme başarısız', type: 'error' });
+            setMessage({ text: data.error || t('cart.err_payment_failed'), type: 'error' });
             setCheckoutErrorType('other');
         }
         setCheckoutError(true);
@@ -205,7 +207,7 @@ export default function CartDrawer() {
 
     } catch (e) {
       console.error(e);
-      setMessage({ text: 'Hata oluştu', type: 'error' });
+      setMessage({ text: t('cart.err_occurred'), type: 'error' });
       setCheckoutError(true);
       setCheckoutErrorType('other');
       setCheckoutLoading(false);
@@ -243,9 +245,9 @@ export default function CartDrawer() {
         {/* --- HEADER --- */}
         <div className="relative z-10 flex items-center justify-between px-5 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <span className="text-white font-bold text-lg">Sepetim</span>
+            <span className="text-white font-bold text-lg">{t('cart.title')}</span>
             <span className="bg-white/10 text-white/60 text-[10px] px-2 py-0.5 rounded-full font-medium">
-              {items.length} Ürün
+              {t('cart.item_count', { count: items.length })}
             </span>
           </div>
           <button onClick={closeCart} className="text-white/50 hover:text-white transition-colors">
@@ -260,9 +262,9 @@ export default function CartDrawer() {
               <div className="relative w-32 h-32 opacity-60 grayscale hover:grayscale-0 transition-all">
                 <Image src="/gif/cat.gif" alt="empty" fill className="object-contain" unoptimized />
               </div>
-              <p className="text-white/40 text-sm">Sepetin şimdilik boş duruyor.</p>
+              <p className="text-white/40 text-sm">{t('cart.empty')}</p>
               <button onClick={closeCart} className="text-[#5865F2] text-sm font-bold hover:underline">
-                Alışverişe Dön
+                {t('cart.continue_shopping')}
               </button>
             </div>
           ) : (
@@ -281,7 +283,7 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-white text-sm truncate">{it.title}</div>
-                    <div className="text-xs text-white/40 mt-0.5">{it.price} Papel</div>
+                    <div className="text-xs text-white/40 mt-0.5">{t('cart.price_papel', { price: it.price })}</div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center bg-black/40 rounded-lg border border-white/5 h-8">
@@ -321,7 +323,7 @@ export default function CartDrawer() {
                   />
                   {isBelowLimit && (
                     <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap flex items-center gap-1 animate-pulse backdrop-blur-md">
-                       <LuLock className="w-3 h-3" /> Kupon için {remainingAmount.toFixed(0)} Papel daha gerekli
+                       <LuLock className="w-3 h-3" /> {t('cart.need_more_for_coupon', { amount: remainingAmount.toFixed(0) })}
                     </div>
                   )}
                </div>
@@ -338,7 +340,7 @@ export default function CartDrawer() {
                         onClick={() => setShowCouponInput(!showCouponInput)}
                         className="flex items-center gap-2 text-xs font-bold text-[#5865F2] hover:text-white transition-colors select-none"
                       >
-                        <LuTicket /> İndirim Kodu Kullan {showCouponInput ? <LuChevronUp /> : <LuChevronDown />}
+                        <LuTicket /> {t('cart.use_discount')} {showCouponInput ? <LuChevronUp /> : <LuChevronDown />}
                       </button>
 
                       <div className="flex-1" />
@@ -346,8 +348,8 @@ export default function CartDrawer() {
                       <button
                         onClick={() => setShowCouponList(prev => !prev)}
                         className="text-white/50 hover:text-white p-2 rounded-md transition-colors"
-                        aria-label={showCouponList ? 'Kuponları kapat' : 'Kuponları aç'}
-                        title={showCouponList ? 'Kuponları kapat' : 'Kuponları aç'}
+                        aria-label={showCouponList ? t('cart.hide_coupons') : t('cart.show_coupons')}
+                        title={showCouponList ? t('cart.hide_coupons') : t('cart.show_coupons')}
                       >
                         {showCouponList ? <LuEye className="w-4 h-4" /> : <LuEyeOff className="w-4 h-4" />}
                       </button>
@@ -359,7 +361,7 @@ export default function CartDrawer() {
                           <input 
                             value={code} 
                             onChange={(e) => setCode(e.target.value)} 
-                            placeholder="Kodu giriniz" 
+                            placeholder={t('cart.code_placeholder')} 
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:border-[#5865F2] outline-none" 
                           />
                           <button 
@@ -367,7 +369,7 @@ export default function CartDrawer() {
                             disabled={applying || !code}
                             className="px-3 bg-white/10 hover:bg-[#5865F2] text-white rounded-lg text-xs font-bold transition-all disabled:opacity-50"
                           >
-                            Ekle
+                            {t('cart.add')}
                           </button>
                         </div>
                       </div>
@@ -381,12 +383,12 @@ export default function CartDrawer() {
                       <div>
                         <p className="text-xs font-bold text-emerald-400">{appliedCoupon.code}</p>
                         <div className="text-[9px] text-white/40 space-y-0.5">
-                          {currentMinSpend > 0 && <p>Min. {currentMinSpend} Papel</p>}
-                            <p>Kullanım: {(appliedCoupon as any).userUsageCount ?? (appliedCoupon as any).used_count ?? 0} / {(appliedCoupon as any).perUserLimit ?? (appliedCoupon as any).max_uses ?? '∞'}</p>
+                          {currentMinSpend > 0 && <p>{t('cart.min_spend', { amount: currentMinSpend })}</p>}
+                            <p>{t('cart.usage', { used: (appliedCoupon as any).userUsageCount ?? (appliedCoupon as any).used_count ?? 0, limit: (appliedCoupon as any).perUserLimit ?? (appliedCoupon as any).max_uses ?? '∞' })}</p>
                         </div>
                       </div>
                     </div>
-                    <button onClick={handleRemoveCoupon} className="text-[10px] text-white/50 hover:text-white underline">Kaldır</button>
+                    <button onClick={handleRemoveCoupon} className="text-[10px] text-white/50 hover:text-white underline">{t('cart.remove')}</button>
                   </div>
                 )}
 
@@ -400,14 +402,14 @@ export default function CartDrawer() {
                         <div className="mt-3 p-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-lg">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-xs font-bold text-indigo-300">Hoşgeldin İndirimi</p>
+                              <p className="text-xs font-bold text-indigo-300">{t('cart.welcome_discount')}</p>
                               <p className="text-[10px] text-white/60">
-                                {welcomeCoupon.percent}% indirim
-                                {wLimit > 1 && <span className="ml-1.5 text-white/40">• {wUsage}/{wLimit} kullanıldı</span>}
+                                {t('cart.percent_off', { percent: welcomeCoupon.percent })}
+                                {wLimit > 1 && <span className="ml-1.5 text-white/40">• {t('cart.used_count', { used: wUsage, limit: wLimit })}</span>}
                               </p>
                             </div>
                             <button onClick={() => handleApply((welcomeCoupon as Coupon).code)} disabled={applying} className="px-3 py-1 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold rounded-lg transition-colors">
-                              Kullan
+                              {t('cart.use')}
                             </button>
                           </div>
                         </div>
@@ -426,12 +428,12 @@ export default function CartDrawer() {
                                 <div>
                                   <p className="text-xs font-bold text-emerald-300">{coupon.code}</p>
                                   <p className="text-[10px] text-white/60">
-                                    {coupon.percent}% indirim
-                                    {perUserLimit > 1 && <span className="ml-1.5 text-white/40">• {userUsageCount}/{perUserLimit} kullanıldı</span>}
+                                    {t('cart.percent_off', { percent: coupon.percent })}
+                                    {perUserLimit > 1 && <span className="ml-1.5 text-white/40">• {t('cart.used_count', { used: userUsageCount, limit: perUserLimit })}</span>}
                                   </p>
                                 </div>
                                 <button onClick={() => handleApply(coupon.code)} disabled={applying} className="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold rounded-lg transition-colors">
-                                  Kullan
+                                  {t('cart.use')}
                                 </button>
                               </div>
                             </div>
@@ -446,12 +448,12 @@ export default function CartDrawer() {
               {/* FİYAT & BUTON */}
               <div className="flex items-end justify-between gap-4">
                  <div>
-                    <p className="text-xs text-white/50 mb-0.5">Toplam Tutar</p>
+                    <p className="text-xs text-white/50 mb-0.5">{t('cart.total_label')}</p>
                     <div className="flex items-baseline gap-2">
                        <span className="text-2xl font-bold text-white">{total.toFixed(2)}</span>
-                       <span className="text-sm font-medium text-white/50">Papel</span>
+                       <span className="text-sm font-medium text-white/50">{t('cart.papel')}</span>
                     </div>
-                    {discountAmount > 0 && <p className="text-[10px] text-emerald-400">-{discountAmount} Papel İndirim</p>}
+                    {discountAmount > 0 && <p className="text-[10px] text-emerald-400">{t('cart.discount_amount', { amount: discountAmount })}</p>}
                  </div>
 
                  {/* ÖDEME BUTONU */}
@@ -468,7 +470,7 @@ export default function CartDrawer() {
                                     : 'bg-gradient-to-r from-[#5865F2] to-indigo-600 hover:brightness-110 shadow-[#5865F2]/25'
                     }`}
                 >
-                    {checkoutLoading ? 'İşleniyor...' : checkoutSuccess ? 'Başarılı' : checkoutError ? (checkoutErrorType === 'insufficient_balance' ? 'Yetersiz Bakiye' : 'İşlem Tamamlanamadı') : isBelowLimit ? 'Limit Yetersiz' : 'Ödemeyi Tamamla'}
+                    {checkoutLoading ? t('cart.processing') : checkoutSuccess ? t('cart.success') : checkoutError ? (checkoutErrorType === 'insufficient_balance' ? t('cart.insufficient_balance') : t('cart.checkout_failed')) : isBelowLimit ? t('cart.limit_short') : t('cart.checkout')}
                 </button>
               </div>
 

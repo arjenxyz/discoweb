@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, useCallback, type ChangeEvent } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
 import Image from 'next/image';
 import { getSupabaseClient } from '../../lib/supabaseClient';
 import { useChat } from '../../lib/utils/useChat';
@@ -95,6 +96,7 @@ type TypingUser = {
 // ============================================================================
 
 export default function ChatInterface() {
+  const { t, language } = useTranslation();
   const supabase = useMemo(() => getSupabaseClient(), []);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const client = supabase as any;
@@ -229,7 +231,7 @@ export default function ChatInterface() {
                     console.debug('server upsert result', json);
                     if (!resp.ok) {
                       console.error('Server upsert responded with status', resp.status, json);
-                      setError('Kullanıcı veritabanına kaydedilemedi');
+                      setError(t('chat.err_user_save'));
                       setNeedsChatAcceptance(true);
                     }
                   }
@@ -377,7 +379,7 @@ export default function ChatInterface() {
         }
       } catch (err) {
         console.error('Failed to load rooms:', err);
-        setError('Odalar yüklenemedi');
+        setError(t('chat.err_rooms'));
       }
     };
 
@@ -551,11 +553,11 @@ export default function ChatInterface() {
     // Permission check for persistent rooms
     if (room?.is_persistent) {
       if (room.name === 'Admin Help' && !isAdmin && !isDeveloper) {
-        setError('Bu kanala erişiminiz yok.');
+        setError(t('chat.err_no_access'));
         return;
       }
       if (room.name === 'Developer Help' && !isDeveloper) {
-        setError('Bu kanala erişiminiz yok.');
+        setError(t('chat.err_no_access'));
         return;
       }
     }
@@ -585,7 +587,7 @@ export default function ChatInterface() {
       scrollToBottom(true);
     } catch (err) {
       console.error('Failed to send message:', err);
-      setError('Mesaj gönderilemedi');
+      setError(t('chat.err_send'));
     }
   };
 
@@ -604,12 +606,12 @@ export default function ChatInterface() {
       setInput('');
     } catch (err) {
       console.error('Failed to edit message:', err);
-      setError('Mesaj düzenlenemedi');
+      setError(t('chat.err_edit'));
     }
   };
 
   const deleteMessage = async (messageId: string) => {
-    if (!confirm('Bu mesajı silmek istediğinizden emin misiniz?')) return;
+    if (!confirm(t('chat.confirm_delete'))) return;
     
     try {
       await client
@@ -621,7 +623,7 @@ export default function ChatInterface() {
         .eq('id', messageId);
     } catch (err) {
       console.error('Failed to delete message:', err);
-      setError('Mesaj silinemedi');
+      setError(t('chat.err_delete'));
     }
   };
 
@@ -799,7 +801,7 @@ export default function ChatInterface() {
       }
     } catch (err) {
       console.error('Failed to create DM:', err);
-      setError('Özel mesaj oluşturulamadı');
+      setError(t('chat.err_dm'));
     }
   };
 
@@ -822,13 +824,13 @@ export default function ChatInterface() {
 
   const getRoomName = (room: Room) => {
     if (room.name) return room.name;
-    if (room.room_type === 'dm') return 'Özel Mesaj';
-    return 'Sohbet';
+    if (room.room_type === 'dm') return t('chat.dm');
+    return t('chat.chat_fallback');
   };
 
   const formatTime = (date: string) => {
     const d = new Date(date);
-    return d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' });
   };
 
   const formatDate = (date: string) => {
@@ -838,11 +840,11 @@ export default function ChatInterface() {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (d.toDateString() === today.toDateString()) {
-      return 'Bugün';
+      return t('chat.today');
     } else if (d.toDateString() === yesterday.toDateString()) {
-      return 'Dün';
+      return t('chat.yesterday');
     } else {
-      return d.toLocaleDateString('tr-TR', { 
+      return d.toLocaleDateString(language, { 
         day: 'numeric', 
         month: 'long',
         year: d.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
@@ -884,10 +886,10 @@ export default function ChatInterface() {
 
   const getStatusText = (status: UserStatus) => {
     switch (status) {
-      case 'online': return 'Çevrimiçi';
-      case 'away': return 'Uzakta';
-      case 'dnd': return 'Rahatsız Etmeyin';
-      default: return 'Çevrimdışı';
+      case 'online': return t('chat.status_online');
+      case 'away': return t('chat.status_away');
+      case 'dnd': return t('chat.status_dnd');
+      default: return t('chat.status_offline');
     }
   };
 
@@ -900,11 +902,11 @@ export default function ChatInterface() {
       <div className="flex items-center justify-center h-full bg-[#0a0b0e]">
         <div className="text-center p-8">
           <h2 className="text-2xl font-bold text-white mb-4">
-            Sohbete Hoş Geldiniz
+            {t('chat.welcome_title')}
           </h2>
-          <p className="text-white/60 mb-6">Devam etmek için Discord ile giriş yapın</p>
+          <p className="text-white/60 mb-6">{t('chat.welcome_body')}</p>
           <button className="px-6 py-3 bg-[#5865f2] hover:bg-[#4752c4] text-white rounded-lg transition-colors">
-            Discord ile Giriş Yap
+            {t('chat.login_discord')}
           </button>
         </div>
       </div>
@@ -915,27 +917,27 @@ export default function ChatInterface() {
     return (
       <div className="flex items-center justify-center h-full bg-[#0a0b0e] text-white p-6">
         <div className="max-w-2xl w-full bg-[#13141a] border border-white/5 rounded-lg p-6">
-          <h2 className="text-lg font-semibold mb-4">Sohbet Kuralları</h2>
+          <h2 className="text-lg font-semibold mb-4">{t('chat.rules_title')}</h2>
           <div className="text-sm text-white/70 mb-4">
             <ul className="list-disc list-inside space-y-2">
-              <li>Saygılı olun.</li>
-              <li>Reklam veya saldırgan içerik yasaktır.</li>
-              <li>Kişisel verileri paylaşmayın.</li>
+              <li>{t('chat.rule_1')}</li>
+              <li>{t('chat.rule_2')}</li>
+              <li>{t('chat.rule_3')}</li>
             </ul>
-            <p className="mt-3 text-xs text-white/50">Bu kuralları onayladığınızda sohbet kullanım hakkı, bir sonraki geliştirici kural değişikliğine kadar geçerli olacaktır.</p>
+            <p className="mt-3 text-xs text-white/50">{t('chat.rules_note')}</p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={acceptChatRules}
               className="px-4 py-2 bg-[#5865f2] hover:bg-[#4752c4] rounded-lg"
             >
-              Onaylıyorum
+              {t('chat.accept')}
             </button>
             <button
-              onClick={() => { setError('Sohbet kurallarını kabul etmeniz gerekiyor'); }}
+              onClick={() => { setError(t('chat.must_accept')); }}
               className="px-4 py-2 bg-transparent border border-white/10 rounded-lg"
             >
-              Vazgeç
+              {t('chat.decline')}
             </button>
           </div>
         </div>
@@ -980,7 +982,7 @@ export default function ChatInterface() {
                   searchMessages(searchQuery);
                 }
               }}
-              placeholder="Sohbet ara veya başlat..."
+              placeholder={t('chat.search_placeholder')}
               className="w-full pl-10 pr-4 py-2.5 bg-[#0a0b0e] border border-white/10 rounded-lg text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-[#5865f2] transition-colors"
             />
             {isSearching && (
@@ -1046,7 +1048,7 @@ export default function ChatInterface() {
                         <p className={`text-xs truncate ${
                           hasUnread ? 'text-white/70 font-medium' : 'text-white/40'
                         }`}>
-                          {room.last_message_preview || 'Henüz mesaj yok'}
+                          {room.last_message_preview || t('chat.no_messages_yet')}
                         </p>
                         {hasUnread && (
                           <span className="flex-shrink-0 ml-2 px-2 py-0.5 bg-[#5865f2] text-white text-xs font-bold rounded-full min-w-[20px] text-center">
@@ -1062,7 +1064,7 @@ export default function ChatInterface() {
 
             {filteredRooms.length === 0 && (
               <div className="text-center py-8 text-white/40 text-sm">
-                {searchQuery ? 'Sohbet bulunamadı' : 'Henüz sohbet yok'}
+                {searchQuery ? t('chat.no_chat_found') : t('chat.no_chats')}
               </div>
             )}
           </div>
@@ -1111,12 +1113,12 @@ export default function ChatInterface() {
             </div>
             <div>
               <h2 className="text-sm font-semibold">
-                {currentRoom ? getRoomName(currentRoom) : 'Sohbet'}
+                {currentRoom ? getRoomName(currentRoom) : t('chat.chat_fallback')}
               </h2>
               {typingUsers.length > 0 && (
                 <p className="text-xs text-[#5865f2] font-medium">
-                  {typingUsers[0].username} yazıyor
-                  {typingUsers.length > 1 && ` ve ${typingUsers.length - 1} kişi daha`}
+                  {t('chat.typing', { name: typingUsers[0].username })}
+                  {typingUsers.length > 1 && t('chat.typing_more', { count: typingUsers.length - 1 })}
                   <span className="animate-pulse">...</span>
                 </p>
               )}
@@ -1126,20 +1128,20 @@ export default function ChatInterface() {
           <div className="flex items-center gap-2">
             <button 
               className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-              title="Sabitle"
+              title={t('chat.pin')}
             >
               <Pin className="w-5 h-5 text-white/60" />
             </button>
             <button 
               className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-              title="Ara"
+              title={t('chat.search')}
               onClick={() => searchMessages(searchQuery)}
             >
               <Search className="w-5 h-5 text-white/60" />
             </button>
             <button 
               className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-              title="Daha fazla"
+              title={t('chat.more')}
             >
               <MoreVertical className="w-5 h-5 text-white/60" />
             </button>
@@ -1160,8 +1162,8 @@ export default function ChatInterface() {
             <div className="flex items-center justify-center h-full text-white/40 text-center">
               <div>
                 <MessageCircle className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                <p className="text-lg font-medium mb-2">Henüz mesaj yok</p>
-                <p className="text-sm">İlk mesajı göndererek sohbeti başlatın</p>
+                <p className="text-lg font-medium mb-2">{t('chat.empty_title')}</p>
+                <p className="text-sm">{t('chat.empty_body')}</p>
               </div>
             </div>
           ) : (
@@ -1178,7 +1180,7 @@ export default function ChatInterface() {
                 if (message.is_deleted) {
                   return (
                     <div key={message.id} className="py-1 px-3 text-white/30 text-sm italic">
-                      Bu mesaj silindi
+                      {t('chat.deleted_message')}
                     </div>
                   );
                 }
@@ -1239,7 +1241,7 @@ export default function ChatInterface() {
                             </span>
                             {message.is_edited && (
                               <span className="text-[10px] text-white/30 italic">
-                                (düzenlendi)
+                                {t('chat.edited')}
                               </span>
                             )}
                           </div>
@@ -1250,7 +1252,7 @@ export default function ChatInterface() {
                           <div className="mb-2 pl-3 border-l-2 border-white/20 py-1">
                             <div className="text-xs text-white/40 flex items-center gap-1">
                               <Reply className="w-3 h-3" />
-                              <span>Yanıtlanan mesaj</span>
+                              <span>{t('chat.replied_message')}</span>
                             </div>
                           </div>
                         )}
@@ -1319,14 +1321,14 @@ export default function ChatInterface() {
                           <button
                             onClick={() => setShowEmojiPicker(message.id)}
                             className="p-1.5 hover:bg-white/10 rounded transition-colors"
-                            title="Tepki ekle"
+                            title={t('chat.react')}
                           >
                             <Smile className="w-4 h-4 text-white/60" />
                           </button>
                           <button
                             onClick={() => setReplyTo(message)}
                             className="p-1.5 hover:bg-white/10 rounded transition-colors"
-                            title="Yanıtla"
+                            title={t('chat.reply')}
                           >
                             <Reply className="w-4 h-4 text-white/60" />
                           </button>
@@ -1338,14 +1340,14 @@ export default function ChatInterface() {
                                   setInput(message.content);
                                 }}
                                 className="p-1.5 hover:bg-white/10 rounded transition-colors"
-                                title="Düzenle"
+                                title={t('chat.edit')}
                               >
                                 <Edit2 className="w-4 h-4 text-white/60" />
                               </button>
                               <button
                                 onClick={() => deleteMessage(message.id)}
                                 className="p-1.5 hover:bg-red-500/10 rounded transition-colors"
-                                title="Sil"
+                                title={t('chat.delete')}
                               >
                                 <Trash2 className="w-4 h-4 text-red-400" />
                               </button>
@@ -1399,14 +1401,14 @@ export default function ChatInterface() {
                     <>
                       <Reply className="w-4 h-4 text-[#5865f2]" />
                       <span className="text-sm text-white/60">
-                        {users[replyTo.sender_id]?.username || 'Birine'} yanıt veriliyor
+                        {t('chat.replying_to', { name: users[replyTo.sender_id]?.username || t('chat.someone') })}
                       </span>
                     </>
                   ) : (
                     <>
                       <Edit2 className="w-4 h-4 text-[#5865f2]" />
                       <span className="text-sm text-white/60">
-                        Mesaj düzenleniyor
+                        {t('chat.editing')}
                       </span>
                     </>
                   )}
@@ -1471,7 +1473,7 @@ export default function ChatInterface() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="p-2.5 hover:bg-white/5 rounded-lg transition-colors flex-shrink-0"
-                title="Dosya ekle"
+                title={t('chat.attach')}
               >
                 <Paperclip className="w-5 h-5 text-white/60" />
               </button>
@@ -1498,24 +1500,24 @@ export default function ChatInterface() {
                   }}
                   placeholder={
                     editingMessage 
-                      ? 'Mesajı düzenle...' 
+                      ? t('chat.placeholder_edit') 
                       : replyTo 
-                      ? 'Yanıt yaz...'
-                      : 'Mesaj yazın...'
+                      ? t('chat.placeholder_reply')
+                      : t('chat.placeholder')
                   }
                   disabled={!isLoggedIn}
                   className="w-full px-4 py-3 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
                 />
                 {!isLoggedIn && (
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-sm">
-                    Giriş yapmadan mesaj gönderemezsiniz
+                    {t('chat.login_required_overlay')}
                   </div>
                 )}
               </div>
 
               <button
                 className="p-2.5 hover:bg-white/5 rounded-lg transition-colors flex-shrink-0"
-                title="Emoji ekle"
+                title={t('chat.add_emoji')}
               >
                 <Smile className="w-5 h-5 text-white/60" />
               </button>
@@ -1530,7 +1532,7 @@ export default function ChatInterface() {
                 }}
                 disabled={!input.trim() && uploadingFiles.length === 0}
                 className="p-2.5 bg-[#5865f2] hover:bg-[#4752c4] disabled:bg-white/10 disabled:cursor-not-allowed rounded-lg transition-colors flex-shrink-0"
-                title={editingMessage ? 'Kaydet' : 'Gönder'}
+                title={editingMessage ? t('chat.save') : t('chat.send')}
               >
                 {editingMessage ? (
                   <Check className="w-5 h-5" />
@@ -1544,15 +1546,15 @@ export default function ChatInterface() {
             <div className="mt-2 text-xs text-white/40 flex items-center gap-4">
               {typingUsers.length > 0 && (
                 <span>
-                  {typingUsers[0].username} yazıyor
-                  {typingUsers.length > 1 && ` ve ${typingUsers.length - 1} kişi daha`}
+                  {t('chat.typing', { name: typingUsers[0].username })}
+                  {typingUsers.length > 1 && t('chat.typing_more', { count: typingUsers.length - 1 })}
                   <span className="animate-pulse">...</span>
                 </span>
               )}
               {currentRoom && (
                 <span>
-                  {currentRoom.room_type === 'dm' && '🔒 Şifreli sohbet'}
-                  {currentRoom.room_type === 'help' && '💬 Yardım odası'}
+                  {currentRoom.room_type === 'dm' && t('chat.encrypted_dm')}
+                  {currentRoom.room_type === 'help' && t('chat.help_room')}
                 </span>
               )}
             </div>

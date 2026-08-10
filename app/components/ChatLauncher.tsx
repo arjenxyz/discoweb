@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LuMessageCircle } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 
 export default function ChatLauncher() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
@@ -21,7 +23,7 @@ export default function ChatLauncher() {
 
   return (
       <button
-        aria-label="Open chat"
+        aria-label={t('chat.launcher_aria')}
         onClick={onClick}
         className="fixed z-50 bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:scale-105 transition-transform"
       >

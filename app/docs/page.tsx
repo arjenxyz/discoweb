@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from '@/lib/i18nContext';
 import Link from "next/link";
 import {
   LuBookOpen,
@@ -16,10 +17,11 @@ import {
 } from "react-icons/lu";
 
 export default function DocsPage() {
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState("overview");
 
   useEffect(() => {
-    document.title = "Belgeler - DiscoWeb";
+    document.title = t('docs.page_title');
 
     const handleScroll = () => {
       const sections = document.querySelectorAll("section[id]");
@@ -39,13 +41,13 @@ export default function DocsPage() {
 
   // Yeni nav öğesi eklendi
   const NAV_ITEMS = [
-    { id: "overview", label: "Genel Bakış", icon: LuBookOpen },
-    { id: "copyright-notice", label: "Telif Hakkı Bildirimi", icon: LuInfo }, // YENİ
-    { id: "policy-links", label: "Terimler & Gizlilik", icon: LuShield },
-    { id: "economy", label: "Ekonomi Rehberi", icon: LuCoins },
-    { id: "paths", label: "Geçiş Yolları", icon: LuArrowLeft },
-    { id: "faq", label: "SSS", icon: LuListChecks },
-    { id: "error-codes", label: "Hata Kodları", icon: LuTriangleAlert },
+    { id: "overview", label: t('docs.nav_overview'), icon: LuBookOpen },
+    { id: "copyright-notice", label: t('docs.nav_copyright'), icon: LuInfo },
+    { id: "policy-links", label: t('docs.nav_policy'), icon: LuShield },
+    { id: "economy", label: t('docs.nav_economy'), icon: LuCoins },
+    { id: "paths", label: t('docs.nav_paths'), icon: LuArrowLeft },
+    { id: "faq", label: t('docs.nav_faq'), icon: LuListChecks },
+    { id: "error-codes", label: t('docs.nav_errors'), icon: LuTriangleAlert },
   ];
 
   return (
@@ -57,7 +59,7 @@ export default function DocsPage() {
             <img src="/gif/cat.gif" alt="DiscoWeb" className="w-8 h-8 rounded-lg" />
             <span className="font-bold text-base text-white">DiscoWeb</span>
             <span className="text-[11px] text-white/30 font-medium tracking-wide hidden sm:inline">
-              DOKÜMANTASYON
+              {t('docs.badge')}
             </span>
           </div>
           <button
@@ -65,7 +67,7 @@ export default function DocsPage() {
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white/70 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg transition-colors"
           >
             <LuArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Geri Dön</span>
+            <span className="hidden sm:inline">{t('docs.back')}</span>
           </button>
         </div>
       </header>
@@ -75,7 +77,7 @@ export default function DocsPage() {
         <aside className="hidden lg:block w-72 min-h-screen fixed top-[60px] left-0 lg:left-auto z-40 border-r border-white/[0.04]">
           <nav className="p-6 pt-8">
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4 px-3">
-              İçindekiler
+              {t('docs.toc')}
             </p>
             <ul className="space-y-0.5">
               {NAV_ITEMS.map((item) => {
@@ -107,55 +109,45 @@ export default function DocsPage() {
           <article className="max-w-3xl mx-auto">
             <header className="mb-10">
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                DiscoWeb Dokümantasyon Merkezi
+                {t('docs.hero_title')}
               </h1>
               <p className="text-white/50 text-sm sm:text-base leading-relaxed">
-                DiscoWeb dokümantasyon merkezi, platformumuzun amaçları, teknik mimarisi ve kullanıcı
-                taahhütlerine yönelik kapsamlı bir rehber sunar. Misyonumuz, Discord sunucularına
-                ölçeklenebilir ekonomi yönetimi, şeffaf yönetim süreçleri ve yasal uyumluluk sağlayarak
-                sürdürülebilir dijital ekosistemler inşa etmektir.
+                {t('docs.hero_p1')}
                 <br />
                 <br />
-                Bu belge; <strong className="text-white/70">Hizmet Koşulları</strong>, <strong className="text-white/70">Gizlilik Politikası</strong> ve <strong className="text-white/70">Basit Ekonomi</strong> modülünün işleyişi ve kriterlerini içerir.
-                Sol menü aracılığıyla ilgili başlıklara hızlıca erişebilir ve şirket standardına uygun kontrollü bir inceleme gerçekleştirebilirsiniz.
+                {t('docs.hero_p2_before')}<strong className="text-white/70">{t('docs.hero_terms')}</strong>{t('docs.hero_p2_mid')}<strong className="text-white/70">{t('docs.hero_privacy')}</strong>{t('docs.hero_p2_and')}<strong className="text-white/70">{t('docs.hero_economy')}</strong>{t('docs.hero_p2_after')}
               </p>
             </header>
 
             <section id="overview" className="scroll-mt-24 mb-14">
-              <SectionTitle>Genel Bakış</SectionTitle>
+              <SectionTitle>{t('docs.overview_title')}</SectionTitle>
               <p className="text-[14px] text-white/60 leading-relaxed mb-4">
-                DiscoWeb, sunucu yönetiminden ekonomi sistemlerine, kurumsal politikaların
-                uygulanmasından kullanıcı haklarının korunmasına kadar geniş bir yelpazede hizmet
-                sunmaktadır. Bu dokümantasyon, platformumuzu kullanırken karşılaşabileceğiniz tüm
-                yasal ve teknik sınırları, ekonomi mekanizmalarının işleyişini ve sıkça sorulan
-                soruların yanıtlarını içermektedir. Aşağıda yer alan bağlantılar ve açıklamalar
-                sayesinde, hem yeni başlayanlar hem de deneyimli kullanıcılar için rehber niteliğinde
-                bir kaynak sunmayı amaçlıyoruz.
+                {t('docs.overview_body')}
               </p>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <DocsCard
-                  title="Hizmet Koşulları"
+                  title={t('docs.card_terms_t')}
                   href="/terms"
-                  description="Kullanıcıların uyması gereken kurallar, sunucu işletimi sorumlulukları, yasaklı eylemler ve hesap iptali süreçleri hakkında kapsamlı bilgi."
+                  description={t('docs.card_terms_d')}
                   icon={<LuListChecks className="w-4 h-4" />}
                 />
                 <DocsCard
-                  title="Gizlilik Politikası"
+                  title={t('docs.card_privacy_t')}
                   href="/privacy"
-                  description="Toplanan kullanıcı verileri, saklama süreleri, üçüncü taraflarla paylaşım ilkeleri ve kişisel verilerinizi koruma haklarınız."
+                  description={t('docs.card_privacy_d')}
                   icon={<LuShield className="w-4 h-4" />}
                 />
                 <DocsCard
-                  title="Basit Ekonomi"
+                  title={t('docs.card_economy_t')}
                   href="/economy/basic"
-                  description="Yeni sunucular için ön tanımlı olarak gelen, günlük aktivite ve mağaza katına dayalı temel ekonomi modeli. Transfer, çekiliş ve günlük bonusları kapsar."
+                  description={t('docs.card_economy_d')}
                   icon={<LuCoins className="w-4 h-4" />}
                 />
                 <DocsCard
-                  title="Hata Kodları"
+                  title={t('docs.card_errors_t')}
                   href="/docs/errors"
-                  description="Activity kullanırken aldığın DW-XXXX hata kodlarının açıklamaları, olası nedenleri ve çözüm adımları."
+                  description={t('docs.card_errors_d')}
                   icon={<LuTriangleAlert className="w-4 h-4" />}
                 />
               </div>
@@ -163,125 +155,106 @@ export default function DocsPage() {
 
             {/* YENİ BÖLÜM: Telif Hakkı Bildirimi */}
             <section id="copyright-notice" className="scroll-mt-24 mb-14">
-              <SectionTitle>Telif Hakkı Bildirimi</SectionTitle>
+              <SectionTitle>{t('docs.copyright_title')}</SectionTitle>
               <div className="p-5 rounded-xl border border-white/[0.08] bg-white/[0.02] space-y-3">
                 <p className="text-[14px] text-white/70 leading-relaxed">
-                  Bu proje, <strong className="text-indigo-300">DiscoWeb</strong>, tamamen kişisel gelişim ve açık kaynak kodlu öğrenme süreçlerini desteklemek amacıyla oluşturulmuştur. Proje kapsamında kullanılan görseller, karakter tasarımları, animasyonlar ve diğer medya öğelerinin bir kısmı, çeşitli anime yapımlarına ait telifli materyaller içerebilmektedir.
+                  {t('docs.copyright_intro')}
                 </p>
                 <ul className="list-disc list-inside text-[14px] text-white/60 space-y-2 pl-2">
-                  <li><strong className="text-white/80">Ticari Amaç Yoktur:</strong> Bu proje, herhangi bir ticari faaliyet, reklam geliri veya doğrudan maddi kazanç elde etmek için tasarlanmamıştır. Tamamen hayranlık duyulan eserleri tanıtma, toplulukla paylaşma ve teknik becerileri geliştirme amacı taşır.</li>
-                  <li><strong className="text-white/80">Fan Eseri Niteliği:</strong> Telifli anime içerikleri, yalnızca sanatsal beğeniyi paylaşmak ve “sen de izle” teşvikinde bulunmak için, bir fan eseri kapsamında kullanılmaktadır. Hiçbir şekilde orijinal eser sahiplerinin haklarına zarar verme, onların itibarını zedeleyecek veya eserleri taklit edecek bir kullanım söz konusu değildir.</li>
-                  <li><strong className="text-white/80">Yasal Uyum ve İçerik Kaldırma:</strong> Eğer bir içerik sahibi, hak sahibi veya temsilcisi, kullanılan herhangi bir materyalin hak ihlali oluşturduğunu düşünüyorsa, derhal iletişime geçildiğinde söz konusu içerik en kısa sürede projeden kaldırılacaktır. İletişim için <a href="mailto:destek@discoweb.com" className="text-indigo-300 hover:underline">destek@discoweb.com</a> adresini kullanabilirsiniz.</li>
-                  <li><strong className="text-white/80">Açık Kaynak ve Öğrenme:</strong> Projenin temel amacı, modern web teknolojilerini (Next.js, Tailwind CSS vb.) öğrenmek, toplulukla deneyim paylaşımında bulunmak ve katkıya açık bir ekosistem oluşturmaktır. Telifli materyaller, bu eğitim sürecinin bir parçası olarak ve popüler kültüre duyulan ilgiyi yansıtmak amacıyla yer almaktadır.</li>
+                  <li><strong className="text-white/80">{t('docs.copyright_commercial_t')}</strong>{t('docs.copyright_commercial')}</li>
+                  <li><strong className="text-white/80">{t('docs.copyright_fan_t')}</strong>{t('docs.copyright_fan')}</li>
+                  <li><strong className="text-white/80">{t('docs.copyright_legal_t')}</strong>{t('docs.copyright_legal')}</li>
+                  <li><strong className="text-white/80">{t('docs.copyright_oss_t')}</strong>{t('docs.copyright_oss')}</li>
                 </ul>
                 <p className="text-[12px] text-white/40 italic pt-2">
-                  Bu projeyi incelerken, lütfen yukarıda belirtilen niyet ve sınırlamalar çerçevesinde değerlendiriniz. Saygılarımızla.
+                  {t('docs.copyright_footer')}
                 </p>
               </div>
             </section>
 
             <section id="policy-links" className="scroll-mt-24 mb-14">
-              <SectionTitle>Terimler & Gizlilik</SectionTitle>
+              <SectionTitle>{t('docs.policy_title')}</SectionTitle>
               <p className="text-[14px] text-white/60 leading-relaxed mb-4">
-                DiscoWeb hizmetlerinden yararlanırken hem sizin hem de diğer kullanıcıların haklarının
-                korunması, şeffaf bir iletişim ortamının sağlanması önceliğimizdir. Aşağıdaki
-                bağlantılar aracılığıyla hizmet koşullarımızı ve gizlilik politikamızı detaylıca
-                inceleyebilir, herhangi bir sorunuz olduğunda iletişim kanallarımızdan bize
-                ulaşabilirsiniz.
+                {t('docs.policy_body')}
               </p>
 
               <ul className="space-y-3">
                 <li>
                   <LinkCard
-                    title="Hizmet Koşulları"
+                    title={t('docs.card_terms_t')}
                     href="/terms"
-                    description="DiscoWeb platformunun kullanımına ilişkin hak, yükümlülük ve sorumluluklar; ihlal durumunda uygulanacak yaptırımlar ile hesap askıya alma ve silme prosedürleri."
+                    description={t('docs.policy_terms_d')}
                   />
                 </li>
                 <li>
                   <LinkCard
-                    title="Gizlilik Politikası"
+                    title={t('docs.card_privacy_t')}
                     href="/privacy"
-                    description="Kişisel verilerin toplanma amacı, hangi verilerin işlendiği, üçüncü taraflarla paylaşım koşulları, çerez kullanımı ve veri sahibi haklarınız (düzeltme, silme, itiraz)."
+                    description={t('docs.policy_privacy_d')}
                   />
                 </li>
               </ul>
             </section>
 
             <section id="economy" className="scroll-mt-24 mb-14">
-              <SectionTitle>Ekonomi Rehberi</SectionTitle>
+              <SectionTitle>{t('docs.economy_title')}</SectionTitle>
               <p className="text-[14px] text-white/60 leading-relaxed mb-4">
-                Sunucu deneyiminizi zenginleştirmek için iki farklı ekonomi modu sunuyoruz.
-                Hangi modun ihtiyaçlarınıza daha uygun olduğunu değerlendirebilir, geçiş
-                yapmadan önce tüm detayları inceleyebilirsiniz.
+                {t('docs.economy_body')}
               </p>
 
               <div className="space-y-4">
-                <InfoBox title="Basit Ekonomi">
-                  Basit Ekonomi modu, yeni kurulan sunucular için varsayılan olarak aktif edilir.
-                  Kullanıcılar günlük aktiflik, mesaj gönderme ve belirli görevleri tamamlayarak
-                  “Papel” kazanır. Kazanılan Papel’ler, sunucu mağazasında çeşitli ürünler, roller
-                  veya özel ayrıcalıklar için harcanabilir. Ayrıca kullanıcılar arası transfer,
-                  çekiliş sistemleri ve temel liderlik tabloları da bu modda etkindir. Basit Ekonomi,
-                  yönetimi kolay, herkesin anlayabileceği sade bir yapı sunar.
+                <InfoBox title={t('docs.economy_box_title')}>
+                  {t('docs.economy_box_body')}
                   <Link
                     href="/economy/basic"
                     className="text-indigo-300 hover:text-indigo-200 underline ml-1"
                   >
-                    Detayları görüntüle
+                    {t('docs.economy_details')}
                   </Link>
                 </InfoBox>
               </div>
             </section>
 
             <section id="paths" className="scroll-mt-24 mb-14">
-              <SectionTitle>Geçiş Yolları</SectionTitle>
+              <SectionTitle>{t('docs.paths_title')}</SectionTitle>
               <ol className="list-decimal list-inside text-[14px] text-white/60 space-y-2">
-                <li>
-                  Sunucunuzu kurarken <strong>Basit Ekonomi</strong> modunu seçin. Bu mod, sunucunun
-                  ilk günlerinde kullanıcıların sistemi tanıması ve temel ekonomi alışkanlıklarını
-                  edinmesi için idealdir.
-                </li>
-                <li>
-                  Sunucunuz en az 3 ay boyunca aktif ve düzenli kullanıcı kitlesine sahip olduktan
-                  sonra, temel ekonomi modelinin sürekliliğini sağlamak için aktif yönetim ve
-                  planlama yapabilirsiniz.
-                </li>
+                <li>{t('docs.paths_1')}</li>
+                <li>{t('docs.paths_2')}</li>
               </ol>
             </section>
 
             <section id="faq" className="scroll-mt-24 mb-14">
-              <SectionTitle>Sıkça Sorulan Sorular</SectionTitle>
+              <SectionTitle>{t('docs.faq_title')}</SectionTitle>
               <FaqItem
-                question="Hizmet Koşulları ve Gizlilik Politikası hangi yasal dayanaklara sahiptir?"
-                answer="DiscoWeb, sunduğu hizmetlerin hukuka uygunluğunu sağlamak amacıyla 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve ilgili mevzuata uygun şekilde hareket eder. Hizmet koşulları, kullanıcıların platformu güvenli ve adil bir şekilde kullanmasını garanti altına almak için oluşturulmuştur. Detaylı bilgi için ilgili sayfaları inceleyebilir veya destek ekibimize sorularınızı iletebilirsiniz."
+                question={t('docs.faq_q1')}
+                answer={t('docs.faq_a1')}
               />
               <FaqItem
-                question="Verilerimin silinmesini nasıl talep edebilirim?"
-                answer="Kişisel verilerinizin silinmesi talebinizi, platform üzerinden veya resmi iletişim adresimizden bize iletebilirsiniz. Talebiniz, KVKK’nın 11. maddesi uyarınca en geç 30 gün içinde sonuçlandırılır. Talebin işleme alınabilmesi için kimlik doğrulama adımları gerekmektedir. Detaylı prosedür için Gizlilik Politikası sayfamızdaki 'Veri Sahibi Hakları' bölümünü ziyaret edin."
+                question={t('docs.faq_q2')}
+                answer={t('docs.faq_a2')}
               />
             </section>
 
             <section id="error-codes" className="scroll-mt-24 mb-14">
-              <SectionTitle>Hata Kodları</SectionTitle>
+              <SectionTitle>{t('docs.errors_title')}</SectionTitle>
               <p className="text-[14px] text-white/60 leading-relaxed mb-4">
-                Activity kullanırken karşılaştığın <strong className="text-white/70">DW-XXXX</strong> formatındaki hata kodlarının ne anlama geldiğini, neden oluştuğunu ve nasıl çözebileceğini ayrıntılı olarak öğrenebilirsin.
+                {t('docs.errors_body')}
               </p>
               <Link
                 href="/docs/errors"
                 className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-xl border border-red-500/20 bg-red-500/10 text-sm font-semibold text-red-300 hover:bg-red-500/20 hover:border-red-500/30 transition-all"
               >
                 <LuTriangleAlert className="w-4 h-4" />
-                Hata Kodları Rehberini Aç
+                {t('docs.errors_cta')}
                 <LuChevronRight className="w-4 h-4 ml-auto group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </section>
 
             <footer className="mt-16 pt-8 border-t border-white/[0.06] text-center">
               <p className="text-xs text-white/25">
-                DiscoWeb Dokümantasyon Sayfası — Son güncelleme: 24 Mart 2026
+                {t('docs.footer_line1')}
                 <br />
-                Tüm hakları saklıdır. İçerikler izinsiz kopyalanamaz veya dağıtılamaz.
+                {t('docs.footer_line2')}
               </p>
             </footer>
           </article>

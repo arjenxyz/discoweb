@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
 import {
   LuBookOpen,
   LuShield,
@@ -14,11 +15,11 @@ import {
 } from 'react-icons/lu';
 
 export default function TermsPage() {
-  const LAST_UPDATED = '16 Mart 2026';
-  const [activeSection, setActiveSection] = useState('intro');
+  const { t } = useTranslation();
+    const [activeSection, setActiveSection] = useState('intro');
 
   useEffect(() => {
-    document.title = 'Hizmet Koşulları - DiscoWeb';
+    document.title = t('terms.page_title');
 
     const handleScroll = () => {
       const sections = document.querySelectorAll('section[id]');
@@ -35,13 +36,13 @@ export default function TermsPage() {
   }, []);
 
   const NAV_ITEMS = [
-    { id: 'intro', label: 'Giriş', icon: LuBookOpen },
-    { id: 'scope', label: 'Kapsam', icon: LuShield },
-    { id: 'use', label: 'Kullanım Şartları', icon: LuListChecks },
-    { id: 'responsibilities', label: 'Sorumluluklar', icon: LuTriangleAlert },
-    { id: 'termination', label: 'Fesih', icon: LuClipboardCheck },
-    { id: 'changes', label: 'Değişiklikler', icon: LuLock },
-    { id: 'contact', label: 'İletişim', icon: LuMessageCircle },
+    { id: 'intro', label: t('terms.nav_intro'), icon: LuBookOpen },
+    { id: 'scope', label: t('terms.nav_scope'), icon: LuShield },
+    { id: 'use', label: t('terms.nav_use'), icon: LuListChecks },
+    { id: 'responsibilities', label: t('terms.nav_responsibilities'), icon: LuTriangleAlert },
+    { id: 'termination', label: t('terms.nav_termination'), icon: LuClipboardCheck },
+    { id: 'changes', label: t('terms.nav_changes'), icon: LuLock },
+    { id: 'contact', label: t('terms.nav_contact'), icon: LuMessageCircle },
   ];
 
   return (
@@ -52,14 +53,14 @@ export default function TermsPage() {
           <div className="flex items-center gap-3">
             <img src="/gif/cat.gif" alt="DiscoWeb" className="w-8 h-8 rounded-lg" />
             <span className="font-bold text-base text-white">DiscoWeb</span>
-            <span className="text-[11px] text-white/30 font-medium tracking-wide hidden sm:inline">HİZMET KOŞULLARI</span>
+            <span className="text-[11px] text-white/30 font-medium tracking-wide hidden sm:inline">{t('terms.badge')}</span>
           </div>
           <button
             onClick={() => window.history.back()}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white/70 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg transition-colors"
           >
             <LuArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Geri Dön</span>
+            <span className="hidden sm:inline">{t('terms.back')}</span>
           </button>
         </div>
       </header>
@@ -68,7 +69,7 @@ export default function TermsPage() {
         {/* Sidebar */}
         <aside className="hidden lg:block w-72 min-h-screen fixed top-[60px] left-0 lg:left-auto z-40 border-r border-white/[0.04]">
           <nav className="p-6 pt-8">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4 px-3">İçindekiler</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4 px-3">{t('terms.toc')}</p>
             <ul className="space-y-0.5">
               {NAV_ITEMS.map(item => {
                 const Icon = item.icon;
@@ -101,57 +102,49 @@ export default function TermsPage() {
             <header className="mb-14">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
                 <LuBookOpen className="w-3.5 h-3.5 text-indigo-400" />
-                <span className="text-[11px] font-semibold text-indigo-400 tracking-wide">HİZMET KOŞULLARI</span>
+                <span className="text-[11px] font-semibold text-indigo-400 tracking-wide">{t('terms.badge')}</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-5 leading-tight">
-                Hizmet Koşulları
+                {t('terms.title')}
               </h1>
               <p className="text-[15px] text-white/50 leading-relaxed mb-6">
-                DiscoWeb platformunu kullanmanız için gerekli kurallar, kullanıcı yükümlülükleri ve hizmetin nasıl yürütüldüğüne dair genel çerçeve bu sayfada yer alır.
+                {t('terms.intro')}
               </p>
               <div className="flex items-center gap-3 text-xs text-white/30">
-                <span>Son güncelleme: {LAST_UPDATED}</span>
+                <span>{t('terms.last_updated_label', { date: t('terms.date') })}</span>
               </div>
             </header>
 
             <div className="space-y-14">
               {/* Giriş */}
               <section id="intro" className="scroll-mt-24">
-                <SectionTitle>Giriş</SectionTitle>
+                <SectionTitle>{t('terms.section_intro')}</SectionTitle>
                 <P>
-                  Bu Hizmet Koşulları, DiscoWeb web sitesi ve ilgili Discord botu hizmetlerinin kullanımına ilişkin şartları belirler.
-                  Platforma erişim sağladığınızda bu koşulları kabul etmiş sayılırsınız.
+                  {t('terms.intro_body')}
                 </P>
-                <InfoCard items={[
-                  'Hizmet yalnızca yasal amaçlarla kullanılmalıdır',
-                  'Kullanıcı hesap bilgileri gizli tutulmalıdır',
-                  'Hizmet kurallarına uymayan hesaplar kısıtlanabilir veya silinebilir',
-                  'Bu sayfada yer alan değişiklikler size bildirimde bulunularak güncellenebilir',
-                ]} />
+                <InfoCard items={[t('terms.tip_1'), t('terms.tip_2'), t('terms.tip_3'), t('terms.tip_4')]} />
               </section>
 
               {/* Kapsam */}
               <section id="scope" className="scroll-mt-24">
-                <SectionTitle>Kapsam</SectionTitle>
+                <SectionTitle>{t('terms.section_scope')}</SectionTitle>
                 <P>
-                  Bu maddeler, DiscoWeb tarafından sağlanan tüm web arayüzleri, Discord botu komutları,
-                  sunucu yönetimi özellikleri ve her türlü ilgili hizmet için geçerlidir.
+                  {t('terms.scope_1')}
                 </P>
                 <P>
-                  Hizmetin bazı bileşenleri üçüncü taraf sağlayıcılar (Discord, Supabase, Vercel vb.) üzerinden yürütülür ve
-                  bu bileşenlerin kullanımında ilgili üçüncü tarafın kendi koşulları da geçerli olabilir.
+                  {t('terms.scope_2')}
                 </P>
               </section>
 
               {/* Kullanım Şartları */}
               <section id="use" className="scroll-mt-24">
-                <SectionTitle>Kullanım Şartları</SectionTitle>
+                <SectionTitle>{t('terms.section_use')}</SectionTitle>
                 <ul className="space-y-2 mt-4">
                   {[
-                    'Hizmet yalnızca Discord tarafından izin verilen kullanım sınırları içinde kullanılmalıdır.',
-                    'Hesap bilgilerinizi paylaşmayın; başkalarının hesabına erişim sağlamak yasaktır.',
-                    'Botu veya paneli kötüye kullanmak (spam, rıza dışı veri toplama, suistimal) yasaktır.',
-                    'Politika ihlalleri durumunda Discord tarafından uygulanan yaptırımlar da dikkate alınır.',
+                    t('terms.use_1'),
+                    t('terms.use_2'),
+                    t('terms.use_3'),
+                    t('terms.use_4'),
                   ].map((text, i) => (
                     <li key={i} className="flex items-start gap-3 text-[14px] text-white/60 leading-relaxed">
                       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400/60 flex-shrink-0" />
@@ -163,16 +156,16 @@ export default function TermsPage() {
 
               {/* Sorumluluklar */}
               <section id="responsibilities" className="scroll-mt-24">
-                <SectionTitle>Kullanıcı Sorumlulukları</SectionTitle>
+                <SectionTitle>{t('terms.section_responsibilities')}</SectionTitle>
                 <P>
-                  Kullanıcılar, hizmeti kullanırken aşağıdaki hususlarda sorumludur:
+                  {t('terms.resp_body')}
                 </P>
                 <ul className="space-y-2 mt-4">
                   {[
-                    'Hesap bilgilerini güvenli tutmak ve başkalarına vermemek',
-                    'Hizmet kurallarına uymak ve Discord hizmet şartlarına riayet etmek',
-                    'Sunucu yöneticileri varsa, sunucu kurallarına saygı göstermek',
-                    'Oluşan hataları veya şüpheli aktiviteleri bildirmek',
+                    t('terms.resp_1'),
+                    t('terms.resp_2'),
+                    t('terms.resp_3'),
+                    t('terms.resp_4'),
                   ].map((text, i) => (
                     <li key={i} className="flex items-start gap-3 text-[14px] text-white/60 leading-relaxed">
                       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400/60 flex-shrink-0" />
@@ -184,15 +177,15 @@ export default function TermsPage() {
 
               {/* Fesih */}
               <section id="termination" className="scroll-mt-24">
-                <SectionTitle>Hesap ve Hizmet Feshi</SectionTitle>
+                <SectionTitle>{t('terms.section_termination')}</SectionTitle>
                 <P>
-                  DiscoWeb, aşağıdaki durumlarda kullanıcı hesabını veya hizmet erişimini sonlandırma hakkını saklı tutar:
+                  {t('terms.term_body')}
                 </P>
                 <ul className="space-y-2 mt-4">
                   {[
-                    'Kullanım şartlarının veya Discord politikalarının ihlali',
-                    'Hizmetin güvenliğini tehdit eden davranışlar',
-                    'Hukuki bir zorunluluk veya resmi talep',
+                    t('terms.term_1'),
+                    t('terms.term_2'),
+                    t('terms.term_3'),
                   ].map((text, i) => (
                     <li key={i} className="flex items-start gap-3 text-[14px] text-white/60 leading-relaxed">
                       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400/60 flex-shrink-0" />
@@ -201,38 +194,35 @@ export default function TermsPage() {
                   ))}
                 </ul>
                 <P className="mt-4">
-                  Hesabınız sonlandırıldığında, verilerinizin nasıl işlendiği ve saklandığı konusunda Gizlilik Politikasını inceleyiniz.
+                  {t('terms.term_privacy')}
                 </P>
               </section>
 
               {/* Değişiklikler */}
               <section id="changes" className="scroll-mt-24">
-                <SectionTitle>Koşullardaki Değişiklikler</SectionTitle>
+                <SectionTitle>{t('terms.section_changes')}</SectionTitle>
                 <P>
-                  Bu hizmet koşulları zaman zaman güncellenebilir. Önemli değişiklikler yapıldığında platform üzerinde veya Discord
-                  sunucumuz üzerinden duyuru yapılabilir.
+                  {t('terms.changes_1')}
                 </P>
                 <P>
-                  Koşullarda yapılan değişiklikleri takip etmek sizin sorumluluğunuzdadır. Hizmete erişiminizi sürdürmeniz, güncellenmiş
-                  koşulları kabul ettiğiniz anlamına gelir.
+                  {t('terms.changes_2')}
                 </P>
               </section>
 
               {/* İletişim */}
               <section id="contact" className="scroll-mt-24">
-                <SectionTitle>İletişim</SectionTitle>
+                <SectionTitle>{t('terms.section_contact')}</SectionTitle>
                 <P>
-                  Hizmet koşulları veya platform hakkında sorularınız için lütfen aşağıdaki kanallardan bize ulaşın:
+                  {t('terms.contact_body')}
                 </P>
                 <div className="mt-5 space-y-3">
-                  <ContactCard icon="💬" label="Discord Sunucusu" value="Destek kanalı üzerinden bize ulaşabilirsiniz" />
-                  <ContactCard icon="📧" label="E-posta" value="destek@discoweb.com" />
+                  <ContactCard icon="💬" label={t('terms.contact_discord_label')} value={t('terms.contact_discord_value')} />
+                  <ContactCard icon="📧" label={t('terms.contact_email_label')} value="destek@discoweb.com" />
                 </div>
 
                 <div className="mt-8 p-5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
                   <p className="text-[13px] text-white/40 leading-relaxed">
-                    Bu sayfa, DiscoWeb hizmetinin kullanım koşullarını özetler. Resmi ve bağlayıcı olmayan bir çerçeve sağlar.
-                    Daha fazla ayrıntı veya özel durumlar için bizimle iletişime geçin.
+                    {t('terms.contact_note')}
                   </p>
                 </div>
               </section>
@@ -241,7 +231,7 @@ export default function TermsPage() {
             {/* Footer */}
             <footer className="mt-16 pt-8 border-t border-white/[0.06] text-center">
               <p className="text-xs text-white/25">
-                DiscoWeb Hizmet Koşulları — Son güncelleme: {LAST_UPDATED}
+                {t('terms.footer', { date: t('terms.date') })}
               </p>
             </footer>
           </article>
