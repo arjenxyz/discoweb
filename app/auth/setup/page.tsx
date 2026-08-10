@@ -1097,65 +1097,89 @@ export default function SetupPage() {
               {/* --- STEP 3: BONUSES --- */}
               {currentStep === 3 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-xl font-bold text-white mb-2">Bonuslar</h2>
-                  <p className="text-sm text-white/50 mb-6">Tag ve boost için ekstra papel.</p>
+                  <h2 className="mb-1 text-lg font-bold text-white">Bonuslar</h2>
+                  <p className="mb-4 text-sm text-white/50">Tag ve boost için ekstra papel.</p>
 
-                  <div className="space-y-6">
-                    {/* Tag Bonus */}
-                    <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                          <LuTag className="w-5 h-5" />
+                  <div className="space-y-2.5">
+                    <div className="rounded-xl border border-purple-500/30 bg-purple-500/5 px-3.5 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-400">
+                          <LuTag className="h-4 w-4" />
                         </div>
-                        <div>
-                          <h3 className="font-bold text-white">Tag Bonusu</h3>
-                          <p className="text-xs text-white/50">İsminde sunucu tagı olanlar</p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-sm font-semibold text-white">Tag Bonusu</h3>
+                          <p className="text-[11px] text-white/45">İsminde sunucu tagı olanlar</p>
                         </div>
                       </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
                         <div>
-                          <label className="block text-xs font-medium text-white/40 mb-2">Mesaj Başına Ek</label>
-                          <div className="relative">
-                            <input type="number" min="0" step="0.1" value={tagBonusMessage} onChange={(e) => setTagBonusMessage(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:outline-none focus:border-purple-500" />
-                            <span className="absolute right-4 top-3.5 text-xs text-white/30">+ Papel</span>
+                          <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.1"
+                              value={tagBonusMessage}
+                              onChange={(e) => setTagBonusMessage(e.target.value)}
+                              className="w-full rounded-lg border border-purple-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-purple-300 focus:border-purple-500 focus:outline-none"
+                            />
+                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-white/40 mb-2">Dakika Başına Ek</label>
-                          <div className="relative">
-                            <input type="number" min="0" step="0.1" value={tagBonusVoice} onChange={(e) => setTagBonusVoice(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:outline-none focus:border-purple-500" />
-                            <span className="absolute right-4 top-3.5 text-xs text-white/30">+ Papel</span>
+                          <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.1"
+                              value={tagBonusVoice}
+                              onChange={(e) => setTagBonusVoice(e.target.value)}
+                              className="w-full rounded-lg border border-purple-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-purple-300 focus:border-purple-500 focus:outline-none"
+                            />
+                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Booster Bonus */}
-                    <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center">
-                          <LuRocket className="w-5 h-5" />
+                    <div className="rounded-xl border border-pink-500/30 bg-pink-500/5 px-3.5 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pink-500/20 text-pink-400">
+                          <LuRocket className="h-4 w-4" />
                         </div>
-                        <div>
-                          <h3 className="font-bold text-white">Boost Bonusu</h3>
-                          <p className="text-xs text-white/50">Sunucuyu boostlayanlar</p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-sm font-semibold text-white">Boost Bonusu</h3>
+                          <p className="text-[11px] text-white/45">Sunucuyu boostlayanlar</p>
                         </div>
                       </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
                         <div>
-                          <label className="block text-xs font-medium text-white/40 mb-2">Mesaj Başına Ek</label>
-                          <div className="relative">
-                            <input type="number" min="0" step="0.1" value={boosterBonusMessage} onChange={(e) => setBoosterBonusMessage(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:outline-none focus:border-pink-500" />
-                            <span className="absolute right-4 top-3.5 text-xs text-white/30">+ Papel</span>
+                          <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.1"
+                              value={boosterBonusMessage}
+                              onChange={(e) => setBoosterBonusMessage(e.target.value)}
+                              className="w-full rounded-lg border border-pink-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-pink-300 focus:border-pink-500 focus:outline-none"
+                            />
+                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-white/40 mb-2">Dakika Başına Ek</label>
-                          <div className="relative">
-                            <input type="number" min="0" step="0.1" value={boosterBonusVoice} onChange={(e) => setBoosterBonusVoice(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:outline-none focus:border-pink-500" />
-                            <span className="absolute right-4 top-3.5 text-xs text-white/30">+ Papel</span>
+                          <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.1"
+                              value={boosterBonusVoice}
+                              onChange={(e) => setBoosterBonusVoice(e.target.value)}
+                              className="w-full rounded-lg border border-pink-500/30 bg-black/40 px-2 py-1.5 text-center text-sm font-bold text-pink-300 focus:border-pink-500 focus:outline-none"
+                            />
+                            <span className="shrink-0 text-[10px] text-white/40">+</span>
                           </div>
                         </div>
                       </div>
