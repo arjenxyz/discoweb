@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Ubuntu } from 'next/font/google';
 import { LuArrowRight, LuCode, LuDatabase, LuLock, LuShield, LuSettings } from 'react-icons/lu';
@@ -70,6 +70,9 @@ export default function SelectServerPage() {
   const [showAgreementModal, setShowAgreementModal] = useState(false);
   const [agreementTargetHref, setAgreementTargetHref] = useState<string | null>(null);
   const [isProcessingAgreement, setIsProcessingAgreement] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshMessage, setRefreshMessage] = useState<string | null>(null);
+  const currentUserIdRef = useRef<string | null>(null);
   const localBypass = isLocalDevBypassClient();
 
   const ensureAgreementAndRedirect = useCallback(
@@ -98,28 +101,9 @@ export default function SelectServerPage() {
     return lockBodyScroll();
   }, [showAgreementModal]);
 
-  useEffect(() => {
-    const fetchUserInfo = async (): Promise<UserInfo | null> => {
-      try {
-        const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
-        if (response.ok) {
-          return (await response.json()) as UserInfo;
-        }
-
-        localStorage.removeItem('discordUser');
-        localStorage.removeItem('adminGuilds');
-        localStorage.removeItem('adminGuildsUpdatedAt');
-        router.replace(loginUrl);
-      } catch {
-        localStorage.removeItem('discordUser');
-        localStorage.removeItem('adminGuilds');
-        localStorage.removeItem('adminGuildsUpdatedAt');
-        router.replace(loginUrl);
-      }
-      return null;
-    };
-
-    const loadGuilds = async (currentUserId?: string | null) => {
+  const loadGuilds = useCallback(
+    async (currentUserId?: string | null, options?: { redirectIfEmpty?: boolean }) => {
+      const redirectIfEmpty = options?.redirectIfEmpty ?? true;
       const bypass = isLocalDevBypassClient();
       const adminGuilds = localStorage.getItem('adminGuilds');
       const updatedAt = localStorage.getItem('adminGuildsUpdatedAt');
@@ -167,7 +151,7 @@ export default function SelectServerPage() {
                 icon?: string | null;
               };
               isOwner = Boolean(currentUserId) && guildData.owner_id === currentUserId;
-              iconUrl = guildData.icon ?? null;
+              iconUrl = guildData.icon ?? guild.iconUrl ?? null;
             }
 
             filteredGuilds.push({ ...guild, isOwner, iconUrl });
@@ -208,7 +192,7 @@ export default function SelectServerPage() {
         }
         setHasDeveloperAccess(developerAccess);
 
-        if (filteredGuilds.length === 0 && !developerAccess) {
+        if (redirectIfEmpty && filteredGuilds.length === 0 && !developerAccess) {
           router.replace('/auth/bot-invite');
           return;
         }
@@ -224,15 +208,82 @@ export default function SelectServerPage() {
       }
 
       setLoading(false);
+    },
+    [ensureAgreementAndRedirect, loginUrl, router],
+  );
+
+  const handleRefreshGuilds = useCallback(async () => {
+    if (isRefreshing || localBypass) return;
+    setIsRefreshing(true);
+    setRefreshMessage(null);
+
+    try {
+      const response = await fetch('/api/discord/refresh-guilds', {
+        method: 'POST',
+        credentials: 'include',
+        cache: 'no-store',
+      });
+
+      const payload = (await response.json().catch(() => ({}))) as {
+        adminGuilds?: Guild[];
+        updatedAt?: string;
+        needsReauth?: boolean;
+        error?: string;
+      };
+
+      if (response.status === 401 || payload.needsReauth) {
+        setRefreshMessage('Discord oturumu yenilenmeli — yönlendiriliyorsunuz…');
+        ensureAgreementAndRedirect(loginUrl);
+        return;
+      }
+
+      if (!response.ok || !payload.adminGuilds) {
+        setRefreshMessage('Liste güncellenemedi. Biraz sonra tekrar deneyin.');
+        return;
+      }
+
+      const updatedAt = payload.updatedAt ?? new Date().toISOString();
+      localStorage.setItem('adminGuilds', JSON.stringify(payload.adminGuilds));
+      localStorage.setItem('adminGuildsUpdatedAt', updatedAt);
+      setLastUpdatedAt(updatedAt);
+      setRefreshMessage('Sunucu listesi güncellendi.');
+      await loadGuilds(currentUserIdRef.current, { redirectIfEmpty: false });
+    } catch {
+      setRefreshMessage('Liste güncellenemedi. Biraz sonra tekrar deneyin.');
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [ensureAgreementAndRedirect, isRefreshing, loadGuilds, localBypass, loginUrl]);
+
+  useEffect(() => {
+    const fetchUserInfo = async (): Promise<UserInfo | null> => {
+      try {
+        const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+        if (response.ok) {
+          return (await response.json()) as UserInfo;
+        }
+
+        localStorage.removeItem('discordUser');
+        localStorage.removeItem('adminGuilds');
+        localStorage.removeItem('adminGuildsUpdatedAt');
+        router.replace(loginUrl);
+      } catch {
+        localStorage.removeItem('discordUser');
+        localStorage.removeItem('adminGuilds');
+        localStorage.removeItem('adminGuildsUpdatedAt');
+        router.replace(loginUrl);
+      }
+      return null;
     };
 
     const initPage = async () => {
       const userData = await fetchUserInfo();
+      currentUserIdRef.current = userData?.id ?? null;
       await loadGuilds(userData?.id ?? null);
     };
 
     initPage();
-  }, [ensureAgreementAndRedirect, loginUrl, router]);
+  }, [loadGuilds, loginUrl, router]);
 
   const handleSetupGuild = (guildId: string) => {
     document.cookie = `selected_guild_id=${guildId}; path=/`;
@@ -288,22 +339,33 @@ export default function SelectServerPage() {
               olduğunuz sunucular listelenir.
             </p>
 
-            <div className="mt-10 flex items-end justify-between gap-3">
-              <div>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div className="min-w-0">
                 <h2 className="text-sm font-semibold text-white/90">Sunucularınız</h2>
                 {lastUpdatedAt && (
                   <p className="mt-1 text-[11px] text-white/35">
                     Son güncelleme: {new Date(lastUpdatedAt).toLocaleString('tr-TR')}
                   </p>
                 )}
+                {!localBypass && (
+                  <p className="mt-2 max-w-xl text-xs leading-5 text-white/40">
+                    Listede sunucu yoksa veya yeni admin olduğunuz sunucu görünmüyorsa{' '}
+                    <span className="text-white/60">Yenile</span>&apos;ye basın. Çoğu zaman liste
+                    burada güncellenir; Discord oturumu düştüyse tekrar yetki isteyebilir.
+                  </p>
+                )}
+                {refreshMessage && (
+                  <p className="mt-1.5 text-xs text-[#9eb0ff]">{refreshMessage}</p>
+                )}
               </div>
               {!localBypass && (
                 <button
                   type="button"
-                  onClick={() => ensureAgreementAndRedirect(loginUrl)}
-                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium text-[#9eb0ff] transition hover:bg-white/5 hover:text-white"
+                  disabled={isRefreshing}
+                  onClick={() => void handleRefreshGuilds()}
+                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium text-[#9eb0ff] transition hover:bg-white/5 hover:text-white disabled:cursor-wait disabled:opacity-60"
                 >
-                  Yenile
+                  {isRefreshing ? 'Yenileniyor…' : 'Yenile'}
                 </button>
               )}
             </div>
@@ -319,7 +381,8 @@ export default function SelectServerPage() {
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center backdrop-blur-md sm:col-span-2 lg:col-span-3">
                   <p className="text-sm text-white/70">Erişilebilir sunucu bulunamadı.</p>
                   <p className="mt-2 text-xs text-white/40">
-                    Botun bulunduğu sunucularda üye olduğunuzdan emin olun.
+                    Botun bulunduğu sunucularda üye olduğunuzdan emin olun. Yeni yetki aldıysanız
+                    Yenile ile listeyi güncelleyin.
                   </p>
                 </div>
               ) : (

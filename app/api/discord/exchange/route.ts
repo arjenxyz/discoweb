@@ -1,30 +1,14 @@
 ﻿import { NextResponse } from 'next/server';
 import { logWebEvent } from '@/lib/serverLogger';
 import { logWebLogin } from '@/lib/activityLogger';
-import { createClient } from '@supabase/supabase-js';
 import { setSessionCookies } from '@/lib/auth';
-
-interface Guild {
-  id: string;
-  name: string;
-  isAdmin: boolean;
-  isSetup: boolean;
-  verifyRoleId: string | null;
-  isOwner: boolean;
-}
+import { buildAdminGuilds, getServiceSupabase } from '@/lib/discord/buildAdminGuilds';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 const REQUIRED_ROLE_ID = process.env.DISCORD_REQUIRED_ROLE_ID ?? '1465999952940498975';
 const ADMIN_ROLE_ID = process.env.DISCORD_ADMIN_ROLE_ID;
 
-const getSupabase = () => {
-  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceRoleKey) {
-    return null;
-  }
-  return createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
-};
+const getSupabase = () => getServiceSupabase();
 
 export async function POST(request: Request) {
   try {
@@ -202,6 +186,7 @@ export async function POST(request: Request) {
       name: string;
       permissions: string;
       owner?: boolean;
+      icon?: string | null;
     }>;
 
     const supabase = getSupabase();
@@ -256,109 +241,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // KullanÄ±cÄ±nÄ±n eriÅŸebildiÄŸi ve botun bulunduÄŸu sunucularÄ± dÃ¶ndÃ¼r
-    const adminGuilds: Guild[] = [];
-
-    let knownServers: Array<{
-      discord_id: string;
-      name: string | null;
-      admin_role_id: string | null;
-      verify_role_id: string | null;
-      is_setup: boolean | null;
-    }> = [];
-
-    if (supabase && guilds.length > 0) {
-      const { data } = await supabase
-        .from('servers')
-        .select('discord_id, name, admin_role_id, verify_role_id, is_setup')
-        .in('discord_id', guilds.map((g) => g.id));
-      knownServers = data ?? [];
-    }
-
-    const serverByGuildId = new Map(knownServers.map((server) => [server.discord_id, server]));
-
-    // Botun bulunduğu sunucuları tek çağrıda çekerek yanlış negatifleri azalt.
-    let botGuildIdSet = new Set<string>();
-    let hasBotGuildList = false;
-    try {
-      const botGuildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
-        headers: { Authorization: `Bot ${botToken}` },
-      });
-      if (botGuildsResponse.ok) {
-        const botGuilds = (await botGuildsResponse.json()) as Array<{ id: string }>;
-        botGuildIdSet = new Set(botGuilds.map((guild) => guild.id));
-        hasBotGuildList = true;
-        console.log(`Bot guild list fetched: ${botGuildIdSet.size}`);
-      } else {
-        console.log(`Bot guild list fetch failed, status=${botGuildsResponse.status}`);
-      }
-    } catch (error) {
-      console.log('Bot guild list fetch exception:', error);
-    }
-
-    for (const userGuild of guilds) {
-      const server = serverByGuildId.get(userGuild.id);
-      console.log(`Guild kontrolü: Sunucu=${userGuild.name}, Kullanıcı=${user.id}`);
-
-      try {
-        // Bot gerçekten bu sunucuda mı?
-        if (hasBotGuildList) {
-          if (!botGuildIdSet.has(userGuild.id)) {
-            continue;
-          }
-        } else {
-          // Guild listesi alınamadıysa önceki yönteme geri dön.
-          const botGuildResponse = await fetch(`https://discord.com/api/guilds/${userGuild.id}`, {
-            headers: { Authorization: `Bot ${botToken}` },
-          });
-
-          if (!botGuildResponse.ok) {
-            console.log(`Bot erişimi yok: Sunucu=${userGuild.name}, Status=${botGuildResponse.status}`);
-            continue;
-          }
-        }
-
-        // Admin kontrolü mümkünse member endpoint ile yapılır.
-        let isAdmin = false;
-        const adminRoleId = server?.admin_role_id ?? null;
-
-        if (adminRoleId) {
-          const memberResponse = await fetch(
-            `https://discord.com/api/guilds/${userGuild.id}/members/${user.id}`,
-            {
-              headers: { Authorization: `Bot ${botToken}` },
-            },
-          );
-
-          if (memberResponse.ok) {
-            const member = (await memberResponse.json()) as { roles: string[] };
-            isAdmin = member.roles.includes(adminRoleId);
-            console.log(`Sunucu ${userGuild.name}: admin_role_id=${adminRoleId}, isAdmin=${isAdmin}`);
-          } else {
-            let memberBody = null;
-            try { memberBody = await memberResponse.json(); } catch { try { memberBody = await memberResponse.text(); } catch {} }
-            await logWebEvent(request, {
-              event: 'discord_exchange_failed',
-              status: 'member_fetch_failed',
-              userId: user.id,
-              guildId: userGuild.id,
-              metadata: { status: memberResponse.status, body: memberBody },
-            });
-          }
-        }
-
-        adminGuilds.push({
-          id: userGuild.id,
-          name: server?.name ?? userGuild.name,
-          isAdmin,
-          isSetup: Boolean(server?.is_setup),
-          verifyRoleId: server?.verify_role_id ?? null,
-          isOwner: Boolean(userGuild.owner),
+    const { adminGuilds } = await buildAdminGuilds({
+      userId: user.id,
+      botToken,
+      guilds,
+      supabase,
+      onMemberFetchFailed: async ({ guildId, status, body }) => {
+        await logWebEvent(request, {
+          event: 'discord_exchange_failed',
+          status: 'member_fetch_failed',
+          userId: user.id,
+          guildId,
+          metadata: { status, body },
         });
-      } catch (error) {
-        console.log(`Sunucu ${userGuild.name} kontrol edilemedi:`, error);
-      }
-    }
+      },
+    });
 
     // Ana sunucudaki rol kontrolü (mevcut sistem için)
     let mainGuildMemberResponse: Response;
