@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { getSessionUserId } from '@/lib/auth';
-import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { isLocalDevBypass, isLocalDevBypassFromRequest } from '@/lib/localDevBypass';
 import { LOCAL_DEV_MOCK_OVERVIEW_STATS } from '@/lib/localDevMocks';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const rangeHours = Number(url.searchParams.get('rangeHours') ?? '24');
 
-  if (await isLocalDevBypass()) {
+  if ((await isLocalDevBypass()) || isLocalDevBypassFromRequest(req)) {
     return NextResponse.json({ ...LOCAL_DEV_MOCK_OVERVIEW_STATS, rangeHours });
   }
 
