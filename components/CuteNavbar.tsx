@@ -547,7 +547,9 @@ export default function CuteNavbar() {
           {onSelectServer && <div className="hidden flex-1 md:block" aria-hidden />}
 
           <div className="flex items-center gap-2 lg:gap-3 shrink-0 min-w-0">
-            <LanguageSwitcher />
+            <div className="hidden md:block">
+              <LanguageSwitcher />
+            </div>
             {isLoggedIn ? (
               onSelectServer ? (
                 <a
@@ -677,7 +679,9 @@ export default function CuteNavbar() {
               )}
             </nav>
 
-            <div className="mt-6 shrink-0">
+            <div className="mt-6 shrink-0 space-y-5">
+              <LanguageSwitcher variant="menu" />
+
               {isLoggedIn ? (
                 onSelectServer ? (
                   <a

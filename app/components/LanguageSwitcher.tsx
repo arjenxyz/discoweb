@@ -10,6 +10,8 @@ import FlagIcon from './FlagIcon';
 type LanguageSwitcherProps = {
   compact?: boolean;
   className?: string;
+  /** Inline list for mobile sheet menus (no dropdown / portal). */
+  variant?: 'dropdown' | 'menu';
 };
 
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -48,7 +50,11 @@ function useShowLanguageLabel() {
   return show;
 }
 
-export default function LanguageSwitcher({ compact = false, className = '' }: LanguageSwitcherProps) {
+export default function LanguageSwitcher({
+  compact = false,
+  className = '',
+  variant = 'dropdown',
+}: LanguageSwitcherProps) {
   const { language, setLanguage } = useTranslation();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -85,7 +91,7 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
   }, []);
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!open || variant === 'menu') return undefined;
 
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
@@ -97,7 +103,44 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
       document.removeEventListener('keydown', handleKey);
       unlock();
     };
-  }, [open]);
+  }, [open, variant]);
+
+  if (variant === 'menu') {
+    return (
+      <div className={`w-full ${className}`}>
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
+          Language
+        </p>
+        <div
+          id={listId}
+          role="listbox"
+          aria-label="Languages"
+          className="grid grid-cols-2 gap-2"
+        >
+          {SUPPORTED_LANGUAGES.map((item) => {
+            const active = item.code === language;
+            return (
+              <button
+                key={item.code}
+                type="button"
+                role="option"
+                aria-selected={active}
+                onClick={() => setLanguage(item.code)}
+                className={`flex min-w-0 items-center gap-2.5 rounded-2xl border px-3 py-3 text-left transition-colors ${
+                  active
+                    ? 'border-[#5865F2]/50 bg-[#5865F2]/25 text-white'
+                    : 'border-white/10 bg-white/[0.04] text-white/75 hover:border-white/20 hover:bg-white/[0.07] hover:text-white'
+                }`}
+              >
+                <FlagIcon code={item.code} size={20} title={item.country} />
+                <span className="min-w-0 truncate text-sm font-semibold">{item.country}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
