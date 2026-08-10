@@ -280,6 +280,7 @@ export default function CuteNavbar() {
 
   const onFabPointerDown = (e: ReactPointerEvent<HTMLButtonElement>) => {
     if (!fabPos) return;
+    e.preventDefault();
     e.currentTarget.setPointerCapture(e.pointerId);
     fabDragRef.current = {
       active: true,
@@ -297,7 +298,12 @@ export default function CuteNavbar() {
     if (!drag.active) return;
     const dx = e.clientX - drag.startX;
     const dy = e.clientY - drag.startY;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.moved = true;
+    // Ignore tiny mouse jitter so a normal click still opens the menu
+    const DRAG_THRESHOLD = 14;
+    if (!drag.moved) {
+      if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
+      drag.moved = true;
+    }
     setFabPos(clampFabPos(drag.originLeft + dx, drag.originTop + dy));
   };
 

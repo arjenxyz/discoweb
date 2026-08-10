@@ -59,8 +59,28 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
 
   const current = SUPPORTED_LANGUAGES.find((item) => item.code === language) ?? SUPPORTED_LANGUAGES[0];
 
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const openMenu = () => {
+    clearCloseTimer();
+    setOpen(true);
+  };
+
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => setOpen(false), 220);
+  };
+
   useEffect(() => {
     setMounted(true);
+    return () => clearCloseTimer();
   }, []);
 
   useEffect(() => {
@@ -79,20 +99,16 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
       ref={rootRef}
       className={`relative group z-[10001] shrink-0 ${className}`}
       onMouseEnter={() => {
-        if (!isTouch) setOpen(true);
+        if (!isTouch) openMenu();
       }}
       onMouseLeave={() => {
-        if (!isTouch) setOpen(false);
+        if (!isTouch) scheduleClose();
       }}
     >
       <button
         type="button"
-        onClick={(e) => {
-          // Desktop: hover opens — ignore click. Touch/mobile: toggle.
-          if (!isTouch && !isMobile) {
-            e.preventDefault();
-            return;
-          }
+        onClick={() => {
+          clearCloseTimer();
           setOpen((prev) => !prev);
         }}
         aria-haspopup="listbox"
@@ -140,6 +156,12 @@ export default function LanguageSwitcher({ compact = false, className = '' }: La
               ? 'fixed left-1/2 top-[7.5rem] w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2'
               : 'absolute top-full right-0 w-72 pt-4'
           }`}
+          onMouseEnter={() => {
+            if (!isTouch) openMenu();
+          }}
+          onMouseLeave={() => {
+            if (!isTouch) scheduleClose();
+          }}
         >
           <div className="relative overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-4 pb-14 shadow-[0_20px_50px_rgba(88,101,242,0.4)] md:rounded-[32px] md:p-5 md:pb-16">
             <div
