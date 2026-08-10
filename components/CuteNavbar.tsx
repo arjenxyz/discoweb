@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslation } from '@/lib/i18nContext';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
@@ -134,6 +134,64 @@ export default function CuteNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
 
+  const FAB_SIZE = 56;
+  const FAB_STORAGE_KEY = 'discoweb_mobile_fab_pos';
+  const [fabPos, setFabPos] = useState<{ left: number; top: number } | null>(null);
+  const fabDragRef = useRef<{
+    active: boolean;
+    moved: boolean;
+    startX: number;
+    startY: number;
+    originLeft: number;
+    originTop: number;
+    pointerId: number | null;
+  }>({
+    active: false,
+    moved: false,
+    startX: 0,
+    startY: 0,
+    originLeft: 0,
+    originTop: 0,
+    pointerId: null,
+  });
+
+  const clampFabPos = (left: number, top: number) => {
+    const pad = 12;
+    const maxLeft = Math.max(pad, window.innerWidth - FAB_SIZE - pad);
+    const maxTop = Math.max(pad, window.innerHeight - FAB_SIZE - pad);
+    return {
+      left: Math.min(Math.max(left, pad), maxLeft),
+      top: Math.min(Math.max(top, pad), maxTop),
+    };
+  };
+
+  const defaultFabPos = () =>
+    clampFabPos(window.innerWidth - FAB_SIZE - 20, window.innerHeight - FAB_SIZE - 28);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(FAB_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { left?: number; top?: number };
+        if (typeof parsed.left === 'number' && typeof parsed.top === 'number') {
+          setFabPos(clampFabPos(parsed.left, parsed.top));
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    setFabPos(defaultFabPos());
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => {
+      setFabPos((prev) => (prev ? clampFabPos(prev.left, prev.top) : defaultFabPos()));
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   // --- DISCORD OAUTH LINK ---
   const DISCORD_CLIENT_ID = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? process.env.DISCORD_CLIENT_ID ?? '';
   // Prefer the explicit Discord redirect env var to avoid origin mismatches on Vercel
@@ -219,6 +277,57 @@ export default function CuteNavbar() {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  const onFabPointerDown = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    if (!fabPos) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    fabDragRef.current = {
+      active: true,
+      moved: false,
+      startX: e.clientX,
+      startY: e.clientY,
+      originLeft: fabPos.left,
+      originTop: fabPos.top,
+      pointerId: e.pointerId,
+    };
+  };
+
+  const onFabPointerMove = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    const drag = fabDragRef.current;
+    if (!drag.active) return;
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.moved = true;
+    setFabPos(clampFabPos(drag.originLeft + dx, drag.originTop + dy));
+  };
+
+  const onFabPointerUp = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    const drag = fabDragRef.current;
+    if (!drag.active) return;
+    drag.active = false;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      // ignore
+    }
+    if (drag.moved) {
+      setFabPos((prev) => {
+        if (!prev) return prev;
+        const next = clampFabPos(prev.left, prev.top);
+        try {
+          localStorage.setItem(FAB_STORAGE_KEY, JSON.stringify(next));
+        } catch {
+          // ignore
+        }
+        return next;
+      });
+      return;
+    }
+    setMobileOpen((v) => {
+      if (v) setMobileSubmenu(null);
+      return !v;
+    });
+  };
 
   return (
     <>
@@ -398,27 +507,31 @@ export default function CuteNavbar() {
                 {t('navbar.login')}
               </Link>
             )}
-
-            {/* Mobile hamburger */}
-            <button
-              className="md:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 transition-all hover:bg-white/10"
-              onClick={() => {
-                setMobileOpen((v) => {
-                  if (v) setMobileSubmenu(null);
-                  return !v;
-                });
-              }}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            >
-              <div className="w-5 h-4 flex flex-col justify-between">
-                <span className={`w-full h-0.5 bg-white rounded transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-                <span className={`w-full h-0.5 bg-white rounded transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`}></span>
-                <span className={`w-full h-0.5 bg-white rounded transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
-              </div>
-            </button>
           </div>
         </nav>
       </div>
+
+      {/* Mobile floating menu FAB (draggable) */}
+      {fabPos && !mobileSubmenu && (
+        <button
+          type="button"
+          className={`md:hidden fixed z-[10020] flex h-14 w-14 touch-none items-center justify-center rounded-full border border-white/15 bg-[#5865F2] text-white shadow-[0_12px_40px_rgba(88,101,242,0.45)] transition-[box-shadow,transform] active:scale-95 ${
+            mobileOpen ? 'ring-2 ring-white/30' : ''
+          }`}
+          style={{ left: fabPos.left, top: fabPos.top }}
+          onPointerDown={onFabPointerDown}
+          onPointerMove={onFabPointerMove}
+          onPointerUp={onFabPointerUp}
+          onPointerCancel={onFabPointerUp}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+        >
+          <div className="pointer-events-none w-5 h-4 flex flex-col justify-between">
+            <span className={`w-full h-0.5 bg-white rounded transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+            <span className={`w-full h-0.5 bg-white rounded transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`} />
+            <span className={`w-full h-0.5 bg-white rounded transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
+          </div>
+        </button>
+      )}
 
       {/* Mobile menu — full-screen glass sheet */}
       {mobileOpen && (
