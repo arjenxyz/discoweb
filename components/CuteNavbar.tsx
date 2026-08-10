@@ -765,42 +765,38 @@ export default function CuteNavbar() {
                     {t('navbar.select_menu_intro')}
                   </p>
 
-                  <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02]">
-                    <div className="border-b border-white/[0.06] px-3.5 py-2.5">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/35">
-                        {t('navbar.select_menu_guide_title')}
-                      </p>
-                    </div>
-                    <ol className="divide-y divide-white/[0.06]">
-                      {[
-                        {
-                          title: t('navbar.select_menu_step_1_title'),
-                          body: t('navbar.select_menu_step_1_body'),
-                        },
-                        {
-                          title: t('navbar.select_menu_step_2_title'),
-                          body: t('navbar.select_menu_step_2_body'),
-                        },
-                        {
-                          title: t('navbar.select_menu_step_3_title'),
-                          body: t('navbar.select_menu_step_3_body'),
-                        },
-                      ].map((step, index) => (
-                        <li key={step.title} className="flex items-start gap-3 px-3.5 py-3">
-                          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#5865F2]/30 text-xs font-bold text-white shadow-[0_0_16px_rgba(88,101,242,0.25)]">
-                            {index + 1}
-                          </span>
-                          <div className="min-w-0 pt-0.5">
-                            <p className="text-sm font-semibold text-white">{step.title}</p>
-                            <p className="mt-0.5 text-xs leading-5 text-white/45">{step.body}</p>
-                          </div>
-                        </li>
-                      ))}
-                    </ol>
-                    <p className="border-t border-white/[0.06] px-3.5 py-2.5 text-[11px] leading-4 text-white/35">
-                      {t('navbar.select_menu_note')}
-                    </p>
-                  </div>
+                  <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/35">
+                    {t('navbar.select_menu_guide_title')}
+                  </p>
+                  <ol className="mt-3 space-y-4">
+                    {[
+                      {
+                        title: t('navbar.select_menu_step_1_title'),
+                        body: t('navbar.select_menu_step_1_body'),
+                      },
+                      {
+                        title: t('navbar.select_menu_step_2_title'),
+                        body: t('navbar.select_menu_step_2_body'),
+                      },
+                      {
+                        title: t('navbar.select_menu_step_3_title'),
+                        body: t('navbar.select_menu_step_3_body'),
+                      },
+                    ].map((step, index) => (
+                      <li key={step.title} className="flex items-start gap-3">
+                        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#5865F2]/30 text-xs font-bold text-white">
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0 pt-0.5">
+                          <p className="text-sm font-semibold text-white">{step.title}</p>
+                          <p className="mt-0.5 text-xs leading-5 text-white/45">{step.body}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-4 text-[11px] leading-4 text-white/35">
+                    {t('navbar.select_menu_note')}
+                  </p>
                 </>
               ) : (
                 <>
