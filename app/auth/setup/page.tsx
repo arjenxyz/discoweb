@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { createPortal } from 'react-dom';
-import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown, LuSearch } from 'react-icons/lu';
+import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown } from 'react-icons/lu';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
 
@@ -88,30 +88,17 @@ function RoleSelectDropdown({
   onChange: (roleId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
   const [pos, setPos] = useState<DropdownPos | null>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
 
   const selected = roles.find((role) => role.id === value) ?? null;
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return roles.filter((role) => {
-      if (role.name === '@everyone') return false;
-      if (!q) return true;
-      return role.name.toLowerCase().includes(q);
-    });
-  }, [roles, query]);
+  const options = useMemo(
+    () => roles.filter((role) => role.name !== '@everyone'),
+    [roles],
+  );
 
-  const accentRing =
-    accent === 'blue'
-      ? 'border-[#5865F2] bg-[#5865F2]/5 ring-4 ring-[#5865F2]/10'
-      : 'border-emerald-500 bg-emerald-500/5 ring-4 ring-emerald-500/10';
-  const accentIcon = accent === 'blue' ? 'text-[#5865F2]' : 'text-emerald-400';
-  const accentSelected =
-    accent === 'blue' ? 'bg-[#5865F2] text-white' : 'bg-emerald-500 text-white';
-  const accentDot = accent === 'blue' ? 'bg-[#5865F2]' : 'bg-emerald-400';
+  const accentIcon = accent === 'blue' ? 'text-[#5865F2]' : 'text-[#5865F2]';
 
   useEffect(() => {
     if (!open) return undefined;
@@ -129,22 +116,15 @@ function RoleSelectDropdown({
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
-  }, [open, filtered.length]);
+  }, [open, options.length]);
 
   useEffect(() => {
-    if (!open) {
-      setQuery('');
-      return;
-    }
-    const id = window.setTimeout(() => searchRef.current?.focus(), 30);
+    if (!open) return undefined;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('keydown', onKey);
-    return () => {
-      window.clearTimeout(id);
-      document.removeEventListener('keydown', onKey);
-    };
+    return () => document.removeEventListener('keydown', onKey);
   }, [open]);
 
   return (
@@ -158,14 +138,16 @@ function RoleSelectDropdown({
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className={`w-full flex items-center justify-between rounded-2xl border px-4 py-3.5 text-left transition-all duration-200 ${
-            open ? accentRing : 'border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.07]'
+          className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left transition-all duration-200 ${
+            open
+              ? 'border-[#5865F2]/50 bg-[#5865F2]/10'
+              : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.08]'
           }`}
         >
           {selected ? (
             <span className="flex min-w-0 items-center gap-3">
               <span
-                className="h-3.5 w-3.5 shrink-0 rounded-full ring-2 ring-white/10"
+                className="h-3 w-3 shrink-0 rounded-full"
                 style={{ backgroundColor: roleColorHex(selected.color) }}
               />
               <span className="truncate font-medium text-white">{selected.name}</span>
@@ -175,7 +157,7 @@ function RoleSelectDropdown({
           )}
           <LuChevronDown
             className={`h-4 w-4 shrink-0 text-white/40 transition-transform duration-300 ${
-              open ? `rotate-180 ${accentIcon}` : ''
+              open ? 'rotate-180 text-[#5865F2]' : ''
             }`}
           />
         </button>
@@ -190,7 +172,7 @@ function RoleSelectDropdown({
             <button
               type="button"
               aria-label="Kapat"
-              className="fixed inset-0 z-[190] cursor-default bg-black/45 backdrop-blur-[1px]"
+              className="fixed inset-0 z-[190] cursor-default bg-black/70 backdrop-blur-md"
               onClick={() => setOpen(false)}
             />
             <div
@@ -199,79 +181,48 @@ function RoleSelectDropdown({
               style={{
                 position: 'fixed',
                 left: pos.left,
-                width: Math.max(pos.width, 260),
+                width: pos.width,
                 zIndex: 200,
                 ...(pos.top != null ? { top: pos.top } : { bottom: pos.bottom }),
               }}
-              className="overflow-hidden rounded-2xl border border-white/12 bg-[#0f1118]/98 shadow-[0_24px_80px_rgba(0,0,0,0.65)] backdrop-blur-xl"
+              className="overflow-hidden rounded-2xl border border-white/10 bg-[#12141d]/95 shadow-2xl backdrop-blur-md"
             >
-              <div className="border-b border-white/8 px-3 pb-3 pt-3">
-                <div className="mb-2 flex items-center justify-between px-1">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/35">
-                    Roller
-                  </p>
-                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/45">
-                    {filtered.length}
-                  </span>
-                </div>
-                <div className="relative">
-                  <LuSearch className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/30" />
-                  <input
-                    ref={searchRef}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Rol ara..."
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 pl-9 pr-3 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-white/20 focus:bg-white/[0.06]"
-                  />
-                </div>
-              </div>
-
               <div
-                className="custom-scrollbar overflow-y-auto overscroll-contain p-2"
-                style={{ maxHeight: Math.max(120, pos.maxHeight - 92) }}
+                className="custom-scrollbar space-y-1 overflow-y-auto overscroll-contain p-2"
+                style={{ maxHeight: pos.maxHeight }}
               >
-                {filtered.length === 0 ? (
-                  <p className="px-3 py-8 text-center text-xs text-white/40">Rol bulunamadı</p>
+                {options.length === 0 ? (
+                  <p className="px-3 py-6 text-center text-xs text-white/40">Rol bulunamadı</p>
                 ) : (
-                  <div className="space-y-1">
-                    {filtered.map((role) => {
-                      const isSelected = role.id === value;
-                      return (
-                        <button
-                          key={role.id}
-                          type="button"
-                          role="option"
-                          aria-selected={isSelected}
-                          onClick={() => {
-                            onChange(role.id);
-                            setOpen(false);
-                          }}
-                          className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${
-                            isSelected
-                              ? accentSelected
-                              : 'text-white/75 hover:bg-white/[0.06] hover:text-white'
-                          }`}
-                        >
-                          <span
-                            className={`h-3.5 w-3.5 shrink-0 rounded-full ${
-                              isSelected ? 'ring-2 ring-white/40' : 'ring-1 ring-white/10'
-                            }`}
-                            style={{
-                              backgroundColor: isSelected ? '#fff' : roleColorHex(role.color),
-                            }}
-                          />
-                          <span className="min-w-0 flex-1 truncate font-medium">{role.name}</span>
-                          {isSelected ? (
-                            <LuCheck className="h-4 w-4 shrink-0" />
-                          ) : (
-                            <span
-                              className={`h-1.5 w-1.5 shrink-0 rounded-full opacity-0 transition group-hover:opacity-100 ${accentDot}`}
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  options.map((role) => {
+                    const isSelected = role.id === value;
+                    return (
+                      <button
+                        key={role.id}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => {
+                          onChange(role.id);
+                          setOpen(false);
+                        }}
+                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                          isSelected
+                            ? 'bg-[#5865F2]/30 text-white'
+                            : 'text-white/75 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <span
+                          className="h-3 w-3 shrink-0 rounded-full"
+                          style={{ backgroundColor: roleColorHex(role.color) }}
+                        />
+                        <span className="min-w-0 flex-1 truncate font-medium">{role.name}</span>
+                        {isSelected && (
+                          <span className="h-2 w-2 shrink-0 rounded-full bg-[#5865F2]" />
+                        )}
+                      </button>
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -722,7 +673,7 @@ export default function SetupPage() {
                       hint="Kayıtlı üyelerin temel rolü; papel kazanır."
                       placeholder="Üye rolünü seçin..."
                       icon={LuUsers}
-                      accent="emerald"
+                      accent="blue"
                       roles={memberRoles}
                       value={selectedVerifyRole}
                       onChange={setSelectedVerifyRole}
