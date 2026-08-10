@@ -430,10 +430,10 @@ export default function SetupPage() {
       </nav>
 
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 py-12">
-        <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
+        <div className="w-full max-w-4xl grid grid-cols-1 items-start md:grid-cols-[280px_1fr] gap-8">
           
           {/* Sidebar / Steps */}
-          <div className="hidden md:flex flex-col gap-2">
+          <div className="hidden md:flex flex-col gap-2 self-start">
             <h2 className="text-xs font-bold uppercase tracking-wider text-white/30 mb-4 px-3">Kurulum Adımları</h2>
             {STEPS.map((step, i) => {
               const StepIcon = step.icon;
@@ -454,22 +454,22 @@ export default function SetupPage() {
           </div>
 
           {/* Content Area */}
-          <div className="bg-[#0c0e14]/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-6 sm:p-10 flex flex-col min-h-[500px]">
+          <div className="bg-[#0c0e14]/80 backdrop-blur-2xl border border-white/10 rounded-[1.75rem] shadow-2xl p-5 sm:p-7 flex flex-col self-start">
             {error && (
-              <div className="mb-6 rounded-2xl bg-red-500/10 border border-red-500/20 p-4 flex items-start gap-3 animate-[slideDown_0.2s_ease-out]">
+              <div className="mb-5 rounded-2xl bg-red-500/10 border border-red-500/20 p-4 flex items-start gap-3 animate-[slideDown_0.2s_ease-out]">
                 <LuX className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                 <p className="text-sm text-red-200">{error}</p>
               </div>
             )}
 
-            <div className="flex-1">
+            <div>
               {/* --- STEP 0: ROLES --- */}
               {currentStep === 0 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-2xl font-bold text-white mb-2">Sistem Rolleri</h2>
-                  <p className="text-sm text-white/50 mb-8">DiscoWeb sistemini yönetecek ve sistemi kullanacak üyeleri ayırt etmek için Discord sunucunuzdaki rolleri belirleyin.</p>
+                  <h2 className="text-xl font-bold text-white mb-2">Sistem Rolleri</h2>
+                  <p className="text-sm text-white/50 mb-6">DiscoWeb sistemini yönetecek ve sistemi kullanacak üyeleri ayırt etmek için Discord sunucunuzdaki rolleri belirleyin.</p>
 
-                  <div className="space-y-6">
+                  <div className="space-y-5">
                     {/* Admin Role */}
                     <div className="group">
                       <label className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-white/80">
@@ -743,7 +743,7 @@ export default function SetupPage() {
 
               {/* --- STEP 4: CONFIRM & RUN --- */}
               {currentStep === 4 && (
-                <div className="animate-[fadeIn_0.4s_ease-out] h-full flex flex-col justify-center">
+                <div className="animate-[fadeIn_0.4s_ease-out] flex flex-col">
                   {!setupStarted ? (
                     <div className="text-center">
                       <div className="w-24 h-24 rounded-full bg-[#5865F2]/10 flex items-center justify-center mx-auto mb-6 relative">
@@ -791,7 +791,7 @@ export default function SetupPage() {
 
             {/* Navigation Footer */}
             {!setupStarted && (
-              <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+              <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between">
                 <button 
                   onClick={() => setCurrentStep(c => Math.max(0, c - 1))}
                   disabled={currentStep === 0}
