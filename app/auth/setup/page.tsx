@@ -423,9 +423,35 @@ export default function SetupPage() {
               </div>
             </div>
           </div>
-          <button onClick={() => router.replace('/auth/select-server')} className="text-sm font-medium text-white/50 hover:text-white transition-colors bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl px-4 py-2">
-            İptal
-          </button>
+          <div className="flex items-center gap-3">
+            {user && (
+              <div className="flex min-w-0 items-center gap-2">
+                {user.avatar ? (
+                  <Image
+                    src={user.avatar}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="h-7 w-7 shrink-0 rounded-full border border-white/15 object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/15 bg-[#5865F2]/25 text-[11px] font-bold text-white">
+                    {(user.username ?? '?').charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="hidden max-w-[9rem] truncate text-sm font-medium text-white/70 sm:inline">
+                  {user.username}
+                </span>
+              </div>
+            )}
+            <button
+              onClick={() => router.replace('/auth/select-server')}
+              className="text-sm font-medium text-white/50 hover:text-white transition-colors bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl px-4 py-2"
+            >
+              İptal
+            </button>
+          </div>
         </div>
       </nav>
 
