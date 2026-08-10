@@ -25,18 +25,6 @@ const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
   </svg>
 );
 
-function useIsCoarsePointer() {
-  const [coarse, setCoarse] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(hover: none), (pointer: coarse)');
-    const update = () => setCoarse(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
-  return coarse;
-}
-
 function useShowLanguageLabel() {
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -59,38 +47,17 @@ export default function LanguageSwitcher({
   const [mounted, setMounted] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
-  const isTouch = useIsCoarsePointer();
   const wideEnoughForLabel = useShowLanguageLabel();
   const showLabel = !compact && wideEnoughForLabel;
 
   const current = SUPPORTED_LANGUAGES.find((item) => item.code === language) ?? SUPPORTED_LANGUAGES[0];
 
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearCloseTimer = () => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-  };
-
-  const openMenu = () => {
-    clearCloseTimer();
-    setOpen(true);
-  };
-
-  const scheduleClose = () => {
-    clearCloseTimer();
-    closeTimerRef.current = setTimeout(() => setOpen(false), 220);
-  };
-
   useEffect(() => {
     setMounted(true);
-    return () => clearCloseTimer();
   }, []);
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!open || variant === 'menu') return undefined;
 
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
@@ -111,7 +78,16 @@ export default function LanguageSwitcher({
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
     };
-  }, [open]);
+  }, [open, variant]);
+
+  useEffect(() => {
+    if (!open || variant !== 'menu') return undefined;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [open, variant]);
 
   if (variant === 'menu') {
     return (
@@ -237,22 +213,10 @@ export default function LanguageSwitcher({
   }
 
   return (
-    <div
-      ref={rootRef}
-      className={`relative group z-[10001] shrink-0 ${className}`}
-      onMouseEnter={() => {
-        if (!isTouch) openMenu();
-      }}
-      onMouseLeave={() => {
-        if (!isTouch) scheduleClose();
-      }}
-    >
+    <div ref={rootRef} className={`relative group z-[10001] shrink-0 ${className}`}>
       <button
         type="button"
-        onClick={() => {
-          clearCloseTimer();
-          setOpen((prev) => !prev);
-        }}
+        onClick={() => setOpen((prev) => !prev)}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
@@ -277,15 +241,7 @@ export default function LanguageSwitcher({
       </button>
 
       {open && (
-        <div
-          className="absolute top-full right-0 z-[10002] w-[min(18rem,calc(100vw-2rem))] pt-2 animate-langSlideUp origin-top md:w-72"
-          onMouseEnter={() => {
-            if (!isTouch) openMenu();
-          }}
-          onMouseLeave={() => {
-            if (!isTouch) scheduleClose();
-          }}
-        >
+        <div className="absolute top-full right-0 z-[10002] w-[min(18rem,calc(100vw-2rem))] pt-2 animate-langSlideUp origin-top md:w-72">
           <div className="relative overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-4 pb-14 shadow-[0_20px_50px_rgba(88,101,242,0.4)] md:rounded-[32px] md:p-5 md:pb-16">
             <div
               id={listId}
