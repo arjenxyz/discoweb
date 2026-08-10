@@ -176,7 +176,7 @@ export default function AdminTopBar({
                     className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-white/70 transition hover:bg-white/[0.05] hover:text-white"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5865F2]/20 text-[#a5b4ff]">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06]">
                         <LuServer className="h-4 w-4" />
                       </div>
                       <span className="text-sm font-medium">{t('admin.shell.change_server')}</span>
