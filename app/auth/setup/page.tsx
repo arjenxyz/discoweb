@@ -985,56 +985,108 @@ export default function SetupPage() {
               {/* --- STEP 2: ECONOMY --- */}
               {currentStep === 2 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-xl font-bold text-white mb-2">Ekonomi</h2>
-                  <p className="text-sm text-white/50 mb-6">Mesaj ve ses için papel oranlarını ayarlayın.</p>
+                  <h2 className="text-lg font-bold text-white mb-1">Ekonomi</h2>
+                  <p className="mb-4 text-sm text-white/50">Mesaj ve ses için papel oranlarını ayarlayın.</p>
 
-                  <div className="space-y-6">
-                    {/* Message Earning */}
-                    <div className={`p-6 rounded-2xl border transition-all duration-300 ${messageEarnEnabled ? 'bg-emerald-500/5 border-emerald-500/30 ring-1 ring-emerald-500/10' : 'bg-white/5 border-white/10'}`}>
-                      <div className="flex items-center justify-between mb-5">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${messageEarnEnabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/40'}`}>
-                            <LuMessageSquare className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-white">Mesaj Kazancı</h3>
-                            <p className="text-xs text-white/50">Her mesaj için</p>
-                          </div>
+                  <div className="space-y-2.5">
+                    <div
+                      className={`rounded-xl border px-3.5 py-3 transition-all duration-200 ${
+                        messageEarnEnabled
+                          ? 'border-emerald-500/30 bg-emerald-500/5'
+                          : 'border-white/10 bg-white/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                            messageEarnEnabled
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'bg-white/10 text-white/40'
+                          }`}
+                        >
+                          <LuMessageSquare className="h-4 w-4" />
                         </div>
-                        <button type="button" onClick={() => setMessageEarnEnabled(!messageEarnEnabled)} className={`relative w-12 h-6 rounded-full transition-colors ${messageEarnEnabled ? 'bg-emerald-500' : 'bg-white/20'}`}>
-                          <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${messageEarnEnabled ? 'translate-x-7' : 'translate-x-1'}`} />
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-sm font-semibold text-white">Mesaj Kazancı</h3>
+                          <p className="text-[11px] text-white/45">Her mesaj için</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setMessageEarnEnabled(!messageEarnEnabled)}
+                          className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+                            messageEarnEnabled ? 'bg-emerald-500' : 'bg-white/20'
+                          }`}
+                          aria-pressed={messageEarnEnabled}
+                        >
+                          <span
+                            className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                              messageEarnEnabled ? 'translate-x-4' : 'translate-x-0.5'
+                            }`}
+                          />
                         </button>
                       </div>
-                      
                       {messageEarnEnabled && (
-                        <div className="flex items-center gap-3 animate-[fadeIn_0.2s_ease-out]">
-                          <input type="number" min="0" step="0.1" value={earnPerMessage} onChange={(e) => setEarnPerMessage(e.target.value)} className="w-32 bg-black/40 border border-emerald-500/30 rounded-xl px-4 py-3 text-emerald-400 font-bold text-lg focus:outline-none focus:border-emerald-500 text-center" />
-                          <span className="text-white/60 font-medium">Papel Kazandır</span>
+                        <div className="mt-2.5 flex items-center gap-2.5 pl-11">
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.1"
+                            value={earnPerMessage}
+                            onChange={(e) => setEarnPerMessage(e.target.value)}
+                            className="w-20 rounded-lg border border-emerald-500/30 bg-black/40 px-2.5 py-1.5 text-center text-sm font-bold text-emerald-400 focus:border-emerald-500 focus:outline-none"
+                          />
+                          <span className="text-xs text-white/50">Papel / mesaj</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Voice Earning */}
-                    <div className={`p-6 rounded-2xl border transition-all duration-300 ${voiceEarnEnabled ? 'bg-indigo-500/5 border-indigo-500/30 ring-1 ring-indigo-500/10' : 'bg-white/5 border-white/10'}`}>
-                      <div className="flex items-center justify-between mb-5">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${voiceEarnEnabled ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white/10 text-white/40'}`}>
-                            <LuMic className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-white">Ses Kazancı</h3>
-                            <p className="text-xs text-white/50">Her ses dakikası için</p>
-                          </div>
+                    <div
+                      className={`rounded-xl border px-3.5 py-3 transition-all duration-200 ${
+                        voiceEarnEnabled
+                          ? 'border-indigo-500/30 bg-indigo-500/5'
+                          : 'border-white/10 bg-white/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                            voiceEarnEnabled
+                              ? 'bg-indigo-500/20 text-indigo-400'
+                              : 'bg-white/10 text-white/40'
+                          }`}
+                        >
+                          <LuMic className="h-4 w-4" />
                         </div>
-                        <button type="button" onClick={() => setVoiceEarnEnabled(!voiceEarnEnabled)} className={`relative w-12 h-6 rounded-full transition-colors ${voiceEarnEnabled ? 'bg-indigo-500' : 'bg-white/20'}`}>
-                          <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${voiceEarnEnabled ? 'translate-x-7' : 'translate-x-1'}`} />
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-sm font-semibold text-white">Ses Kazancı</h3>
+                          <p className="text-[11px] text-white/45">Her ses dakikası için</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setVoiceEarnEnabled(!voiceEarnEnabled)}
+                          className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+                            voiceEarnEnabled ? 'bg-indigo-500' : 'bg-white/20'
+                          }`}
+                          aria-pressed={voiceEarnEnabled}
+                        >
+                          <span
+                            className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                              voiceEarnEnabled ? 'translate-x-4' : 'translate-x-0.5'
+                            }`}
+                          />
                         </button>
                       </div>
-                      
                       {voiceEarnEnabled && (
-                        <div className="flex items-center gap-3 animate-[fadeIn_0.2s_ease-out]">
-                          <input type="number" min="0" step="0.1" value={earnPerVoiceMinute} onChange={(e) => setEarnPerVoiceMinute(e.target.value)} className="w-32 bg-black/40 border border-indigo-500/30 rounded-xl px-4 py-3 text-indigo-400 font-bold text-lg focus:outline-none focus:border-indigo-500 text-center" />
-                          <span className="text-white/60 font-medium">Papel Kazandır</span>
+                        <div className="mt-2.5 flex items-center gap-2.5 pl-11">
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.1"
+                            value={earnPerVoiceMinute}
+                            onChange={(e) => setEarnPerVoiceMinute(e.target.value)}
+                            className="w-20 rounded-lg border border-indigo-500/30 bg-black/40 px-2.5 py-1.5 text-center text-sm font-bold text-indigo-400 focus:border-indigo-500 focus:outline-none"
+                          />
+                          <span className="text-xs text-white/50">Papel / dk</span>
                         </div>
                       )}
                     </div>
