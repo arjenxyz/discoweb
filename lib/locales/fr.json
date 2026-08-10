@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "Préparation du système..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Panneau de gestion Discord",
+    "description": "Plateforme de gestion avancée assistée par IA, conçue pour les serveurs Discord privés."
+  },
+  "maintenance": {
+    "eyebrow": "Mode maintenance",
+    "site_message": "Le panneau membre est en maintenance générale. Pour la sécurité et les performances, tous les services du dashboard ont été temporairement interrompus. L’accès se rouvrira automatiquement une fois la maintenance terminée.",
+    "module_message": "Information : le module sélectionné est en maintenance et les fonctionnalités associées sont temporairement indisponibles.",
+    "owner": "Responsable de la maintenance : {name}",
+    "back_home": "Retour à l’accueil",
+    "member_panel": "Panneau membre",
+    "labels": {
+      "store": "Boutique",
+      "transactions": "Transactions",
+      "tracking": "Suivi boutique",
+      "promotions": "Promotions",
+      "discounts": "Code promo",
+      "transfers": "Envoyer Papel"
+    }
+  },
+  "server_left": {
+    "user_fallback": "Utilisateur",
+    "badge": "Vous avez quitté le serveur",
+    "body_1": "Comme vous avez quitté le serveur sélectionné, votre accès aux contenus de ce serveur a été restreint.",
+    "body_2": "Si vous souhaitez utiliser la boutique, le portefeuille et les autres fonctionnalités de ce serveur, vous devez le rejoindre à nouveau.",
+    "select_server": "Retour à la sélection de serveur",
+    "home": "Accueil",
+    "support": "Pour toute question, vous pouvez contacter notre équipe d’assistance."
+  },
+  "thank_you": {
+    "title": "Merci",
+    "body": "Merci d’avoir visité DiscoWeb. Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.",
+    "home": "Accueil"
+  },
+  "confirm": {
+    "title": "Confirmation",
+    "yes": "Oui",
+    "cancel": "Annuler"
+  },
+  "panel_switcher": {
+    "admin": "Panneau administrateur",
+    "admin_short": "Admin",
+    "developer": "Panneau développeur",
+    "developer_short": "Dev",
+    "dashboard": "Panneau membre",
+    "dashboard_short": "Membre"
+  },
+  "status": {
+    "meta_description": "État du système DiscoWeb, disponibilité des services et historique des incidents.",
+    "label": {
+      "operational": "Opérationnel",
+      "degraded": "Performances dégradées",
+      "partial_outage": "Interruption partielle",
+      "major_outage": "Interruption majeure",
+      "maintenance": "Maintenance"
+    },
+    "headline": {
+      "operational": "Tous les systèmes opérationnels",
+      "degraded": "Performances dégradées sur certains services",
+      "partial_outage": "Interruption partielle du système",
+      "major_outage": "Interruption majeure du système",
+      "maintenance": "Maintenance planifiée"
+    },
+    "phase": {
+      "investigating": "Enquête en cours",
+      "identified": "Identifié",
+      "monitoring": "Surveillance",
+      "resolved": "Résolu"
+    },
+    "history_title": "Incidents passés",
+    "days_ago": "il y a 90 jours",
+    "today": "Aujourd’hui",
+    "load_error": "Impossible de charger les informations d’état.",
+    "loading": "Chargement de l’état…",
+    "past_uptime": "Uptime passé",
+    "uptime_aria": "Historique d’uptime sur 90 jours",
+    "no_incidents": "Aucun incident signalé.",
+    "uptime_intro": "Disponibilité des 90 derniers jours.",
+    "updated": "Mis à jour : {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "システムを準備しています..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Discord管理パネル",
+    "description": "プライベートなDiscordサーバー向けに開発された、AI対応の高度な管理プラットフォーム。"
+  },
+  "maintenance": {
+    "eyebrow": "メンテナンスモード",
+    "site_message": "メンバーパネルは全体メンテナンス中です。セキュリティとパフォーマンスのため、すべてのダッシュボードサービスを一時停止しています。メンテナンス完了後、アクセスは自動的に再開されます。",
+    "module_message": "お知らせ: 選択中のモジュールはメンテナンス中のため、関連機能は一時的に利用できません。",
+    "owner": "メンテナンス担当: {name}",
+    "back_home": "ホームに戻る",
+    "member_panel": "メンバーパネル",
+    "labels": {
+      "store": "ストア",
+      "transactions": "取引",
+      "tracking": "ストア追跡",
+      "promotions": "プロモーション",
+      "discounts": "割引コード",
+      "transfers": "Papel送信"
+    }
+  },
+  "server_left": {
+    "user_fallback": "ユーザー",
+    "badge": "サーバーを退出しました",
+    "body_1": "選択したサーバーを退出したため、このサーバーのコンテンツへのアクセスが制限されています。",
+    "body_2": "このサーバーのストア、ウォレット、その他の機能を利用するには、サーバーに再参加する必要があります。",
+    "select_server": "サーバー選択に戻る",
+    "home": "ホーム",
+    "support": "ご質問がある場合は、サポートチームまでお問い合わせください。"
+  },
+  "thank_you": {
+    "title": "ありがとうございます",
+    "body": "DiscoWebをご訪問いただきありがとうございます。メッセージを受け取りました。できるだけ早くご連絡いたします。",
+    "home": "ホーム"
+  },
+  "confirm": {
+    "title": "確認",
+    "yes": "はい",
+    "cancel": "キャンセル"
+  },
+  "panel_switcher": {
+    "admin": "管理者パネル",
+    "admin_short": "Admin",
+    "developer": "開発者パネル",
+    "developer_short": "Dev",
+    "dashboard": "メンバーパネル",
+    "dashboard_short": "メンバー"
+  },
+  "status": {
+    "meta_description": "DiscoWebのシステム状態、サービス稼働時間、インシデント履歴。",
+    "label": {
+      "operational": "正常稼働",
+      "degraded": "パフォーマンス低下",
+      "partial_outage": "一部障害",
+      "major_outage": "重大障害",
+      "maintenance": "メンテナンス"
+    },
+    "headline": {
+      "operational": "すべてのシステムが正常稼働中",
+      "degraded": "一部サービスでパフォーマンス低下",
+      "partial_outage": "システムの一部障害",
+      "major_outage": "システムの重大障害",
+      "maintenance": "計画メンテナンス"
+    },
+    "phase": {
+      "investigating": "調査中",
+      "identified": "原因特定",
+      "monitoring": "監視中",
+      "resolved": "解決済み"
+    },
+    "history_title": "過去のインシデント",
+    "days_ago": "90日前",
+    "today": "今日",
+    "load_error": "ステータス情報を読み込めませんでした。",
+    "loading": "ステータスを読み込み中…",
+    "past_uptime": "過去の稼働状況",
+    "uptime_aria": "90日間の稼働履歴",
+    "no_incidents": "インシデントの報告はありません。",
+    "uptime_intro": "過去90日間の稼働率。",
+    "updated": "更新: {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

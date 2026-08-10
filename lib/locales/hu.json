@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "Rendszer előkészítése..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Discord kezelőpanel",
+    "description": "Fejlett, mesterséges intelligenciával támogatott kezelőplatform privát Discord-szerverekhez."
+  },
+  "maintenance": {
+    "eyebrow": "Karbantartási mód",
+    "site_message": "A tagpanel általános karbantartás alatt áll. A biztonság és a teljesítmény érdekében az összes dashboard szolgáltatás ideiglenesen leállt. A hozzáférés a karbantartás után automatikusan megnyílik.",
+    "module_message": "Tájékoztatás: A kiválasztott modul karbantartás alatt áll, a kapcsolódó funkciók ideiglenesen nem elérhetők.",
+    "owner": "Karbantartás felelőse: {name}",
+    "back_home": "Vissza a főoldalra",
+    "member_panel": "Tagpanel",
+    "labels": {
+      "store": "Áruház",
+      "transactions": "Tranzakciók",
+      "tracking": "Áruház követés",
+      "promotions": "Promóció",
+      "discounts": "Kedvezménykód",
+      "transfers": "Papel küldése"
+    }
+  },
+  "server_left": {
+    "user_fallback": "Felhasználó",
+    "badge": "Elhagytad a szervert",
+    "body_1": "Mivel elhagytad a kiválasztott szervert, a szerver tartalmaihoz való hozzáférésed korlátozva lett.",
+    "body_2": "Ha szeretnéd használni a szerver áruházát, pénztárcáját és egyéb funkcióit, újra csatlakoznod kell a szerverhez.",
+    "select_server": "Vissza a szerverválasztáshoz",
+    "home": "Főoldal",
+    "support": "Kérdéseiddel fordulhatsz ügyfélszolgálatunkhoz."
+  },
+  "thank_you": {
+    "title": "Köszönjük",
+    "body": "Köszönjük, hogy meglátogattad a DiscoWebet. Üzenetedet megkaptuk, és hamarosan felvesszük veled a kapcsolatot.",
+    "home": "Főoldal"
+  },
+  "confirm": {
+    "title": "Megerősítés",
+    "yes": "Igen",
+    "cancel": "Mégse"
+  },
+  "panel_switcher": {
+    "admin": "Adminisztrátori panel",
+    "admin_short": "Admin",
+    "developer": "Fejlesztői panel",
+    "developer_short": "Dev",
+    "dashboard": "Tagpanel",
+    "dashboard_short": "Tag"
+  },
+  "status": {
+    "meta_description": "DiscoWeb rendszerállapot, szolgáltatások rendelkezésre állása és eseménytörténet.",
+    "label": {
+      "operational": "Működik",
+      "degraded": "Csökkent teljesítmény",
+      "partial_outage": "Részleges kiesés",
+      "major_outage": "Nagy kiesés",
+      "maintenance": "Karbantartás"
+    },
+    "headline": {
+      "operational": "Minden rendszer működik",
+      "degraded": "Csökkent teljesítmény egyes szolgáltatásoknál",
+      "partial_outage": "Részleges rendszerkiesés",
+      "major_outage": "Nagy rendszerkiesés",
+      "maintenance": "Tervezett karbantartás"
+    },
+    "phase": {
+      "investigating": "Vizsgálat alatt",
+      "identified": "Azonosítva",
+      "monitoring": "Figyelés alatt",
+      "resolved": "Megoldva"
+    },
+    "history_title": "Korábbi események",
+    "days_ago": "90 napja",
+    "today": "Ma",
+    "load_error": "Az állapotinformációk nem tölthetők be.",
+    "loading": "Állapot betöltése…",
+    "past_uptime": "Korábbi uptime",
+    "uptime_aria": "90 napos uptime előzmény",
+    "no_incidents": "Nem jelentettek eseményt.",
+    "uptime_intro": "Az elmúlt 90 nap üzemideje.",
+    "updated": "Frissítve: {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

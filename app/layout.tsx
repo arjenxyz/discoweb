@@ -17,30 +17,35 @@ export const viewport: Viewport = {
   themeColor: "#5865F2",
 };
 
-export const metadata: Metadata = {
-  title: "DiscoWeb - Discord Yönetim Paneli",
-  description: "Özel Discord sunucuları için geliştirilmiş, yapay zeka destekli gelişmiş yönetim platformu.",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "DiscoWeb",
-  },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/icon-192x192.png",
-  },
-};
-
 import { LanguageProvider } from "@/lib/i18nContext";
+import { getServerLanguage, getServerTranslation } from "@/lib/i18n.server";
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerTranslation();
+  return {
+    title: t("meta.title"),
+    description: t("meta.description"),
+    manifest: "/manifest.json",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "black-translucent",
+      title: "DiscoWeb",
+    },
+    icons: {
+      icon: "/favicon.ico",
+      apple: "/icon-192x192.png",
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const language = await getServerLanguage();
   return (
-    <html lang="tr">
+    <html lang={language}>
       <body className={inter.className}>
         {/* ThemeBootstrap applies persisted theme on client mount; removed pre-hydration inline script
           to prevent React hydration mismatches. This may cause a very short FOUC but avoids warnings. */}

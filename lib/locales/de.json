@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "System wird vorbereitet..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Discord-Verwaltungspanel",
+    "description": "Eine fortschrittliche, KI-gestützte Verwaltungsplattform für private Discord-Server."
+  },
+  "maintenance": {
+    "eyebrow": "Wartungsmodus",
+    "site_message": "Das Mitgliederpanel befindet sich in allgemeiner Wartung. Aus Sicherheits- und Leistungsgründen wurden alle Dashboard-Dienste vorübergehend gestoppt. Der Zugriff wird automatisch wieder geöffnet, sobald die Wartung abgeschlossen ist.",
+    "module_message": "Hinweis: Das ausgewählte Modul ist in Wartung und die zugehörigen Funktionen sind vorübergehend deaktiviert.",
+    "owner": "Wartungsverantwortlicher: {name}",
+    "back_home": "Zur Startseite",
+    "member_panel": "Mitgliederpanel",
+    "labels": {
+      "store": "Shop",
+      "transactions": "Transaktionen",
+      "tracking": "Shop-Tracking",
+      "promotions": "Aktionen",
+      "discounts": "Rabattcode",
+      "transfers": "Papel senden"
+    }
+  },
+  "server_left": {
+    "user_fallback": "Benutzer",
+    "badge": "Server verlassen",
+    "body_1": "Da Sie den ausgewählten Server verlassen haben, ist Ihr Zugriff auf die Inhalte dieses Servers eingeschränkt.",
+    "body_2": "Wenn Sie Shop, Wallet und andere Funktionen dieses Servers nutzen möchten, müssen Sie dem Server erneut beitreten.",
+    "select_server": "Zur Serverauswahl zurück",
+    "home": "Startseite",
+    "support": "Bei Fragen können Sie sich an unser Support-Team wenden."
+  },
+  "thank_you": {
+    "title": "Danke",
+    "body": "Vielen Dank für Ihren Besuch bei DiscoWeb. Wir haben Ihre Nachricht erhalten und melden uns so schnell wie möglich.",
+    "home": "Startseite"
+  },
+  "confirm": {
+    "title": "Bestätigung",
+    "yes": "Ja",
+    "cancel": "Abbrechen"
+  },
+  "panel_switcher": {
+    "admin": "Admin-Panel",
+    "admin_short": "Admin",
+    "developer": "Entwickler-Panel",
+    "developer_short": "Dev",
+    "dashboard": "Mitglieder-Panel",
+    "dashboard_short": "Mitglied"
+  },
+  "status": {
+    "meta_description": "DiscoWeb-Systemstatus, Dienstlaufzeiten und Vorfallverlauf.",
+    "label": {
+      "operational": "Betriebsbereit",
+      "degraded": "Eingeschränkte Leistung",
+      "partial_outage": "Teilausfall",
+      "major_outage": "Schwerer Ausfall",
+      "maintenance": "Wartung"
+    },
+    "headline": {
+      "operational": "Alle Systeme betriebsbereit",
+      "degraded": "Eingeschränkte Leistung bei einigen Diensten",
+      "partial_outage": "Teilweiser Systemausfall",
+      "major_outage": "Schwerer Systemausfall",
+      "maintenance": "Geplante Wartung"
+    },
+    "phase": {
+      "investigating": "Untersuchung",
+      "identified": "Identifiziert",
+      "monitoring": "Überwachung",
+      "resolved": "Behoben"
+    },
+    "history_title": "Vergangene Vorfälle",
+    "days_ago": "vor 90 Tagen",
+    "today": "Heute",
+    "load_error": "Statusinformationen konnten nicht geladen werden.",
+    "loading": "Status wird geladen…",
+    "past_uptime": "Vergangene Uptime",
+    "uptime_aria": "90-Tage-Uptime-Verlauf",
+    "no_incidents": "Keine Vorfälle gemeldet.",
+    "uptime_intro": "Betriebszeit der letzten 90 Tage.",
+    "updated": "Aktualisiert: {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

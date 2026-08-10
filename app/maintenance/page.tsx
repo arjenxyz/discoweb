@@ -2,24 +2,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { MAINTENANCE_KEYS, getMaintenanceFlags } from '@/lib/maintenance';
+import { getServerTranslation } from '@/lib/i18n.server';
 import MaintenanceWatcher from './maintenance-watcher';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 
-const LABELS: Record<string, string> = {
-  store: 'Mağaza',
-  transactions: 'İşlemler',
-  tracking: 'Mağaza Takip',
-  promotions: 'Promosyon',
-  discounts: 'İndirim Kodu',
-  transfers: 'Papel Gönder',
-};
-
 export default async function MaintenancePage() {
+  const { t } = await getServerTranslation();
   const data = await getMaintenanceFlags();
   const flags = data?.flags ?? null;
+
+  const LABELS: Record<string, string> = {
+    store: t('maintenance.labels.store'),
+    transactions: t('maintenance.labels.transactions'),
+    tracking: t('maintenance.labels.tracking'),
+    promotions: t('maintenance.labels.promotions'),
+    discounts: t('maintenance.labels.discounts'),
+    transfers: t('maintenance.labels.transfers'),
+  };
 
   const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
   const botToken = process.env.DISCORD_BOT_TOKEN;
@@ -71,8 +73,7 @@ export default async function MaintenancePage() {
     profiles.filter(([, profile]) => profile).map(([id, profile]) => [id, profile]),
   ) as Record<string, { id: string; name: string; avatarUrl: string }>;
   const isSiteMaintenance = Boolean(flags?.site?.is_active);
-  const siteTemplateMessage =
-    'Üye paneli genel bakımda. Güvenlik ve performans için tüm dashboard servisleri geçici olarak durduruldu. Bakım tamamlandığında erişim otomatik olarak açılacaktır.';
+  const siteTemplateMessage = t('maintenance.site_message');
   const siteUpdaterId = flags?.site?.updated_by;
   const siteUpdater = siteUpdaterId ? updaterProfiles[siteUpdaterId] : undefined;
 
@@ -85,13 +86,13 @@ export default async function MaintenancePage() {
       <MaintenanceWatcher signature={flagsSignature} />
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
         <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-8 shadow-[0_30px_80px_rgba(10,12,18,0.55)]">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-200">Bakım Modu</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-200">{t('maintenance.eyebrow')}</p>
 
           <div className="mt-4 rounded-2xl border border-amber-500/20 bg-[#0b0d12]/60 px-4 py-3 text-sm text-amber-100/80">
             <p>
               {isSiteMaintenance
                 ? siteTemplateMessage
-                : 'Bilgilendirme: Seçili modül bakımda ve ilgili özellikler geçici olarak kapalı.'}
+                : t('maintenance.module_message')}
             </p>
             {siteUpdater && (
               <div className="mt-2 flex items-center gap-2 text-xs text-amber-100/70">
@@ -103,7 +104,7 @@ export default async function MaintenancePage() {
                   unoptimized
                   className="h-4.5 w-4.5 rounded-full border border-amber-200/40"
                 />
-                <span>Bakım sorumlusu: {siteUpdater.name}</span>
+                <span>{t('maintenance.owner', { name: siteUpdater.name })}</span>
               </div>
             )}
           </div>
@@ -131,13 +132,13 @@ export default async function MaintenancePage() {
               href="/"
               className="rounded-full border border-amber-300/40 px-4 py-2 text-xs text-amber-100 transition hover:border-amber-200"
             >
-              Ana sayfaya dön
+              {t('maintenance.back_home')}
             </Link>
             <Link
               href="/dashboard"
               className="rounded-full border border-amber-300/40 px-4 py-2 text-xs text-amber-100 transition hover:border-amber-200"
             >
-              Üye paneli
+              {t('maintenance.member_panel')}
             </Link>
           </div>
         </div>

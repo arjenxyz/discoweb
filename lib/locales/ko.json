@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "시스템 준비 중..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Discord 관리 패널",
+    "description": "프라이빗 Discord 서버를 위해 개발된 AI 기반 고급 관리 플랫폼입니다."
+  },
+  "maintenance": {
+    "eyebrow": "점검 모드",
+    "site_message": "멤버 패널이 전체 점검 중입니다. 보안과 성능을 위해 모든 대시보드 서비스가 일시적으로 중단되었습니다. 점검이 끝나면 접근이 자동으로 다시 열립니다.",
+    "module_message": "안내: 선택한 모듈이 점검 중이며 관련 기능이 일시적으로 비활성화되어 있습니다.",
+    "owner": "점검 담당자: {name}",
+    "back_home": "홈으로 돌아가기",
+    "member_panel": "멤버 패널",
+    "labels": {
+      "store": "상점",
+      "transactions": "거래",
+      "tracking": "상점 추적",
+      "promotions": "프로모션",
+      "discounts": "할인 코드",
+      "transfers": "Papel 보내기"
+    }
+  },
+  "server_left": {
+    "user_fallback": "사용자",
+    "badge": "서버에서 나갔습니다",
+    "body_1": "선택한 서버에서 나갔기 때문에 이 서버 콘텐츠에 대한 접근이 제한되었습니다.",
+    "body_2": "이 서버의 상점, 지갑 및 기타 기능을 사용하려면 서버에 다시 참여해야 합니다.",
+    "select_server": "서버 선택으로 돌아가기",
+    "home": "홈",
+    "support": "궁금한 점이 있으면 지원팀에 문의할 수 있습니다."
+  },
+  "thank_you": {
+    "title": "감사합니다",
+    "body": "DiscoWeb을 방문해 주셔서 감사합니다. 메시지를 받았으며 최대한 빠르게 연락드리겠습니다.",
+    "home": "홈"
+  },
+  "confirm": {
+    "title": "확인",
+    "yes": "예",
+    "cancel": "취소"
+  },
+  "panel_switcher": {
+    "admin": "관리자 패널",
+    "admin_short": "Admin",
+    "developer": "개발자 패널",
+    "developer_short": "Dev",
+    "dashboard": "멤버 패널",
+    "dashboard_short": "멤버"
+  },
+  "status": {
+    "meta_description": "DiscoWeb 시스템 상태, 서비스 가동 시간 및 장애 기록.",
+    "label": {
+      "operational": "정상 작동",
+      "degraded": "성능 저하",
+      "partial_outage": "부분 장애",
+      "major_outage": "주요 장애",
+      "maintenance": "점검"
+    },
+    "headline": {
+      "operational": "모든 시스템 정상 작동",
+      "degraded": "일부 서비스 성능 저하",
+      "partial_outage": "시스템 부분 장애",
+      "major_outage": "시스템 주요 장애",
+      "maintenance": "예정된 점검"
+    },
+    "phase": {
+      "investigating": "조사 중",
+      "identified": "원인 파악됨",
+      "monitoring": "모니터링 중",
+      "resolved": "해결됨"
+    },
+    "history_title": "이전 장애",
+    "days_ago": "90일 전",
+    "today": "오늘",
+    "load_error": "상태 정보를 불러올 수 없습니다.",
+    "loading": "상태 불러오는 중…",
+    "past_uptime": "이전 가동률",
+    "uptime_aria": "90일 가동 기록",
+    "no_incidents": "보고된 장애가 없습니다.",
+    "uptime_intro": "최근 90일 가동 시간.",
+    "updated": "업데이트: {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

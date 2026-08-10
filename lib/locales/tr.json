@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "Sistem hazırlanıyor..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Discord Yönetim Paneli",
+    "description": "Özel Discord sunucuları için geliştirilmiş, yapay zeka destekli gelişmiş yönetim platformu."
+  },
+  "maintenance": {
+    "eyebrow": "Bakım Modu",
+    "site_message": "Üye paneli genel bakımda. Güvenlik ve performans için tüm dashboard servisleri geçici olarak durduruldu. Bakım tamamlandığında erişim otomatik olarak açılacaktır.",
+    "module_message": "Bilgilendirme: Seçili modül bakımda ve ilgili özellikler geçici olarak kapalı.",
+    "owner": "Bakım sorumlusu: {name}",
+    "back_home": "Ana sayfaya dön",
+    "member_panel": "Üye paneli",
+    "labels": {
+      "store": "Mağaza",
+      "transactions": "İşlemler",
+      "tracking": "Mağaza Takip",
+      "promotions": "Promosyon",
+      "discounts": "İndirim Kodu",
+      "transfers": "Papel Gönder"
+    }
+  },
+  "server_left": {
+    "user_fallback": "Kullanıcı",
+    "badge": "Sunucudan Ayrıldınız",
+    "body_1": "Seçili sunucudan ayrıldığınız için bu sunucunun içeriklerine erişiminiz kısıtlanmıştır.",
+    "body_2": "Eğer bu sunucunun mağaza, cüzdan ve diğer özelliklerine erişmek istiyorsanız, sunucuya geri dönmeniz gerekmektedir.",
+    "select_server": "Sunucu Seçimine Dön",
+    "home": "Ana Sayfa",
+    "support": "Sorularınız için destek ekibimizle iletişime geçebilirsiniz."
+  },
+  "thank_you": {
+    "title": "Teşekkürler",
+    "body": "DiscoWeb Türkiye'yi ziyaret ettiğiniz için teşekkür ederiz. Mesajınızı aldık ve en kısa sürede sizinle iletişime geçeceğiz.",
+    "home": "Ana Sayfa"
+  },
+  "confirm": {
+    "title": "Onay",
+    "yes": "Evet",
+    "cancel": "İptal"
+  },
+  "panel_switcher": {
+    "admin": "Yönetici Paneli",
+    "admin_short": "Admin",
+    "developer": "Geliştirici Paneli",
+    "developer_short": "Dev",
+    "dashboard": "Üye Paneli",
+    "dashboard_short": "Üye"
+  },
+  "status": {
+    "meta_description": "DiscoWeb sistem durumu, servis çalışma süreleri ve olay geçmişi.",
+    "label": {
+      "operational": "Çalışıyor",
+      "degraded": "Performans Düşük",
+      "partial_outage": "Kısmi Kesinti",
+      "major_outage": "Büyük Kesinti",
+      "maintenance": "Bakım"
+    },
+    "headline": {
+      "operational": "Tüm Sistemler Çalışıyor",
+      "degraded": "Bazı Servislerde Performans Düşüklüğü",
+      "partial_outage": "Kısmi Sistem Kesintisi",
+      "major_outage": "Büyük Sistem Kesintisi",
+      "maintenance": "Planlı Bakım"
+    },
+    "phase": {
+      "investigating": "İnceleniyor",
+      "identified": "Tespit Edildi",
+      "monitoring": "İzleniyor",
+      "resolved": "Çözüldü"
+    },
+    "history_title": "Geçmiş Olaylar",
+    "days_ago": "90 gün önce",
+    "today": "Bugün",
+    "load_error": "Durum bilgileri yüklenemedi.",
+    "loading": "Durum yükleniyor…",
+    "past_uptime": "Geçmiş uptime",
+    "uptime_aria": "90 günlük çalışma süresi geçmişi",
+    "no_incidents": "Olay bildirilmedi.",
+    "uptime_intro": "Son 90 günün çalışma süresi.",
+    "updated": "Güncellendi: {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

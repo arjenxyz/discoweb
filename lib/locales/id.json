@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "Menyiapkan sistem..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Panel Manajemen Discord",
+    "description": "Platform manajemen canggih berbantuan AI yang dibuat untuk server Discord privat."
+  },
+  "maintenance": {
+    "eyebrow": "Mode Pemeliharaan",
+    "site_message": "Panel anggota sedang dalam pemeliharaan menyeluruh. Demi keamanan dan performa, semua layanan dashboard sementara dihentikan. Akses akan dibuka otomatis setelah pemeliharaan selesai.",
+    "module_message": "Pemberitahuan: Modul yang dipilih sedang dalam pemeliharaan dan fitur terkait sementara tidak tersedia.",
+    "owner": "Penanggung jawab pemeliharaan: {name}",
+    "back_home": "Kembali ke beranda",
+    "member_panel": "Panel anggota",
+    "labels": {
+      "store": "Toko",
+      "transactions": "Transaksi",
+      "tracking": "Pelacakan Toko",
+      "promotions": "Promosi",
+      "discounts": "Kode Diskon",
+      "transfers": "Kirim Papel"
+    }
+  },
+  "server_left": {
+    "user_fallback": "Pengguna",
+    "badge": "Anda Meninggalkan Server",
+    "body_1": "Karena Anda meninggalkan server yang dipilih, akses Anda ke konten server ini telah dibatasi.",
+    "body_2": "Jika ingin menggunakan toko, dompet, dan fitur lain di server ini, Anda perlu bergabung kembali ke server.",
+    "select_server": "Kembali ke Pemilihan Server",
+    "home": "Beranda",
+    "support": "Jika ada pertanyaan, Anda dapat menghubungi tim dukungan kami."
+  },
+  "thank_you": {
+    "title": "Terima Kasih",
+    "body": "Terima kasih telah mengunjungi DiscoWeb. Kami telah menerima pesan Anda dan akan segera menghubungi Anda.",
+    "home": "Beranda"
+  },
+  "confirm": {
+    "title": "Konfirmasi",
+    "yes": "Ya",
+    "cancel": "Batal"
+  },
+  "panel_switcher": {
+    "admin": "Panel Admin",
+    "admin_short": "Admin",
+    "developer": "Panel Pengembang",
+    "developer_short": "Dev",
+    "dashboard": "Panel Anggota",
+    "dashboard_short": "Anggota"
+  },
+  "status": {
+    "meta_description": "Status sistem DiscoWeb, waktu aktif layanan, dan riwayat insiden.",
+    "label": {
+      "operational": "Beroperasi",
+      "degraded": "Performa Menurun",
+      "partial_outage": "Gangguan Sebagian",
+      "major_outage": "Gangguan Besar",
+      "maintenance": "Pemeliharaan"
+    },
+    "headline": {
+      "operational": "Semua Sistem Beroperasi",
+      "degraded": "Performa Menurun di Beberapa Layanan",
+      "partial_outage": "Gangguan Sistem Sebagian",
+      "major_outage": "Gangguan Sistem Besar",
+      "maintenance": "Pemeliharaan Terjadwal"
+    },
+    "phase": {
+      "investigating": "Sedang diselidiki",
+      "identified": "Teridentifikasi",
+      "monitoring": "Sedang dipantau",
+      "resolved": "Selesai"
+    },
+    "history_title": "Insiden Sebelumnya",
+    "days_ago": "90 hari yang lalu",
+    "today": "Hari ini",
+    "load_error": "Informasi status tidak dapat dimuat.",
+    "loading": "Memuat status…",
+    "past_uptime": "Uptime sebelumnya",
+    "uptime_aria": "Riwayat uptime 90 hari",
+    "no_incidents": "Tidak ada insiden dilaporkan.",
+    "uptime_intro": "Uptime 90 hari terakhir.",
+    "updated": "Diperbarui: {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

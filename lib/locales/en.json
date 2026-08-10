@@ -586,5 +586,86 @@
       "done": "done"
     },
     "loading": "Preparing system..."
+  },
+  "meta": {
+    "title": "DiscoWeb - Discord Management Panel",
+    "description": "An advanced, AI-powered management platform built for private Discord servers."
+  },
+  "maintenance": {
+    "eyebrow": "Maintenance Mode",
+    "site_message": "The member panel is under site-wide maintenance. All dashboard services have been temporarily paused for security and performance. Access will reopen automatically when maintenance is complete.",
+    "module_message": "Notice: The selected module is under maintenance and related features are temporarily unavailable.",
+    "owner": "Maintenance owner: {name}",
+    "back_home": "Back to home",
+    "member_panel": "Member panel",
+    "labels": {
+      "store": "Store",
+      "transactions": "Transactions",
+      "tracking": "Store Tracking",
+      "promotions": "Promotions",
+      "discounts": "Discount Code",
+      "transfers": "Send Papel"
+    }
+  },
+  "server_left": {
+    "user_fallback": "User",
+    "badge": "You Left the Server",
+    "body_1": "Because you left the selected server, your access to this server’s content has been restricted.",
+    "body_2": "If you want to use this server’s store, wallet, and other features, you need to rejoin the server.",
+    "select_server": "Back to Server Selection",
+    "home": "Home",
+    "support": "If you have questions, you can contact our support team."
+  },
+  "thank_you": {
+    "title": "Thank You",
+    "body": "Thank you for visiting DiscoWeb. We’ve received your message and will get back to you as soon as possible.",
+    "home": "Home"
+  },
+  "confirm": {
+    "title": "Confirm",
+    "yes": "Yes",
+    "cancel": "Cancel"
+  },
+  "panel_switcher": {
+    "admin": "Admin Panel",
+    "admin_short": "Admin",
+    "developer": "Developer Panel",
+    "developer_short": "Dev",
+    "dashboard": "Member Panel",
+    "dashboard_short": "Member"
+  },
+  "status": {
+    "meta_description": "DiscoWeb system status, service uptime, and incident history.",
+    "label": {
+      "operational": "Operational",
+      "degraded": "Degraded Performance",
+      "partial_outage": "Partial Outage",
+      "major_outage": "Major Outage",
+      "maintenance": "Maintenance"
+    },
+    "headline": {
+      "operational": "All Systems Operational",
+      "degraded": "Degraded Performance",
+      "partial_outage": "Partial System Outage",
+      "major_outage": "Major System Outage",
+      "maintenance": "Scheduled Maintenance"
+    },
+    "phase": {
+      "investigating": "Investigating",
+      "identified": "Identified",
+      "monitoring": "Monitoring",
+      "resolved": "Resolved"
+    },
+    "history_title": "Past Incidents",
+    "days_ago": "90 days ago",
+    "today": "Today",
+    "load_error": "Could not load status information.",
+    "loading": "Loading status…",
+    "past_uptime": "Past uptime",
+    "uptime_aria": "90 day uptime history",
+    "no_incidents": "No incidents reported.",
+    "uptime_intro": "Uptime over the last 90 days.",
+    "updated": "Updated: {time}",
+    "uptime_pct": "{value} % uptime"
   }
 }

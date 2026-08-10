@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { LuShield, LuCode, LuLayoutDashboard, LuChevronDown } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 
 export type PanelType = 'admin' | 'developer' | 'dashboard';
 
@@ -10,37 +11,38 @@ type PanelSwitcherProps = {
   availablePanels: PanelType[];
 };
 
-const PANEL_CONFIG: Record<PanelType, { label: string; shortLabel: string; href: string; icon: React.ReactNode; color: string }> = {
-  admin: {
-    label: 'Yönetici Paneli',
-    shortLabel: 'Admin',
-    href: '/admin',
-    icon: <LuShield className="h-3.5 w-3.5" />,
-    color: 'text-[#5865F2]',
-  },
-  developer: {
-    label: 'Geliştirici Paneli',
-    shortLabel: 'Dev',
-    href: '/developer',
-    icon: <LuCode className="h-3.5 w-3.5" />,
-    color: 'text-emerald-400',
-  },
-  dashboard: {
-    label: 'Üye Paneli',
-    shortLabel: 'Üye',
-    href: '/dashboard',
-    icon: <LuLayoutDashboard className="h-3.5 w-3.5" />,
-    color: 'text-indigo-400',
-  },
-};
-
 export default function PanelSwitcher({ currentPanel, availablePanels }: PanelSwitcherProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  const panelConfig: Record<PanelType, { label: string; shortLabel: string; href: string; icon: React.ReactNode; color: string }> = {
+    admin: {
+      label: t('panel_switcher.admin'),
+      shortLabel: t('panel_switcher.admin_short'),
+      href: '/admin',
+      icon: <LuShield className="h-3.5 w-3.5" />,
+      color: 'text-[#5865F2]',
+    },
+    developer: {
+      label: t('panel_switcher.developer'),
+      shortLabel: t('panel_switcher.developer_short'),
+      href: '/developer',
+      icon: <LuCode className="h-3.5 w-3.5" />,
+      color: 'text-emerald-400',
+    },
+    dashboard: {
+      label: t('panel_switcher.dashboard'),
+      shortLabel: t('panel_switcher.dashboard_short'),
+      href: '/dashboard',
+      icon: <LuLayoutDashboard className="h-3.5 w-3.5" />,
+      color: 'text-indigo-400',
+    },
+  };
+
   if (availablePanels.length <= 1) return null;
 
-  const current = PANEL_CONFIG[currentPanel];
+  const current = panelConfig[currentPanel];
   const otherPanels = availablePanels.filter((p) => p !== currentPanel);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -57,7 +59,6 @@ export default function PanelSwitcher({ currentPanel, availablePanels }: PanelSw
 
   return (
     <div className="relative" ref={ref}>
-      {/* Trigger - kompakt pill */}
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
@@ -72,7 +73,6 @@ export default function PanelSwitcher({ currentPanel, availablePanels }: PanelSw
         <LuChevronDown className={`h-3 w-3 text-white/30 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Dropdown - minimal liste */}
       <div
         className={`absolute right-0 top-[calc(100%+6px)] z-50 min-w-[180px] overflow-hidden rounded-xl border border-white/[0.08] bg-[#111114]/95 backdrop-blur-xl shadow-xl shadow-black/40 transition-all duration-150 origin-top-right ${
           open
@@ -80,7 +80,6 @@ export default function PanelSwitcher({ currentPanel, availablePanels }: PanelSw
             : 'opacity-0 scale-95 invisible pointer-events-none'
         }`}
       >
-        {/* Aktif panel - sadece subtle indicator */}
         <div className="px-1.5 pt-1.5">
           <div className="flex items-center gap-2.5 rounded-lg bg-white/[0.04] px-3 py-2">
             <span className={current.color}>{current.icon}</span>
@@ -89,13 +88,11 @@ export default function PanelSwitcher({ currentPanel, availablePanels }: PanelSw
           </div>
         </div>
 
-        {/* Ayırıcı */}
         <div className="mx-3 my-1 h-px bg-white/[0.06]" />
 
-        {/* Diğer paneller */}
         <div className="px-1.5 pb-1.5">
           {otherPanels.map((panel) => {
-            const config = PANEL_CONFIG[panel];
+            const config = panelConfig[panel];
             return (
               <button
                 key={panel}
@@ -104,14 +101,10 @@ export default function PanelSwitcher({ currentPanel, availablePanels }: PanelSw
                   setOpen(false);
                   window.location.href = config.href;
                 }}
-                className="group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.98]"
+                className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-white/[0.06]"
               >
-                <span className={`text-white/40 group-hover:${config.color.replace('text-', 'text-')} transition-colors`}>
-                  {config.icon}
-                </span>
-                <span className="text-[13px] text-white/50 group-hover:text-white transition-colors">
-                  {config.label}
-                </span>
+                <span className={config.color}>{config.icon}</span>
+                <span className="text-[13px] text-white/70">{config.label}</span>
               </button>
             );
           })}
