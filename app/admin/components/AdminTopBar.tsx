@@ -56,28 +56,22 @@ export default function AdminTopBar({
         accountMenuOpen ? 'z-[9991]' : 'z-30'
       } lg:relative lg:inset-auto`}
     >
-      {/* Mobile menu trigger */}
-      <button
-        type="button"
-        onClick={onMobileMenuOpen}
-        className="lg:hidden flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 transition hover:bg-white/[0.06] hover:text-white"
-        aria-label={t('admin.shell.open_menu')}
-      >
-        <LuMenu className="h-[18px] w-[18px]" />
-      </button>
+      <div className="flex min-w-0 items-center gap-2.5">
+        {/* Mobile menu trigger */}
+        <button
+          type="button"
+          onClick={onMobileMenuOpen}
+          className="lg:hidden flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/60 transition hover:bg-white/[0.06] hover:text-white"
+          aria-label={t('admin.shell.open_menu')}
+        >
+          <LuMenu className="h-[18px] w-[18px]" />
+        </button>
 
-      {/* Desktop logo */}
-      <div className="hidden lg:flex min-w-fit items-center ml-1">
-        <span className="font-black text-xl tracking-tight leading-none" style={logoWhiteStyle}>
-          Disco<span style={logoBlueStyle}>Web</span>
-        </span>
-      </div>
-
-      {/* Mobile centered logo */}
-      <div className="lg:hidden pointer-events-none absolute left-1/2 -translate-x-1/2">
-        <span className="font-black text-xl tracking-tight leading-none" style={logoWhiteStyle}>
-          Disco<span style={logoBlueStyle}>Web</span>
-        </span>
+        <div className="min-w-0 items-center">
+          <span className="font-black text-xl tracking-tight leading-none" style={logoWhiteStyle}>
+            Disco<span style={logoBlueStyle}>Web</span>
+          </span>
+        </div>
       </div>
 
       <div className="flex-1" />
