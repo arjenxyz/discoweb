@@ -215,6 +215,7 @@ export default function SelectServerPage() {
       } catch {
         if (bypass) {
           setGuilds([LOCAL_DEV_GUILD]);
+          setHasDeveloperAccess(true);
           setLoading(false);
           return;
         }
