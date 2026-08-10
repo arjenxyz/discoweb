@@ -44,24 +44,32 @@ export default function AdminQuizPage() {
   const [tab, setTab] = useState<'events' | 'questions'>('events');
 
   return (
-    <div className="p-6 text-white">
-      <div className="mb-6 flex items-center gap-3">
-        <LuTrophy className="h-6 w-6 text-amber-400" />
-        <h1 className="text-2xl font-bold">Quiz Etkinlikleri (Sunucu)</h1>
+    <div className="min-w-0 text-white">
+      <div className="mb-5 flex items-start gap-3 sm:mb-6 sm:items-center">
+        <LuTrophy className="mt-0.5 h-6 w-6 shrink-0 text-amber-400 sm:mt-0" />
+        <h1 className="text-xl font-bold leading-tight sm:text-2xl">Quiz Etkinlikleri (Sunucu)</h1>
       </div>
 
-      <div className="mb-6 inline-flex rounded-lg border border-white/10 bg-white/[0.03] p-1">
+      <div className="mb-5 flex w-full gap-1 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-1 sm:mb-6 sm:inline-flex sm:w-auto sm:overflow-visible">
         <button
+          type="button"
           onClick={() => setTab('events')}
-          className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${tab === 'events' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'}`}
+          className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition sm:flex-none sm:justify-start sm:px-4 ${
+            tab === 'events' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'
+          }`}
         >
-          <LuTrophy className="h-4 w-4" /> Etkinlikler
+          <LuTrophy className="h-4 w-4 shrink-0" />
+          <span className="truncate">Etkinlikler</span>
         </button>
         <button
+          type="button"
           onClick={() => setTab('questions')}
-          className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${tab === 'questions' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'}`}
+          className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition sm:flex-none sm:justify-start sm:px-4 ${
+            tab === 'questions' ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white'
+          }`}
         >
-          <LuBrain className="h-4 w-4" /> Sunucuya Özel Sorular
+          <LuBrain className="h-4 w-4 shrink-0" />
+          <span className="truncate">Özel Sorular</span>
         </button>
       </div>
 
@@ -155,20 +163,95 @@ function EventsPanel() {
   };
 
   return (
-    <div>
-      <div className="mb-4 flex items-center gap-2">
-        <button onClick={() => load()} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/80">
+    <div className="min-w-0">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <button
+          type="button"
+          onClick={() => load()}
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/80 sm:justify-start"
+        >
           <LuRefreshCw className="h-4 w-4" /> Yenile
         </button>
-        <button onClick={() => setShowCreate(true)} className="ml-auto flex items-center gap-2 rounded-lg bg-amber-500 px-3 py-2 text-sm font-semibold text-black">
+        <button
+          type="button"
+          onClick={() => setShowCreate(true)}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-3 py-2.5 text-sm font-semibold text-black sm:ml-auto"
+        >
           <LuPlus className="h-4 w-4" /> Yeni Etkinlik
         </button>
       </div>
 
-      {error && <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">{error}</div>}
+      {error && (
+        <div className="mb-4 break-words rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+          {error}
+        </div>
+      )}
 
-      <div className="overflow-x-auto rounded-xl border border-white/10">
-        <table className="w-full text-left text-sm">
+      {/* Mobile cards */}
+      <div className="space-y-3 md:hidden">
+        {loading && (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
+            Yükleniyor...
+          </div>
+        )}
+        {!loading && events.length === 0 && (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
+            Etkinlik yok
+          </div>
+        )}
+        {!loading &&
+          events.map((e) => (
+            <article key={e.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
+                    <span className={`rounded-md border px-2 py-0.5 text-xs ${badgeStyle(e.status)}`}>
+                      {statusLabel(e.status)}
+                    </span>
+                    <span className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs text-white/70">
+                      {e.lang ?? 'tr'}
+                    </span>
+                  </div>
+                  <h3 className="truncate text-base font-semibold text-white">{e.title}</h3>
+                  <p className="mt-1 text-xs text-white/45">
+                    {new Date(e.start_at).toLocaleString('tr-TR')}
+                  </p>
+                </div>
+                {e.status === 'scheduled' && (
+                  <button
+                    type="button"
+                    onClick={() => cancel(e.id)}
+                    className="shrink-0 rounded-lg border border-red-500/30 px-2.5 py-1.5 text-xs text-red-300 hover:bg-red-500/10"
+                  >
+                    İptal
+                  </button>
+                )}
+              </div>
+              <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                <div className="rounded-xl bg-white/[0.04] px-3 py-2">
+                  <dt className="text-white/40">Soru</dt>
+                  <dd className="mt-0.5 font-medium text-white/85">{e.total_questions}</dd>
+                </div>
+                <div className="rounded-xl bg-white/[0.04] px-3 py-2">
+                  <dt className="text-white/40">Havuz</dt>
+                  <dd className="mt-0.5 font-medium text-amber-300">
+                    {Number(e.prize_pool_papel).toLocaleString('tr-TR')}
+                  </dd>
+                </div>
+                <div className="col-span-2 rounded-xl bg-white/[0.04] px-3 py-2">
+                  <dt className="text-white/40">Checkpoint</dt>
+                  <dd className="mt-0.5 break-words text-white/70">
+                    {e.checkpoints.map((c) => `${c.position}→${c.papel_reward}`).join(' · ') || '—'}
+                  </dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
+        <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="bg-white/[0.04] text-xs uppercase text-white/50">
             <tr>
               <th className="px-3 py-2">Durum</th>
@@ -183,129 +266,214 @@ function EventsPanel() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {loading && (
-              <tr><td colSpan={8} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>
-            )}
-            {!loading && events.length === 0 && (
-              <tr><td colSpan={8} className="px-3 py-6 text-center text-white/40">Etkinlik yok</td></tr>
-            )}
-            {!loading && events.map((e) => (
-              <tr key={e.id} className="hover:bg-white/[0.02]">
-                <td className="px-3 py-2">
-                  <span className={`rounded-md border px-2 py-0.5 text-xs ${badgeStyle(e.status)}`}>{statusLabel(e.status)}</span>
-                </td>
-                <td className="px-3 py-2 text-white/70">
-                  <span className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">{e.lang ?? 'tr'}</span>
-                </td>
-                <td className="px-3 py-2 text-white/90">{e.title}</td>
-                <td className="px-3 py-2 text-white/60">{new Date(e.start_at).toLocaleString('tr-TR')}</td>
-                <td className="px-3 py-2 text-white/70">{e.total_questions}</td>
-                <td className="px-3 py-2 text-amber-300">{Number(e.prize_pool_papel).toLocaleString('tr-TR')}</td>
-                <td className="px-3 py-2 text-white/60">{e.checkpoints.map(c => `${c.position}→${c.papel_reward}`).join(' · ')}</td>
-                <td className="px-3 py-2">
-                  {e.status === 'scheduled' && (
-                    <button onClick={() => cancel(e.id)} className="rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10">
-                      İptal
-                    </button>
-                  )}
+              <tr>
+                <td colSpan={8} className="px-3 py-6 text-center text-white/40">
+                  Yükleniyor...
                 </td>
               </tr>
-            ))}
+            )}
+            {!loading && events.length === 0 && (
+              <tr>
+                <td colSpan={8} className="px-3 py-6 text-center text-white/40">
+                  Etkinlik yok
+                </td>
+              </tr>
+            )}
+            {!loading &&
+              events.map((e) => (
+                <tr key={e.id} className="hover:bg-white/[0.02]">
+                  <td className="px-3 py-2">
+                    <span className={`rounded-md border px-2 py-0.5 text-xs ${badgeStyle(e.status)}`}>
+                      {statusLabel(e.status)}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 text-white/70">
+                    <span className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">{e.lang ?? 'tr'}</span>
+                  </td>
+                  <td className="px-3 py-2 text-white/90">{e.title}</td>
+                  <td className="px-3 py-2 text-white/60">
+                    {new Date(e.start_at).toLocaleString('tr-TR')}
+                  </td>
+                  <td className="px-3 py-2 text-white/70">{e.total_questions}</td>
+                  <td className="px-3 py-2 text-amber-300">
+                    {Number(e.prize_pool_papel).toLocaleString('tr-TR')}
+                  </td>
+                  <td className="px-3 py-2 text-white/60">
+                    {e.checkpoints.map((c) => `${c.position}→${c.papel_reward}`).join(' · ')}
+                  </td>
+                  <td className="px-3 py-2">
+                    {e.status === 'scheduled' && (
+                      <button
+                        type="button"
+                        onClick={() => cancel(e.id)}
+                        className="rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10"
+                      >
+                        İptal
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
 
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-[#0f1116] p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
+          <div className="flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#0f1116] shadow-2xl sm:max-h-[90vh] sm:rounded-2xl">
+            <div className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-4 py-4 sm:px-6">
               <h2 className="text-lg font-semibold text-white">Yeni Etkinlik</h2>
-              <button onClick={() => setShowCreate(false)} className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white"><LuX className="h-5 w-5" /></button>
+              <button
+                type="button"
+                onClick={() => setShowCreate(false)}
+                className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white"
+              >
+                <LuX className="h-5 w-5" />
+              </button>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="block text-sm text-white/70 sm:col-span-2">
-                Başlık
-                <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
-              </label>
-              <label className="block text-sm text-white/70 sm:col-span-2">
-                Açıklama
-                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
-              </label>
-              <label className="block text-sm text-white/70">
-                Dil
-                <select value={form.lang} onChange={(e) => setForm({ ...form, lang: e.target.value })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white">
-                  {Object.entries(LANG_LABELS).map(([c, l]) => <option key={c} value={c}>{l} ({c})</option>)}
-                </select>
-                <span className="mt-1 block text-xs text-white/40">
-                  Soru havuzunda bu dilde <strong>{form.total_questions}</strong> hazır soru olmalı.
-                </span>
-              </label>
-              <label className="block text-sm text-white/70">
-                Toplam Soru
-                <input
-                  type="number"
-                  min={1}
-                  max={100}
-                  value={form.total_questions}
-                  onChange={(e) => setForm({ ...form, total_questions: Number(e.target.value) })}
-                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
-                />
-              </label>
-              <label className="block text-sm text-white/70">
-                Soru Başı Süre (sn)
-                <input
-                  type="number"
-                  min={5}
-                  max={60}
-                  value={form.seconds_per_question}
-                  onChange={(e) => setForm({ ...form, seconds_per_question: Number(e.target.value) })}
-                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
-                />
-              </label>
-              <label className="block text-sm text-white/70">
-                Yanlış Hakkı
-                <input
-                  type="number"
-                  min={1}
-                  max={10}
-                  value={form.wrong_allowed}
-                  onChange={(e) => setForm({ ...form, wrong_allowed: Number(e.target.value) })}
-                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
-                />
-              </label>
-              <label className="block text-sm text-white/70">
-                Başlangıç
-                <input type="datetime-local" value={form.start_at} onChange={(e) => setForm({ ...form, start_at: e.target.value })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
-              </label>
-              <label className="block text-sm text-white/70">
-                Havuz (Papel)
-                <input type="number" value={form.prize_pool_papel} onChange={(e) => setForm({ ...form, prize_pool_papel: Number(e.target.value) })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
-              </label>
-            </div>
-            <div className="mt-4 rounded-lg border border-white/5 bg-white/[0.02] p-3">
-              <div className="mb-2 text-xs font-semibold uppercase text-white/50">Checkpoint Ödülleri</div>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: 'CP 1', pos: 'cp1_pos', rew: 'cp1_reward' },
-                  { label: 'CP 2', pos: 'cp2_pos', rew: 'cp2_reward' },
-                  { label: 'Final', pos: 'cp3_pos', rew: 'cp3_reward' },
-                ].map((c) => (
-                  <div key={c.label} className="rounded-md border border-white/10 bg-white/[0.03] p-2 text-xs">
-                    <div className="text-white/60">{c.label}</div>
-                    <label className="mt-1 block text-white/50">
-                      Pozisyon
-                      <input type="number" value={form[c.pos as keyof typeof form] as number} onChange={(e) => setForm({ ...form, [c.pos]: Number(e.target.value) })} className="mt-1 w-full rounded border border-white/10 bg-white/[0.03] p-1 text-white" />
-                    </label>
-                    <label className="mt-1 block text-white/50">
-                      Papel
-                      <input type="number" value={form[c.rew as keyof typeof form] as number} onChange={(e) => setForm({ ...form, [c.rew]: Number(e.target.value) })} className="mt-1 w-full rounded border border-white/10 bg-white/[0.03] p-1 text-white" />
-                    </label>
-                  </div>
-                ))}
+            <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="block text-sm text-white/70 sm:col-span-2">
+                  Başlık
+                  <input
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
+                </label>
+                <label className="block text-sm text-white/70 sm:col-span-2">
+                  Açıklama
+                  <textarea
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    rows={2}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
+                </label>
+                <label className="block text-sm text-white/70">
+                  Dil
+                  <select
+                    value={form.lang}
+                    onChange={(e) => setForm({ ...form, lang: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  >
+                    {Object.entries(LANG_LABELS).map(([c, l]) => (
+                      <option key={c} value={c}>
+                        {l} ({c})
+                      </option>
+                    ))}
+                  </select>
+                  <span className="mt-1 block text-xs text-white/40">
+                    Soru havuzunda bu dilde <strong>{form.total_questions}</strong> hazır soru olmalı.
+                  </span>
+                </label>
+                <label className="block text-sm text-white/70">
+                  Toplam Soru
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={form.total_questions}
+                    onChange={(e) => setForm({ ...form, total_questions: Number(e.target.value) })}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
+                </label>
+                <label className="block text-sm text-white/70">
+                  Soru Başı Süre (sn)
+                  <input
+                    type="number"
+                    min={5}
+                    max={60}
+                    value={form.seconds_per_question}
+                    onChange={(e) =>
+                      setForm({ ...form, seconds_per_question: Number(e.target.value) })
+                    }
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
+                </label>
+                <label className="block text-sm text-white/70">
+                  Yanlış Hakkı
+                  <input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={form.wrong_allowed}
+                    onChange={(e) => setForm({ ...form, wrong_allowed: Number(e.target.value) })}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
+                </label>
+                <label className="block text-sm text-white/70">
+                  Başlangıç
+                  <input
+                    type="datetime-local"
+                    value={form.start_at}
+                    onChange={(e) => setForm({ ...form, start_at: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
+                </label>
+                <label className="block text-sm text-white/70">
+                  Havuz (Papel)
+                  <input
+                    type="number"
+                    value={form.prize_pool_papel}
+                    onChange={(e) => setForm({ ...form, prize_pool_papel: Number(e.target.value) })}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
+                </label>
+              </div>
+              <div className="mt-4 rounded-lg border border-white/5 bg-white/[0.02] p-3">
+                <div className="mb-2 text-xs font-semibold uppercase text-white/50">
+                  Checkpoint Ödülleri
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  {[
+                    { label: 'CP 1', pos: 'cp1_pos', rew: 'cp1_reward' },
+                    { label: 'CP 2', pos: 'cp2_pos', rew: 'cp2_reward' },
+                    { label: 'Final', pos: 'cp3_pos', rew: 'cp3_reward' },
+                  ].map((c) => (
+                    <div
+                      key={c.label}
+                      className="rounded-md border border-white/10 bg-white/[0.03] p-2 text-xs"
+                    >
+                      <div className="text-white/60">{c.label}</div>
+                      <label className="mt-1 block text-white/50">
+                        Pozisyon
+                        <input
+                          type="number"
+                          value={form[c.pos as keyof typeof form] as number}
+                          onChange={(e) => setForm({ ...form, [c.pos]: Number(e.target.value) })}
+                          className="mt-1 w-full rounded border border-white/10 bg-white/[0.03] p-1.5 text-white"
+                        />
+                      </label>
+                      <label className="mt-1 block text-white/50">
+                        Papel
+                        <input
+                          type="number"
+                          value={form[c.rew as keyof typeof form] as number}
+                          onChange={(e) => setForm({ ...form, [c.rew]: Number(e.target.value) })}
+                          className="mt-1 w-full rounded border border-white/10 bg-white/[0.03] p-1.5 text-white"
+                        />
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="mt-6 flex justify-end gap-2">
-              <button onClick={() => setShowCreate(false)} className="rounded-md border border-white/10 px-4 py-2 text-sm text-white/70 hover:bg-white/5">İptal</button>
-              <button onClick={create} className="rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-black hover:bg-amber-400">Oluştur</button>
+            <div className="flex shrink-0 justify-end gap-2 border-t border-white/[0.06] px-4 py-4 sm:px-6">
+              <button
+                type="button"
+                onClick={() => setShowCreate(false)}
+                className="rounded-md border border-white/10 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5"
+              >
+                İptal
+              </button>
+              <button
+                type="button"
+                onClick={create}
+                className="rounded-md bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400"
+              >
+                Oluştur
+              </button>
             </div>
           </div>
         </div>
@@ -412,26 +580,109 @@ function CustomQuestionsPanel() {
   };
 
   return (
-    <div>
-      <div className="mb-4 flex items-center gap-2">
-        <button onClick={() => load()} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/80">
+    <div className="min-w-0">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <button
+          type="button"
+          onClick={() => load()}
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/80 sm:justify-start"
+        >
           <LuRefreshCw className="h-4 w-4" /> Yenile
         </button>
-        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/70">
-          <span className="text-xs text-white/40">Editör dili:</span>
-          <select value={editingLang} onChange={(e) => setEditingLang(e.target.value)} className="bg-transparent text-white focus:outline-none">
-            {Object.entries(LANG_LABELS).map(([c, l]) => <option key={c} value={c} className="bg-[#0f1116]">{l}</option>)}
+        <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/70">
+          <span className="shrink-0 text-xs text-white/40">Editör dili:</span>
+          <select
+            value={editingLang}
+            onChange={(e) => setEditingLang(e.target.value)}
+            className="min-w-0 flex-1 bg-transparent text-white focus:outline-none"
+          >
+            {Object.entries(LANG_LABELS).map(([c, l]) => (
+              <option key={c} value={c} className="bg-[#0f1116]">
+                {l}
+              </option>
+            ))}
           </select>
         </div>
-        <button onClick={() => openEdit(null)} className="ml-auto flex items-center gap-2 rounded-lg bg-indigo-500 px-3 py-2 text-sm font-semibold text-white">
+        <button
+          type="button"
+          onClick={() => openEdit(null)}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-3 py-2.5 text-sm font-semibold text-white sm:ml-auto"
+        >
           <LuPlus className="h-4 w-4" /> Yeni Soru
         </button>
       </div>
 
-      {error && <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">{error}</div>}
+      {error && (
+        <div className="mb-4 break-words rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+          {error}
+        </div>
+      )}
 
-      <div className="overflow-x-auto rounded-xl border border-white/10">
-        <table className="w-full text-left text-sm">
+      <div className="space-y-3 md:hidden">
+        {loading && (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
+            Yükleniyor...
+          </div>
+        )}
+        {!loading && items.length === 0 && (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
+            Sunucuya özel soru yok
+          </div>
+        )}
+        {!loading &&
+          items.map((q) => {
+            const t = q.translations.find((tr) => tr.lang === editingLang);
+            return (
+              <article key={q.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex flex-wrap gap-1">
+                      {q.translations.map((tr) => (
+                        <span
+                          key={tr.lang}
+                          className={`rounded px-1.5 py-0.5 text-xs ${
+                            tr.is_ready
+                              ? 'bg-emerald-500/15 text-emerald-300'
+                              : 'bg-amber-500/15 text-amber-300'
+                          }`}
+                        >
+                          {tr.lang}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="line-clamp-3 text-sm text-white/85">
+                      {t?.question || (
+                        <span className="text-white/30">— bu dilde çevrilmemiş —</span>
+                      )}
+                    </p>
+                    <p className="mt-2 text-xs text-white/40">
+                      Doğru: {'ABCD'[q.correct_index]} · {q.difficulty ?? '—'}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => openEdit(q)}
+                      className="rounded-md p-2 text-white/60 hover:bg-white/10"
+                    >
+                      <LuPencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => remove(q.id)}
+                      className="rounded-md p-2 text-red-300 hover:bg-red-500/10"
+                    >
+                      <LuTrash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
+        <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-white/[0.04] text-xs uppercase text-white/50">
             <tr>
               <th className="px-3 py-2">Diller</th>
@@ -442,58 +693,120 @@ function CustomQuestionsPanel() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {loading && <tr><td colSpan={5} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>}
-            {!loading && items.length === 0 && <tr><td colSpan={5} className="px-3 py-6 text-center text-white/40">Sunucuya özel soru yok</td></tr>}
-            {!loading && items.map((q) => {
-              const t = q.translations.find((tr) => tr.lang === editingLang);
-              return (
-                <tr key={q.id} className="hover:bg-white/[0.02]">
-                  <td className="px-3 py-2 text-white/60">
-                    <div className="flex flex-wrap gap-1">
-                      {q.translations.map((tr) => (
-                        <span key={tr.lang} className={`rounded px-1.5 py-0.5 text-xs ${tr.is_ready ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'}`}>{tr.lang}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="max-w-[400px] px-3 py-2 text-white/80">
-                    <div className="line-clamp-2">{t?.question || <span className="text-white/30">— bu dilde çevrilmemiş —</span>}</div>
-                  </td>
-                  <td className="px-3 py-2 text-white/70">{'ABCD'[q.correct_index]}</td>
-                  <td className="px-3 py-2 text-white/60">{q.difficulty ?? '—'}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => openEdit(q)} className="rounded-md p-1.5 text-white/60 hover:bg-white/10"><LuPencil className="h-4 w-4" /></button>
-                      <button onClick={() => remove(q.id)} className="rounded-md p-1.5 text-red-300 hover:bg-red-500/10"><LuTrash2 className="h-4 w-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {loading && (
+              <tr>
+                <td colSpan={5} className="px-3 py-6 text-center text-white/40">
+                  Yükleniyor...
+                </td>
+              </tr>
+            )}
+            {!loading && items.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-3 py-6 text-center text-white/40">
+                  Sunucuya özel soru yok
+                </td>
+              </tr>
+            )}
+            {!loading &&
+              items.map((q) => {
+                const t = q.translations.find((tr) => tr.lang === editingLang);
+                return (
+                  <tr key={q.id} className="hover:bg-white/[0.02]">
+                    <td className="px-3 py-2 text-white/60">
+                      <div className="flex flex-wrap gap-1">
+                        {q.translations.map((tr) => (
+                          <span
+                            key={tr.lang}
+                            className={`rounded px-1.5 py-0.5 text-xs ${
+                              tr.is_ready
+                                ? 'bg-emerald-500/15 text-emerald-300'
+                                : 'bg-amber-500/15 text-amber-300'
+                            }`}
+                          >
+                            {tr.lang}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="max-w-[400px] px-3 py-2 text-white/80">
+                      <div className="line-clamp-2">
+                        {t?.question || (
+                          <span className="text-white/30">— bu dilde çevrilmemiş —</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 text-white/70">{'ABCD'[q.correct_index]}</td>
+                    <td className="px-3 py-2 text-white/60">{q.difficulty ?? '—'}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => openEdit(q)}
+                          className="rounded-md p-1.5 text-white/60 hover:bg-white/10"
+                        >
+                          <LuPencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => remove(q.id)}
+                          className="rounded-md p-1.5 text-red-300 hover:bg-red-500/10"
+                        >
+                          <LuTrash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f1116] p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
+          <div className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#0f1116] shadow-2xl sm:max-h-[90vh] sm:rounded-2xl">
+            <div className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-4 py-4 sm:px-6">
               <div>
-                <h2 className="text-lg font-semibold text-white">{editing.id ? 'Soruyu düzenle' : 'Yeni soru'}</h2>
-                <p className="text-xs text-white/50">Dil: <span className="font-mono text-indigo-300">{LANG_LABELS[editingLang] ?? editingLang}</span></p>
+                <h2 className="text-lg font-semibold text-white">
+                  {editing.id ? 'Soruyu düzenle' : 'Yeni soru'}
+                </h2>
+                <p className="text-xs text-white/50">
+                  Dil:{' '}
+                  <span className="font-mono text-indigo-300">
+                    {LANG_LABELS[editingLang] ?? editingLang}
+                  </span>
+                </p>
               </div>
-              <button onClick={() => setEditing(null)} className="rounded-md p-1 text-white/60 hover:bg-white/10"><LuX className="h-5 w-5" /></button>
+              <button
+                type="button"
+                onClick={() => setEditing(null)}
+                className="rounded-md p-1 text-white/60 hover:bg-white/10"
+              >
+                <LuX className="h-5 w-5" />
+              </button>
             </div>
-            <div className="space-y-3">
+            <div className="custom-scrollbar min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 sm:px-6">
               <label className="block text-sm text-white/70">
                 Soru
-                <textarea value={editing.question} onChange={(e) => setEditing({ ...editing, question: e.target.value })} rows={2} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
+                <textarea
+                  value={editing.question}
+                  onChange={(e) => setEditing({ ...editing, question: e.target.value })}
+                  rows={2}
+                  className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                />
               </label>
               {editing.options.map((opt, i) => (
                 <label key={i} className="block text-sm text-white/70">
                   <div className="mb-1 flex items-center gap-2">
                     <span className="font-semibold text-white/80">{'ABCD'[i]}</span>
                     <label className="ml-auto flex items-center gap-1 text-xs text-white/60">
-                      <input type="radio" name="correct" checked={editing.correct_index === i} onChange={() => setEditing({ ...editing, correct_index: i })} className="accent-emerald-500" />
+                      <input
+                        type="radio"
+                        name="correct"
+                        checked={editing.correct_index === i}
+                        onChange={() => setEditing({ ...editing, correct_index: i })}
+                        className="accent-emerald-500"
+                      />
                       Doğru
                     </label>
                   </div>
@@ -504,18 +817,31 @@ function CustomQuestionsPanel() {
                       next[i] = e.target.value;
                       setEditing({ ...editing, options: next });
                     }}
-                    className="w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
+                    className="w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
                   />
                 </label>
               ))}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="block text-sm text-white/70">
                   Kategori
-                  <input value={editing.category ?? ''} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white" />
+                  <input
+                    value={editing.category ?? ''}
+                    onChange={(e) => setEditing({ ...editing, category: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  />
                 </label>
                 <label className="block text-sm text-white/70">
                   Zorluk
-                  <select value={editing.difficulty ?? ''} onChange={(e) => setEditing({ ...editing, difficulty: (e.target.value || null) as EditDraft['difficulty'] })} className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white">
+                  <select
+                    value={editing.difficulty ?? ''}
+                    onChange={(e) =>
+                      setEditing({
+                        ...editing,
+                        difficulty: (e.target.value || null) as EditDraft['difficulty'],
+                      })
+                    }
+                    className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
+                  >
                     <option value="">—</option>
                     <option value="easy">Kolay</option>
                     <option value="medium">Orta</option>
@@ -524,13 +850,30 @@ function CustomQuestionsPanel() {
                 </label>
               </div>
               <label className="flex items-center gap-2 text-sm text-white/70">
-                <input type="checkbox" checked={editing.is_ready} onChange={(e) => setEditing({ ...editing, is_ready: e.target.checked })} className="accent-emerald-500" />
+                <input
+                  type="checkbox"
+                  checked={editing.is_ready}
+                  onChange={(e) => setEditing({ ...editing, is_ready: e.target.checked })}
+                  className="accent-emerald-500"
+                />
                 Bu dilde hazır (is_ready)
               </label>
             </div>
-            <div className="mt-6 flex justify-end gap-2">
-              <button onClick={() => setEditing(null)} className="rounded-md border border-white/10 px-4 py-2 text-sm text-white/70 hover:bg-white/5">İptal</button>
-              <button onClick={() => save(editing)} className="rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Kaydet</button>
+            <div className="flex shrink-0 justify-end gap-2 border-t border-white/[0.06] px-4 py-4 sm:px-6">
+              <button
+                type="button"
+                onClick={() => setEditing(null)}
+                className="rounded-md border border-white/10 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5"
+              >
+                İptal
+              </button>
+              <button
+                type="button"
+                onClick={() => save(editing)}
+                className="rounded-md bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-400"
+              >
+                Kaydet
+              </button>
             </div>
           </div>
         </div>
@@ -551,20 +894,30 @@ type EditDraft = {
 
 function badgeStyle(status: string) {
   switch (status) {
-    case 'scheduled': return 'bg-blue-500/15 text-blue-300 border-blue-500/30';
-    case 'live': return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
-    case 'finished': return 'bg-white/10 text-white/60 border-white/10';
-    case 'cancelled': return 'bg-red-500/15 text-red-300 border-red-500/30';
-    default: return 'bg-white/10 text-white/60 border-white/10';
+    case 'scheduled':
+      return 'bg-blue-500/15 text-blue-300 border-blue-500/30';
+    case 'live':
+      return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
+    case 'finished':
+      return 'bg-white/10 text-white/60 border-white/10';
+    case 'cancelled':
+      return 'bg-red-500/15 text-red-300 border-red-500/30';
+    default:
+      return 'bg-white/10 text-white/60 border-white/10';
   }
 }
 
 function statusLabel(status: string) {
   switch (status) {
-    case 'scheduled': return 'Planlandı';
-    case 'live': return 'Canlı';
-    case 'finished': return 'Bitti';
-    case 'cancelled': return 'İptal';
-    default: return status;
+    case 'scheduled':
+      return 'Planlandı';
+    case 'live':
+      return 'Canlı';
+    case 'finished':
+      return 'Bitti';
+    case 'cancelled':
+      return 'İptal';
+    default:
+      return status;
   }
 }
