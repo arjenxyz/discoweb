@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { createClient, SupabaseClient, PostgrestResponse } from '@supabase/supabase-js';
 import RemoveSetupButton from './RemoveSetupButton';
 import { getSessionUserId } from '@/lib/auth';
+import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { LOCAL_DEV_MOCK_GUILD, LOCAL_DEV_MOCK_GUILD_NAME } from '@/lib/localDevMocks';
 import AdminOverviewClient from './AdminOverviewClient';
 import { AdminAccessDenied, AdminLoadFailed } from './AdminAccessDenied';
 
@@ -58,6 +60,11 @@ const formatShortDate = new Intl.DateTimeFormat('tr-TR', {
 // Admin yetkisi kontrolü
 const checkAdminAccess = async (selectedGuildId: string): Promise<boolean> => {
   try {
+    if (await isLocalDevBypass()) {
+      console.log('Local dev bypass: granting admin access');
+      return true;
+    }
+
     console.log('Checking admin access for guild:', selectedGuildId);
     
     const discordUserId = await getSessionUserId();
@@ -143,14 +150,59 @@ const checkAdminAccess = async (selectedGuildId: string): Promise<boolean> => {
 
 const getOverviewData = async () => {
   console.log('Getting overview data...');
+  const selectedGuildId = await getSelectedGuildId();
+  console.log('Selected guild ID:', selectedGuildId);
+
+  if (await isLocalDevBypass()) {
+    const supabase = getSupabase();
+    if (!supabase) {
+      return {
+        server: {
+          id: 'local-server',
+          name: LOCAL_DEV_MOCK_GUILD_NAME,
+          admin_role_id: 'local-role-admin',
+          verify_role_id: 'local-role-verified',
+          is_setup: true,
+        },
+        selectedGuildId: selectedGuildId || LOCAL_DEV_MOCK_GUILD.id,
+        webhookCount: 8,
+        configuredChannels: [],
+        auditLogs24h: 24,
+        metricsUpdatedAt: new Date().toISOString(),
+        recentLogs: [],
+        logActivityCount: 3,
+      };
+    }
+
+    const { data: server } = await supabase
+      .from('servers')
+      .select('id,name,admin_role_id,verify_role_id,is_setup')
+      .eq('discord_id', selectedGuildId)
+      .maybeSingle();
+
+    return {
+      server: server ?? {
+        id: 'local-server',
+        name: LOCAL_DEV_MOCK_GUILD_NAME,
+        admin_role_id: 'local-role-admin',
+        verify_role_id: 'local-role-verified',
+        is_setup: true,
+      },
+      selectedGuildId: selectedGuildId || LOCAL_DEV_MOCK_GUILD.id,
+      webhookCount: 8,
+      configuredChannels: [],
+      auditLogs24h: 24,
+      metricsUpdatedAt: new Date().toISOString(),
+      recentLogs: [],
+      logActivityCount: 3,
+    };
+  }
+
   const supabase = getSupabase();
   if (!supabase) {
     console.log('No supabase client');
     return null;
   }
-
-  const selectedGuildId = await getSelectedGuildId();
-  console.log('Selected guild ID:', selectedGuildId);
 
   const { data: server } = await supabase
     .from('servers')

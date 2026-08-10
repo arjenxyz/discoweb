@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { checkMaintenance } from '@/lib/maintenance';
 import { getSessionUserId } from '@/lib/auth';
+import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { LOCAL_DEV_MOCK_OVERVIEW_STATS } from '@/lib/localDevMocks';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -19,15 +21,20 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'maintenance', key: maintenance.key, reason: maintenance.reason }, { status: 503 });
   }
 
-  const supabase = getSupabase();
-  if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
-
-  const cookieStore = await cookies();
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const url = new URL(req.url);
   const rangeHours = Number(url.searchParams.get('rangeHours') ?? '24');
+
+  if (await isLocalDevBypass()) {
+    return NextResponse.json({ ...LOCAL_DEV_MOCK_OVERVIEW_STATS, rangeHours });
+  }
+
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
+
+  const cookieStore = await cookies();
 
   // compute start date for daily stats (floor to date)
   const now = new Date();

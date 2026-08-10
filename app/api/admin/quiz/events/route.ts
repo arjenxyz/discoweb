@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminOrDeveloper, getSelectedGuildId } from '@/lib/adminAuth';
+import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { LOCAL_DEV_MOCK_QUIZ_EVENTS } from '@/lib/localDevMocks';
 import {
   findGuildQuizStartConflict,
   quizEventConflictMessage,
@@ -45,6 +47,9 @@ const LANG_RE = /^[a-z]{2}(-[a-z0-9]{2,8})?$/i;
 
 export async function GET() {
   if (!(await isAdminOrDeveloper())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (await isLocalDevBypass()) {
+    return NextResponse.json({ events: LOCAL_DEV_MOCK_QUIZ_EVENTS, localDevMock: true });
+  }
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
   const guildId = await getSelectedGuildId();
@@ -85,6 +90,13 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   if (!(await isAdminOrDeveloper())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (await isLocalDevBypass()) {
+    return NextResponse.json({
+      ok: true,
+      event: { id: `local-quiz-${Date.now()}`, localDevMock: true },
+      localDevMock: true,
+    });
+  }
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
   const guildId = await getSelectedGuildId();
@@ -121,33 +133,38 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { data: event, error } = await supabase.from('quiz_events').insert({
-    scope: 'guild',
-    guild_id: guildId,
-    title: body.title,
-    description: body.description ?? null,
-    lang,
-    start_at: startAtIso,
-    end_at: endAt.toISOString(),
-    total_questions: total,
-    seconds_per_question: sec,
-    reveal_seconds: 2,
-    wrong_allowed: body.wrong_allowed ?? 3,
-    prize_pool_papel: body.prize_pool_papel ?? 50000,
-    status: 'scheduled',
-  }).select().single();
+  const { data: event, error } = await supabase
+    .from('quiz_events')
+    .insert({
+      scope: 'guild',
+      guild_id: guildId,
+      title: body.title,
+      description: body.description ?? null,
+      lang,
+      start_at: startAtIso,
+      end_at: endAt.toISOString(),
+      total_questions: total,
+      seconds_per_question: sec,
+      reveal_seconds: 2,
+      wrong_allowed: body.wrong_allowed ?? 3,
+      prize_pool_papel: body.prize_pool_papel ?? 50000,
+      status: 'scheduled',
+    })
+    .select()
+    .single();
   if (error) {
     const err = quizEventDbErrorPayload(error);
     return NextResponse.json(err.body, { status: err.status });
   }
 
-  const checkpoints = body.checkpoints && body.checkpoints.length
-    ? body.checkpoints
-    : [
-        { position: Math.max(1, Math.floor(total / 3)), papel_reward: 50, label: 'Checkpoint 1' },
-        { position: Math.max(2, Math.floor((total * 2) / 3)), papel_reward: 100, label: 'Checkpoint 2' },
-        { position: total, papel_reward: 250, label: 'Final' },
-      ];
+  const checkpoints =
+    body.checkpoints && body.checkpoints.length
+      ? body.checkpoints
+      : [
+          { position: Math.max(1, Math.floor(total / 3)), papel_reward: 50, label: 'Checkpoint 1' },
+          { position: Math.max(2, Math.floor((total * 2) / 3)), papel_reward: 100, label: 'Checkpoint 2' },
+          { position: total, papel_reward: 250, label: 'Final' },
+        ];
 
   await supabase.from('quiz_event_checkpoints').insert(
     checkpoints.map((c) => ({
@@ -163,6 +180,9 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   if (!(await isAdminOrDeveloper())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (await isLocalDevBypass()) {
+    return NextResponse.json({ ok: true, localDevMock: true });
+  }
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
   const guildId = await getSelectedGuildId();
@@ -205,7 +225,9 @@ export async function PATCH(request: NextRequest) {
         );
       }
       patch.start_at = startAtIso;
-      patch.end_at = new Date(startAt.getTime() + existing.total_questions * (existing.seconds_per_question + 2) * 1000).toISOString();
+      patch.end_at = new Date(
+        startAt.getTime() + existing.total_questions * (existing.seconds_per_question + 2) * 1000,
+      ).toISOString();
     }
     if (body.prize_pool_papel !== undefined) patch.prize_pool_papel = body.prize_pool_papel;
     if (body.lang !== undefined) {

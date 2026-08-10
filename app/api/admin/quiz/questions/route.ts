@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminOrDeveloper, getSelectedGuildId } from '@/lib/adminAuth';
+import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { LOCAL_DEV_MOCK_QUIZ_QUESTIONS } from '@/lib/localDevMocks';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +33,9 @@ const LANG_RE = /^[a-z]{2}(-[a-z0-9]{2,8})?$/i;
 
 export async function GET() {
   if (!(await isAdminOrDeveloper())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (await isLocalDevBypass()) {
+    return NextResponse.json({ questions: LOCAL_DEV_MOCK_QUIZ_QUESTIONS, localDevMock: true });
+  }
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
   const guildId = await getSelectedGuildId();
@@ -54,6 +59,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   if (!(await isAdminOrDeveloper())) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (await isLocalDevBypass()) {
+    return NextResponse.json({ ok: true, localDevMock: true });
+  }
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'server_error' }, { status: 500 });
   const guildId = await getSelectedGuildId();

@@ -4,6 +4,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { logWebEvent } from '@/lib/serverLogger';
 import { getSessionUserId } from '@/lib/auth';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
+import { isLocalDevBypass } from '@/lib/localDevBypass';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -153,6 +154,11 @@ const insertLedger = async (supabase: SupabaseClient, userId: string, amount: nu
 export async function GET() {
   if (!(await isAdminUser())) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  if (await isLocalDevBypass()) {
+    const { LOCAL_DEV_MOCK_WALLETS } = await import('@/lib/localDevMocks');
+    return NextResponse.json(LOCAL_DEV_MOCK_WALLETS);
   }
 
   const supabase = getSupabase();

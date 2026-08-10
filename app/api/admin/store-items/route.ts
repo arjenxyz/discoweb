@@ -4,6 +4,8 @@ import { logWebEvent } from '@/lib/serverLogger';
 import { getSessionUserId } from '@/lib/auth';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
 import { getSelectedGuildId, resolveServer } from '@/lib/serverResolve';
+import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { LOCAL_DEV_MOCK_STORE_ITEMS } from '@/lib/localDevMocks';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -23,6 +25,10 @@ const getAdminId = async () => {
 export async function GET() {
   if (!(await isAdminUser())) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  if (await isLocalDevBypass()) {
+    return NextResponse.json(LOCAL_DEV_MOCK_STORE_ITEMS);
   }
 
   const supabase = getSupabase();

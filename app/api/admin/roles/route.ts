@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
+import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { LOCAL_DEV_MOCK_ROLES } from '@/lib/localDevMocks';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -26,6 +28,22 @@ const isAdminUser = isAdminOrDeveloper;
 export async function GET(request: Request) {
   if (!(await isAdminUser())) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  if (await isLocalDevBypass()) {
+    const { searchParams } = new URL(request.url);
+    const query = (searchParams.get('query') ?? '').trim().toLowerCase();
+    const limit = Math.min(Number(searchParams.get('limit') ?? 20), 50);
+    const roles = LOCAL_DEV_MOCK_ROLES.filter((role) => role.id !== 'local-role-everyone')
+      .filter((role) => !query || role.name.toLowerCase().includes(query))
+      .slice(0, limit)
+      .map((role) => ({
+        id: role.id,
+        name: role.name,
+        color: role.color,
+        position: role.position,
+      }));
+    return NextResponse.json(roles);
   }
 
   const botToken = process.env.DISCORD_BOT_TOKEN;
