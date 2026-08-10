@@ -123,8 +123,8 @@ function StatCard({
 }
 
 export default function AdminOverviewClient({
-  serverName,
-  serverSetup,
+  serverName: _serverName,
+  serverSetup: _serverSetup,
   selectedGuildId: _selectedGuildId,
 }: Props) {
   const { t, language } = useTranslation();
@@ -208,57 +208,21 @@ export default function AdminOverviewClient({
     },
   ];
 
+  const refreshButton = (
+    <button
+      type="button"
+      onClick={() => void fetchStats(true)}
+      disabled={refreshing || loading}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs font-medium text-white/55 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white disabled:opacity-50"
+      aria-label={t('admin.dashboard.refresh')}
+    >
+      <LuRefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+      <span className="hidden sm:inline">{t('admin.dashboard.refresh')}</span>
+    </button>
+  );
+
   return (
     <div className="min-w-0 space-y-6 sm:space-y-8">
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0c0e14]/80 p-5 sm:p-7">
-        <div className="pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full bg-[#5865F2]/25 blur-[90px]" />
-        <div className="pointer-events-none absolute -bottom-16 -right-10 h-48 w-48 rounded-full bg-[#7289DA]/15 blur-[80px]" />
-
-        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a5b4ff]">
-                {t('admin.dashboard.title')}
-              </p>
-              <span
-                className={`rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-                  serverSetup
-                    ? 'bg-emerald-500/15 text-emerald-300'
-                    : 'bg-amber-500/15 text-amber-300'
-                }`}
-              >
-                {serverSetup ? t('admin.dashboard.active') : t('admin.dashboard.unconfigured')}
-              </span>
-            </div>
-            <h1 className="mt-3 truncate text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              {serverName ?? t('admin.dashboard.default_server_name')}
-            </h1>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/45">
-              {t('admin.dashboard.subtitle')}
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <button
-              type="button"
-              onClick={() => void fetchStats(true)}
-              disabled={refreshing}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white/70 transition hover:border-white/20 hover:text-white disabled:opacity-50"
-            >
-              <LuRefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-              {t('admin.dashboard.refresh')}
-            </button>
-            <Link
-              href="/admin/earn-settings"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#5865F2]/25 transition hover:bg-[#4752c4]"
-            >
-              <LuCoins className="h-4 w-4" />
-              {t('admin.dashboard.earn_settings')}
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {loading ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -271,9 +235,12 @@ export default function AdminOverviewClient({
       ) : stats ? (
         <>
           <section>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
-              {t('admin.dashboard.server_activity')}
-            </p>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
+                {t('admin.dashboard.server_activity')}
+              </p>
+              {refreshButton}
+            </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <StatCard
                 icon={<LuMessageSquare className="h-5 w-5" />}
@@ -369,8 +336,9 @@ export default function AdminOverviewClient({
           </section>
         </>
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm text-white/50">
-          {t('admin.dashboard.stats_error')}
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <p className="text-sm text-white/50">{t('admin.dashboard.stats_error')}</p>
+          {refreshButton}
         </div>
       )}
 
