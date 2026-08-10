@@ -143,292 +143,294 @@ export default function EarnSettingsPage() {
 
   if (loading) return (
     <div className="flex h-64 items-center justify-center">
-      <LuLoader className="w-8 h-8 animate-spin text-indigo-500" />
+      <LuLoader className="h-7 w-7 animate-spin text-[#5865F2]" />
     </div>
   );
   
-  if (!settings) return <div className="text-center p-10 text-red-400">{t('admin.earn.data_error')}</div>;
+  if (!settings) return <div className="p-8 text-center text-sm text-red-300">{t('admin.earn.data_error')}</div>;
+
+  const boosterOn =
+    (settings.booster_bonus_message ?? 0) > 0 ||
+    (settings.booster_bonus_voice ?? 0) > 0 ||
+    settings._boosterBonusEnabled === true;
+
+  const fieldClass =
+    'w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm font-mono text-white outline-none transition focus:border-[#5865F2]/40 focus:ring-2 focus:ring-[#5865F2]/20';
+  const labelClass = 'mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.16em] text-white/40';
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
-      
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">{t('admin.earn.title')}</h1>
-          <p className="mt-1 text-sm text-zinc-400">{t('admin.earn.subtitle')}</p>
+    <div className="mx-auto min-w-0 max-w-6xl space-y-5 pb-16 sm:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-bold tracking-tight text-white sm:text-2xl">{t('admin.earn.title')}</h1>
+          <p className="mt-1 text-sm text-white/45">{t('admin.earn.subtitle')}</p>
         </div>
-        
-        <div className="flex items-center gap-3">
-            {hasChanges && (
-                <button 
-                    onClick={() => setSettings(initialSettings)}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium"
-                >
-                    <LuUndo2 size={16} />
-                    <span>{t('admin.earn.undo')}</span>
-                </button>
-            )}
-            <button 
-                onClick={handleSave}
-                disabled={saving || !hasChanges}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-900/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        <div className="flex shrink-0 items-center gap-2">
+          {hasChanges && (
+            <button
+              type="button"
+              onClick={() => setSettings(initialSettings)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/55 transition hover:border-white/20 hover:text-white"
             >
-                {saving ? <LuLoader className="w-4 h-4 animate-spin" /> : <LuSave size={18} />}
-                <span>{saving ? t('admin.earn.saving') : t('admin.earn.save')}</span>
+              <LuUndo2 size={14} />
+              <span>{t('admin.earn.undo')}</span>
             </button>
+          )}
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving || !hasChanges}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {saving ? <LuLoader className="h-3.5 w-3.5 animate-spin" /> : <LuSave size={14} />}
+            <span>{saving ? t('admin.earn.saving') : t('admin.earn.save')}</span>
+          </button>
         </div>
       </div>
 
-      {/* MESAJLAR */}
       {(message || error) && (
-        <div className={`p-4 rounded-lg border ${error ? 'bg-red-500/10 border-red-500/20 text-red-200' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-200'} flex items-center gap-3`}>
-            {error ? <LuShieldAlert size={20} /> : <LuCheck size={20} />}
-            <span>{error || message}</span>
+        <div
+          className={`flex items-center gap-2.5 rounded-xl border px-3.5 py-2.5 text-sm ${
+            error
+              ? 'border-red-500/20 bg-red-500/10 text-red-200'
+              : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200'
+          }`}
+        >
+          {error ? <LuShieldAlert size={16} /> : <LuCheck size={16} />}
+          <span>{error || message}</span>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* KART 1: MESAJ */}
-        <div className="relative overflow-hidden rounded-2xl bg-[#0f1116] border border-white/5 p-6 group hover:border-white/10 transition-colors">
-            <div className="mb-6 flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  <LuMessageSquare size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-white">{t('admin.earn.message_activity')}</h2>
-            </div>
-
-            <div className="space-y-4">
-               <div>
-                  <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.earn_per_message')}</label>
-                  <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <span className="text-amber-500 text-sm font-bold">P</span>
-                      </div>
-                        <input 
-                          type="number" 
-                          min={0} 
-                          step="0.01" 
-                          value={settings?.earn_per_message ?? 0} 
-                          onChange={(e) => updateNumber('earn_per_message', Number(e.target.value))}
-                          className="w-full pl-8 pr-4 py-2.5 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
-                        />
-                  </div>
-               </div>
-            </div>
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="mb-3 flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#5865F2]/20 text-[#a5b4ff]">
+              <LuMessageSquare size={16} />
+            </span>
+            <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.message_activity')}</h2>
+          </div>
+          <label className={labelClass}>{t('admin.earn.earn_per_message')}</label>
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-amber-400">
+              P
+            </span>
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              value={settings?.earn_per_message ?? 0}
+              onChange={(e) => updateNumber('earn_per_message', Number(e.target.value))}
+              className={`${fieldClass} pl-8`}
+            />
+          </div>
         </div>
 
-        {/* KART 2: SES */}
-        <div className="relative overflow-hidden rounded-2xl bg-[#0f1116] border border-white/5 p-6 group hover:border-white/10 transition-colors">
-            <div className="mb-6 flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20">
-                  <LuMic size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-white">{t('admin.earn.voice_chat')}</h2>
-            </div>
-
-            <div className="space-y-4">
-               <div>
-                  <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.earn_per_voice')}</label>
-                  <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <span className="text-emerald-500 text-sm font-bold">P</span>
-                      </div>
-                        <input 
-                          type="number" 
-                          min={0} 
-                          step="0.01" 
-                          value={settings?.earn_per_voice_minute ?? 0} 
-                          onChange={(e) => updateNumber('earn_per_voice_minute', Number(e.target.value))}
-                          className="w-full pl-8 pr-4 py-2.5 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-violet-500/50 outline-none transition-all"
-                        />
-                  </div>
-               </div>
-            </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="mb-3 flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
+              <LuMic size={16} />
+            </span>
+            <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.voice_chat')}</h2>
+          </div>
+          <label className={labelClass}>{t('admin.earn.earn_per_voice')}</label>
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-emerald-400">
+              P
+            </span>
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              value={settings?.earn_per_voice_minute ?? 0}
+              onChange={(e) => updateNumber('earn_per_voice_minute', Number(e.target.value))}
+              className={`${fieldClass} pl-8`}
+            />
+          </div>
         </div>
 
-        {/* KART 3: ETİKET & BOOSTER (GÜNCELLENDİ) */}
-        <div className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-[#0f1116] border border-white/5 p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
-                {/* SOL: ETİKET */}
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-lg bg-pink-500/10 text-pink-400 border border-pink-500/20">
-                              <LuTag size={20} />
-                            </div>
-                            <div>
-                                <h2 className="text-lg font-bold text-white">{t('admin.earn.tag_bonus')}</h2>
-                                <p className="text-xs text-zinc-500">{t('admin.earn.tag_bonus_desc')}</p>
-                            </div>
-                         </div>
-                         <label className={`relative inline-flex items-center ${!settings.tag_configured ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}>
-                            <input 
-                              type="checkbox" 
-                              checked={settings.tag_required}
-                              onChange={(e) => {
-                                if (!settings.tag_configured) return;
-                                setSettings({ ...settings, tag_required: e.target.checked });
-                              }}
-                              className="sr-only peer" 
-                              disabled={!settings.tag_configured}
-                            />
-                            <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:bg-pink-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                          </label>
-                    </div>
-
-                    {/* GERÇEK SUNUCU BİLGİSİ ÖNİZLEMESİ */}
-                    {settings.tag_required && settings._guildPreview && (
-                        <div className="p-4 rounded-xl bg-zinc-900/50 border border-white/5 flex items-center justify-between animate-in fade-in slide-in-from-top-2">
-                            <span className="text-xs text-zinc-500 font-medium">{t('admin.earn.tag_check_label')}</span>
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#2B2D31] border border-[#1E1F22] text-[#DBDEE1]">
-                                {settings._guildPreview.icon ? (
-                                    <div className="relative w-5 h-5 rounded-full overflow-hidden">
-                                       <Image 
-                                         src={settings._guildPreview.icon} 
-                                         alt="Guild Icon" 
-                                         fill 
-                                         className="object-cover" 
-                                         unoptimized 
-                                       />
-                                    </div>
-                                ) : (
-                                    <LuServer size={16} />
-                                )}
-                                <span className="text-xs font-bold">{settings._guildPreview.name}</span>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.message_bonus')}</label>
-                          <input type="number" min={0} step="0.01" value={settings?.tag_bonus_message ?? 0} onChange={(e) => updateNumber('tag_bonus_message', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.voice_bonus')}</label>
-                          <input type="number" min={0} step="0.01" value={settings?.tag_bonus_voice ?? 0} onChange={(e) => updateNumber('tag_bonus_voice', Number(e.target.value))} className={`w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-pink-500/50 outline-none ${!settings.tag_configured ? 'opacity-60 pointer-events-none' : ''}`} disabled={!settings.tag_configured} />
-                        </div>
-                    </div>
-                    {!settings.tag_configured && (
-                      <div className="mt-3 text-sm text-zinc-400">{t('admin.earn.tag_not_configured')}</div>
-                    )}
-                </div>
-
-                {/* SAĞ: BOOSTER */}
-                <div className="space-y-6 md:border-l md:border-white/5 md:pl-8">
-                     <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2.5 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20">
-                            <LuZap size={20} />
-                          </div>
-                          <div>
-                              <h2 className="text-lg font-bold text-white">{t('admin.earn.booster_bonus')}</h2>
-                              <p className="text-xs text-zinc-500">{t('admin.earn.booster_bonus_desc')}</p>
-                          </div>
-                        </div>
-                        <label className="relative inline-flex cursor-pointer items-center">
-                          <input
-                            type="checkbox"
-                            checked={(settings.booster_bonus_message ?? 0) > 0 || (settings.booster_bonus_voice ?? 0) > 0 || settings._boosterBonusEnabled === true}
-                            onChange={(e) => {
-                              const enabled = e.target.checked;
-                              if (!enabled) {
-                                setSettings({
-                                  ...settings,
-                                  booster_bonus_message: 0,
-                                  booster_bonus_voice: 0,
-                                  _boosterBonusEnabled: false,
-                                });
-                                return;
-                              }
-                              setSettings({
-                                ...settings,
-                                _boosterBonusEnabled: true,
-                                booster_bonus_message: settings.booster_bonus_message || 0,
-                                booster_bonus_voice: settings.booster_bonus_voice || 0,
-                              });
-                            }}
-                            className="peer sr-only"
-                          />
-                          <div className="h-6 w-11 rounded-full bg-zinc-800 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-fuchsia-600 peer-checked:after:translate-x-full peer-focus:outline-none" />
-                        </label>
-                     </div>
-
-                     <div className={`grid grid-cols-2 gap-4 pt-2 ${
-                       (settings.booster_bonus_message ?? 0) > 0 ||
-                       (settings.booster_bonus_voice ?? 0) > 0 ||
-                       settings._boosterBonusEnabled
-                         ? ''
-                         : 'pointer-events-none opacity-50'
-                     }`}>
-                        <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.message_bonus')}</label>
-                            <input type="number" min={0} step="0.01" value={settings?.booster_bonus_message ?? 0} onChange={(e) => updateNumber('booster_bonus_message', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.voice_bonus')}</label>
-                            <input type="number" min={0} step="0.01" value={settings?.booster_bonus_voice ?? 0} onChange={(e) => updateNumber('booster_bonus_voice', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
-                        </div>
-                    </div>
-                </div>
-
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-pink-500/15 text-pink-300">
+                <LuTag size={16} />
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.tag_bonus')}</h2>
+                <p className="truncate text-xs text-white/40">{t('admin.earn.tag_bonus_desc')}</p>
+              </div>
             </div>
+            <label
+              className={`relative inline-flex shrink-0 items-center ${
+                !settings.tag_configured ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={settings.tag_required}
+                onChange={(e) => {
+                  if (!settings.tag_configured) return;
+                  setSettings({ ...settings, tag_required: e.target.checked });
+                }}
+                className="peer sr-only"
+                disabled={!settings.tag_configured}
+              />
+              <div className="h-5 w-9 rounded-full bg-white/10 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-pink-500 peer-checked:after:translate-x-4 peer-focus:outline-none" />
+            </label>
+          </div>
+
+          {settings.tag_required && settings._guildPreview && (
+            <div className="mb-3 flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/25 px-3 py-2">
+              <span className="text-[11px] text-white/40">{t('admin.earn.tag_check_label')}</span>
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80">
+                {settings._guildPreview.icon ? (
+                  <span className="relative h-4 w-4 overflow-hidden rounded-full">
+                    <Image
+                      src={settings._guildPreview.icon}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </span>
+                ) : (
+                  <LuServer size={14} />
+                )}
+                <span className="truncate">{settings._guildPreview.name}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2.5">
+            <div>
+              <label className={labelClass}>{t('admin.earn.message_bonus')}</label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={settings?.tag_bonus_message ?? 0}
+                onChange={(e) => updateNumber('tag_bonus_message', Number(e.target.value))}
+                disabled={!settings.tag_configured}
+                className={`${fieldClass} ${!settings.tag_configured ? 'pointer-events-none opacity-50' : ''}`}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>{t('admin.earn.voice_bonus')}</label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={settings?.tag_bonus_voice ?? 0}
+                onChange={(e) => updateNumber('tag_bonus_voice', Number(e.target.value))}
+                disabled={!settings.tag_configured}
+                className={`${fieldClass} ${!settings.tag_configured ? 'pointer-events-none opacity-50' : ''}`}
+              />
+            </div>
+          </div>
+          {!settings.tag_configured && (
+            <p className="mt-2.5 text-xs leading-relaxed text-white/40">{t('admin.earn.tag_not_configured')}</p>
+          )}
         </div>
 
-        {/* KART 4: GÜVENLİK */}
-        <div className="lg:col-span-2 rounded-2xl border border-red-500/20 bg-red-500/5 p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-6 opacity-5">
-                <LuShieldAlert size={120} className="text-red-500" />
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">
+                <LuZap size={16} />
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.booster_bonus')}</h2>
+                <p className="truncate text-xs text-white/40">{t('admin.earn.booster_bonus_desc')}</p>
+              </div>
             </div>
+            <label className="relative inline-flex shrink-0 cursor-pointer items-center">
+              <input
+                type="checkbox"
+                checked={boosterOn}
+                onChange={(e) => {
+                  const enabled = e.target.checked;
+                  if (!enabled) {
+                    setSettings({
+                      ...settings,
+                      booster_bonus_message: 0,
+                      booster_bonus_voice: 0,
+                      _boosterBonusEnabled: false,
+                    });
+                    return;
+                  }
+                  setSettings({
+                    ...settings,
+                    _boosterBonusEnabled: true,
+                  });
+                }}
+                className="peer sr-only"
+              />
+              <div className="h-5 w-9 rounded-full bg-white/10 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-amber-500 peer-checked:after:translate-x-4 peer-focus:outline-none" />
+            </label>
+          </div>
 
-            <div className="relative z-10 flex flex-col md:flex-row gap-6">
-                <div className="flex-shrink-0">
-                    <div className="p-3 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 inline-flex">
-                        <LuShieldAlert size={24} />
-                    </div>
-                </div>
-                <div className="flex-1 space-y-4">
-                    <div>
-                        <h3 className="text-lg font-bold text-white">{t('admin.earn.security_title')}</h3>
-                        <p className="text-sm text-red-200/70 mt-1">
-                            {t('admin.earn.security_desc')}
-                        </p>
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-medium text-red-300 uppercase mb-2">{t('admin.earn.verify_role_label')}</label>
-                        <div className="flex items-center gap-3">
-                            <input 
-                                type="text" 
-                                value={settings.verify_role_id ?? ''} 
-                                onChange={(e) => setSettings({ ...settings, verify_role_id: e.target.value || null })} 
-                                placeholder={t('admin.earn.verify_role_placeholder')} 
-                                className="flex-1 px-4 py-3 rounded-lg bg-black/40 border border-red-500/20 text-white placeholder-red-500/30 focus:ring-2 focus:ring-red-500/50 outline-none font-mono" 
-                            />
-                            
-                            {/* ROL ADI GÖSTERGESİ */}
-                            {roleName && (
-                                <div className="hidden sm:flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-sm font-medium whitespace-nowrap animate-in fade-in">
-                                    <LuCheck size={16} />
-                                    <span>{roleName}</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+          <div className={`grid grid-cols-2 gap-2.5 ${boosterOn ? '' : 'pointer-events-none opacity-45'}`}>
+            <div>
+              <label className={labelClass}>{t('admin.earn.message_bonus')}</label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={settings?.booster_bonus_message ?? 0}
+                onChange={(e) => updateNumber('booster_bonus_message', Number(e.target.value))}
+                className={fieldClass}
+              />
             </div>
+            <div>
+              <label className={labelClass}>{t('admin.earn.voice_bonus')}</label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={settings?.booster_bonus_voice ?? 0}
+                onChange={(e) => updateNumber('booster_bonus_voice', Number(e.target.value))}
+                className={fieldClass}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* KART 5: KANAL YAPILANDIRMASI */}
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.06] p-4 lg:col-span-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 text-red-300">
+              <LuShieldAlert size={16} />
+            </span>
+            <div className="min-w-0 flex-1 space-y-3">
+              <div>
+                <h3 className="text-[15px] font-semibold text-white">{t('admin.earn.security_title')}</h3>
+                <p className="mt-0.5 text-xs leading-relaxed text-red-200/60">{t('admin.earn.security_desc')}</p>
+              </div>
+              <div>
+                <label className={labelClass}>{t('admin.earn.verify_role_label')}</label>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    type="text"
+                    value={settings.verify_role_id ?? ''}
+                    onChange={(e) => setSettings({ ...settings, verify_role_id: e.target.value || null })}
+                    placeholder={t('admin.earn.verify_role_placeholder')}
+                    className={`${fieldClass} flex-1`}
+                  />
+                  {roleName && (
+                    <div className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-300">
+                      <LuCheck size={14} />
+                      <span>{roleName}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <ChannelEarnConfig
           settings={settings}
           onUpdate={(earnChannels) => setSettings({ ...settings, earn_channels: earnChannels })}
           t={t}
         />
-
       </div>
     </div>
   );
