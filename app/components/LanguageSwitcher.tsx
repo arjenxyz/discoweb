@@ -4,7 +4,6 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from '@/lib/i18nContext';
 import { SUPPORTED_LANGUAGES } from '@/lib/i18n/languages';
-import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import FlagIcon from './FlagIcon';
 
 type LanguageSwitcherProps = {
@@ -97,11 +96,20 @@ export default function LanguageSwitcher({
       if (event.key === 'Escape') setOpen(false);
     };
 
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (rootRef.current && target && !rootRef.current.contains(target)) {
+        setOpen(false);
+      }
+    };
+
     document.addEventListener('keydown', handleKey);
-    const unlock = lockBodyScroll();
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown);
     return () => {
       document.removeEventListener('keydown', handleKey);
-      unlock();
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
     };
   }, [open]);
 
@@ -132,7 +140,7 @@ export default function LanguageSwitcher({
             <div className="fixed inset-0 z-[10040] flex items-end justify-center p-4 sm:items-center">
               <button
                 type="button"
-                className="absolute inset-0 bg-black/70 backdrop-blur-md"
+                className="absolute inset-0 bg-black/70"
                 aria-label="Close language picker"
                 onClick={() => setOpen(false)}
               />
@@ -268,21 +276,6 @@ export default function LanguageSwitcher({
         <ChevronIcon isOpen={open} />
       </button>
 
-      {mounted &&
-        open &&
-        createPortal(
-          <div
-            className={`fixed inset-0 z-[9998] bg-black/60 backdrop-blur-[12px] transition-all duration-500 ${
-              isTouch ? 'pointer-events-auto' : 'pointer-events-none'
-            }`}
-            aria-hidden
-            onClick={() => {
-              if (isTouch) setOpen(false);
-            }}
-          />,
-          document.body,
-        )}
-
       {open && (
         <div
           className="absolute top-full right-0 z-[10002] w-[min(18rem,calc(100vw-2rem))] pt-2 animate-langSlideUp origin-top md:w-72"
@@ -330,6 +323,7 @@ export default function LanguageSwitcher({
             </div>
 
             <div className="pointer-events-none absolute -bottom-5 -right-4 z-10 h-28 w-28 -rotate-[10deg] drop-shadow-2xl transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105 md:-bottom-6 md:-right-6 md:h-40 md:w-40">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/gif/Patickstar.gif" alt="" className="h-full w-full object-contain" draggable={false} />
             </div>
           </div>
