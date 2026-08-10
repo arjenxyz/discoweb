@@ -515,8 +515,8 @@ export default function CuteNavbar() {
       {fabPos && !mobileSubmenu && (
         <button
           type="button"
-          className={`md:hidden fixed z-[10020] flex h-14 w-14 touch-none items-center justify-center rounded-full border border-white/15 bg-[#5865F2] text-white shadow-[0_12px_40px_rgba(88,101,242,0.45)] transition-[box-shadow,transform] active:scale-95 ${
-            mobileOpen ? 'ring-2 ring-white/30' : ''
+          className={`md:hidden fixed z-[10020] flex h-14 w-14 touch-none items-center justify-center rounded-full border border-white/15 bg-white/10 text-white shadow-lg shadow-black/30 backdrop-blur-md transition-[box-shadow,transform,background-color] active:scale-95 hover:bg-white/15 ${
+            mobileOpen ? 'bg-white/20 ring-2 ring-white/25' : ''
           }`}
           style={{ left: fabPos.left, top: fabPos.top }}
           onPointerDown={onFabPointerDown}
