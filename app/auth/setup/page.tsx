@@ -22,11 +22,11 @@ interface DiscordUser {
 }
 
 const STEPS = [
-  { id: 'roles',   title: 'Roller',           icon: LuShield,      description: 'Yönetim ve doğrulama rollerini belirleyin' },
-  { id: 'logs',    title: 'Log Yönetimi',     icon: LuHardDrive,   description: 'Güvenlik loglarının depolanacağı sunucu' },
-  { id: 'economy', title: 'Kazanç',            icon: LuSettings,    description: 'Papel kazanç sistemini yapılandırın' },
-  { id: 'bonuses', title: 'Bonuslar',          icon: LuZap,         description: 'Tag ve Booster bonus oranlarını ayarlayın' },
-  { id: 'confirm', title: 'Kurulum',           icon: LuCheck,       description: 'Sistemi devreye al' },
+  { id: 'roles',   title: 'Roller',           icon: LuShield,      description: 'Admin ve üye rollerini seçin' },
+  { id: 'logs',    title: 'Log Yönetimi',     icon: LuHardDrive,   description: 'Logların yazılacağı yer' },
+  { id: 'economy', title: 'Kazanç',            icon: LuSettings,    description: 'Papel kazanç oranları' },
+  { id: 'bonuses', title: 'Bonuslar',          icon: LuZap,         description: 'Tag ve boost ek kazançları' },
+  { id: 'confirm', title: 'Kurulum',           icon: LuCheck,       description: 'Onayla ve başlat' },
 ];
 
 function readSelectedGuildId(): string | null {
@@ -388,7 +388,7 @@ export default function SetupPage() {
             <LuShield className="w-10 h-10 text-red-500" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">Erişim Reddedildi</h1>
-          <p className="text-white/60 mb-8 text-sm">Bu sunucunun kurulumuna erişim izniniz yok. Sunucu sahibi olmanız veya yönetici izinlerine sahip bir role sahip olmanız gerekmektedir.</p>
+          <p className="text-white/60 mb-8 text-sm">Kurulum için sunucu sahibi veya yönetici olmalısınız.</p>
           <button onClick={() => router.replace('/auth/select-server')} className="w-full bg-white/5 hover:bg-white/10 text-white font-medium py-3 rounded-xl transition-all border border-white/10 hover:border-white/20">
             Geri Dön
           </button>
@@ -419,7 +419,7 @@ export default function SetupPage() {
               <p className="text-base font-bold text-white tracking-tight">{guildName}</p>
               <div className="flex items-center gap-2 text-xs text-white/40">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#5865F2] animate-pulse" />
-                Sistem Kurulum Sihirbazı
+                Sistem Kurulumu
               </div>
             </div>
           </div>
@@ -460,7 +460,7 @@ export default function SetupPage() {
           
           {/* Sidebar / Steps */}
           <div className="hidden md:flex flex-col gap-2 self-start">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-white/30 mb-4 px-3">Kurulum Adımları</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-white/30 mb-4 px-3">Adımlar</h2>
             {STEPS.map((step, i) => {
               const StepIcon = step.icon;
               const isActive = i === currentStep;
@@ -493,7 +493,7 @@ export default function SetupPage() {
               {currentStep === 0 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
                   <h2 className="text-xl font-bold text-white mb-2">Sistem Rolleri</h2>
-                  <p className="text-sm text-white/50 mb-6">DiscoWeb sistemini yönetecek ve sistemi kullanacak üyeleri ayırt etmek için Discord sunucunuzdaki rolleri belirleyin.</p>
+                  <p className="text-sm text-white/50 mb-6">Admin paneli ve üye erişimi için Discord rollerini seçin.</p>
 
                   <div className="space-y-5">
                     {/* Admin Role */}
@@ -510,7 +510,7 @@ export default function SetupPage() {
                               <span className="text-white font-medium">{getRoleNameById(selectedAdminRole)}</span>
                             </span>
                           ) : (
-                            <span className="text-white/40">Yönetici yetkisine sahip rolü seçin...</span>
+                            <span className="text-white/40">Admin rolünü seçin...</span>
                           )}
                           <LuChevronDown className={`w-5 h-5 text-white/40 transition-transform duration-300 ${adminDropdownOpen ? 'rotate-180 text-[#5865F2]' : ''}`} />
                         </button>
@@ -531,14 +531,14 @@ export default function SetupPage() {
                           </div>
                         )}
                       </div>
-                      <p className="mt-2 text-xs text-white/30 ml-2">Bu role sahip üyeler Admin Paneline giriş yapabilir ve ayarları değiştirebilir.</p>
+                      <p className="mt-2 text-xs text-white/30 ml-2">Bu rolle Admin Paneline girilir.</p>
                     </div>
 
                     {/* Verify Role */}
                     <div className="group">
                       <label className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-white/80">
                         <LuUsers className="w-4 h-4 text-emerald-400" />
-                        Üye (Doğrulanmış) Rolü
+                        Üye Rolü
                       </label>
                       <div className="relative" ref={verifyDropdownRef}>
                         <button type="button" onClick={() => { setVerifyDropdownOpen(v => !v); setAdminDropdownOpen(false); }} className={`w-full flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition-all duration-200 ${verifyDropdownOpen ? 'border-emerald-500 bg-emerald-500/5 ring-4 ring-emerald-500/10' : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'}`}>
@@ -548,7 +548,7 @@ export default function SetupPage() {
                               <span className="text-white font-medium">{getRoleNameById(selectedVerifyRole)}</span>
                             </span>
                           ) : (
-                            <span className="text-white/40">Kayıtlı üyelere verilecek rolü seçin...</span>
+                            <span className="text-white/40">Üye rolünü seçin...</span>
                           )}
                           <LuChevronDown className={`w-5 h-5 text-white/40 transition-transform duration-300 ${verifyDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`} />
                         </button>
@@ -566,7 +566,7 @@ export default function SetupPage() {
                           </div>
                         )}
                       </div>
-                      <p className="mt-2 text-xs text-white/30 ml-2">Sisteme kayıt olan üyelerin sahip olacağı, papel kazanabilen temel rol.</p>
+                      <p className="mt-2 text-xs text-white/30 ml-2">Kayıtlı üyelerin temel rolü; papel kazanır.</p>
                     </div>
                   </div>
                 </div>
@@ -575,8 +575,8 @@ export default function SetupPage() {
               {/* --- STEP 1: LOG MANAGEMENT --- */}
               {currentStep === 1 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-2xl font-bold text-white mb-2">Log Yönetimi</h2>
-                  <p className="text-sm text-white/50 mb-8">Sistemde gerçekleşen transferler, satın alımlar ve kritik işlemler nereye loglansın?</p>
+                  <h2 className="text-xl font-bold text-white mb-2">Log Yönetimi</h2>
+                  <p className="text-sm text-white/50 mb-6">İşlem logları nereye yazılsın?</p>
 
                   <div className="space-y-4">
                     {/* Option 1: Current Server */}
@@ -589,9 +589,9 @@ export default function SetupPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-white flex items-center gap-2">
-                          Mevcut Sunucuya Kur <span className="px-2 py-0.5 rounded-full bg-[#5865F2]/20 text-[#5865F2] text-[10px] uppercase font-bold">Önerilen</span>
+                          Bu sunucuya kur <span className="px-2 py-0.5 rounded-full bg-[#5865F2]/20 text-[#5865F2] text-[10px] uppercase font-bold">Önerilen</span>
                         </h3>
-                        <p className="text-sm text-white/50 mt-1">"💠 DiscoWeb Logs" kategorisi ve admin log kanalı bu sunucunun içerisine açılır.</p>
+                        <p className="text-sm text-white/50 mt-1">DiscoWeb Logs kategorisi burada açılır.</p>
                       </div>
                     </button>
 
@@ -604,12 +604,12 @@ export default function SetupPage() {
                         {logMode === 'dedicated' && <div className="w-3 h-3 rounded-full bg-indigo-500" />}
                       </div>
                       <div className="w-full">
-                        <h3 className="font-semibold text-white">Özel Log Sunucusu Kullan</h3>
-                        <p className="text-sm text-white/50 mt-1">Loglar tamamen farklı bir Discord sunucusuna gönderilir. Güvenlik için idealdir.</p>
+                        <h3 className="font-semibold text-white">Ayrı log sunucusu</h3>
+                        <p className="text-sm text-white/50 mt-1">Loglar başka bir Discord sunucusuna gider.</p>
                         
                         {/* Expandable input for dedicated server */}
                         <div className={`overflow-hidden transition-all duration-300 ${logMode === 'dedicated' ? 'max-h-32 mt-4 opacity-100' : 'max-h-0 opacity-0'}`}>
-                          <label className="text-xs font-medium text-indigo-300 mb-2 block">Hedef Sunucu ID'si</label>
+                          <label className="text-xs font-medium text-indigo-300 mb-2 block">Hedef sunucu ID</label>
                           <input 
                             type="text" 
                             placeholder="123456789012345678"
@@ -618,7 +618,7 @@ export default function SetupPage() {
                             className="w-full bg-black/40 border border-indigo-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono text-sm"
                           />
                           <p className="text-[10px] text-indigo-300/60 mt-2 flex items-center gap-1">
-                            <LuCheck className="w-3 h-3" /> Botun hedef sunucuda bulunduğundan emin olun.
+                            <LuCheck className="w-3 h-3" /> Bot o sunucuda olmalı.
                           </p>
                         </div>
                       </div>
@@ -628,8 +628,8 @@ export default function SetupPage() {
                     <div className="mt-6 rounded-2xl bg-orange-500/10 border border-orange-500/20 p-4 flex items-start gap-3">
                       <LuLock className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="text-sm font-semibold text-orange-300 mb-1">Önemli Bilgilendirme</h4>
-                        <p className="text-xs text-orange-200/70 leading-relaxed">Log sunucusu kurulumunda eski kanallar silinip yeniden açılabilir. Veri kaybı yaşanmaması için daha önce kurulmuş log kanallarınız varsa dikkatli olun.</p>
+                        <h4 className="text-sm font-semibold text-orange-300 mb-1">Dikkat</h4>
+                        <p className="text-xs text-orange-200/70 leading-relaxed">Kurulumda eski log kanalları silinip yeniden açılabilir.</p>
                       </div>
                     </div>
 
@@ -640,8 +640,8 @@ export default function SetupPage() {
               {/* --- STEP 2: ECONOMY --- */}
               {currentStep === 2 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-2xl font-bold text-white mb-2">Ekonomi Ayarları</h2>
-                  <p className="text-sm text-white/50 mb-8">Üyelerinizin sohbet ederek papel kazanmasını sağlayacak oranları belirleyin.</p>
+                  <h2 className="text-xl font-bold text-white mb-2">Ekonomi</h2>
+                  <p className="text-sm text-white/50 mb-6">Mesaj ve ses için papel oranlarını ayarlayın.</p>
 
                   <div className="space-y-6">
                     {/* Message Earning */}
@@ -653,7 +653,7 @@ export default function SetupPage() {
                           </div>
                           <div>
                             <h3 className="font-bold text-white">Mesaj Kazancı</h3>
-                            <p className="text-xs text-white/50">Gönderilen her mesaj için</p>
+                            <p className="text-xs text-white/50">Her mesaj için</p>
                           </div>
                         </div>
                         <button type="button" onClick={() => setMessageEarnEnabled(!messageEarnEnabled)} className={`relative w-12 h-6 rounded-full transition-colors ${messageEarnEnabled ? 'bg-emerald-500' : 'bg-white/20'}`}>
@@ -677,8 +677,8 @@ export default function SetupPage() {
                             <LuMic className="w-5 h-5" />
                           </div>
                           <div>
-                            <h3 className="font-bold text-white">Sesli Sohbet Kazancı</h3>
-                            <p className="text-xs text-white/50">Seslide kalınan her dakika için</p>
+                            <h3 className="font-bold text-white">Ses Kazancı</h3>
+                            <p className="text-xs text-white/50">Her ses dakikası için</p>
                           </div>
                         </div>
                         <button type="button" onClick={() => setVoiceEarnEnabled(!voiceEarnEnabled)} className={`relative w-12 h-6 rounded-full transition-colors ${voiceEarnEnabled ? 'bg-indigo-500' : 'bg-white/20'}`}>
@@ -700,8 +700,8 @@ export default function SetupPage() {
               {/* --- STEP 3: BONUSES --- */}
               {currentStep === 3 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-2xl font-bold text-white mb-2">Bonus Sistemi</h2>
-                  <p className="text-sm text-white/50 mb-8">Sunucuya destek olan üyelere standart kazançlarına ek olarak ekstra papel hediye edin.</p>
+                  <h2 className="text-xl font-bold text-white mb-2">Bonuslar</h2>
+                  <p className="text-sm text-white/50 mb-6">Tag ve boost için ekstra papel.</p>
 
                   <div className="space-y-6">
                     {/* Tag Bonus */}
@@ -711,8 +711,8 @@ export default function SetupPage() {
                           <LuTag className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-white">Tag Bonusları</h3>
-                          <p className="text-xs text-white/50">İsmine sunucu tagı alan üyeler</p>
+                          <h3 className="font-bold text-white">Tag Bonusu</h3>
+                          <p className="text-xs text-white/50">İsminde sunucu tagı olanlar</p>
                         </div>
                       </div>
                       
@@ -741,8 +741,8 @@ export default function SetupPage() {
                           <LuRocket className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-white">Takviye (Boost) Bonusları</h3>
-                          <p className="text-xs text-white/50">Sunucuya nitro takviyesi basan üyeler</p>
+                          <h3 className="font-bold text-white">Boost Bonusu</h3>
+                          <p className="text-xs text-white/50">Sunucuyu boostlayanlar</p>
                         </div>
                       </div>
                       
@@ -776,15 +776,15 @@ export default function SetupPage() {
                         <div className="absolute inset-0 rounded-full border-4 border-[#5865F2]/20 border-t-[#5865F2] animate-spin-slow" />
                         <LuServer className="w-10 h-10 text-[#5865F2]" />
                       </div>
-                      <h2 className="text-3xl font-bold text-white mb-4">Her Şey Hazır!</h2>
-                      <p className="text-white/60 mb-8 max-w-md mx-auto">Rolleriniz, log sunucunuz ve ekonomi ayarlarınız derlendi. Kurulumu başlattığınızda sistem Discord sunucunuza entegre olacak.</p>
+                      <h2 className="text-2xl font-bold text-white mb-3">Hazır</h2>
+                      <p className="text-white/60 mb-8 max-w-md mx-auto">Ayarlar tamam. Başlatınca sunucuya uygulanır.</p>
                       <button onClick={handleSetup} className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-4 px-12 rounded-2xl transition-all shadow-[0_0_30px_rgba(88,101,242,0.4)] hover:shadow-[0_0_50px_rgba(88,101,242,0.6)] hover:-translate-y-1">
-                        Sistemi Devreye Al
+                        Kurulumu Başlat
                       </button>
                     </div>
                   ) : (
                     <div className="w-full">
-                      <h2 className="text-2xl font-bold text-white mb-6 text-center">Kurulum Gerçekleştiriliyor</h2>
+                      <h2 className="text-xl font-bold text-white mb-6 text-center">Kurulum sürüyor</h2>
                       
                       {/* Premium Terminal / Logger */}
                       <div className="bg-[#020204] rounded-2xl border border-white/10 p-6 font-mono text-sm h-64 overflow-hidden relative shadow-inner">
