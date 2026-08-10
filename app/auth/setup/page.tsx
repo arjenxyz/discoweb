@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown } from 'react-icons/lu';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
+import staffRoleGif from './staff-role.gif';
 
 interface DiscordRole {
   id: string;
@@ -115,7 +116,7 @@ function RoleSelectDropdown({
             src={iconSrc}
             alt=""
             draggable={false}
-            className="h-5 w-5 shrink-0 object-contain"
+            className="h-6 w-6 shrink-0 object-contain"
           />
         ) : Icon ? (
           <Icon className={`h-4 w-4 ${accentIcon}`} />
@@ -673,7 +674,7 @@ export default function SetupPage() {
                       label="Yönetici Rolü"
                       hint="Bu rolle Admin Paneline girilir."
                       placeholder="Admin rolünü seçin..."
-                      iconSrc="/gif/112771-staff.gif"
+                      iconSrc={staffRoleGif.src}
                       accent="blue"
                       roles={adminRoles}
                       value={selectedAdminRole}

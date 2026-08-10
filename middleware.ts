@@ -202,7 +202,7 @@ async function isDeveloper(userId: string): Promise<boolean> {
 	return roles.includes(roleId);
 }
 
-const IGNORED_PREFIXES = ['/api', '/_next'];
+const IGNORED_PREFIXES = ['/api', '/_next', '/gif', '/images', '/fonts', '/data'];
 const IGNORED_PATHS = ['/favicon.ico', '/robots.txt', '/sitemap.xml', '/sw.js', '/manifest.json'];
 
 export async function middleware(request: NextRequest) {
@@ -347,6 +347,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+	matcher: ['/((?!_next/static|_next/image|favicon.ico|gif/|images/|fonts/|data/).*)'],
 };
 
