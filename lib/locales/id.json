@@ -74,7 +74,7 @@
     "empty_body": "Pastikan Anda admin atau pemilik di server tempat bot berada. Jika daftar kurang lengkap, segarkan atau tambahkan bot.",
     "add_bot": "Tambahkan bot ke server",
     "role_owner": "Pemilik",
-    "role_admin": "Admin",
+    "role_admin": "Administrator",
     "role_member": "Anggota",
     "setup_required": "Perlu setup — ketuk untuk mulai",
     "setup_owner_only": "Setup hanya dapat dilakukan pemilik server",
@@ -100,5 +100,287 @@
     "agreement_not_now": "Nanti saja",
     "agreement_processing": "Memproses...",
     "agreement_accept": "Setujui dan lanjutkan"
+  },
+  "sidebar": {
+    "dashboard": "Dasbor",
+    "bot_settings": "Pengaturan bot",
+    "channels_logs": "Saluran & log",
+    "earn_settings": "Pengaturan penghasilan",
+    "wallet": "Kelola dompet",
+    "store": "Toko (Market)",
+    "user_management": "Kelola pengguna",
+    "global_announcements": "Pengumuman global",
+    "back_to_select": "Kembali ke pilih server",
+    "quiz_events": "Acara Quiz"
+  },
+  "promo": {
+    "title": "Kode promo",
+    "subtitle": "Masukkan kode untuk menambahkan Papel ke saldo Anda.",
+    "placeholder": "Masukkan kode",
+    "redeem": "Tukarkan",
+    "success": "{amount} Papel ditambahkan ke saldo Anda!",
+    "error": {
+      "empty": "Masukkan kode.",
+      "generic": "Kode promo tidak dapat ditukarkan.",
+      "invalid": "Kode promo tidak valid.",
+      "unauthorized": "Anda perlu masuk.",
+      "server": "Server tidak ditemukan.",
+      "wrong_server": "Kode ini milik server lain.",
+      "expired": "Kode ini sudah kedaluwarsa.",
+      "limit": "Kode ini mencapai batas penggunaan.",
+      "already_used": "Anda sudah memakai kode ini.",
+      "maintenance": "Sistem promo sedang dalam pemeliharaan."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Panel manajemen",
+      "active": "Aktif",
+      "unconfigured": "Belum dikonfigurasi",
+      "default_server_name": "Pusat manajemen",
+      "subtitle": "Pantau status umum dan statistik server dari sini.",
+      "refresh": "Muat ulang",
+      "earn_settings": "Pengaturan penghasilan",
+      "maintenance_mode": "Mode pemeliharaan",
+      "server_activity": "Aktivitas server",
+      "messages_24h": "Pesan (24 jam terakhir)",
+      "total": "Total",
+      "voice_24h": "Menit suara (24 jam terakhir)",
+      "total_min": "Total: {0} menit",
+      "registered_members": "Anggota terdaftar",
+      "wallets_created": "{0} dompet dibuat",
+      "tag_owner": "Pemilik Tag",
+      "booster": "Booster",
+      "economy": "Ekonomi & toko",
+      "circulation": "Papel beredar",
+      "avg_balance": "Saldo rata-rata: {0}",
+      "highest_balance": "Saldo tertinggi",
+      "active_products": "Produk aktif",
+      "orders_summary": "{0} tertunda · {1} dibayar",
+      "pending_orders": "Pesanan tertunda",
+      "paid_orders": "Dibayar: {0}",
+      "stats_error": "Gagal memuat statistik. Muat ulang halaman.",
+      "quick_actions": "Aksi cepat",
+      "action_new_product": "Buat produk baru",
+      "action_wallet": "Kelola dompet",
+      "action_notify": "Kirim notifikasi",
+      "action_promo": "Buat kode promo",
+      "action_discount": "Buat kode diskon",
+      "action_log_channels": "Saluran log",
+      "access_denied_title": "Akses ditolak",
+      "access_denied_body": "Anda tidak memiliki izin admin di server ini.",
+      "back_home": "Kembali ke beranda",
+      "load_failed": "Gagal memuat data admin. Periksa pengaturan dan izin server."
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "Kelola dompet",
+      "subtitle": "Tambah atau kurangi papel untuk pengguna atau semua anggota.",
+      "operation": "Operasi",
+      "scope": "Cakupan",
+      "mode_add": "Tambah saldo",
+      "mode_remove": "Kurangi saldo",
+      "scope_user": "Satu pengguna",
+      "scope_all": "Semua pengguna",
+      "search_label": "Cari pengguna (nama panggilan / username)",
+      "search_placeholder": "mis. night, newli",
+      "searching": "Mencari...",
+      "no_results": "Tidak ada hasil.",
+      "user_id_label": "ID Discord pengguna",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "Hapus pilihan",
+      "amount_label": "Jumlah (papel)",
+      "amount_placeholder": "100",
+      "presets_label": "Pesan siap pakai",
+      "presets_select": "Pilih",
+      "amount_hint": "Placeholder {amount} diganti dengan jumlah sebenarnya.",
+      "description_required": "Deskripsi (wajib)",
+      "description_optional": "Deskripsi (opsional)",
+      "description_placeholder": "mis. kompensasi pemeliharaan, hadiah acara, dll.",
+      "image_label": "URL gambar (opsional)",
+      "image_placeholder": "https://...",
+      "submit_loading": "Memproses...",
+      "submit": "Terapkan",
+      "error_invalid_amount": "Masukkan jumlah yang valid.",
+      "error_user_required": "ID pengguna wajib diisi.",
+      "error_message_required": "Deskripsi wajib saat menambah papel.",
+      "error_failed": "Operasi gagal.",
+      "success_all": "Diterapkan ke semua pengguna. Total: {count}",
+      "success_single": "Operasi berhasil.",
+      "presets": {
+        "add_maintenance": {
+          "label": "Kompensasi pemeliharaan",
+          "text": "Halo, {amount} papel ditambahkan ke akun Anda sebagai kompensasi pemeliharaan singkat. Terima kasih atas pengertiannya."
+        },
+        "add_event": {
+          "label": "Hadiah acara/pencapaian",
+          "text": "Selamat! {amount} papel dikreditkan ke akun Anda atas kontribusi acara. Nikmati!"
+        },
+        "add_gift": {
+          "label": "Hadiah terima kasih komunitas",
+          "text": "Terima kasih mendukung komunitas kami. Kami menghadiahkan {amount} papel kepada Anda."
+        },
+        "add_refund": {
+          "label": "Kompensasi/pengembalian kesalahan",
+          "text": "Kami mohon maaf atas gangguan. {amount} papel ditambahkan ke saldo Anda sebagai kompensasi."
+        },
+        "add_milestone": {
+          "label": "Hadiah level/kontribusi",
+          "text": "Terima kasih atas kontribusi komunitas Anda! {amount} papel dikreditkan ke akun Anda."
+        },
+        "add_support": {
+          "label": "Terima kasih dukungan",
+          "text": "Sebagai hadiah niat baik setelah permintaan dukungan Anda, {amount} papel ditambahkan ke akun Anda."
+        },
+        "remove_penalty": {
+          "label": "Pelanggaran aturan/penalti",
+          "text": "{amount} papel dipotong dari akun Anda karena pelanggaran aturan."
+        },
+        "remove_chargeback": {
+          "label": "Koreksi transaksi salah",
+          "text": "{amount} papel dipotong dari saldo Anda sebagai koreksi transaksi yang salah."
+        },
+        "remove_fee": {
+          "label": "Biaya transaksi",
+          "text": "{amount} papel dipotong dari saldo Anda sebagai biaya transaksi."
+        },
+        "remove_refund": {
+          "label": "Pembatalan pengembalian",
+          "text": "{amount} papel dipotong dari saldo Anda karena pembatalan pengembalian."
+        },
+        "all_maintenance": {
+          "label": "Kompensasi pemeliharaan (semua)",
+          "text": "Sebagai kompensasi pemeliharaan terjadwal, {amount} papel ditambahkan ke saldo semua anggota. Terima kasih."
+        },
+        "all_announcement": {
+          "label": "Insentif komunitas (umum)",
+          "text": "Untuk motivasi komunitas, {amount} papel diberikan kepada semua anggota. Nikmati!"
+        },
+        "all_event": {
+          "label": "Hadiah acara (umum)",
+          "text": "Sebagai terima kasih atas partisipasi acara, {amount} papel dibagikan ke semua anggota."
+        },
+        "all_season": {
+          "label": "Bonus penutupan musim",
+          "text": "Sebagai bonus penutupan musim, {amount} papel ditambahkan ke semua anggota."
+        },
+        "all_promo": {
+          "label": "Insentif promosi",
+          "text": "Untuk insentif periode baru, {amount} papel dimuat ke saldo semua anggota."
+        },
+        "all_loyalty": {
+          "label": "Terima kasih loyalitas",
+          "text": "Terima kasih atas kontribusi Anda — {amount} papel dihadiahkan kepada semua anggota."
+        },
+        "remove_all_adjustment": {
+          "label": "Penyesuaian saldo umum",
+          "text": "Pemotongan {amount} papel diterapkan ke semua anggota sebagai penyesuaian saldo umum."
+        },
+        "remove_all_fee": {
+          "label": "Biaya transaksi umum",
+          "text": "Pemotongan {amount} papel diterapkan ke semua anggota sebagai biaya transaksi umum."
+        }
+      },
+      "mail": {
+        "title_add": "Saldo ditambahkan",
+        "title_remove": "Saldo dikurangi",
+        "title_add_all": "Saldo massal ditambahkan",
+        "title_remove_all": "Saldo massal dikurangi",
+        "heading_add": "✅ Saldo ditambahkan",
+        "heading_remove": "❌ Saldo dikurangi",
+        "heading_add_all": "✅ Saldo massal ditambahkan",
+        "heading_remove_all": "❌ Saldo massal dikurangi",
+        "amount_label": "Jumlah transaksi:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "Deskripsi transaksi:",
+        "footer_single": "Transaksi ini dilakukan oleh sistem.",
+        "footer_all": "Transaksi massal ini dilakukan oleh sistem."
+      }
+    },
+    "earn": {
+      "title": "Pengaturan penghasilan",
+      "subtitle": "Kelola ekonomi server dari sini.",
+      "undo": "Urungkan",
+      "saving": "Menyimpan...",
+      "save": "Simpan perubahan",
+      "load_error": "Terjadi kesalahan saat memuat pengaturan.",
+      "save_error": "Gagal menyimpan pengaturan.",
+      "save_success": "Pengaturan berhasil disimpan.",
+      "data_error": "Gagal memuat data.",
+      "verified_role_mock": "@Anggota terverifikasi",
+      "message_activity": "Aktivitas pesan",
+      "earn_per_message": "Penghasilan per pesan",
+      "voice_chat": "Obrolan suara",
+      "earn_per_voice": "Penghasilan per menit",
+      "tag_bonus": "Bonus Tag",
+      "tag_bonus_desc": "Hadiahkan anggota yang memakai tag server Anda.",
+      "tag_check_label": "Pemeriksaan tag berlaku untuk server ini:",
+      "message_bonus": "Bonus pesan",
+      "voice_bonus": "Bonus suara",
+      "tag_not_configured": "Belum ada tag di server ini. Atur tag yang sesuai di Discord atau selesaikan setup bot sebelum mengaktifkan syarat tag.",
+      "booster_bonus": "Bonus Booster",
+      "booster_bonus_desc": "Hadiah ekstra untuk booster server.",
+      "security_title": "Keamanan & verifikasi",
+      "security_desc": "Bagian ini menentukan siapa yang menerima hadiah. Jika kosong, semua anggota menerima hadiah.",
+      "verify_role_label": "ID peran verifikasi",
+      "verify_role_placeholder": "Masukkan ID peran",
+      "channels_title": "Saluran penghasilan",
+      "channels_load_error": "Gagal memuat informasi saluran.",
+      "channels_desc": "Pilih di mana anggota dapat memperoleh papel.",
+      "mode_all_label": "Semua saluran",
+      "mode_all_desc": "Penghasilan aktif di setiap saluran",
+      "mode_whitelist_label": "Daftar putih",
+      "mode_whitelist_desc": "Penghasilan hanya di saluran terpilih",
+      "mode_blacklist_label": "Daftar hitam",
+      "mode_blacklist_desc": "Penghasilan di mana saja kecuali saluran terpilih",
+      "message_channels": "Saluran pesan",
+      "voice_channels": "Saluran suara",
+      "categories": "Kategori",
+      "text_channels": "Saluran teks",
+      "voice_channel_list": "Saluran suara",
+      "summary_whitelist": "Penghasilan aktif hanya di:",
+      "summary_blacklist": "Penghasilan aktif kecuali di:",
+      "suffix_message": "(pesan)",
+      "suffix_voice": "(suara)",
+      "no_channels_selected": "Belum ada saluran dipilih."
+    },
+    "menu": {
+      "group_general": "Umum",
+      "group_store": "Toko",
+      "group_community": "Komunitas",
+      "group_management": "Manajemen",
+      "section_create": "Buat",
+      "section_lists": "Daftar",
+      "section_badges": "Lencana Tag",
+      "new_product": "Produk baru",
+      "new_promo": "Kode promo",
+      "new_discount": "Kode diskon",
+      "product_list": "Daftar produk",
+      "promo_list": "Daftar promo",
+      "discount_list": "Daftar diskon",
+      "tag_booster": "Tag & Booster",
+      "tag_settings": "Pengaturan Tag",
+      "booster_settings": "Pengaturan Booster",
+      "custom_roles": "Permintaan peran kustom"
+    },
+    "shell": {
+      "default_server": "Pusat data",
+      "panel_label": "Panel admin",
+      "collapse": "Ciutkan bilah sisi",
+      "expand": "Perluas bilah sisi",
+      "developer": "Panel pengembang",
+      "open_menu": "Buka menu",
+      "close_menu": "Tutup menu",
+      "menu_title": "Menu",
+      "admin_fallback": "Admin",
+      "role": "Admin",
+      "settings": "Pengaturan Setup",
+      "language_settings": "Pengaturan bahasa",
+      "change_server": "Ganti server",
+      "switch_server_hint": "Pilih dari server yang dapat Anda kelola.",
+      "switch_server_current": "Anda berada di server ini",
+      "mobile_welcome": "Kelola server, toko, dan ekonomi dari panel admin.",
+      "logout": "Keluar"
+    }
   }
 }

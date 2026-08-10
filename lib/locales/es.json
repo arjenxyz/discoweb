@@ -74,7 +74,7 @@
     "empty_body": "Asegúrate de ser admin o propietario en servidores donde esté el bot. Si falta alguno, actualiza o añade el bot.",
     "add_bot": "Añadir bot al servidor",
     "role_owner": "Propietario",
-    "role_admin": "Admin",
+    "role_admin": "Administrador",
     "role_member": "Miembro",
     "setup_required": "Configuración necesaria — toca para empezar",
     "setup_owner_only": "Solo el propietario del servidor puede configurarlo",
@@ -100,5 +100,287 @@
     "agreement_not_now": "Ahora no",
     "agreement_processing": "Procesando...",
     "agreement_accept": "Aceptar y continuar"
+  },
+  "sidebar": {
+    "dashboard": "Panel",
+    "bot_settings": "Ajustes del bot",
+    "channels_logs": "Canales y registros",
+    "earn_settings": "Ajustes de ganancias",
+    "wallet": "Gestión de cartera",
+    "store": "Tienda (Mercado)",
+    "user_management": "Gestión de usuarios",
+    "global_announcements": "Anuncios globales",
+    "back_to_select": "Volver a seleccionar servidor",
+    "quiz_events": "Eventos de Quiz"
+  },
+  "promo": {
+    "title": "Código promocional",
+    "subtitle": "Introduce tu código para añadir Papel a tu saldo.",
+    "placeholder": "Introduce el código",
+    "redeem": "Canjear",
+    "success": "¡{amount} Papel añadidos a tu saldo!",
+    "error": {
+      "empty": "Introduce un código.",
+      "generic": "No se pudo canjear el código promocional.",
+      "invalid": "Código promocional no válido.",
+      "unauthorized": "Debes iniciar sesión.",
+      "server": "Servidor no encontrado.",
+      "wrong_server": "Este código pertenece a otro servidor.",
+      "expired": "Este código ha caducado.",
+      "limit": "Este código alcanzó su límite de uso.",
+      "already_used": "Ya usaste este código.",
+      "maintenance": "El sistema de promociones está en mantenimiento."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Panel de gestión",
+      "active": "Activo",
+      "unconfigured": "Sin configurar",
+      "default_server_name": "Centro de gestión",
+      "subtitle": "Sigue el estado general y las estadísticas del servidor desde aquí.",
+      "refresh": "Actualizar",
+      "earn_settings": "Ajustes de ganancias",
+      "maintenance_mode": "Modo de mantenimiento",
+      "server_activity": "Actividad del servidor",
+      "messages_24h": "Mensajes (últimas 24 h)",
+      "total": "Total",
+      "voice_24h": "Minutos de voz (últimas 24 h)",
+      "total_min": "Total: {0} min",
+      "registered_members": "Miembros registrados",
+      "wallets_created": "{0} carteras creadas",
+      "tag_owner": "Dueño de Tag",
+      "booster": "Booster",
+      "economy": "Economía y tienda",
+      "circulation": "Papel en circulación",
+      "avg_balance": "Saldo medio: {0}",
+      "highest_balance": "Saldo más alto",
+      "active_products": "Productos activos",
+      "orders_summary": "{0} pendientes · {1} pagados",
+      "pending_orders": "Pedidos pendientes",
+      "paid_orders": "Pagados: {0}",
+      "stats_error": "Error al cargar estadísticas. Actualiza la página.",
+      "quick_actions": "Acciones rápidas",
+      "action_new_product": "Crear producto nuevo",
+      "action_wallet": "Gestión de cartera",
+      "action_notify": "Enviar notificación",
+      "action_promo": "Crear código promocional",
+      "action_discount": "Crear código de descuento",
+      "action_log_channels": "Canales de registro",
+      "access_denied_title": "Acceso denegado",
+      "access_denied_body": "No tienes permisos de admin en este servidor.",
+      "back_home": "Volver al inicio",
+      "load_failed": "Error al cargar datos de admin. Revisa la configuración y los permisos del servidor."
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "Gestión de cartera",
+      "subtitle": "Añade o quita papel a usuarios o a todos los miembros.",
+      "operation": "Operación",
+      "scope": "Alcance",
+      "mode_add": "Añadir saldo",
+      "mode_remove": "Quitar saldo",
+      "scope_user": "Un solo usuario",
+      "scope_all": "Todos los usuarios",
+      "search_label": "Buscar usuario (apodo / nombre)",
+      "search_placeholder": "p. ej. night, newli",
+      "searching": "Buscando...",
+      "no_results": "Sin resultados.",
+      "user_id_label": "ID de Discord del usuario",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "Borrar selección",
+      "amount_label": "Cantidad (papel)",
+      "amount_placeholder": "100",
+      "presets_label": "Mensajes predefinidos",
+      "presets_select": "Seleccionar",
+      "amount_hint": "El marcador {amount} se sustituye por la cantidad real.",
+      "description_required": "Descripción (obligatoria)",
+      "description_optional": "Descripción (opcional)",
+      "description_placeholder": "p. ej. compensación por mantenimiento, recompensa de evento, etc.",
+      "image_label": "URL de imagen (opcional)",
+      "image_placeholder": "https://...",
+      "submit_loading": "Procesando...",
+      "submit": "Aplicar",
+      "error_invalid_amount": "Introduce una cantidad válida.",
+      "error_user_required": "El ID de usuario es obligatorio.",
+      "error_message_required": "La descripción es obligatoria al añadir papel.",
+      "error_failed": "La operación falló.",
+      "success_all": "Aplicado a todos los usuarios. Total: {count}",
+      "success_single": "Operación correcta.",
+      "presets": {
+        "add_maintenance": {
+          "label": "Compensación por mantenimiento",
+          "text": "Hola, se añadieron {amount} papel a tu cuenta como compensación por un breve mantenimiento. Gracias por tu comprensión."
+        },
+        "add_event": {
+          "label": "Recompensa de evento/logro",
+          "text": "¡Enhorabuena! Se acreditaron {amount} papel en tu cuenta por tu contribución al evento. ¡Disfrútalo!"
+        },
+        "add_gift": {
+          "label": "Regalo de agradecimiento",
+          "text": "Gracias por apoyar a nuestra comunidad. Te regalamos {amount} papel."
+        },
+        "add_refund": {
+          "label": "Compensación/reembolso por error",
+          "text": "Pedimos disculpas por la molestia. Se añadieron {amount} papel a tu saldo como compensación."
+        },
+        "add_milestone": {
+          "label": "Recompensa de nivel/contribución",
+          "text": "¡Gracias por tu contribución! Se acreditaron {amount} papel en tu cuenta."
+        },
+        "add_support": {
+          "label": "Agradecimiento de soporte",
+          "text": "Como gesto de buena voluntad tras tu solicitud de soporte, se añadieron {amount} papel a tu cuenta."
+        },
+        "remove_penalty": {
+          "label": "Infracción/penalización",
+          "text": "Se dedujeron {amount} papel de tu cuenta por una infracción de las reglas."
+        },
+        "remove_chargeback": {
+          "label": "Corrección de transacción incorrecta",
+          "text": "Se dedujeron {amount} papel de tu saldo como corrección de una transacción incorrecta."
+        },
+        "remove_fee": {
+          "label": "Comisión de transacción",
+          "text": "Se dedujeron {amount} papel de tu saldo como comisión de transacción."
+        },
+        "remove_refund": {
+          "label": "Reversión de reembolso",
+          "text": "Se dedujeron {amount} papel de tu saldo por una reversión de reembolso."
+        },
+        "all_maintenance": {
+          "label": "Compensación por mantenimiento (todos)",
+          "text": "Como compensación por el mantenimiento programado, se añadieron {amount} papel a los saldos de todos los miembros. Gracias."
+        },
+        "all_announcement": {
+          "label": "Incentivo comunitario (general)",
+          "text": "Para motivar a la comunidad, se otorgaron {amount} papel a todos los miembros. ¡Disfrutad!"
+        },
+        "all_event": {
+          "label": "Recompensa de evento (general)",
+          "text": "Como agradecimiento por participar en el evento, se repartieron {amount} papel a todos los miembros."
+        },
+        "all_season": {
+          "label": "Bono de cierre de temporada",
+          "text": "Como bono de cierre de temporada, se añadieron {amount} papel a todos los miembros."
+        },
+        "all_promo": {
+          "label": "Incentivo promocional",
+          "text": "Como incentivo del nuevo periodo, se cargaron {amount} papel en los saldos de todos los miembros."
+        },
+        "all_loyalty": {
+          "label": "Agradecimiento por lealtad",
+          "text": "Gracias por vuestras aportaciones — se regalaron {amount} papel a todos los miembros."
+        },
+        "remove_all_adjustment": {
+          "label": "Ajuste general de saldo",
+          "text": "Se aplicó una deducción de {amount} papel a todos los miembros como ajuste general de saldo."
+        },
+        "remove_all_fee": {
+          "label": "Comisión general de transacción",
+          "text": "Se aplicó una deducción de {amount} papel a todos los miembros como comisión general de transacción."
+        }
+      },
+      "mail": {
+        "title_add": "Saldo añadido",
+        "title_remove": "Saldo eliminado",
+        "title_add_all": "Saldo masivo añadido",
+        "title_remove_all": "Saldo masivo eliminado",
+        "heading_add": "✅ Saldo añadido",
+        "heading_remove": "❌ Saldo eliminado",
+        "heading_add_all": "✅ Saldo masivo añadido",
+        "heading_remove_all": "❌ Saldo masivo eliminado",
+        "amount_label": "Importe de la transacción:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "Descripción de la transacción:",
+        "footer_single": "Esta transacción la realizó el sistema.",
+        "footer_all": "Esta transacción masiva la realizó el sistema."
+      }
+    },
+    "earn": {
+      "title": "Ajustes de ganancias",
+      "subtitle": "Gestiona la economía del servidor desde aquí.",
+      "undo": "Deshacer",
+      "saving": "Guardando...",
+      "save": "Guardar cambios",
+      "load_error": "Ocurrió un error al cargar los ajustes.",
+      "save_error": "No se pudieron guardar los ajustes.",
+      "save_success": "Ajustes guardados correctamente.",
+      "data_error": "No se pudieron cargar los datos.",
+      "verified_role_mock": "@Miembro verificado",
+      "message_activity": "Actividad de mensajes",
+      "earn_per_message": "Ganancias por mensaje",
+      "voice_chat": "Chat de voz",
+      "earn_per_voice": "Ganancias por minuto",
+      "tag_bonus": "Bonus de Tag",
+      "tag_bonus_desc": "Recompensa a quienes usan la tag del servidor.",
+      "tag_check_label": "La comprobación de tag se aplica a este servidor:",
+      "message_bonus": "Bonus de mensaje",
+      "voice_bonus": "Bonus de voz",
+      "tag_not_configured": "No hay tag configurada en este servidor. Configura una tag adecuada en Discord o completa el setup del bot antes de exigir tag.",
+      "booster_bonus": "Bonus de Booster",
+      "booster_bonus_desc": "Recompensa extra para boosters del servidor.",
+      "security_title": "Seguridad y verificación",
+      "security_desc": "Esta sección determina quién recibe recompensas. Si queda vacía, todos los miembros las reciben.",
+      "verify_role_label": "ID del rol de verificación",
+      "verify_role_placeholder": "Introduce el ID del rol",
+      "channels_title": "Canales de ganancia",
+      "channels_load_error": "No se pudo cargar la información de canales.",
+      "channels_desc": "Elige dónde los miembros pueden ganar papel.",
+      "mode_all_label": "Todos los canales",
+      "mode_all_desc": "Ganancia activa en todos los canales",
+      "mode_whitelist_label": "Lista blanca",
+      "mode_whitelist_desc": "Ganancia solo en canales seleccionados",
+      "mode_blacklist_label": "Lista negra",
+      "mode_blacklist_desc": "Ganancia en todos excepto los seleccionados",
+      "message_channels": "Canales de mensaje",
+      "voice_channels": "Canales de voz",
+      "categories": "Categorías",
+      "text_channels": "Canales de texto",
+      "voice_channel_list": "Canales de voz",
+      "summary_whitelist": "Ganancia activa solo en:",
+      "summary_blacklist": "Ganancia activa excepto en:",
+      "suffix_message": "(mensaje)",
+      "suffix_voice": "(voz)",
+      "no_channels_selected": "Aún no hay canales seleccionados."
+    },
+    "menu": {
+      "group_general": "General",
+      "group_store": "Tienda",
+      "group_community": "Comunidad",
+      "group_management": "Gestión",
+      "section_create": "Crear",
+      "section_lists": "Listas",
+      "section_badges": "Insignia de Tag",
+      "new_product": "Producto nuevo",
+      "new_promo": "Código promocional",
+      "new_discount": "Código de descuento",
+      "product_list": "Lista de productos",
+      "promo_list": "Lista de promociones",
+      "discount_list": "Lista de descuentos",
+      "tag_booster": "Tag y Booster",
+      "tag_settings": "Ajustes de Tag",
+      "booster_settings": "Ajustes de Booster",
+      "custom_roles": "Solicitudes de rol personalizado"
+    },
+    "shell": {
+      "default_server": "Centro de datos",
+      "panel_label": "Panel admin",
+      "collapse": "Contraer barra lateral",
+      "expand": "Expandir barra lateral",
+      "developer": "Panel de desarrollador",
+      "open_menu": "Abrir menú",
+      "close_menu": "Cerrar menú",
+      "menu_title": "Menú",
+      "admin_fallback": "Admin",
+      "role": "Admin",
+      "settings": "Ajustes de Setup",
+      "language_settings": "Ajustes de idioma",
+      "change_server": "Cambiar servidor",
+      "switch_server_hint": "Elige entre los servidores que puedes gestionar.",
+      "switch_server_current": "Estás en este servidor",
+      "mobile_welcome": "Gestiona el servidor, la tienda y la economía desde el panel admin.",
+      "logout": "Cerrar sesión"
+    }
   }
 }

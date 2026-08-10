@@ -20,7 +20,7 @@
     "home": "Startseite",
     "store": "Shop",
     "developer": "Developer",
-    "status": "Status",
+    "status": "Statusseite",
     "discover": "Entdecken",
     "continue": "Weiter",
     "add_bot": "Bot zum Server hinzufügen",
@@ -57,7 +57,7 @@
     "status_history": "Verlauf",
     "discover_community": "Community",
     "discover_blog": "Blog",
-    "discover_support": "Support"
+    "discover_support": "Hilfe"
   },
   "select_server": {
     "loading": "Server werden geladen...",
@@ -74,7 +74,7 @@
     "empty_body": "Stelle sicher, dass du Admin oder Eigentümer auf Servern bist, auf denen der Bot ist. Bei unvollständiger Liste aktualisieren oder den Bot hinzufügen.",
     "add_bot": "Bot zum Server hinzufügen",
     "role_owner": "Eigentümer",
-    "role_admin": "Admin",
+    "role_admin": "Administrator",
     "role_member": "Mitglied",
     "setup_required": "Setup erforderlich — tippen zum Starten",
     "setup_owner_only": "Setup nur durch den Server-Eigentümer möglich",
@@ -100,5 +100,287 @@
     "agreement_not_now": "Nicht jetzt",
     "agreement_processing": "Wird verarbeitet...",
     "agreement_accept": "Akzeptieren und fortfahren"
+  },
+  "sidebar": {
+    "dashboard": "Übersicht",
+    "bot_settings": "Bot-Einstellungen",
+    "channels_logs": "Kanäle & Protokolle",
+    "earn_settings": "Verdiensteinstellungen",
+    "wallet": "Wallet-Verwaltung",
+    "store": "Shop (Markt)",
+    "user_management": "Benutzerverwaltung",
+    "global_announcements": "Globale Ankündigungen",
+    "back_to_select": "Zurück zur Serverauswahl",
+    "quiz_events": "Quiz-Events"
+  },
+  "promo": {
+    "title": "Promo-Code",
+    "subtitle": "Gib deinen Code ein, um Papel deinem Guthaben hinzuzufügen.",
+    "placeholder": "Code eingeben",
+    "redeem": "Einlösen",
+    "success": "{amount} Papel wurden deinem Guthaben hinzugefügt!",
+    "error": {
+      "empty": "Bitte gib einen Code ein.",
+      "generic": "Promo-Code konnte nicht eingelöst werden.",
+      "invalid": "Ungültiger Promo-Code.",
+      "unauthorized": "Du musst dich anmelden.",
+      "server": "Server nicht gefunden.",
+      "wrong_server": "Dieser Code gehört zu einem anderen Server.",
+      "expired": "Dieser Code ist abgelaufen.",
+      "limit": "Dieser Code hat sein Nutzungslimit erreicht.",
+      "already_used": "Du hast diesen Code bereits verwendet.",
+      "maintenance": "Das Promo-System ist in Wartung."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Verwaltungspanel",
+      "active": "Aktiv",
+      "unconfigured": "Nicht konfiguriert",
+      "default_server_name": "Verwaltungszentrum",
+      "subtitle": "Verfolge hier den allgemeinen Status und die Statistiken deines Servers.",
+      "refresh": "Aktualisieren",
+      "earn_settings": "Verdiensteinstellungen",
+      "maintenance_mode": "Wartungsmodus",
+      "server_activity": "Serveraktivität",
+      "messages_24h": "Nachrichten (letzte 24 Std.)",
+      "total": "Gesamt",
+      "voice_24h": "Sprachminuten (letzte 24 Std.)",
+      "total_min": "Gesamt: {0} Min.",
+      "registered_members": "Registrierte Mitglieder",
+      "wallets_created": "{0} Wallets erstellt",
+      "tag_owner": "Tag-Inhaber",
+      "booster": "Booster",
+      "economy": "Wirtschaft & Shop",
+      "circulation": "Papel im Umlauf",
+      "avg_balance": "Ø-Guthaben: {0}",
+      "highest_balance": "Höchstes Guthaben",
+      "active_products": "Aktive Produkte",
+      "orders_summary": "{0} ausstehend · {1} bezahlt",
+      "pending_orders": "Ausstehende Bestellungen",
+      "paid_orders": "Bezahlt: {0}",
+      "stats_error": "Statistiken konnten nicht geladen werden. Bitte Seite aktualisieren.",
+      "quick_actions": "Schnellaktionen",
+      "action_new_product": "Neues Produkt erstellen",
+      "action_wallet": "Wallet-Verwaltung",
+      "action_notify": "Benachrichtigung senden",
+      "action_promo": "Promo-Code erstellen",
+      "action_discount": "Rabattcode erstellen",
+      "action_log_channels": "Protokollkanäle",
+      "access_denied_title": "Zugriff verweigert",
+      "access_denied_body": "Du hast auf diesem Server keine Admin-Berechtigungen.",
+      "back_home": "Zurück zur Startseite",
+      "load_failed": "Admin-Daten konnten nicht geladen werden. Prüfe Servereinstellungen und Berechtigungen."
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "Wallet-Verwaltung",
+      "subtitle": "Papel für Nutzer oder alle Mitglieder hinzufügen oder entfernen.",
+      "operation": "Vorgang",
+      "scope": "Bereich",
+      "mode_add": "Guthaben hinzufügen",
+      "mode_remove": "Guthaben entfernen",
+      "scope_user": "Einzelner Nutzer",
+      "scope_all": "Alle Nutzer",
+      "search_label": "Nutzer suchen (Spitzname / Benutzername)",
+      "search_placeholder": "z. B. night, newli",
+      "searching": "Suche...",
+      "no_results": "Keine Ergebnisse.",
+      "user_id_label": "Discord-Nutzer-ID",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "Auswahl löschen",
+      "amount_label": "Betrag (papel)",
+      "amount_placeholder": "100",
+      "presets_label": "Vorlagenachrichten",
+      "presets_select": "Auswählen",
+      "amount_hint": "Der Platzhalter {amount} wird durch den tatsächlichen Betrag ersetzt.",
+      "description_required": "Beschreibung (erforderlich)",
+      "description_optional": "Beschreibung (optional)",
+      "description_placeholder": "z. B. Wartungsentschädigung, Event-Belohnung usw.",
+      "image_label": "Bild-URL (optional)",
+      "image_placeholder": "https://...",
+      "submit_loading": "Wird verarbeitet...",
+      "submit": "Anwenden",
+      "error_invalid_amount": "Gib einen gültigen Betrag ein.",
+      "error_user_required": "Nutzer-ID ist erforderlich.",
+      "error_message_required": "Beschreibung ist beim Hinzufügen von papel erforderlich.",
+      "error_failed": "Vorgang fehlgeschlagen.",
+      "success_all": "Auf alle Nutzer angewendet. Gesamt: {count}",
+      "success_single": "Vorgang erfolgreich.",
+      "presets": {
+        "add_maintenance": {
+          "label": "Wartungsentschädigung",
+          "text": "Hallo, {amount} papel wurden deinem Konto als Entschädigung für eine kurze Wartung gutgeschrieben. Danke für dein Verständnis."
+        },
+        "add_event": {
+          "label": "Event-/Erfolgsbelohnung",
+          "text": "Glückwunsch! {amount} papel wurden für deinen Event-Beitrag gutgeschrieben. Viel Spaß!"
+        },
+        "add_gift": {
+          "label": "Community-Dankesgeschenk",
+          "text": "Danke, dass du unsere Community unterstützt. Wir schenken dir {amount} papel."
+        },
+        "add_refund": {
+          "label": "Fehlerentschädigung/Erstattung",
+          "text": "Entschuldigung für die Störung. {amount} papel wurden als Entschädigung hinzugefügt."
+        },
+        "add_milestone": {
+          "label": "Level-/Beitragsbelohnung",
+          "text": "Danke für deinen Community-Beitrag! {amount} papel wurden gutgeschrieben."
+        },
+        "add_support": {
+          "label": "Support-Dankeschön",
+          "text": "Als Goodwill-Geschenk nach deiner Support-Anfrage wurden {amount} papel hinzugefügt."
+        },
+        "remove_penalty": {
+          "label": "Regelverstoß/Strafe",
+          "text": "{amount} papel wurden wegen eines Regelverstoßes abgezogen."
+        },
+        "remove_chargeback": {
+          "label": "Korrektur falscher Transaktion",
+          "text": "{amount} papel wurden als Korrektur einer falschen Transaktion abgezogen."
+        },
+        "remove_fee": {
+          "label": "Transaktionsgebühr",
+          "text": "{amount} papel wurden als Transaktionsgebühr abgezogen."
+        },
+        "remove_refund": {
+          "label": "Erstattungsrücknahme",
+          "text": "{amount} papel wurden wegen einer Erstattungsrücknahme abgezogen."
+        },
+        "all_maintenance": {
+          "label": "Wartungsentschädigung (alle)",
+          "text": "Als Entschädigung für geplante Wartung wurden {amount} papel allen Mitgliedern gutgeschrieben. Danke."
+        },
+        "all_announcement": {
+          "label": "Community-Anreiz (allgemein)",
+          "text": "Zur Motivation der Community wurden {amount} papel an alle Mitglieder vergeben. Viel Spaß!"
+        },
+        "all_event": {
+          "label": "Event-Belohnung (allgemein)",
+          "text": "Als Dank für die Event-Teilnahme wurden {amount} papel an alle Mitglieder verteilt."
+        },
+        "all_season": {
+          "label": "Saisonabschluss-Bonus",
+          "text": "Als Saisonabschluss-Bonus wurden {amount} papel allen Mitgliedern hinzugefügt."
+        },
+        "all_promo": {
+          "label": "Werbeanreiz",
+          "text": "Als Anreiz für den neuen Zeitraum wurden {amount} papel auf alle Mitgliedskonten geladen."
+        },
+        "all_loyalty": {
+          "label": "Treue-Dankeschön",
+          "text": "Danke für eure Beiträge — {amount} papel wurden allen Mitgliedern geschenkt."
+        },
+        "remove_all_adjustment": {
+          "label": "Allgemeine Guthabenanpassung",
+          "text": "Ein Abzug von {amount} papel wurde bei allen Mitgliedern als allgemeine Guthabenanpassung vorgenommen."
+        },
+        "remove_all_fee": {
+          "label": "Allgemeine Transaktionsgebühr",
+          "text": "Ein Abzug von {amount} papel wurde bei allen Mitgliedern als allgemeine Transaktionsgebühr vorgenommen."
+        }
+      },
+      "mail": {
+        "title_add": "Guthaben hinzugefügt",
+        "title_remove": "Guthaben entfernt",
+        "title_add_all": "Massen-Guthaben hinzugefügt",
+        "title_remove_all": "Massen-Guthaben entfernt",
+        "heading_add": "✅ Guthaben hinzugefügt",
+        "heading_remove": "❌ Guthaben entfernt",
+        "heading_add_all": "✅ Massen-Guthaben hinzugefügt",
+        "heading_remove_all": "❌ Massen-Guthaben entfernt",
+        "amount_label": "Transaktionsbetrag:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "Transaktionsbeschreibung:",
+        "footer_single": "Diese Transaktion wurde vom System ausgeführt.",
+        "footer_all": "Diese Massen-Transaktion wurde vom System ausgeführt."
+      }
+    },
+    "earn": {
+      "title": "Verdiensteinstellungen",
+      "subtitle": "Verwalte hier die Serverwirtschaft.",
+      "undo": "Rückgängig",
+      "saving": "Speichern...",
+      "save": "Änderungen speichern",
+      "load_error": "Beim Laden der Einstellungen ist ein Fehler aufgetreten.",
+      "save_error": "Einstellungen konnten nicht gespeichert werden.",
+      "save_success": "Einstellungen erfolgreich gespeichert.",
+      "data_error": "Daten konnten nicht geladen werden.",
+      "verified_role_mock": "@Verifiziertes Mitglied",
+      "message_activity": "Nachrichtenaktivität",
+      "earn_per_message": "Verdienst pro Nachricht",
+      "voice_chat": "Sprachchat",
+      "earn_per_voice": "Verdienst pro Minute",
+      "tag_bonus": "Tag-Bonus",
+      "tag_bonus_desc": "Belohne Mitglieder, die euren Server-Tag nutzen.",
+      "tag_check_label": "Tag-Prüfung gilt für diesen Server:",
+      "message_bonus": "Nachrichtenbonus",
+      "voice_bonus": "Sprachbonus",
+      "tag_not_configured": "Auf diesem Server ist kein Tag konfiguriert. Richte einen passenden Tag auf Discord ein oder schließe das Bot-Setup ab, bevor du Tag-Anforderungen aktivierst.",
+      "booster_bonus": "Booster-Bonus",
+      "booster_bonus_desc": "Extra-Belohnung für Server-Booster.",
+      "security_title": "Sicherheit & Verifizierung",
+      "security_desc": "Dieser Bereich legt fest, wer Belohnungen erhält. Leer gelassen erhalten alle Mitglieder Belohnungen.",
+      "verify_role_label": "Verifizierungsrollen-ID",
+      "verify_role_placeholder": "Rollen-ID eingeben",
+      "channels_title": "Verdienstkanäle",
+      "channels_load_error": "Kanalinformationen konnten nicht geladen werden.",
+      "channels_desc": "Wähle, wo Mitglieder papel verdienen können.",
+      "mode_all_label": "Alle Kanäle",
+      "mode_all_desc": "Verdienst in jedem Kanal aktiv",
+      "mode_whitelist_label": "Whitelist",
+      "mode_whitelist_desc": "Verdienst nur in ausgewählten Kanälen",
+      "mode_blacklist_label": "Blacklist",
+      "mode_blacklist_desc": "Verdienst überall außer in ausgewählten Kanälen",
+      "message_channels": "Nachrichtenkanäle",
+      "voice_channels": "Sprachkanäle",
+      "categories": "Kategorien",
+      "text_channels": "Textkanäle",
+      "voice_channel_list": "Sprachkanäle",
+      "summary_whitelist": "Verdienst nur aktiv in:",
+      "summary_blacklist": "Verdienst aktiv außer in:",
+      "suffix_message": "(Nachricht)",
+      "suffix_voice": "(Sprache)",
+      "no_channels_selected": "Noch keine Kanäle ausgewählt."
+    },
+    "menu": {
+      "group_general": "Allgemein",
+      "group_store": "Shop",
+      "group_community": "Community",
+      "group_management": "Verwaltung",
+      "section_create": "Erstellen",
+      "section_lists": "Listen",
+      "section_badges": "Tag-Abzeichen",
+      "new_product": "Neues Produkt",
+      "new_promo": "Promo-Code",
+      "new_discount": "Rabattcode",
+      "product_list": "Produktliste",
+      "promo_list": "Promo-Liste",
+      "discount_list": "Rabattliste",
+      "tag_booster": "Tag & Booster",
+      "tag_settings": "Tag-Einstellungen",
+      "booster_settings": "Booster-Einstellungen",
+      "custom_roles": "Anfragen für benutzerdefinierte Rollen"
+    },
+    "shell": {
+      "default_server": "Rechenzentrum",
+      "panel_label": "Admin-Panel",
+      "collapse": "Seitenleiste einklappen",
+      "expand": "Seitenleiste ausklappen",
+      "developer": "Entwicklerpanel",
+      "open_menu": "Menü öffnen",
+      "close_menu": "Menü schließen",
+      "menu_title": "Menü",
+      "admin_fallback": "Admin",
+      "role": "Admin",
+      "settings": "Setup-Einstellungen",
+      "language_settings": "Spracheinstellungen",
+      "change_server": "Server wechseln",
+      "switch_server_hint": "Wähle aus den Servern, die du verwalten kannst.",
+      "switch_server_current": "Du bist auf diesem Server",
+      "mobile_welcome": "Verwalte Server, Shop und Wirtschaft über das Admin-Panel.",
+      "logout": "Abmelden"
+    }
   }
 }

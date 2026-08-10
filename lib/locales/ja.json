@@ -11,7 +11,7 @@
     "loading_progress": "読み込み中... {progress}%",
     "welcome": "DiscoWebへようこそ",
     "description": "サーバー管理者向けのDiscord管理パネルです。オーナーと管理者だけがログインしてコミュニティを管理できます。",
-    "copyright": "DiscoWeb | 2026 © All rights reserved",
+    "copyright": "DiscoWeb | 2026 © 全著作権所有",
     "banner_alt": "Discordバナー",
     "decorative_cat": "装飾用の猫"
   },
@@ -100,5 +100,287 @@
     "agreement_not_now": "今はしない",
     "agreement_processing": "処理中...",
     "agreement_accept": "同意して続行"
+  },
+  "sidebar": {
+    "dashboard": "ダッシュボード",
+    "bot_settings": "Bot設定",
+    "channels_logs": "チャンネルとログ",
+    "earn_settings": "獲得設定",
+    "wallet": "ウォレット管理",
+    "store": "ストア（マーケット）",
+    "user_management": "ユーザー管理",
+    "global_announcements": "グローバルお知らせ",
+    "back_to_select": "サーバー選択に戻る",
+    "quiz_events": "Quizイベント"
+  },
+  "promo": {
+    "title": "プロモコード",
+    "subtitle": "コードを入力して残高にPapelを追加します。",
+    "placeholder": "コードを入力",
+    "redeem": "利用する",
+    "success": "{amount} Papelが残高に追加されました！",
+    "error": {
+      "empty": "コードを入力してください。",
+      "generic": "プロモコードを利用できませんでした。",
+      "invalid": "無効なプロモコードです。",
+      "unauthorized": "ログインが必要です。",
+      "server": "サーバーが見つかりません。",
+      "wrong_server": "このコードは別のサーバー用です。",
+      "expired": "このコードは期限切れです。",
+      "limit": "このコードは利用上限に達しました。",
+      "already_used": "このコードは既に使用済みです。",
+      "maintenance": "プロモシステムはメンテナンス中です。"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "管理パネル",
+      "active": "有効",
+      "unconfigured": "未設定",
+      "default_server_name": "管理センター",
+      "subtitle": "サーバーの全体状況と統計をここから確認できます。",
+      "refresh": "更新",
+      "earn_settings": "獲得設定",
+      "maintenance_mode": "メンテナンスモード",
+      "server_activity": "サーバーアクティビティ",
+      "messages_24h": "メッセージ（直近24時間）",
+      "total": "合計",
+      "voice_24h": "ボイス分数（直近24時間）",
+      "total_min": "合計: {0}分",
+      "registered_members": "登録メンバー",
+      "wallets_created": "{0}件のウォレット作成済み",
+      "tag_owner": "Tag所有者",
+      "booster": "Booster",
+      "economy": "経済とストア",
+      "circulation": "流通中のPapel",
+      "avg_balance": "平均残高: {0}",
+      "highest_balance": "最高残高",
+      "active_products": "有効な商品",
+      "orders_summary": "保留 {0} · 支払済 {1}",
+      "pending_orders": "保留中の注文",
+      "paid_orders": "支払済: {0}",
+      "stats_error": "統計の読み込みに失敗しました。ページを更新してください。",
+      "quick_actions": "クイック操作",
+      "action_new_product": "新しい商品を作成",
+      "action_wallet": "ウォレット管理",
+      "action_notify": "通知を送信",
+      "action_promo": "プロモコードを作成",
+      "action_discount": "割引コードを作成",
+      "action_log_channels": "ログチャンネル",
+      "access_denied_title": "アクセス拒否",
+      "access_denied_body": "このサーバーでの管理者権限がありません。",
+      "back_home": "ホームに戻る",
+      "load_failed": "管理データの読み込みに失敗しました。サーバー設定と権限を確認してください。"
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "ウォレット管理",
+      "subtitle": "ユーザーまたは全メンバーのpapelを追加／削除します。",
+      "operation": "操作",
+      "scope": "範囲",
+      "mode_add": "残高を追加",
+      "mode_remove": "残高を削除",
+      "scope_user": "単一ユーザー",
+      "scope_all": "全ユーザー",
+      "search_label": "ユーザー検索（ニックネーム／ユーザー名）",
+      "search_placeholder": "例: night, newli",
+      "searching": "検索中...",
+      "no_results": "結果なし。",
+      "user_id_label": "ユーザーのDiscord ID",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "選択をクリア",
+      "amount_label": "数量（papel）",
+      "amount_placeholder": "100",
+      "presets_label": "定型メッセージ",
+      "presets_select": "選択",
+      "amount_hint": "{amount} プレースホルダーは実際の金額に置き換えられます。",
+      "description_required": "説明（必須）",
+      "description_optional": "説明（任意）",
+      "description_placeholder": "例: メンテナンス補償、イベント報酬など",
+      "image_label": "画像URL（任意）",
+      "image_placeholder": "https://...",
+      "submit_loading": "処理中...",
+      "submit": "適用",
+      "error_invalid_amount": "有効な金額を入力してください。",
+      "error_user_required": "ユーザーIDは必須です。",
+      "error_message_required": "papel追加時は説明が必須です。",
+      "error_failed": "操作に失敗しました。",
+      "success_all": "全ユーザーに適用しました。合計: {count}",
+      "success_single": "操作が完了しました。",
+      "presets": {
+        "add_maintenance": {
+          "label": "メンテナンス補償",
+          "text": "こんにちは。短いメンテナンスの補償として {amount} papel がアカウントに追加されました。ご理解ありがとうございます。"
+        },
+        "add_event": {
+          "label": "イベント／実績報酬",
+          "text": "おめでとうございます！イベント貢献により {amount} papel がクレジットされました。お楽しみください！"
+        },
+        "add_gift": {
+          "label": "コミュニティ感謝ギフト",
+          "text": "コミュニティへのご支援ありがとうございます。{amount} papel をプレゼントします。"
+        },
+        "add_refund": {
+          "label": "エラー補償／返金",
+          "text": "ご不便をおかけして申し訳ありません。補償として {amount} papel を残高に追加しました。"
+        },
+        "add_milestone": {
+          "label": "レベル／貢献報酬",
+          "text": "コミュニティへの貢献ありがとうございます！{amount} papel がクレジットされました。"
+        },
+        "add_support": {
+          "label": "サポートへのお礼",
+          "text": "サポート依頼後の善意のギフトとして {amount} papel が追加されました。"
+        },
+        "remove_penalty": {
+          "label": "ルール違反／罰則",
+          "text": "ルール違反のため {amount} papel がアカウントから差し引かれました。"
+        },
+        "remove_chargeback": {
+          "label": "誤取引の訂正",
+          "text": "誤った取引の訂正として {amount} papel が残高から差し引かれました。"
+        },
+        "remove_fee": {
+          "label": "取引手数料",
+          "text": "取引手数料として {amount} papel が残高から差し引かれました。"
+        },
+        "remove_refund": {
+          "label": "返金取り消し",
+          "text": "返金取り消しのため {amount} papel が残高から差し引かれました。"
+        },
+        "all_maintenance": {
+          "label": "メンテナンス補償（全員）",
+          "text": "予定メンテナンスの補償として、全メンバーの残高に {amount} papel を追加しました。ありがとうございます。"
+        },
+        "all_announcement": {
+          "label": "コミュニティ激励（全体）",
+          "text": "コミュニティのモチベーション向上のため、全メンバーに {amount} papel を付与しました。お楽しみください！"
+        },
+        "all_event": {
+          "label": "イベント報酬（全体）",
+          "text": "イベント参加への感謝として、全メンバーに {amount} papel を配布しました。"
+        },
+        "all_season": {
+          "label": "シーズン終了ボーナス",
+          "text": "シーズン終了ボーナスとして、全メンバーに {amount} papel を追加しました。"
+        },
+        "all_promo": {
+          "label": "プロモ激励",
+          "text": "新期間の激励として、全メンバーの残高に {amount} papel をチャージしました。"
+        },
+        "all_loyalty": {
+          "label": "ロイヤリティへの感謝",
+          "text": "ご貢献に感謝します — 全メンバーに {amount} papel をギフトしました。"
+        },
+        "remove_all_adjustment": {
+          "label": "全体残高調整",
+          "text": "全体残高調整として、全メンバーから {amount} papel を差し引きました。"
+        },
+        "remove_all_fee": {
+          "label": "全体取引手数料",
+          "text": "全体取引手数料として、全メンバーから {amount} papel を差し引きました。"
+        }
+      },
+      "mail": {
+        "title_add": "残高追加",
+        "title_remove": "残高削除",
+        "title_add_all": "一括残高追加",
+        "title_remove_all": "一括残高削除",
+        "heading_add": "✅ 残高追加",
+        "heading_remove": "❌ 残高削除",
+        "heading_add_all": "✅ 一括残高追加",
+        "heading_remove_all": "❌ 一括残高削除",
+        "amount_label": "取引金額:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "取引の説明:",
+        "footer_single": "この取引はシステムによって実行されました。",
+        "footer_all": "この一括取引はシステムによって実行されました。"
+      }
+    },
+    "earn": {
+      "title": "獲得設定",
+      "subtitle": "ここからサーバー経済を管理します。",
+      "undo": "元に戻す",
+      "saving": "保存中...",
+      "save": "変更を保存",
+      "load_error": "設定の読み込み中にエラーが発生しました。",
+      "save_error": "設定の保存に失敗しました。",
+      "save_success": "設定を保存しました。",
+      "data_error": "データの読み込みに失敗しました。",
+      "verified_role_mock": "@認証済みメンバー",
+      "message_activity": "メッセージ活動",
+      "earn_per_message": "メッセージごとの獲得",
+      "voice_chat": "ボイスチャット",
+      "earn_per_voice": "分ごとの獲得",
+      "tag_bonus": "Tagボーナス",
+      "tag_bonus_desc": "サーバーTagを使うメンバーに報酬を与えます。",
+      "tag_check_label": "Tagチェックはこのサーバーに適用されます:",
+      "message_bonus": "メッセージボーナス",
+      "voice_bonus": "ボイスボーナス",
+      "tag_not_configured": "このサーバーにTagが設定されていません。Tag要件を有効にする前に、Discordで適切なTagを設定するかBotのSetupを完了してください。",
+      "booster_bonus": "Boosterボーナス",
+      "booster_bonus_desc": "サーバーBooster向けの追加報酬。",
+      "security_title": "セキュリティと認証",
+      "security_desc": "この欄で報酬を受け取る人を決めます。空の場合は全メンバーが報酬を受け取ります。",
+      "verify_role_label": "認証ロールID",
+      "verify_role_placeholder": "ロールIDを入力",
+      "channels_title": "獲得チャンネル",
+      "channels_load_error": "チャンネル情報の読み込みに失敗しました。",
+      "channels_desc": "メンバーがpapelを獲得できる場所を選びます。",
+      "mode_all_label": "すべてのチャンネル",
+      "mode_all_desc": "すべてのチャンネルで獲得が有効",
+      "mode_whitelist_label": "ホワイトリスト",
+      "mode_whitelist_desc": "選択したチャンネルのみで獲得",
+      "mode_blacklist_label": "ブラックリスト",
+      "mode_blacklist_desc": "選択したチャンネル以外で獲得",
+      "message_channels": "メッセージチャンネル",
+      "voice_channels": "ボイスチャンネル",
+      "categories": "カテゴリ",
+      "text_channels": "テキストチャンネル",
+      "voice_channel_list": "ボイスチャンネル",
+      "summary_whitelist": "獲得が有効なのは:",
+      "summary_blacklist": "次を除いて獲得が有効:",
+      "suffix_message": "（メッセージ）",
+      "suffix_voice": "（ボイス）",
+      "no_channels_selected": "まだチャンネルが選択されていません。"
+    },
+    "menu": {
+      "group_general": "一般",
+      "group_store": "ストア",
+      "group_community": "コミュニティ",
+      "group_management": "管理",
+      "section_create": "作成",
+      "section_lists": "一覧",
+      "section_badges": "Tagバッジ",
+      "new_product": "新しい商品",
+      "new_promo": "プロモコード",
+      "new_discount": "割引コード",
+      "product_list": "商品一覧",
+      "promo_list": "プロモ一覧",
+      "discount_list": "割引一覧",
+      "tag_booster": "TagとBooster",
+      "tag_settings": "Tag設定",
+      "booster_settings": "Booster設定",
+      "custom_roles": "カスタムロール申請"
+    },
+    "shell": {
+      "default_server": "データセンター",
+      "panel_label": "管理パネル",
+      "collapse": "サイドバーを折りたたむ",
+      "expand": "サイドバーを展開",
+      "developer": "開発者パネル",
+      "open_menu": "メニューを開く",
+      "close_menu": "メニューを閉じる",
+      "menu_title": "メニュー",
+      "admin_fallback": "Admin",
+      "role": "Admin",
+      "settings": "Setup設定",
+      "language_settings": "言語設定",
+      "change_server": "サーバーを変更",
+      "switch_server_hint": "管理できるサーバーから選んでください。",
+      "switch_server_current": "このサーバーにいます",
+      "mobile_welcome": "管理パネルからサーバー、ストア、経済を管理します。",
+      "logout": "ログアウト"
+    }
   }
 }

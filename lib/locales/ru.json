@@ -100,5 +100,287 @@
     "agreement_not_now": "Не сейчас",
     "agreement_processing": "Обработка...",
     "agreement_accept": "Принять и продолжить"
+  },
+  "sidebar": {
+    "dashboard": "Панель",
+    "bot_settings": "Настройки бота",
+    "channels_logs": "Каналы и логи",
+    "earn_settings": "Настройки заработка",
+    "wallet": "Управление кошельком",
+    "store": "Магазин (Маркет)",
+    "user_management": "Управление пользователями",
+    "global_announcements": "Глобальные объявления",
+    "back_to_select": "Назад к выбору сервера",
+    "quiz_events": "События Quiz"
+  },
+  "promo": {
+    "title": "Промокод",
+    "subtitle": "Введите код, чтобы добавить Papel на баланс.",
+    "placeholder": "Введите код",
+    "redeem": "Активировать",
+    "success": "{amount} Papel добавлено на ваш баланс!",
+    "error": {
+      "empty": "Введите код.",
+      "generic": "Не удалось активировать промокод.",
+      "invalid": "Недействительный промокод.",
+      "unauthorized": "Нужно войти в аккаунт.",
+      "server": "Сервер не найден.",
+      "wrong_server": "Этот код принадлежит другому серверу.",
+      "expired": "Срок действия этого кода истёк.",
+      "limit": "Этот код достиг лимита использований.",
+      "already_used": "Вы уже использовали этот код.",
+      "maintenance": "Система промокодов на обслуживании."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Панель управления",
+      "active": "Активен",
+      "unconfigured": "Не настроено",
+      "default_server_name": "Центр управления",
+      "subtitle": "Отслеживайте общий статус и статистику сервера здесь.",
+      "refresh": "Обновить",
+      "earn_settings": "Настройки заработка",
+      "maintenance_mode": "Режим обслуживания",
+      "server_activity": "Активность сервера",
+      "messages_24h": "Сообщения (за 24 ч)",
+      "total": "Всего",
+      "voice_24h": "Минуты голоса (за 24 ч)",
+      "total_min": "Всего: {0} мин",
+      "registered_members": "Зарегистрированные участники",
+      "wallets_created": "Создано кошельков: {0}",
+      "tag_owner": "Владелец Tag",
+      "booster": "Booster",
+      "economy": "Экономика и магазин",
+      "circulation": "Papel в обороте",
+      "avg_balance": "Средний баланс: {0}",
+      "highest_balance": "Наибольший баланс",
+      "active_products": "Активные товары",
+      "orders_summary": "{0} ожидают · {1} оплачены",
+      "pending_orders": "Ожидающие заказы",
+      "paid_orders": "Оплачено: {0}",
+      "stats_error": "Не удалось загрузить статистику. Обновите страницу.",
+      "quick_actions": "Быстрые действия",
+      "action_new_product": "Создать товар",
+      "action_wallet": "Управление кошельком",
+      "action_notify": "Отправить уведомление",
+      "action_promo": "Создать промокод",
+      "action_discount": "Создать код скидки",
+      "action_log_channels": "Каналы логов",
+      "access_denied_title": "Доступ запрещён",
+      "access_denied_body": "У вас нет прав администратора на этом сервере.",
+      "back_home": "На главную",
+      "load_failed": "Не удалось загрузить данные админа. Проверьте настройки сервера и права."
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "Управление кошельком",
+      "subtitle": "Добавляйте или снимайте papel у пользователей или у всех участников.",
+      "operation": "Операция",
+      "scope": "Область",
+      "mode_add": "Добавить баланс",
+      "mode_remove": "Снять баланс",
+      "scope_user": "Один пользователь",
+      "scope_all": "Все пользователи",
+      "search_label": "Поиск пользователя (ник / имя)",
+      "search_placeholder": "напр. night, newli",
+      "searching": "Поиск...",
+      "no_results": "Ничего не найдено.",
+      "user_id_label": "Discord ID пользователя",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "Очистить выбор",
+      "amount_label": "Сумма (papel)",
+      "amount_placeholder": "100",
+      "presets_label": "Готовые сообщения",
+      "presets_select": "Выбрать",
+      "amount_hint": "Плейсхолдер {amount} заменяется фактической суммой.",
+      "description_required": "Описание (обязательно)",
+      "description_optional": "Описание (необязательно)",
+      "description_placeholder": "напр. компенсация за обслуживание, награда за событие и т. д.",
+      "image_label": "URL изображения (необязательно)",
+      "image_placeholder": "https://...",
+      "submit_loading": "Обработка...",
+      "submit": "Применить",
+      "error_invalid_amount": "Введите корректную сумму.",
+      "error_user_required": "Требуется ID пользователя.",
+      "error_message_required": "При добавлении papel описание обязательно.",
+      "error_failed": "Операция не удалась.",
+      "success_all": "Применено ко всем пользователям. Всего: {count}",
+      "success_single": "Операция выполнена.",
+      "presets": {
+        "add_maintenance": {
+          "label": "Компенсация за обслуживание",
+          "text": "Здравствуйте, на ваш счёт добавлено {amount} papel в качестве компенсации за краткое обслуживание. Спасибо за понимание."
+        },
+        "add_event": {
+          "label": "Награда за событие/достижение",
+          "text": "Поздравляем! На ваш счёт зачислено {amount} papel за вклад в событие. Наслаждайтесь!"
+        },
+        "add_gift": {
+          "label": "Благодарственный подарок сообщества",
+          "text": "Спасибо за поддержку нашего сообщества. Мы дарим вам {amount} papel."
+        },
+        "add_refund": {
+          "label": "Компенсация/возврат за ошибку",
+          "text": "Приносим извинения за неудобства. На баланс добавлено {amount} papel в качестве компенсации."
+        },
+        "add_milestone": {
+          "label": "Награда за уровень/вклад",
+          "text": "Спасибо за вклад в сообщество! На ваш счёт зачислено {amount} papel."
+        },
+        "add_support": {
+          "label": "Благодарность за поддержку",
+          "text": "В знак доброй воли после вашего обращения в поддержку на счёт добавлено {amount} papel."
+        },
+        "remove_penalty": {
+          "label": "Нарушение правил/штраф",
+          "text": "С вашего счёта списано {amount} papel из-за нарушения правил."
+        },
+        "remove_chargeback": {
+          "label": "Исправление ошибочной транзакции",
+          "text": "С баланса списано {amount} papel в рамках исправления ошибочной транзакции."
+        },
+        "remove_fee": {
+          "label": "Комиссия за транзакцию",
+          "text": "С баланса списано {amount} papel в качестве комиссии за транзакцию."
+        },
+        "remove_refund": {
+          "label": "Отмена возврата",
+          "text": "С баланса списано {amount} papel из-за отмены возврата."
+        },
+        "all_maintenance": {
+          "label": "Компенсация за обслуживание (всем)",
+          "text": "В качестве компенсации за плановое обслуживание всем участникам добавлено {amount} papel. Спасибо."
+        },
+        "all_announcement": {
+          "label": "Стимул сообщества (общий)",
+          "text": "Для мотивации сообщества всем участникам выдано {amount} papel. Наслаждайтесь!"
+        },
+        "all_event": {
+          "label": "Награда за событие (общая)",
+          "text": "В знак благодарности за участие в событии всем участникам распределено {amount} papel."
+        },
+        "all_season": {
+          "label": "Бонус закрытия сезона",
+          "text": "В качестве бонуса закрытия сезона всем участникам добавлено {amount} papel."
+        },
+        "all_promo": {
+          "label": "Промо-стимул",
+          "text": "В качестве стимула нового периода на балансы всех участников загружено {amount} papel."
+        },
+        "all_loyalty": {
+          "label": "Благодарность за лояльность",
+          "text": "Спасибо за ваш вклад — всем участникам подарено {amount} papel."
+        },
+        "remove_all_adjustment": {
+          "label": "Общая корректировка баланса",
+          "text": "Списание {amount} papel применено ко всем участникам в рамках общей корректировки баланса."
+        },
+        "remove_all_fee": {
+          "label": "Общая комиссия за транзакцию",
+          "text": "Списание {amount} papel применено ко всем участникам в качестве общей комиссии за транзакцию."
+        }
+      },
+      "mail": {
+        "title_add": "Баланс добавлен",
+        "title_remove": "Баланс снят",
+        "title_add_all": "Массовое добавление баланса",
+        "title_remove_all": "Массовое снятие баланса",
+        "heading_add": "✅ Баланс добавлен",
+        "heading_remove": "❌ Баланс снят",
+        "heading_add_all": "✅ Массовое добавление баланса",
+        "heading_remove_all": "❌ Массовое снятие баланса",
+        "amount_label": "Сумма транзакции:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "Описание транзакции:",
+        "footer_single": "Эта транзакция выполнена системой.",
+        "footer_all": "Эта массовая транзакция выполнена системой."
+      }
+    },
+    "earn": {
+      "title": "Настройки заработка",
+      "subtitle": "Управляйте экономикой сервера здесь.",
+      "undo": "Отменить",
+      "saving": "Сохранение...",
+      "save": "Сохранить изменения",
+      "load_error": "Произошла ошибка при загрузке настроек.",
+      "save_error": "Не удалось сохранить настройки.",
+      "save_success": "Настройки успешно сохранены.",
+      "data_error": "Не удалось загрузить данные.",
+      "verified_role_mock": "@Проверенный участник",
+      "message_activity": "Активность сообщений",
+      "earn_per_message": "Заработок за сообщение",
+      "voice_chat": "Голосовой чат",
+      "earn_per_voice": "Заработок за минуту",
+      "tag_bonus": "Бонус Tag",
+      "tag_bonus_desc": "Награждайте участников, использующих тег сервера.",
+      "tag_check_label": "Проверка Tag применяется к этому серверу:",
+      "message_bonus": "Бонус за сообщения",
+      "voice_bonus": "Бонус за голос",
+      "tag_not_configured": "На этом сервере не настроен Tag. Настройте подходящий Tag в Discord или завершите Setup бота перед включением требования Tag.",
+      "booster_bonus": "Бонус Booster",
+      "booster_bonus_desc": "Дополнительная награда для бустеров сервера.",
+      "security_title": "Безопасность и проверка",
+      "security_desc": "Этот раздел определяет, кто получает награды. Если оставить пустым, награды получают все участники.",
+      "verify_role_label": "ID роли проверки",
+      "verify_role_placeholder": "Введите ID роли",
+      "channels_title": "Каналы заработка",
+      "channels_load_error": "Не удалось загрузить информацию о каналах.",
+      "channels_desc": "Выберите, где участники могут зарабатывать papel.",
+      "mode_all_label": "Все каналы",
+      "mode_all_desc": "Заработок активен в каждом канале",
+      "mode_whitelist_label": "Белый список",
+      "mode_whitelist_desc": "Заработок только в выбранных каналах",
+      "mode_blacklist_label": "Чёрный список",
+      "mode_blacklist_desc": "Заработок везде, кроме выбранных каналов",
+      "message_channels": "Текстовые каналы",
+      "voice_channels": "Голосовые каналы",
+      "categories": "Категории",
+      "text_channels": "Текстовые каналы",
+      "voice_channel_list": "Голосовые каналы",
+      "summary_whitelist": "Заработок активен только в:",
+      "summary_blacklist": "Заработок активен, кроме:",
+      "suffix_message": "(сообщение)",
+      "suffix_voice": "(голос)",
+      "no_channels_selected": "Каналы ещё не выбраны."
+    },
+    "menu": {
+      "group_general": "Общее",
+      "group_store": "Магазин",
+      "group_community": "Сообщество",
+      "group_management": "Управление",
+      "section_create": "Создать",
+      "section_lists": "Списки",
+      "section_badges": "Значок Tag",
+      "new_product": "Новый товар",
+      "new_promo": "Промокод",
+      "new_discount": "Код скидки",
+      "product_list": "Список товаров",
+      "promo_list": "Список промо",
+      "discount_list": "Список скидок",
+      "tag_booster": "Tag и Booster",
+      "tag_settings": "Настройки Tag",
+      "booster_settings": "Настройки Booster",
+      "custom_roles": "Запросы на пользовательские роли"
+    },
+    "shell": {
+      "default_server": "Дата-центр",
+      "panel_label": "Панель администратора",
+      "collapse": "Свернуть боковую панель",
+      "expand": "Развернуть боковую панель",
+      "developer": "Панель разработчика",
+      "open_menu": "Открыть меню",
+      "close_menu": "Закрыть меню",
+      "menu_title": "Меню",
+      "admin_fallback": "Admin",
+      "role": "Admin",
+      "settings": "Настройки Setup",
+      "language_settings": "Языковые настройки",
+      "change_server": "Сменить сервер",
+      "switch_server_hint": "Выберите среди серверов, которыми можете управлять.",
+      "switch_server_current": "Вы на этом сервере",
+      "mobile_welcome": "Управляйте сервером, магазином и экономикой из панели администратора.",
+      "logout": "Выйти"
+    }
   }
 }

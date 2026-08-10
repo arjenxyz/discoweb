@@ -11,7 +11,7 @@
     "loading_progress": "로딩 중... {progress}%",
     "welcome": "DiscoWeb에 오신 것을 환영합니다",
     "description": "서버 관리자를 위한 Discord 관리 패널입니다. 소유자와 관리자만 로그인하여 커뮤니티를 관리할 수 있습니다.",
-    "copyright": "DiscoWeb | 2026 © All rights reserved",
+    "copyright": "DiscoWeb | 2026 © 모든 권리 보유",
     "banner_alt": "Discord 배너",
     "decorative_cat": "장식용 고양이"
   },
@@ -100,5 +100,287 @@
     "agreement_not_now": "나중에",
     "agreement_processing": "처리 중...",
     "agreement_accept": "동의하고 계속"
+  },
+  "sidebar": {
+    "dashboard": "대시보드",
+    "bot_settings": "봇 설정",
+    "channels_logs": "채널 및 로그",
+    "earn_settings": "적립 설정",
+    "wallet": "지갑 관리",
+    "store": "스토어(마켓)",
+    "user_management": "사용자 관리",
+    "global_announcements": "전역 공지",
+    "back_to_select": "서버 선택으로 돌아가기",
+    "quiz_events": "Quiz 이벤트"
+  },
+  "promo": {
+    "title": "프로모 코드",
+    "subtitle": "코드를 입력해 잔액에 Papel을 추가하세요.",
+    "placeholder": "코드 입력",
+    "redeem": "사용하기",
+    "success": "{amount} Papel이 잔액에 추가되었습니다!",
+    "error": {
+      "empty": "코드를 입력하세요.",
+      "generic": "프로모 코드를 사용할 수 없습니다.",
+      "invalid": "잘못된 프로모 코드입니다.",
+      "unauthorized": "로그인이 필요합니다.",
+      "server": "서버를 찾을 수 없습니다.",
+      "wrong_server": "이 코드는 다른 서버용입니다.",
+      "expired": "이 코드는 만료되었습니다.",
+      "limit": "이 코드는 사용 한도에 도달했습니다.",
+      "already_used": "이미 이 코드를 사용했습니다.",
+      "maintenance": "프로모 시스템이 점검 중입니다."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "관리 패널",
+      "active": "활성",
+      "unconfigured": "미구성",
+      "default_server_name": "관리 센터",
+      "subtitle": "서버의 전체 상태와 통계를 여기서 확인하세요.",
+      "refresh": "새로고침",
+      "earn_settings": "적립 설정",
+      "maintenance_mode": "점검 모드",
+      "server_activity": "서버 활동",
+      "messages_24h": "메시지(최근 24시간)",
+      "total": "합계",
+      "voice_24h": "음성 분(최근 24시간)",
+      "total_min": "합계: {0}분",
+      "registered_members": "등록된 멤버",
+      "wallets_created": "지갑 {0}개 생성됨",
+      "tag_owner": "Tag 소유자",
+      "booster": "Booster",
+      "economy": "경제 및 스토어",
+      "circulation": "유통 중인 Papel",
+      "avg_balance": "평균 잔액: {0}",
+      "highest_balance": "최고 잔액",
+      "active_products": "활성 상품",
+      "orders_summary": "대기 {0} · 결제 {1}",
+      "pending_orders": "대기 주문",
+      "paid_orders": "결제됨: {0}",
+      "stats_error": "통계를 불러오지 못했습니다. 페이지를 새로고침하세요.",
+      "quick_actions": "빠른 작업",
+      "action_new_product": "새 상품 만들기",
+      "action_wallet": "지갑 관리",
+      "action_notify": "알림 보내기",
+      "action_promo": "프로모 코드 만들기",
+      "action_discount": "할인 코드 만들기",
+      "action_log_channels": "로그 채널",
+      "access_denied_title": "접근 거부",
+      "access_denied_body": "이 서버에서 관리자 권한이 없습니다.",
+      "back_home": "홈으로 돌아가기",
+      "load_failed": "관리자 데이터를 불러오지 못했습니다. 서버 설정과 권한을 확인하세요."
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "지갑 관리",
+      "subtitle": "사용자 또는 전체 멤버의 papel을 추가하거나 제거합니다.",
+      "operation": "작업",
+      "scope": "범위",
+      "mode_add": "잔액 추가",
+      "mode_remove": "잔액 제거",
+      "scope_user": "단일 사용자",
+      "scope_all": "모든 사용자",
+      "search_label": "사용자 검색(닉네임 / 사용자명)",
+      "search_placeholder": "예: night, newli",
+      "searching": "검색 중...",
+      "no_results": "결과 없음.",
+      "user_id_label": "사용자 Discord ID",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "선택 지우기",
+      "amount_label": "수량(papel)",
+      "amount_placeholder": "100",
+      "presets_label": "미리 작성된 메시지",
+      "presets_select": "선택",
+      "amount_hint": "{amount} 자리 표시자는 실제 금액으로 바뀝니다.",
+      "description_required": "설명(필수)",
+      "description_optional": "설명(선택)",
+      "description_placeholder": "예: 점검 보상, 이벤트 보상 등",
+      "image_label": "이미지 URL(선택)",
+      "image_placeholder": "https://...",
+      "submit_loading": "처리 중...",
+      "submit": "적용",
+      "error_invalid_amount": "유효한 금액을 입력하세요.",
+      "error_user_required": "사용자 ID가 필요합니다.",
+      "error_message_required": "papel 추가 시 설명이 필요합니다.",
+      "error_failed": "작업에 실패했습니다.",
+      "success_all": "모든 사용자에게 적용됨. 합계: {count}",
+      "success_single": "작업이 완료되었습니다.",
+      "presets": {
+        "add_maintenance": {
+          "label": "점검 보상",
+          "text": "안녕하세요. 짧은 점검을 보상하기 위해 {amount} papel이 계정에 추가되었습니다. 양해해 주셔서 감사합니다."
+        },
+        "add_event": {
+          "label": "이벤트/업적 보상",
+          "text": "축하합니다! 이벤트 기여로 {amount} papel이 계정에 적립되었습니다. 즐기세요!"
+        },
+        "add_gift": {
+          "label": "커뮤니티 감사 선물",
+          "text": "커뮤니티를 지원해 주셔서 감사합니다. {amount} papel을 선물합니다."
+        },
+        "add_refund": {
+          "label": "오류 보상/환불",
+          "text": "불편을 드려 죄송합니다. 보상으로 {amount} papel이 잔액에 추가되었습니다."
+        },
+        "add_milestone": {
+          "label": "레벨/기여 보상",
+          "text": "커뮤니티 기여에 감사드립니다! {amount} papel이 계정에 적립되었습니다."
+        },
+        "add_support": {
+          "label": "지원 감사",
+          "text": "지원 요청 후 선의의 선물로 {amount} papel이 계정에 추가되었습니다."
+        },
+        "remove_penalty": {
+          "label": "규칙 위반/페널티",
+          "text": "규칙 위반으로 {amount} papel이 계정에서 차감되었습니다."
+        },
+        "remove_chargeback": {
+          "label": "잘못된 거래 정정",
+          "text": "잘못된 거래 정정으로 {amount} papel이 잔액에서 차감되었습니다."
+        },
+        "remove_fee": {
+          "label": "거래 수수료",
+          "text": "거래 수수료로 {amount} papel이 잔액에서 차감되었습니다."
+        },
+        "remove_refund": {
+          "label": "환불 취소",
+          "text": "환불 취소로 {amount} papel이 잔액에서 차감되었습니다."
+        },
+        "all_maintenance": {
+          "label": "점검 보상(전체)",
+          "text": "예정된 점검 보상으로 모든 멤버 잔액에 {amount} papel이 추가되었습니다. 감사합니다."
+        },
+        "all_announcement": {
+          "label": "커뮤니티 인센티브(일반)",
+          "text": "커뮤니티 동기 부여를 위해 모든 멤버에게 {amount} papel이 지급되었습니다. 즐기세요!"
+        },
+        "all_event": {
+          "label": "이벤트 보상(일반)",
+          "text": "이벤트 참여에 대한 감사로 모든 멤버에게 {amount} papel이 배포되었습니다."
+        },
+        "all_season": {
+          "label": "시즌 종료 보너스",
+          "text": "시즌 종료 보너스로 모든 멤버에게 {amount} papel이 추가되었습니다."
+        },
+        "all_promo": {
+          "label": "프로모션 인센티브",
+          "text": "새 기간 인센티브로 모든 멤버 잔액에 {amount} papel이 충전되었습니다."
+        },
+        "all_loyalty": {
+          "label": "충성도 감사",
+          "text": "기여에 감사드립니다 — 모든 멤버에게 {amount} papel을 선물했습니다."
+        },
+        "remove_all_adjustment": {
+          "label": "일반 잔액 조정",
+          "text": "일반 잔액 조정으로 모든 멤버에게 {amount} papel 차감이 적용되었습니다."
+        },
+        "remove_all_fee": {
+          "label": "일반 거래 수수료",
+          "text": "일반 거래 수수료로 모든 멤버에게 {amount} papel 차감이 적용되었습니다."
+        }
+      },
+      "mail": {
+        "title_add": "잔액 추가됨",
+        "title_remove": "잔액 제거됨",
+        "title_add_all": "일괄 잔액 추가됨",
+        "title_remove_all": "일괄 잔액 제거됨",
+        "heading_add": "✅ 잔액 추가됨",
+        "heading_remove": "❌ 잔액 제거됨",
+        "heading_add_all": "✅ 일괄 잔액 추가됨",
+        "heading_remove_all": "❌ 일괄 잔액 제거됨",
+        "amount_label": "거래 금액:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "거래 설명:",
+        "footer_single": "이 거래는 시스템에 의해 수행되었습니다.",
+        "footer_all": "이 일괄 거래는 시스템에 의해 수행되었습니다."
+      }
+    },
+    "earn": {
+      "title": "적립 설정",
+      "subtitle": "여기서 서버 경제를 관리하세요.",
+      "undo": "실행 취소",
+      "saving": "저장 중...",
+      "save": "변경 사항 저장",
+      "load_error": "설정을 불러오는 중 오류가 발생했습니다.",
+      "save_error": "설정을 저장하지 못했습니다.",
+      "save_success": "설정이 저장되었습니다.",
+      "data_error": "데이터를 불러오지 못했습니다.",
+      "verified_role_mock": "@인증된 멤버",
+      "message_activity": "메시지 활동",
+      "earn_per_message": "메시지당 적립",
+      "voice_chat": "음성 채팅",
+      "earn_per_voice": "분당 적립",
+      "tag_bonus": "Tag 보너스",
+      "tag_bonus_desc": "서버 Tag를 사용하는 멤버에게 보상합니다.",
+      "tag_check_label": "Tag 확인이 이 서버에 적용됩니다:",
+      "message_bonus": "메시지 보너스",
+      "voice_bonus": "음성 보너스",
+      "tag_not_configured": "이 서버에 Tag가 구성되어 있지 않습니다. Tag 요구 사항을 켜기 전에 Discord에서 적절한 Tag를 설정하거나 봇 Setup을 완료하세요.",
+      "booster_bonus": "Booster 보너스",
+      "booster_bonus_desc": "서버 Booster를 위한 추가 보상.",
+      "security_title": "보안 및 인증",
+      "security_desc": "이 섹션은 보상을 받을 사람을 정합니다. 비워 두면 모든 멤버가 보상을 받습니다.",
+      "verify_role_label": "인증 역할 ID",
+      "verify_role_placeholder": "역할 ID 입력",
+      "channels_title": "적립 채널",
+      "channels_load_error": "채널 정보를 불러오지 못했습니다.",
+      "channels_desc": "멤버가 papel을 적립할 수 있는 곳을 선택하세요.",
+      "mode_all_label": "모든 채널",
+      "mode_all_desc": "모든 채널에서 적립 활성",
+      "mode_whitelist_label": "허용 목록",
+      "mode_whitelist_desc": "선택한 채널에서만 적립",
+      "mode_blacklist_label": "차단 목록",
+      "mode_blacklist_desc": "선택한 채널을 제외한 모든 곳에서 적립",
+      "message_channels": "메시지 채널",
+      "voice_channels": "음성 채널",
+      "categories": "카테고리",
+      "text_channels": "텍스트 채널",
+      "voice_channel_list": "음성 채널",
+      "summary_whitelist": "적립이 활성인 곳:",
+      "summary_blacklist": "다음을 제외하고 적립 활성:",
+      "suffix_message": "(메시지)",
+      "suffix_voice": "(음성)",
+      "no_channels_selected": "아직 선택된 채널이 없습니다."
+    },
+    "menu": {
+      "group_general": "일반",
+      "group_store": "스토어",
+      "group_community": "커뮤니티",
+      "group_management": "관리",
+      "section_create": "만들기",
+      "section_lists": "목록",
+      "section_badges": "Tag 배지",
+      "new_product": "새 상품",
+      "new_promo": "프로모 코드",
+      "new_discount": "할인 코드",
+      "product_list": "상품 목록",
+      "promo_list": "프로모 목록",
+      "discount_list": "할인 목록",
+      "tag_booster": "Tag 및 Booster",
+      "tag_settings": "Tag 설정",
+      "booster_settings": "Booster 설정",
+      "custom_roles": "커스텀 역할 요청"
+    },
+    "shell": {
+      "default_server": "데이터 센터",
+      "panel_label": "관리자 패널",
+      "collapse": "사이드바 접기",
+      "expand": "사이드바 펼치기",
+      "developer": "개발자 패널",
+      "open_menu": "메뉴 열기",
+      "close_menu": "메뉴 닫기",
+      "menu_title": "메뉴",
+      "admin_fallback": "Admin",
+      "role": "Admin",
+      "settings": "Setup 설정",
+      "language_settings": "언어 설정",
+      "change_server": "서버 변경",
+      "switch_server_hint": "관리할 수 있는 서버 중에서 선택하세요.",
+      "switch_server_current": "이 서버에 있습니다",
+      "mobile_welcome": "관리자 패널에서 서버, 스토어, 경제를 관리하세요.",
+      "logout": "로그아웃"
+    }
   }
 }

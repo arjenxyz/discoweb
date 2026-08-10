@@ -74,7 +74,7 @@
     "empty_body": "Győződj meg róla, hogy admin vagy tulajdonos vagy azokon a szervereken, ahol a bot jelen van. Ha a lista hiányos, frissíts vagy add hozzá a botot.",
     "add_bot": "Bot hozzáadása a szerverhez",
     "role_owner": "Tulajdonos",
-    "role_admin": "Admin",
+    "role_admin": "Adminisztrátor",
     "role_member": "Tag",
     "setup_required": "Beállítás szükséges — koppints a kezdéshez",
     "setup_owner_only": "A beállítást csak a szerver tulajdonosa végezheti el",
@@ -100,5 +100,287 @@
     "agreement_not_now": "Most nem",
     "agreement_processing": "Feldolgozás...",
     "agreement_accept": "Elfogadom és folytatom"
+  },
+  "sidebar": {
+    "dashboard": "Irányítópult",
+    "bot_settings": "Bot beállítások",
+    "channels_logs": "Csatornák és naplók",
+    "earn_settings": "Kereseti beállítások",
+    "wallet": "Pénztárca kezelés",
+    "store": "Áruház (Piac)",
+    "user_management": "Felhasználókezelés",
+    "global_announcements": "Globális közlemények",
+    "back_to_select": "Vissza a szerverválasztáshoz",
+    "quiz_events": "Quiz események"
+  },
+  "promo": {
+    "title": "Promóciós kód",
+    "subtitle": "Add meg a kódot, hogy Papelt adj a egyenlegedhez.",
+    "placeholder": "Add meg a kódot",
+    "redeem": "Beváltás",
+    "success": "{amount} Papel hozzáadva az egyenlegedhez!",
+    "error": {
+      "empty": "Add meg a kódot.",
+      "generic": "A promóciós kód nem váltható be.",
+      "invalid": "Érvénytelen promóciós kód.",
+      "unauthorized": "Be kell jelentkezned.",
+      "server": "A szerver nem található.",
+      "wrong_server": "Ez a kód másik szerverhez tartozik.",
+      "expired": "Ez a kód lejárt.",
+      "limit": "Ez a kód elérte a használati korlátot.",
+      "already_used": "Ezt a kódot már felhasználtad.",
+      "maintenance": "A promórendszer karbantartás alatt áll."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Kezelőpanel",
+      "active": "Aktív",
+      "unconfigured": "Nincs beállítva",
+      "default_server_name": "Kezelőközpont",
+      "subtitle": "Kövesd innen a szerver általános állapotát és statisztikáit.",
+      "refresh": "Frissítés",
+      "earn_settings": "Kereseti beállítások",
+      "maintenance_mode": "Karbantartási mód",
+      "server_activity": "Szerver aktivitás",
+      "messages_24h": "Üzenetek (elmúlt 24 óra)",
+      "total": "Összesen",
+      "voice_24h": "Hangpercek (elmúlt 24 óra)",
+      "total_min": "Összesen: {0} perc",
+      "registered_members": "Regisztrált tagok",
+      "wallets_created": "{0} pénztárca létrehozva",
+      "tag_owner": "Tag tulajdonos",
+      "booster": "Booster",
+      "economy": "Gazdaság és áruház",
+      "circulation": "Forgalomban lévő Papel",
+      "avg_balance": "Átlagos egyenleg: {0}",
+      "highest_balance": "Legmagasabb egyenleg",
+      "active_products": "Aktív termékek",
+      "orders_summary": "{0} függőben · {1} fizetve",
+      "pending_orders": "Függő rendelések",
+      "paid_orders": "Fizetve: {0}",
+      "stats_error": "Nem sikerült betölteni a statisztikákat. Frissítsd az oldalt.",
+      "quick_actions": "Gyors műveletek",
+      "action_new_product": "Új termék létrehozása",
+      "action_wallet": "Pénztárca kezelés",
+      "action_notify": "Értesítés küldése",
+      "action_promo": "Promóciós kód létrehozása",
+      "action_discount": "Kedvezménykód létrehozása",
+      "action_log_channels": "Naplócsatornák",
+      "access_denied_title": "Hozzáférés megtagadva",
+      "access_denied_body": "Nincs admin jogosultságod ezen a szerveren.",
+      "back_home": "Vissza a főoldalra",
+      "load_failed": "Nem sikerült betölteni az admin adatokat. Ellenőrizd a szerverbeállításokat és a jogosultságokat."
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "Pénztárca kezelés",
+      "subtitle": "Papel hozzáadása vagy elvétele felhasználóknak vagy minden tagnak.",
+      "operation": "Művelet",
+      "scope": "Hatókör",
+      "mode_add": "Egyenleg hozzáadása",
+      "mode_remove": "Egyenleg elvétele",
+      "scope_user": "Egy felhasználó",
+      "scope_all": "Minden felhasználó",
+      "search_label": "Felhasználó keresése (becenév / felhasználónév)",
+      "search_placeholder": "pl. night, newli",
+      "searching": "Keresés...",
+      "no_results": "Nincs találat.",
+      "user_id_label": "Felhasználó Discord ID",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "Kijelölés törlése",
+      "amount_label": "Összeg (papel)",
+      "amount_placeholder": "100",
+      "presets_label": "Előre megírt üzenetek",
+      "presets_select": "Válassz",
+      "amount_hint": "A {amount} helyőrzőt a tényleges összeg váltja fel.",
+      "description_required": "Leírás (kötelező)",
+      "description_optional": "Leírás (opcionális)",
+      "description_placeholder": "pl. karbantartási kárpótlás, eseményjutalom stb.",
+      "image_label": "Kép URL (opcionális)",
+      "image_placeholder": "https://...",
+      "submit_loading": "Feldolgozás...",
+      "submit": "Alkalmaz",
+      "error_invalid_amount": "Adj meg érvényes összeget.",
+      "error_user_required": "A felhasználói ID kötelező.",
+      "error_message_required": "Papel hozzáadásakor a leírás kötelező.",
+      "error_failed": "A művelet sikertelen.",
+      "success_all": "Alkalmazva minden felhasználóra. Összesen: {count}",
+      "success_single": "Sikeres művelet.",
+      "presets": {
+        "add_maintenance": {
+          "label": "Karbantartási kárpótlás",
+          "text": "Szia, {amount} papel került a fiókodba rövid karbantartás miatti kárpótlásként. Köszönjük a megértést."
+        },
+        "add_event": {
+          "label": "Esemény-/teljesítményjutalom",
+          "text": "Gratulálunk! {amount} papel került jóváírásra az eseményben való hozzájárulásodért. Élvezd!"
+        },
+        "add_gift": {
+          "label": "Közösségi köszönőajándék",
+          "text": "Köszönjük, hogy támogatod a közösségünket. {amount} papelt ajándékozunk neked."
+        },
+        "add_refund": {
+          "label": "Hibakárpótlás/visszatérítés",
+          "text": "Elnézést a kellemetlenségért. {amount} papel került az egyenlegedre kárpótlásként."
+        },
+        "add_milestone": {
+          "label": "Szint-/hozzájárulási jutalom",
+          "text": "Köszönjük a közösségi hozzájárulásodat! {amount} papel került jóváírásra."
+        },
+        "add_support": {
+          "label": "Támogatási köszönet",
+          "text": "Jószándékú ajándékként a támogatási kérésed után {amount} papel került a fiókodba."
+        },
+        "remove_penalty": {
+          "label": "Szabálysértés/büntetés",
+          "text": "{amount} papel levonásra került a fiókodból szabálysértés miatt."
+        },
+        "remove_chargeback": {
+          "label": "Hibás tranzakció javítása",
+          "text": "{amount} papel levonásra került az egyenlegedről hibás tranzakció javításaként."
+        },
+        "remove_fee": {
+          "label": "Tranzakciós díj",
+          "text": "{amount} papel levonásra került az egyenlegedről tranzakciós díjként."
+        },
+        "remove_refund": {
+          "label": "Visszatérítés visszavonása",
+          "text": "{amount} papel levonásra került az egyenlegedről visszatérítés visszavonása miatt."
+        },
+        "all_maintenance": {
+          "label": "Karbantartási kárpótlás (mindenki)",
+          "text": "A tervezett karbantartás kárpótlásaként {amount} papel került minden tag egyenlegére. Köszönjük."
+        },
+        "all_announcement": {
+          "label": "Közösségi ösztönző (általános)",
+          "text": "A közösség motiválására {amount} papel került kiosztásra minden tagnak. Élvezzétek!"
+        },
+        "all_event": {
+          "label": "Eseményjutalom (általános)",
+          "text": "Az eseményen való részvételért {amount} papel került szétosztásra minden tagnak."
+        },
+        "all_season": {
+          "label": "Szezonzáró bónusz",
+          "text": "Szezonzáró bónuszként {amount} papel került minden taghoz."
+        },
+        "all_promo": {
+          "label": "Promóciós ösztönző",
+          "text": "Az új időszak ösztönzőjeként {amount} papel került minden tag egyenlegére."
+        },
+        "all_loyalty": {
+          "label": "Hűségköszönet",
+          "text": "Köszönjük a hozzájárulásaitokat — {amount} papel került ajándékozásra minden tagnak."
+        },
+        "remove_all_adjustment": {
+          "label": "Általános egyenlegkorrekció",
+          "text": "{amount} papel levonás került alkalmazásra minden tagnál általános egyenlegkorrekcióként."
+        },
+        "remove_all_fee": {
+          "label": "Általános tranzakciós díj",
+          "text": "{amount} papel levonás került alkalmazásra minden tagnál általános tranzakciós díjként."
+        }
+      },
+      "mail": {
+        "title_add": "Egyenleg hozzáadva",
+        "title_remove": "Egyenleg elvéve",
+        "title_add_all": "Tömeges egyenleg hozzáadva",
+        "title_remove_all": "Tömeges egyenleg elvéve",
+        "heading_add": "✅ Egyenleg hozzáadva",
+        "heading_remove": "❌ Egyenleg elvéve",
+        "heading_add_all": "✅ Tömeges egyenleg hozzáadva",
+        "heading_remove_all": "❌ Tömeges egyenleg elvéve",
+        "amount_label": "Tranzakció összege:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "Tranzakció leírása:",
+        "footer_single": "Ezt a tranzakciót a rendszer hajtotta végre.",
+        "footer_all": "Ezt a tömeges tranzakciót a rendszer hajtotta végre."
+      }
+    },
+    "earn": {
+      "title": "Kereseti beállítások",
+      "subtitle": "Innen kezeld a szerver gazdaságát.",
+      "undo": "Visszavonás",
+      "saving": "Mentés...",
+      "save": "Változások mentése",
+      "load_error": "Hiba történt a beállítások betöltésekor.",
+      "save_error": "Nem sikerült menteni a beállításokat.",
+      "save_success": "Beállítások sikeresen elmentve.",
+      "data_error": "Nem sikerült betölteni az adatokat.",
+      "verified_role_mock": "@Ellenőrzött tag",
+      "message_activity": "Üzenetaktivitás",
+      "earn_per_message": "Kereset üzenetenként",
+      "voice_chat": "Hangcsevegés",
+      "earn_per_voice": "Kereset percenként",
+      "tag_bonus": "Tag bónusz",
+      "tag_bonus_desc": "Jutalmazd a szerver Tagjét használó tagokat.",
+      "tag_check_label": "A Tag-ellenőrzés erre a szerverre vonatkozik:",
+      "message_bonus": "Üzenetbónusz",
+      "voice_bonus": "Hangbónusz",
+      "tag_not_configured": "Nincs Tag beállítva ezen a szerveren. Állíts be megfelelő Taget a Discordon, vagy fejezd be a bot Setupját, mielőtt Tag-követelményt kapcsolnál be.",
+      "booster_bonus": "Booster bónusz",
+      "booster_bonus_desc": "Extra jutalom a szerver boostereinek.",
+      "security_title": "Biztonság és ellenőrzés",
+      "security_desc": "Ez a rész határozza meg, ki kap jutalmat. Ha üresen marad, minden tag kap jutalmat.",
+      "verify_role_label": "Ellenőrző szerep ID",
+      "verify_role_placeholder": "Add meg a szerep ID-ját",
+      "channels_title": "Kereseti csatornák",
+      "channels_load_error": "Nem sikerült betölteni a csatornaadatokat.",
+      "channels_desc": "Válaszd ki, hol kereshetnek a tagok papelt.",
+      "mode_all_label": "Minden csatorna",
+      "mode_all_desc": "Kereset minden csatornán aktív",
+      "mode_whitelist_label": "Fehérlista",
+      "mode_whitelist_desc": "Kereset csak a kiválasztott csatornákon",
+      "mode_blacklist_label": "Feketelista",
+      "mode_blacklist_desc": "Kereset mindenhol, kivéve a kiválasztottakat",
+      "message_channels": "Üzenetcsatornák",
+      "voice_channels": "Hangcsatornák",
+      "categories": "Kategóriák",
+      "text_channels": "Szöveges csatornák",
+      "voice_channel_list": "Hangcsatornák",
+      "summary_whitelist": "Kereset csak itt aktív:",
+      "summary_blacklist": "Kereset aktív, kivéve:",
+      "suffix_message": "(üzenet)",
+      "suffix_voice": "(hang)",
+      "no_channels_selected": "Még nincs kiválasztott csatorna."
+    },
+    "menu": {
+      "group_general": "Általános",
+      "group_store": "Áruház",
+      "group_community": "Közösség",
+      "group_management": "Kezelés",
+      "section_create": "Létrehozás",
+      "section_lists": "Listák",
+      "section_badges": "Tag jelvény",
+      "new_product": "Új termék",
+      "new_promo": "Promóciós kód",
+      "new_discount": "Kedvezménykód",
+      "product_list": "Terméklista",
+      "promo_list": "Promólista",
+      "discount_list": "Kedvezménylista",
+      "tag_booster": "Tag és Booster",
+      "tag_settings": "Tag beállítások",
+      "booster_settings": "Booster beállítások",
+      "custom_roles": "Egyedi szerepkérések"
+    },
+    "shell": {
+      "default_server": "Adatközpont",
+      "panel_label": "Admin panel",
+      "collapse": "Oldalsáv összecsukása",
+      "expand": "Oldalsáv kibontása",
+      "developer": "Fejlesztői panel",
+      "open_menu": "Menü megnyitása",
+      "close_menu": "Menü bezárása",
+      "menu_title": "Menü",
+      "admin_fallback": "Admin",
+      "role": "Admin",
+      "settings": "Setup beállítások",
+      "language_settings": "Nyelvi beállítások",
+      "change_server": "Szerver váltása",
+      "switch_server_hint": "Válassz a kezelhető szervereid közül.",
+      "switch_server_current": "Ezen a szerveren vagy",
+      "mobile_welcome": "Kezeld a szervert, az áruházat és a gazdaságot az admin panelről.",
+      "logout": "Kijelentkezés"
+    }
   }
 }
