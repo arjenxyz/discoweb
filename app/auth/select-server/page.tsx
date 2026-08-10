@@ -64,7 +64,6 @@ const LOCAL_DEV_GUILD: Guild = {
 export default function SelectServerPage() {
   const router = useRouter();
   const [guilds, setGuilds] = useState<Guild[]>([]);
-  const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
@@ -104,9 +103,7 @@ export default function SelectServerPage() {
       try {
         const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
         if (response.ok) {
-          const userData = (await response.json()) as UserInfo;
-          setUser(userData);
-          return userData;
+          return (await response.json()) as UserInfo;
         }
 
         localStorage.removeItem('discordUser');
@@ -295,32 +292,6 @@ export default function SelectServerPage() {
               Yönetmek istediğiniz Discord sunucusunu seçin. Yalnızca sahip olduğunuz veya admin
               olduğunuz sunucular listelenir.
             </p>
-
-            {/* User chip */}
-            <div className="mt-6 inline-flex max-w-full items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-2 backdrop-blur-md">
-              {user?.avatar ? (
-                <Image
-                  src={user.avatar}
-                  alt=""
-                  width={32}
-                  height={32}
-                  className="h-8 w-8 shrink-0 rounded-full object-cover"
-                  unoptimized
-                />
-              ) : (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5865F2] text-xs font-bold">
-                  {(user?.username ?? 'D').charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-white">
-                  {user?.username ?? 'Discord Kullanıcısı'}
-                </p>
-                <p className="truncate text-[11px] text-white/45">
-                  {localBypass ? 'Localhost geliştirme modu' : 'Discord ile giriş yapıldı'}
-                </p>
-              </div>
-            </div>
 
             {isDeveloper && (
               <button
