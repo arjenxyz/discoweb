@@ -48,7 +48,8 @@ export default function AdminStoreDiscountCreatePage() {
       minSpend: activeTab === 'welcome' ? 0 : minSpend ? Number(minSpend) : 0,
       perUserLimit: activeTab === 'welcome' ? 1 : perUserLimit ? Number(perUserLimit) : 1,
       status: 'active' as const,
-      expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
+      expiresAt:
+        activeTab === 'welcome' ? null : expiresAt ? new Date(expiresAt).toISOString() : null,
       is_special: activeTab === 'welcome' ? false : isSpecial,
       is_welcome: activeTab === 'welcome',
     };
@@ -125,6 +126,7 @@ export default function AdminStoreDiscountCreatePage() {
             setActiveTab('welcome');
             setCode('WELCOME2026');
             setIsSpecial(false);
+            setExpiresAt('');
             setMessage(null);
           }}
           className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition ${
@@ -226,15 +228,22 @@ export default function AdminStoreDiscountCreatePage() {
             </div>
           )}
 
-          <div>
-            <label className={labelClass}>Bitiş</label>
-            <input
-              type="datetime-local"
-              value={expiresAt}
-              onChange={(e) => setExpiresAt(e.target.value)}
-              className={`${fieldClass} [color-scheme:dark]`}
-            />
-          </div>
+          {activeTab === 'welcome' ? (
+            <div>
+              <label className={labelClass}>Bitiş</label>
+              <div className={`${fieldClass} text-white/55`}>Sınırsız</div>
+            </div>
+          ) : (
+            <div>
+              <label className={labelClass}>Bitiş</label>
+              <input
+                type="datetime-local"
+                value={expiresAt}
+                onChange={(e) => setExpiresAt(e.target.value)}
+                className={`${fieldClass} [color-scheme:dark]`}
+              />
+            </div>
+          )}
 
           {activeTab !== 'welcome' && (
             <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-black/20 px-3.5 py-3">
