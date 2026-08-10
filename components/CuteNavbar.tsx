@@ -142,6 +142,7 @@ export default function CuteNavbar() {
   const [isDeveloper, setIsDeveloper] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const onSelectServer = pathname?.startsWith('/auth/select-server') ?? false;
+  const onHome = pathname === '/' || pathname === '';
   const botInviteUrl = siteConfig.bot.inviteUrl;
 
   const FAB_SIZE = 56;
@@ -471,13 +472,13 @@ export default function CuteNavbar() {
                 <Link
                   href="/"
                   className="relative z-50 block min-w-0 max-w-[11rem] sm:max-w-[14rem] md:max-w-[16rem]"
-                  aria-label={t('navbar.back_home_hint')}
+                  aria-label={onHome ? 'DiscoWeb' : t('navbar.back_home_hint')}
                 >
                   <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
                     {user.username}
                   </div>
                   <div className="truncate text-[10px] font-medium text-white/40 transition-colors hover:text-white/70">
-                    {t('navbar.back_home_hint')}
+                    {onHome ? 'DiscoWeb' : t('navbar.back_home_hint')}
                   </div>
                 </Link>
               ) : (
