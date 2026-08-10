@@ -5,7 +5,6 @@ import {
   LuChartBar,
   LuClipboardList,
   LuCoins,
-  LuPalette,
   LuLayoutGrid,
   LuPackage,
   LuStore,
@@ -127,7 +126,6 @@ export const ADMIN_MENU: MenuGroup[] = [
       { kind: 'link', href: '/admin/earn-settings', labelKey: 'sidebar.earn_settings', icon: LuCoins },
       { kind: 'link', href: '/admin/log-channels', labelKey: 'sidebar.channels_logs', icon: LuChartBar },
       { kind: 'link', href: '/admin/quiz', labelKey: 'sidebar.quiz_events', icon: LuTrophy },
-      { kind: 'link', href: '/admin/custom-roles', labelKey: 'admin.menu.custom_roles', icon: LuPalette },
     ],
   },
 ];
