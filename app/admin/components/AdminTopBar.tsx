@@ -1,10 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { LuChevronRight, LuFileText, LuLanguages, LuLogOut, LuMenu, LuServer, LuSettings } from 'react-icons/lu';
+import { LuChevronRight, LuLanguages, LuLogOut, LuMenu, LuServer, LuSettings } from 'react-icons/lu';
 import LanguageSwitcher, { LanguagePickerModal } from '@/app/components/LanguageSwitcher';
 import { useTranslation } from '@/lib/i18nContext';
 import type { AdminProfile } from './AdminSidebar';
@@ -51,7 +49,6 @@ export default function AdminTopBar({
   accountMenuRef,
 }: AdminTopBarProps) {
   const { t } = useTranslation();
-  const pathname = usePathname();
   const [serverSwitchOpen, setServerSwitchOpen] = useState(false);
   const [languageModalOpen, setLanguageModalOpen] = useState(false);
 
@@ -220,24 +217,6 @@ export default function AdminTopBar({
                     </div>
                     <LuChevronRight className="h-4 w-4 text-white/25" />
                   </button>
-
-                  <Link
-                    href="/admin/guide"
-                    onClick={onAccountMenuClose}
-                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 transition ${
-                      pathname.startsWith('/admin/guide')
-                        ? 'bg-[#5865F2]/15 text-[#c7d0ff]'
-                        : 'text-white/70 hover:bg-white/[0.05] hover:text-white'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06]">
-                        <LuFileText className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">{t('admin.shell.guide')}</span>
-                    </div>
-                    <LuChevronRight className="h-4 w-4 text-white/25" />
-                  </Link>
 
                   <div className="pt-1">
                     <button
