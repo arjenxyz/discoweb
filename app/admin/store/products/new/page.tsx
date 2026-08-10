@@ -193,23 +193,6 @@ function AdminStoreProductCreatePageContent() {
   const fieldClass =
     'mt-1.5 w-full rounded-xl border border-white/10 bg-black/25 px-3.5 py-2.5 text-sm text-white/85 placeholder:text-white/25 focus:border-[#5865F2]/50 focus:outline-none';
 
-  const durationLabel =
-    durationDays === ''
-      ? 'Süre yok'
-      : durationDays === '0'
-        ? 'Süresiz'
-        : (() => {
-            const m = Number(durationDays);
-            const d = Math.floor(m / 1440);
-            const h = Math.floor((m % 1440) / 60);
-            const mn = m % 60;
-            const parts: string[] = [];
-            if (d > 0) parts.push(`${d}g`);
-            if (h > 0) parts.push(`${h}sa`);
-            if (mn > 0) parts.push(`${mn}dk`);
-            return parts.join(' ') || `${m}dk`;
-          })();
-
   return (
     <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
       <div className="flex items-center justify-between gap-3">
@@ -459,39 +442,13 @@ function AdminStoreProductCreatePageContent() {
           </div>
         </div>
 
-        <div className="space-y-3 lg:space-y-4">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Önizleme</p>
-            <div className="mt-3 rounded-xl border border-white/10 bg-black/25 p-3.5">
-              <p className="truncate text-sm font-semibold text-white">{title || 'Ürün adı'}</p>
-              {description ? (
-                <p className="mt-1 line-clamp-2 text-xs text-white/45">{description}</p>
-              ) : null}
-              <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] text-white/50">
-                <span className="rounded-lg border border-white/10 px-2 py-0.5">
-                  {price ? `${price} papel` : 'Fiyat yok'}
-                </span>
-                <span className="rounded-lg border border-white/10 px-2 py-0.5">{durationLabel}</span>
-                <span className="rounded-lg border border-white/10 px-2 py-0.5">
-                  {itemStatus === 'active' ? 'Aktif' : 'Pasif'}
-                </span>
-                {(selectedRoleName || roleId) && (
-                  <span className="max-w-full truncate rounded-lg border border-white/10 px-2 py-0.5">
-                    {selectedRoleName || roleId}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:block">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">İpuçları</p>
-            <ul className="mt-3 space-y-2 text-xs text-white/45">
-              <li>Rol seçilince satın alma otomatik rol verir.</li>
-              <li>Süre 0 = kalıcı rol.</li>
-              <li>Pasif ürünler satın alınamaz.</li>
-            </ul>
-          </div>
+        <div className="hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:block">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">İpuçları</p>
+          <ul className="mt-3 space-y-2 text-xs text-white/45">
+            <li>Rol seçilince satın alma otomatik rol verir.</li>
+            <li>Süre 0 = kalıcı rol.</li>
+            <li>Pasif ürünler satın alınamaz.</li>
+          </ul>
         </div>
       </div>
     </div>
