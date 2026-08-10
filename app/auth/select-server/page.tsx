@@ -10,31 +10,30 @@ import CuteNavbar from '@/components/CuteNavbar';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import { siteConfig } from '@/config/site';
+import { useTranslation } from '@/lib/i18nContext';
+import { getLocaleTag } from '@/lib/i18n/languages';
 
 const ubuntu = Ubuntu({ subsets: ['latin'], weight: ['400', '700'] });
 
-const AGREEMENT_OVERVIEW = [
+const AGREEMENT_ITEMS = [
   {
-    title: 'Temel hesap bilgileri',
-    description: 'Discord kimliği, kullanıcı adı ve avatar bilgisi giriş eşleştirmesi için kullanılır.',
+    titleKey: 'select_server.agreement_account_title',
+    bodyKey: 'select_server.agreement_account_body',
     icon: LuShield,
   },
   {
-    title: 'Sunucu ve rol doğrulaması',
-    description: 'Üyelik ve rol kontrolleri sadece doğru panel erişimi sağlamak için işlenir.',
+    titleKey: 'select_server.agreement_roles_title',
+    bodyKey: 'select_server.agreement_roles_body',
     icon: LuDatabase,
   },
   {
-    title: 'Güvenlik ve işlem kayıtları',
-    description: 'Güvenlik amacıyla gerekli durumlarda teknik işlem kayıtları tutulabilir.',
+    titleKey: 'select_server.agreement_security_title',
+    bodyKey: 'select_server.agreement_security_body',
     icon: LuLock,
   },
-];
+] as const;
 
-const AGREEMENT_PROMISES = [
-  'Verileriniz satılmaz; reklam profili çıkarmak için kullanılmaz.',
-  'İşlenen bilgiler sadece hizmet sunumu ve güvenlik için gereklidir.',
-];
+type RefreshMessageKey = 'refresh_reauth' | 'refresh_failed' | 'refresh_success';
 
 interface Guild {
   id: string;
@@ -64,6 +63,7 @@ const LOCAL_DEV_GUILD: Guild = {
 
 export default function SelectServerPage() {
   const router = useRouter();
+  const { t, language } = useTranslation();
   const [guilds, setGuilds] = useState<Guild[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
@@ -72,9 +72,10 @@ export default function SelectServerPage() {
   const [agreementTargetHref, setAgreementTargetHref] = useState<string | null>(null);
   const [isProcessingAgreement, setIsProcessingAgreement] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [refreshMessage, setRefreshMessage] = useState<string | null>(null);
+  const [refreshMessageKey, setRefreshMessageKey] = useState<RefreshMessageKey | null>(null);
   const currentUserIdRef = useRef<string | null>(null);
   const localBypass = isLocalDevBypassClient();
+  const localeTag = getLocaleTag(language);
 
   const ensureAgreementAndRedirect = useCallback(
     (href: string) => {
@@ -220,7 +221,7 @@ export default function SelectServerPage() {
   const handleRefreshGuilds = useCallback(async () => {
     if (isRefreshing || localBypass) return;
     setIsRefreshing(true);
-    setRefreshMessage(null);
+    setRefreshMessageKey(null);
 
     try {
       const response = await fetch('/api/discord/refresh-guilds', {
@@ -237,13 +238,13 @@ export default function SelectServerPage() {
       };
 
       if (response.status === 401 || payload.needsReauth) {
-        setRefreshMessage('Discord oturumu yenilenmeli — yönlendiriliyorsunuz…');
+        setRefreshMessageKey('refresh_reauth');
         ensureAgreementAndRedirect(loginUrl);
         return;
       }
 
       if (!response.ok || !payload.adminGuilds) {
-        setRefreshMessage('Liste güncellenemedi. Biraz sonra tekrar deneyin.');
+        setRefreshMessageKey('refresh_failed');
         return;
       }
 
@@ -252,9 +253,9 @@ export default function SelectServerPage() {
       localStorage.setItem('adminGuildsUpdatedAt', updatedAt);
       setLastUpdatedAt(updatedAt);
       await loadGuilds(currentUserIdRef.current);
-      setRefreshMessage('Sunucu listesi güncellendi.');
+      setRefreshMessageKey('refresh_success');
     } catch {
-      setRefreshMessage('Liste güncellenemedi. Biraz sonra tekrar deneyin.');
+      setRefreshMessageKey('refresh_failed');
     } finally {
       setIsRefreshing(false);
     }
@@ -318,7 +319,7 @@ export default function SelectServerPage() {
           <div className="mx-auto mb-3 h-1.5 w-48 overflow-hidden rounded-full bg-white/10">
             <div className="h-full w-2/3 animate-pulse rounded-full bg-[#5865F2]" />
           </div>
-          <p className={`text-sm text-white/60 ${ubuntu.className}`}>Sunucular yükleniyor...</p>
+          <p className={`text-sm text-white/60 ${ubuntu.className}`}>{t('select_server.loading')}</p>
         </div>
       </div>
     );
@@ -337,19 +338,20 @@ export default function SelectServerPage() {
               DiscoWeb
             </p>
             <h1 className="mt-3 max-w-3xl text-balance text-3xl font-extrabold tracking-tight text-white md:text-5xl">
-              Sunucu seçin
+              {t('select_server.title')}
             </h1>
             <p className="mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-[#cbd5db] md:text-base">
-              Yönetmek istediğiniz Discord sunucusunu seçin. Yalnızca sahip olduğunuz veya admin
-              olduğunuz sunucular listelenir.
+              {t('select_server.description')}
             </p>
 
             <div className="mt-10 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <h2 className="text-sm font-semibold text-white/90">Sunucularınız</h2>
+                <h2 className="text-sm font-semibold text-white/90">{t('select_server.your_servers')}</h2>
                 {lastUpdatedAt && (
                   <p className="mt-1 text-[11px] text-white/35">
-                    Son güncelleme: {new Date(lastUpdatedAt).toLocaleString('tr-TR')}
+                    {t('select_server.last_updated', {
+                      date: new Date(lastUpdatedAt).toLocaleString(localeTag),
+                    })}
                   </p>
                 )}
               </div>
@@ -360,12 +362,12 @@ export default function SelectServerPage() {
                   onClick={() => void handleRefreshGuilds()}
                   className="shrink-0 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white/20 hover:bg-white/10 hover:text-white disabled:cursor-wait disabled:opacity-60"
                 >
-                  {isRefreshing ? 'Yenileniyor…' : 'Yenile'}
+                  {isRefreshing ? t('select_server.refreshing') : t('select_server.refresh')}
                 </button>
               )}
             </div>
-            {refreshMessage && (
-              <p className="mt-2 text-xs text-[#9eb0ff]">{refreshMessage}</p>
+            {refreshMessageKey && (
+              <p className="mt-2 text-xs text-[#9eb0ff]">{t(`select_server.${refreshMessageKey}`)}</p>
             )}
 
             <div
@@ -377,11 +379,8 @@ export default function SelectServerPage() {
             >
               {guilds.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-7 text-left backdrop-blur-md sm:col-span-1">
-                  <p className="text-sm font-medium text-white/80">Erişilebilir sunucu bulunamadı.</p>
-                  <p className="mt-2 text-xs leading-5 text-white/45">
-                    Botun bulunduğu sunucularda admin veya sahip olduğunuzdan emin olun. Liste
-                    eksikse yenileyin ya da botu sunucuya ekleyin.
-                  </p>
+                  <p className="text-sm font-medium text-white/80">{t('select_server.empty_title')}</p>
+                  <p className="mt-2 text-xs leading-5 text-white/45">{t('select_server.empty_body')}</p>
                   {!localBypass && (
                     <div className="mt-5 flex flex-wrap items-center gap-2">
                       <a
@@ -390,7 +389,7 @@ export default function SelectServerPage() {
                         rel="noopener noreferrer"
                         className="inline-flex h-9 items-center justify-center rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white transition hover:bg-[#4752c4]"
                       >
-                        Botu sunucuya ekle
+                        {t('select_server.add_bot')}
                       </a>
                       <button
                         type="button"
@@ -398,7 +397,7 @@ export default function SelectServerPage() {
                         onClick={() => void handleRefreshGuilds()}
                         className="inline-flex h-9 items-center justify-center rounded-full border border-white/15 px-4 text-xs font-semibold text-white/75 transition hover:border-white/25 hover:bg-white/5 hover:text-white disabled:cursor-wait disabled:opacity-60"
                       >
-                        {isRefreshing ? 'Yenileniyor…' : 'Yenile'}
+                        {isRefreshing ? t('select_server.refreshing') : t('select_server.refresh')}
                       </button>
                     </div>
                   )}
@@ -407,7 +406,11 @@ export default function SelectServerPage() {
                 guilds.map((guild) => {
                   const canSetup = !guild.isSetup && guild.isOwner;
                   const canEnter = guild.isSetup || canSetup;
-                  const roleLabel = guild.isOwner ? 'Sahip' : guild.isAdmin ? 'Yönetici' : 'Üye';
+                  const roleLabel = guild.isOwner
+                    ? t('select_server.role_owner')
+                    : guild.isAdmin
+                      ? t('select_server.role_admin')
+                      : t('select_server.role_member');
 
                   return (
                     <div
@@ -458,12 +461,12 @@ export default function SelectServerPage() {
                           <p className="mt-0.5 truncate text-[11px] text-white/35">ID: {guild.id}</p>
                           {!guild.isSetup && canSetup && (
                             <p className="mt-1 text-xs text-[#c5cbff]">
-                              Kurulum gerekli — tıklayarak başlatın
+                              {t('select_server.setup_required')}
                             </p>
                           )}
                           {!guild.isSetup && !canSetup && (
                             <p className="mt-1 text-xs text-white/40">
-                              Kurulum yalnızca sunucu sahibi tarafından yapılabilir
+                              {t('select_server.setup_owner_only')}
                             </p>
                           )}
                         </div>
@@ -478,8 +481,8 @@ export default function SelectServerPage() {
                           type="button"
                           onClick={() => handleSetupGuild(guild.id)}
                           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/50 transition hover:bg-white/10 hover:text-white"
-                          title="Sunucu ayarlarını güncelle"
-                          aria-label="Sunucu ayarlarını güncelle"
+                          title={t('select_server.update_settings')}
+                          aria-label={t('select_server.update_settings')}
                         >
                           <LuSettings className="h-4 w-4" />
                         </button>
@@ -493,7 +496,7 @@ export default function SelectServerPage() {
             {hasDeveloperAccess && (
               <div className="mt-12 border-t border-white/10 pt-8">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
-                  Geliştirici
+                  {t('select_server.developer_section')}
                 </p>
                 <Link
                   href="/developer"
@@ -503,9 +506,11 @@ export default function SelectServerPage() {
                     <LuCode className="h-5 w-5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-white">Developer paneli</span>
+                    <span className="block text-sm font-semibold text-white">
+                      {t('select_server.developer_panel')}
+                    </span>
                     <span className="mt-0.5 block text-xs leading-5 text-white/45">
-                      Sistem yönetimi, sunucular ve araçlar
+                      {t('select_server.developer_panel_desc')}
                     </span>
                   </span>
                   <LuArrowRight className="h-4 w-4 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white" />
@@ -514,7 +519,7 @@ export default function SelectServerPage() {
             )}
         </section>
 
-        <p className="mt-10 text-center text-xs text-[#99AAB5]/75">Copyright Discoweb 2026</p>
+        <p className="mt-10 text-center text-xs text-[#99AAB5]/75">{t('select_server.copyright')}</p>
       </main>
 
       {showAgreementModal && (
@@ -530,28 +535,30 @@ export default function SelectServerPage() {
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Veri kullanım onayı"
+            aria-label={t('select_server.agreement_title')}
             className="relative z-10 w-full max-w-lg overflow-visible rounded-[28px] border border-white/20 bg-[#5865F2] p-6 shadow-[0_28px_70px_rgba(88,101,242,0.55)]"
           >
             <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_42%)]" />
             <div className="relative z-20">
               <div className="mb-2.5 h-1 w-10 rounded-full bg-white/80" />
-              <h3 className="text-xl font-black tracking-tight text-white">Veri kullanım onayı</h3>
+              <h3 className="text-xl font-black tracking-tight text-white">
+                {t('select_server.agreement_title')}
+              </h3>
               <p className="mt-2 text-sm leading-6 text-white/80">
-                Giriş, sunucu doğrulama ve rol kontrolü için gerekli veriler işlenir.
+                {t('select_server.agreement_lead')}
               </p>
 
               <div className="mt-5 space-y-2.5">
-                {AGREEMENT_OVERVIEW.map((item) => {
+                {AGREEMENT_ITEMS.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className="flex items-start gap-3 rounded-xl bg-white/10 px-3 py-2.5">
+                    <div key={item.titleKey} className="flex items-start gap-3 rounded-xl bg-white/10 px-3 py-2.5">
                       <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white">
                         <Icon className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-white">{item.title}</p>
-                        <p className="text-xs leading-5 text-white/70">{item.description}</p>
+                        <p className="text-sm font-semibold text-white">{t(item.titleKey)}</p>
+                        <p className="text-xs leading-5 text-white/70">{t(item.bodyKey)}</p>
                       </div>
                     </div>
                   );
@@ -559,17 +566,16 @@ export default function SelectServerPage() {
               </div>
 
               <div className="mt-4 border-l-2 border-white/35 pl-3 text-xs leading-5 text-white/65">
-                {AGREEMENT_PROMISES.map((point) => (
-                  <p key={point}>{point}</p>
-                ))}
+                <p>{t('select_server.agreement_promise_1')}</p>
+                <p>{t('select_server.agreement_promise_2')}</p>
                 <p className="mt-2">
-                  Detaylar için{' '}
+                  {t('select_server.agreement_details_prefix')}{' '}
                   <Link href="/privacy" className="underline underline-offset-2 hover:text-white">
-                    Gizlilik
+                    {t('select_server.agreement_privacy')}
                   </Link>{' '}
-                  ve{' '}
+                  {t('select_server.agreement_and')}{' '}
                   <Link href="/terms" className="underline underline-offset-2 hover:text-white">
-                    Kullanım Koşulları
+                    {t('select_server.agreement_terms')}
                   </Link>
                   .
                 </p>
@@ -584,7 +590,7 @@ export default function SelectServerPage() {
                   }}
                   className="rounded-full border border-white/20 px-4 py-2.5 text-sm font-semibold text-white/85 transition hover:bg-white/10"
                 >
-                  Şimdi değil
+                  {t('select_server.agreement_not_now')}
                 </button>
                 <button
                   type="button"
@@ -602,7 +608,9 @@ export default function SelectServerPage() {
                   }}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-[#5865F2] transition hover:bg-white/90 disabled:opacity-50"
                 >
-                  {isProcessingAgreement ? 'İşleniyor...' : 'Onayla ve devam et'}
+                  {isProcessingAgreement
+                    ? t('select_server.agreement_processing')
+                    : t('select_server.agreement_accept')}
                   {!isProcessingAgreement && <LuArrowRight className="h-4 w-4" />}
                 </button>
               </div>
