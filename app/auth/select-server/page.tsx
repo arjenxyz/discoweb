@@ -438,16 +438,6 @@ export default function SelectServerPage() {
                 })
               )}
             </div>
-
-            <div className="mt-8 flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => router.replace('/')}
-                className="rounded-full px-4 py-2 text-sm text-white/50 transition hover:bg-white/5 hover:text-white"
-              >
-                Ana sayfaya dön
-              </button>
-            </div>
           </section>
 
           {/* Right: visual */}
