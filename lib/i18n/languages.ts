@@ -63,20 +63,27 @@ const LOCALE_TAGS: Record<LanguageCode, string> = {
   ru: 'ru-RU',
 };
 
-/** Merge section overlays onto English so missing keys still resolve. */
-function mergeLocale(base: Translations, overlay: Translations): Translations {
+/** Deep-merge locale overlays onto English so missing nested keys still resolve. */
+function deepMergeLocale(base: Translations, overlay: Translations): Translations {
   const result: Translations = { ...base };
-  for (const [section, value] of Object.entries(overlay)) {
+  for (const [key, value] of Object.entries(overlay)) {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
-      result[section] = {
-        ...((base[section] as Record<string, unknown>) ?? {}),
-        ...(value as Record<string, unknown>),
-      };
+      const baseVal = base[key];
+      result[key] = deepMergeLocale(
+        (baseVal && typeof baseVal === 'object' && !Array.isArray(baseVal)
+          ? baseVal
+          : {}) as Translations,
+        value as Translations,
+      );
     } else {
-      result[section] = value;
+      result[key] = value;
     }
   }
   return result;
+}
+
+function mergeLocale(base: Translations, overlay: Translations): Translations {
+  return deepMergeLocale(base, overlay);
 }
 
 export const translations: Record<LanguageCode, Translations> = {

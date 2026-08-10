@@ -277,7 +277,7 @@ export default function StatusPageClient() {
 
         <footer className="mt-12 border-t border-[#e3e5e8] pt-8 text-center text-xs text-[#72767d]">
           <p>
-            DiscoWeb sistem durumu sayfası{' '}
+{t('status.footer_inspired_before')}{' '}
             <a
               href="https://discordstatus.com/"
               target="_blank"
@@ -286,19 +286,19 @@ export default function StatusPageClient() {
             >
               Discord Status
             </a>{' '}
-            tasarımından esinlenilmiştir.
+            {t('status.footer_inspired_after')}
           </p>
           <p className="mt-2">
-            Sorun bildirmek için{' '}
+{t('status.footer_report_before')}{' '}
             <a
               href={siteConfig.links.support}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#5865F2] hover:underline"
             >
-              Discord destek sunucusunu
+              {t('status.footer_report_link')}
             </a>{' '}
-            kullanın. Veriler {REFRESH_MS / 1000} saniyede bir güncellenir.
+            {t('status.footer_report_after', { seconds: REFRESH_MS / 1000 })}
           </p>
         </footer>
       </main>

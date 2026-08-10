@@ -11,6 +11,7 @@ import {
   LuSearch,
   LuUndo2,
 } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
 import RemoveSetupButton from '../RemoveSetupButton';
 
 type DiscordRole = {
@@ -46,6 +47,7 @@ function RoleSelector({
   value: string | null;
   onChange: (id: string | null) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
 
@@ -81,7 +83,7 @@ function RoleSelector({
               <span className="text-white">{selected.name}</span>
             </span>
           ) : (
-            <span className="text-white/40">Rol seçin...</span>
+            <span className="text-white/40">{t('admin.settings.select_role')}</span>
           )}
           <LuChevronDown
             className={`h-4 w-4 text-white/40 transition ${open ? 'rotate-180' : ''}`}
@@ -95,7 +97,7 @@ function RoleSelector({
                 <LuSearch className="h-4 w-4 text-white/30" />
                 <input
                   type="text"
-                  placeholder="Rol ara..."
+                  placeholder={t('admin.settings.search_role')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
@@ -112,7 +114,7 @@ function RoleSelector({
                 }}
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/50 transition hover:bg-white/5"
               >
-                Kaldır (Rol Seçme)
+                {t('admin.settings.clear_role')}
               </button>
               {filtered.map((role) => (
                 <button
@@ -136,7 +138,9 @@ function RoleSelector({
                 </button>
               ))}
               {filtered.length === 0 && (
-                <p className="px-3 py-4 text-center text-xs text-white/30">Rol bulunamadı</p>
+                <p className="px-3 py-4 text-center text-xs text-white/30">
+                  {t('admin.settings.role_not_found')}
+                </p>
               )}
             </div>
           </div>
@@ -145,7 +149,7 @@ function RoleSelector({
 
       {value && (
         <p className="mt-2 text-[11px] text-white/30">
-          Rol ID: <span className="font-mono text-white/50">{value}</span>
+          {t('admin.settings.role_id_label', { id: value })}
         </p>
       )}
     </div>
@@ -153,6 +157,7 @@ function RoleSelector({
 }
 
 export default function AdminSettingsPage() {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<ServerSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -164,12 +169,12 @@ export default function AdminSettingsPage() {
     const load = async () => {
       try {
         const res = await fetch('/api/admin/settings', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Veri alınamadı');
+        if (!res.ok) throw new Error(t('admin.settings.fetch_failed'));
         const data = await res.json();
         setSettings(data);
         setInitial(data);
       } catch {
-        setError('Ayarlar yüklenirken hata oluştu.');
+        setError(t('admin.settings.load_error'));
       } finally {
         setLoading(false);
       }
@@ -198,11 +203,11 @@ export default function AdminSettingsPage() {
           verify_role_id: settings.verify_role_id,
         }),
       });
-      if (!res.ok) throw new Error('Kaydetme başarısız');
-      setMessage('Ayarlar başarıyla kaydedildi.');
+      if (!res.ok) throw new Error(t('admin.settings.save_failed_short'));
+      setMessage(t('admin.settings.save_success'));
       setInitial({ ...settings });
     } catch {
-      setError('Ayarlar kaydedilemedi. Lütfen tekrar deneyin.');
+      setError(t('admin.settings.save_error'));
     } finally {
       setSaving(false);
     }
@@ -219,7 +224,7 @@ export default function AdminSettingsPage() {
   if (!settings) {
     return (
       <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.08] px-3.5 py-2.5 text-sm text-red-200">
-        {error ?? 'Ayarlar yüklenemedi.'}
+        {error ?? t('admin.settings.load_failed')}
       </div>
     );
   }
@@ -229,12 +234,12 @@ export default function AdminSettingsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">
-            Yönetim
+            {t('admin.settings.eyebrow')}
           </p>
           <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
-            Setup Ayarları
+            {t('admin.settings.title')}
           </h1>
-          <p className="mt-1 text-sm text-white/45">Rol yapılandırması ve sunucu tercihleri.</p>
+          <p className="mt-1 text-sm text-white/45">{t('admin.settings.subtitle')}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {hasChanges && (
@@ -244,7 +249,7 @@ export default function AdminSettingsPage() {
               className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/55 transition hover:border-white/20 hover:text-white"
             >
               <LuUndo2 size={14} />
-              <span>Geri Al</span>
+              <span>{t('admin.settings.undo')}</span>
             </button>
           )}
           <button
@@ -254,7 +259,7 @@ export default function AdminSettingsPage() {
             className="inline-flex items-center gap-1.5 rounded-xl bg-[#5865F2] px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? <LuLoader className="h-3.5 w-3.5 animate-spin" /> : <LuSave size={14} />}
-            <span>{saving ? 'Kaydediliyor...' : 'Kaydet'}</span>
+            <span>{saving ? t('admin.settings.saving') : t('admin.settings.save')}</span>
           </button>
         </div>
       </div>
@@ -274,16 +279,16 @@ export default function AdminSettingsPage() {
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         <RoleSelector
-          label="Admin Rolü"
-          description="Bu role sahip üyeler admin paneline erişebilir."
+          label={t('admin.settings.admin_role')}
+          description={t('admin.settings.admin_role_desc')}
           icon={<LuShield size={16} />}
           roles={settings._roles}
           value={settings.admin_role_id}
           onChange={(id) => setSettings({ ...settings, admin_role_id: id })}
         />
         <RoleSelector
-          label="Onaylı Üye Rolü"
-          description="Bu role sahip üyeler kazanç alır ve mağazayı kullanabilir."
+          label={t('admin.settings.verify_role')}
+          description={t('admin.settings.verify_role_desc')}
           icon={<LuUsers size={16} />}
           roles={settings._roles}
           value={settings.verify_role_id}
@@ -294,10 +299,10 @@ export default function AdminSettingsPage() {
       <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.06] p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-[15px] font-semibold text-rose-300">Tehlikeli Bölge</h2>
-            <p className="mt-0.5 text-xs text-white/45">
-              Bu işlemler geri alınamaz. Dikkatli kullanın.
-            </p>
+            <h2 className="text-[15px] font-semibold text-rose-300">
+              {t('admin.settings.danger_zone')}
+            </h2>
+            <p className="mt-0.5 text-xs text-white/45">{t('admin.settings.danger_zone_desc')}</p>
           </div>
           <RemoveSetupButton />
         </div>
