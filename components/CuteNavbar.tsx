@@ -23,6 +23,10 @@ const NICKET_EMOJIS = [
   '/nicket/845183-spider.png',
 ] as const;
 
+function pickNicketEmoji() {
+  return NICKET_EMOJIS[Math.floor(Math.random() * NICKET_EMOJIS.length)];
+}
+
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
   <svg
     className={`w-3 h-3 ml-1.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
@@ -160,6 +164,7 @@ export default function CuteNavbar() {
   const selectServerMenuOpen = onSelectServer && mobileOpen;
   const showUserIdentity = onSelectServer && isLoggedIn && !!user && !mobileOpen;
 
+  const [nicketEmoji] = useState(pickNicketEmoji);
   const FAB_SIZE = 56;
   const FAB_STORAGE_KEY = 'discoweb_mobile_fab_pos';
   const [fabPos, setFabPos] = useState<{ left: number; top: number } | null>(null);
@@ -497,18 +502,14 @@ export default function CuteNavbar() {
                     <span className="truncate text-lg font-black tracking-tight text-white md:text-xl">
                       {user.username}
                     </span>
-                    <span className="flex shrink-0 items-center gap-0.5" aria-hidden>
-                      {NICKET_EMOJIS.map((src) => (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          key={src}
-                          src={src}
-                          alt=""
-                          className="h-3.5 w-3.5 object-contain sm:h-4 sm:w-4"
-                          draggable={false}
-                        />
-                      ))}
-                    </span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={nicketEmoji}
+                      alt=""
+                      className="h-4 w-4 shrink-0 object-contain sm:h-[1.125rem] sm:w-[1.125rem]"
+                      draggable={false}
+                      aria-hidden
+                    />
                   </div>
                   <div className="truncate text-[10px] font-medium text-white/40 transition-colors hover:text-white/70">
                     {t('navbar.back_home_hint')}
