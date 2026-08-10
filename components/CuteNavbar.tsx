@@ -447,25 +447,23 @@ export default function CuteNavbar() {
           
           {/* Logo / kullanıcı — home keeps DiscoWeb brand; other signed-in pages show identity */}
           <div className="flex min-w-0 items-center gap-3">
-            <div className="relative z-50 h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#5865F2] p-0.5 shadow-lg shadow-[#5865F2]/20 transition-transform hover:scale-110">
-              <div className="h-full w-full overflow-hidden rounded-[10px] bg-[#1e1f22]">
-                {!onHome && isLoggedIn && user?.avatar ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={user.avatar}
-                    alt=""
-                    className="h-full w-full object-cover"
-                    draggable={false}
-                  />
-                ) : !onHome && isLoggedIn && user ? (
-                  <div className="flex h-full w-full items-center justify-center bg-[#5865F2] text-sm font-black text-white">
-                    {user.username.charAt(0).toUpperCase()}
-                  </div>
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src="/gif/cat.gif" alt="" className="h-full w-full object-cover" draggable={false} />
-                )}
-              </div>
+            <div className="relative z-50 h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#1e1f22] transition-transform hover:scale-110">
+              {!onHome && isLoggedIn && user?.avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.avatar}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+              ) : !onHome && isLoggedIn && user ? (
+                <div className="flex h-full w-full items-center justify-center bg-white/10 text-sm font-black text-white">
+                  {user.username.charAt(0).toUpperCase()}
+                </div>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src="/gif/cat.gif" alt="" className="h-full w-full object-cover" draggable={false} />
+              )}
             </div>
 
             <div
