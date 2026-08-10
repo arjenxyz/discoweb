@@ -1,10 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { LuLogOut, LuServer, LuX } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
-import type { AdminProfile } from './AdminSidebar';
 
 const logoWhiteStyle: React.CSSProperties = {
   backgroundImage:
@@ -30,13 +28,11 @@ export default function AdminMobileDrawer({
   open,
   onClose,
   onLogout,
-  profile,
   children,
 }: {
   open: boolean;
   onClose: () => void;
   onLogout: () => void;
-  profile: AdminProfile | null;
   children: React.ReactNode;
 }) {
   const { t } = useTranslation();
@@ -79,37 +75,6 @@ export default function AdminMobileDrawer({
             >
               <LuX className="h-4 w-4" />
             </button>
-          </div>
-
-          <div className="relative mb-5 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-            <div className="pointer-events-none absolute -right-8 -top-10 h-24 w-24 rounded-full bg-[#5865F2]/25 blur-2xl" />
-            <div className="relative flex items-center gap-3">
-              <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#1e1f22]">
-                {profile?.guildIcon ? (
-                  <Image
-                    src={profile.guildIcon}
-                    alt=""
-                    width={44}
-                    height={44}
-                    unoptimized
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-[#5865F2]/25 text-sm font-bold text-white">
-                    {(profile?.guildName ?? '#').charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0a0c12] bg-emerald-400" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[15px] font-semibold text-white">
-                  {profile?.guildName ?? t('admin.shell.default_server')}
-                </p>
-                <p className="truncate text-[11px] font-medium tracking-wide text-[#a5b4ff]/80">
-                  {t('admin.shell.panel_label')}
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto pr-0.5">{children}</div>
