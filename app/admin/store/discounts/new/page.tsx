@@ -235,8 +235,8 @@ export default function AdminStoreDiscountCreatePage() {
 
           {activeTab === 'welcome' ? (
             <div>
-              <label className={labelClass}>Bitiş</label>
-              <div className={`${fieldClass} text-white/55`}>Sınırsız</div>
+              <label className={labelClass}>Geçerlilik</label>
+              <div className={`${fieldClass} text-white/55`}>Bitiş tarihi yok</div>
             </div>
           ) : (
             <div>
