@@ -332,7 +332,7 @@
       "menu_title": "Menü",
       "admin_fallback": "Yetkili",
       "role": "Admin",
-      "settings": "Panel Ayarları",
+      "settings": "Setup Ayarları",
       "language_settings": "Dil Ayarları",
       "change_server": "Sunucu Değiştir",
       "switch_server_hint": "Yönetebildiğin sunucular arasından seç.",

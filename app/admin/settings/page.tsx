@@ -232,7 +232,7 @@ export default function AdminSettingsPage() {
             Yönetim
           </p>
           <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
-            Panel Ayarları
+            Setup Ayarları
           </h1>
           <p className="mt-1 text-sm text-white/45">Rol yapılandırması ve sunucu tercihleri.</p>
         </div>
