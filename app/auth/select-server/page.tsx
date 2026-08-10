@@ -344,8 +344,7 @@ export default function SelectServerPage() {
                 {!localBypass && (
                   <p className="mt-2 max-w-xl text-xs leading-5 text-white/40">
                     Listede sunucu yoksa veya yeni admin olduğunuz sunucu görünmüyorsa{' '}
-                    <span className="text-white/60">Yenile</span>&apos;ye basın. Çoğu zaman liste
-                    burada güncellenir; Discord oturumu düştüyse tekrar yetki isteyebilir.
+                    <span className="text-white/60">Yenile</span>&apos;ye basın.
                   </p>
                 )}
                 {refreshMessage && (
