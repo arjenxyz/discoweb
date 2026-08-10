@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LuArrowRight, LuCode, LuDatabase, LuLoader, LuLock, LuShield, LuSettings } from 'react-icons/lu';
+import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 
 const AGREEMENT_OVERVIEW = [
   {
@@ -44,6 +45,16 @@ interface UserInfo {
   username: string;
   avatar: string | null;
 }
+
+const LOCAL_DEV_GUILD: Guild = {
+  id: process.env.NEXT_PUBLIC_DISCORD_GUILD_ID ?? '1465698764453838882',
+  name: 'Local Development',
+  isAdmin: true,
+  isSetup: true,
+  verifyRoleId: null,
+  isOwner: true,
+  iconUrl: null,
+};
 
 export default function SelectServerPage() {
   const router = useRouter();
@@ -102,12 +113,19 @@ export default function SelectServerPage() {
     };
 
     const loadGuilds = async (currentUserId?: string | null) => {
+      const localBypass = isLocalDevBypassClient();
       const adminGuilds = localStorage.getItem('adminGuilds');
       const updatedAt = localStorage.getItem('adminGuildsUpdatedAt');
       setLastUpdatedAt(updatedAt);
 
       if (!adminGuilds) {
         console.log('No adminGuilds found in localStorage');
+        if (localBypass) {
+          setGuilds([LOCAL_DEV_GUILD]);
+          setIsDeveloper(true);
+          setLoading(false);
+          return;
+        }
         ensureAgreementAndRedirect(loginUrl);
         return;
       }
@@ -175,9 +193,9 @@ export default function SelectServerPage() {
         // Sadece Admin veya Sahip olunan sunucuları filtrele (Developer yetkisi zaten altta bypass ediliyor)
         const adminOnlyGuilds = withSetupStatus.filter((g) => g.isAdmin || g.isOwner);
         console.log('Filtered admin guilds:', adminOnlyGuilds);
-        setGuilds(adminOnlyGuilds);
+        setGuilds(localBypass && adminOnlyGuilds.length === 0 ? [LOCAL_DEV_GUILD] : adminOnlyGuilds);
 
-        let developerAccess = false;
+        let developerAccess = localBypass;
         try {
           const developerResponse = await fetch('/api/developer/check-access', {
             credentials: 'include',
@@ -191,6 +209,10 @@ export default function SelectServerPage() {
           console.error('Developer access check failed:', error);
         }
 
+        if (localBypass) {
+          setIsDeveloper(true);
+        }
+
         if (filteredGuilds.length === 0 && !developerAccess) {
           console.log('User is not a member of any guilds, redirecting to bot invite');
           router.replace('/auth/bot-invite');
@@ -198,6 +220,12 @@ export default function SelectServerPage() {
         }
       } catch (error) {
         console.error('Sunucu bilgileri parse edilemedi:', error);
+        if (localBypass) {
+          setGuilds([LOCAL_DEV_GUILD]);
+          setIsDeveloper(true);
+          setLoading(false);
+          return;
+        }
         router.replace('/auth/error');
         return;
       }
@@ -281,7 +309,11 @@ export default function SelectServerPage() {
             )}
             <div>
               <p className="text-sm font-semibold text-white">{user?.username ?? 'Discord Kullanıcısı'}</p>
-              <p className="text-xs text-white/50">Discord hesabınızla giriş yaptınız</p>
+              <p className="text-xs text-white/50">
+                {isLocalDevBypassClient()
+                  ? 'Localhost geliştirme modu (Discord girişi yok)'
+                  : 'Discord hesabınızla giriş yaptınız'}
+              </p>
             </div>
           </div>
           <button
@@ -323,8 +355,9 @@ export default function SelectServerPage() {
             <button
               onClick={() => ensureAgreementAndRedirect(loginUrl)}
               className="text-xs text-blue-400 transition-colors hover:text-blue-300"
+              disabled={isLocalDevBypassClient()}
             >
-              Sunucuları yenile
+              {isLocalDevBypassClient() ? 'Localhost bypass aktif' : 'Sunucuları yenile'}
             </button>
           </div>
         </div>
