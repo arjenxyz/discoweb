@@ -136,7 +136,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="h-screen overflow-hidden bg-[#090b10] text-white">
-      <style>{`@keyframes adminTitleShine{0%,60%{background-position:100% 0}100%{background-position:-100% 0}}`}</style>
+      <style>{`
+        @keyframes adminTitleShine{0%,60%{background-position:100% 0}100%{background-position:-100% 0}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .animate-fadeIn{animation:fadeIn .25s ease-out}
+      `}</style>
 
       <div className="flex h-full">
         {/* Desktop sidebar */}
