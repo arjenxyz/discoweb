@@ -10,7 +10,7 @@ import FlagIcon from './FlagIcon';
 type LanguageSwitcherProps = {
   compact?: boolean;
   className?: string;
-  /** Inline list for mobile sheet menus (no dropdown / portal). */
+  /** Compact trigger for mobile sheets; opens a language modal. */
   variant?: 'dropdown' | 'menu';
 };
 
@@ -91,7 +91,7 @@ export default function LanguageSwitcher({
   }, []);
 
   useEffect(() => {
-    if (!open || variant === 'menu') return undefined;
+    if (!open) return undefined;
 
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
@@ -103,7 +103,7 @@ export default function LanguageSwitcher({
       document.removeEventListener('keydown', handleKey);
       unlock();
     };
-  }, [open, variant]);
+  }, [open]);
 
   if (variant === 'menu') {
     return (
@@ -111,33 +111,119 @@ export default function LanguageSwitcher({
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
           Language
         </p>
-        <div
-          id={listId}
-          role="listbox"
-          aria-label="Languages"
-          className="grid grid-cols-2 gap-2"
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-left transition-colors hover:border-white/20 hover:bg-white/[0.07]"
         >
-          {SUPPORTED_LANGUAGES.map((item) => {
-            const active = item.code === language;
-            return (
+          <FlagIcon code={current.code} size={22} title={current.country} />
+          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-white">
+            {current.nativeLabel}
+          </span>
+          <span className="text-xs text-white/40">{current.country}</span>
+          <ChevronIcon isOpen={false} />
+        </button>
+
+        {mounted &&
+          open &&
+          createPortal(
+            <div className="fixed inset-0 z-[10040] flex items-end justify-center p-4 sm:items-center">
               <button
-                key={item.code}
                 type="button"
-                role="option"
-                aria-selected={active}
-                onClick={() => setLanguage(item.code)}
-                className={`flex min-w-0 items-center gap-2.5 rounded-2xl border px-3 py-3 text-left transition-colors ${
-                  active
-                    ? 'border-[#5865F2]/50 bg-[#5865F2]/25 text-white'
-                    : 'border-white/10 bg-white/[0.04] text-white/75 hover:border-white/20 hover:bg-white/[0.07] hover:text-white'
-                }`}
+                className="absolute inset-0 bg-black/70 backdrop-blur-md"
+                aria-label="Close language picker"
+                onClick={() => setOpen(false)}
+              />
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Languages"
+                className="relative z-10 w-full max-w-sm overflow-hidden rounded-[24px] border border-white/15 bg-[#12141d] p-4 shadow-2xl animate-langSlideUp"
               >
-                <FlagIcon code={item.code} size={20} title={item.country} />
-                <span className="min-w-0 truncate text-sm font-semibold">{item.country}</span>
-              </button>
-            );
-          })}
-        </div>
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-white">Dil seçin</p>
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/50 transition hover:bg-white/5 hover:text-white"
+                    aria-label="Close"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div
+                  id={listId}
+                  role="listbox"
+                  aria-label="Languages"
+                  className="lang-scroll max-h-[min(360px,55vh)] space-y-1 overflow-y-auto pr-1"
+                >
+                  {SUPPORTED_LANGUAGES.map((item) => {
+                    const active = item.code === language;
+                    return (
+                      <button
+                        key={item.code}
+                        type="button"
+                        role="option"
+                        aria-selected={active}
+                        onClick={() => {
+                          setLanguage(item.code);
+                          setOpen(false);
+                        }}
+                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
+                          active
+                            ? 'bg-[#5865F2]/30 text-white'
+                            : 'text-white/75 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <FlagIcon code={item.code} size={22} title={item.country} />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold leading-tight">{item.nativeLabel}</p>
+                          <p className="truncate text-xs text-white/45">{item.country}</p>
+                        </div>
+                        {active && <span className="h-2 w-2 shrink-0 rounded-full bg-[#5865F2]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )}
+
+        <style jsx global>{`
+          @keyframes langSlideUp {
+            from {
+              opacity: 0;
+              transform: translateY(15px) scale(0.95);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+          .animate-langSlideUp {
+            animation: langSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+          .lang-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+          }
+          .lang-scroll::-webkit-scrollbar {
+            width: 6px;
+          }
+          .lang-scroll::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 6px 0;
+          }
+          .lang-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 999px;
+          }
+        `}</style>
       </div>
     );
   }
