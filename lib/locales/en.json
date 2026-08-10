@@ -53,7 +53,6 @@
     "select_menu_step_2_body": "Use Refresh to sync permissions, or add the bot to that Discord server first.",
     "select_menu_step_3_title": "Setup, then panel",
     "select_menu_step_3_body": "First-time servers need a short setup. After that you enter the admin panel.",
-    "select_menu_note": "Members without admin access cannot manage a server here.",
     "home_overview": "Overview",
     "home_features": "Features",
     "home_panel_title": "Server admins only",
