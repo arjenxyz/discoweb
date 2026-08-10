@@ -2,14 +2,14 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
+import { isLocalDevBypass, LOCAL_DEV_USER_ID } from '@/lib/localDevBypass';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
-// Seçilen sunucu ID'sini al
 const getSelectedGuildId = async (): Promise<string> => {
   const cookieStore = await cookies();
   const selectedGuildId = cookieStore.get('selected_guild_id')?.value;
-  return selectedGuildId || GUILD_ID; // Varsayılan olarak config'deki guild ID
+  return selectedGuildId || GUILD_ID;
 };
 
 const getSupabase = () => {
@@ -21,17 +21,36 @@ const getSupabase = () => {
 
 export async function GET() {
   try {
+    if (await isLocalDevBypass()) {
+      return NextResponse.json({
+        username: 'Local Dev',
+        nickname: 'Localhost Bypass',
+        avatarUrl: 'https://cdn.discordapp.com/embed/avatars/0.png',
+        guildName: 'Local Development',
+        guildIcon: null,
+        localDevBypass: true,
+      });
+    }
+
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) {
       return NextResponse.json({ error: 'missing_bot_token' }, { status: 500 });
     }
-    const cookieStore = await cookies();
     const userId = await getSessionUserId();
     if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    if (userId === LOCAL_DEV_USER_ID) {
+      return NextResponse.json({
+        username: 'Local Dev',
+        nickname: 'Localhost Bypass',
+        avatarUrl: 'https://cdn.discordapp.com/embed/avatars/0.png',
+        guildName: 'Local Development',
+        guildIcon: null,
+        localDevBypass: true,
+      });
+    }
 
     const selectedGuildId = await getSelectedGuildId();
 
-    // Sunucu bilgilerini veritabanından al (admin_role_id için)
     const supabase = getSupabase();
     let adminRoleFromDb: string | null = null;
     if (supabase) {
@@ -61,7 +80,6 @@ export async function GET() {
     };
     const guild = (await guildResponse.json()) as { name: string; icon: string | null; id: string };
 
-    // Admin rolü kontrolü: önce veritabanından, yoksa env'den
     const adminRoleId = adminRoleFromDb || process.env.ADMIN_ROLE_ID;
     const developerRoleId = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
     const developerGuildId = process.env.DEVELOPER_GUILD_ID ?? '1465698764453838882';
@@ -69,14 +87,11 @@ export async function GET() {
 
     const hasAdminRole = adminRoleId ? member.roles.includes(adminRoleId) : false;
 
-    // Developer rolü developer sunucusunda kontrol edilmeli (seçili sunucuda değil)
     let hasDeveloperRole = false;
     if (developerRoleId) {
       if (selectedGuildId === developerGuildId) {
-        // Zaten developer sunucusundayız, mevcut member verisi yeterli
         hasDeveloperRole = member.roles.includes(developerRoleId);
       } else {
-        // Farklı bir sunucu seçili — developer sunucusundaki rolleri ayrıca kontrol et
         try {
           const devMemberRes = await fetch(
             `https://discord.com/api/guilds/${developerGuildId}/members/${userId}`,
@@ -87,7 +102,7 @@ export async function GET() {
             hasDeveloperRole = devMember.roles.includes(developerRoleId);
           }
         } catch {
-          // Developer sunucusuna erişilemezse developer rolü yok say
+          // ignore
         }
       }
     }
@@ -100,7 +115,13 @@ export async function GET() {
 
     const guildIcon = guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=64` : null;
 
-    return NextResponse.json({ username: member.user.username, nickname: member.nick ?? null, avatarUrl, guildName: guild.name, guildIcon });
+    return NextResponse.json({
+      username: member.user.username,
+      nickname: member.nick ?? null,
+      avatarUrl,
+      guildName: guild.name,
+      guildIcon,
+    });
   } catch {
     return NextResponse.json({ error: 'unhandled_exception' }, { status: 500 });
   }

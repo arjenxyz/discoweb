@@ -1,6 +1,7 @@
-import { cookies } from 'next/headers';
+﻿import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
+import { isLocalDevBypass, LOCAL_DEV_USER_ID } from '@/lib/localDevBypass';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 const DEVELOPER_ROLE_ID = process.env.DEVELOPER_ROLE_ID ?? '1467580199481639013';
@@ -24,12 +25,15 @@ export async function getSelectedGuildId(): Promise<string> {
  */
 export async function isAdminOrDeveloper(): Promise<boolean> {
   try {
+    if (await isLocalDevBypass()) return true;
+
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) return false;
 
     const userId = await getSessionUserId();
     const selectedGuildId = await getSelectedGuildId();
     if (!userId || !selectedGuildId) return false;
+    if (userId === LOCAL_DEV_USER_ID) return true;
 
     // 1) Check developer role in the developer guild first (fast path)
     if (DEVELOPER_ROLE_ID && DEVELOPER_GUILD_ID) {

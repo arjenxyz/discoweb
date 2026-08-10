@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { isLocalDevBypassFromRequest } from '@/lib/localDevBypass';
 
 // Cache iÃ§in basit bir map (production'da Redis kullan)
 const roleCheckCache = new Map<string, { roles: string[]; expires: number }>();
@@ -209,6 +210,11 @@ export async function middleware(request: NextRequest) {
 
 	// Static dosyalarÄ± ve API'leri atla
 	if (IGNORED_PREFIXES.some((prefix) => pathname.startsWith(prefix)) || IGNORED_PATHS.includes(pathname)) {
+		return NextResponse.next();
+	}
+
+	// Localhost + next dev: Discord girişi olmadan tüm sayfaları aç
+	if (isLocalDevBypassFromRequest(request)) {
 		return NextResponse.next();
 	}
 

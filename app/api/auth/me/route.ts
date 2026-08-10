@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
+import { isLocalDevBypass, LOCAL_DEV_USER_ID } from '@/lib/localDevBypass';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,10 +13,31 @@ const getSupabase = () => {
 };
 
 export async function GET() {
+  if (await isLocalDevBypass()) {
+    return NextResponse.json({
+      id: LOCAL_DEV_USER_ID,
+      username: 'Local Dev',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
+      localDevBypass: true,
+    });
+  }
+
   const userId = await getSessionUserId();
-  console.log('[/api/auth/me] getSessionUserId result:', userId ? `found (${userId.substring(0, 6)}...)` : 'null');
+  console.log(
+    '[/api/auth/me] getSessionUserId result:',
+    userId ? `found (${userId.substring(0, 6)}...)` : 'null',
+  );
   if (!userId) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+
+  if (userId === LOCAL_DEV_USER_ID) {
+    return NextResponse.json({
+      id: LOCAL_DEV_USER_ID,
+      username: 'Local Dev',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
+      localDevBypass: true,
+    });
   }
 
   const supabase = getSupabase();
@@ -31,9 +53,9 @@ export async function GET() {
 
   const avatar = user?.avatar ?? null;
   const avatarUrl = avatar
-    ? (avatar.startsWith('http')
-        ? avatar
-        : `https://cdn.discordapp.com/avatars/${userId}/${avatar}.png?size=96`)
+    ? avatar.startsWith('http')
+      ? avatar
+      : `https://cdn.discordapp.com/avatars/${userId}/${avatar}.png?size=96`
     : `https://cdn.discordapp.com/embed/avatars/${Number(userId) % 5}.png`;
 
   return NextResponse.json({
@@ -42,4 +64,3 @@ export async function GET() {
     avatar: avatarUrl,
   });
 }
-

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslation } from '@/lib/i18nContext';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
+import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -234,6 +235,12 @@ export default function CuteNavbar() {
   useEffect(() => {
     // Check if user is logged in via localStorage + validate session cookie
     const checkLoginStatus = async () => {
+      // Localhost development: treat as signed-in without Discord OAuth
+      if (isLocalDevBypassClient()) {
+        setIsLoggedIn(true);
+        return;
+      }
+
       const discordUser = localStorage.getItem('discordUser');
       const adminGuilds = localStorage.getItem('adminGuilds');
       const hasLocalData = !!(discordUser && adminGuilds);
@@ -483,7 +490,7 @@ export default function CuteNavbar() {
             <LanguageSwitcher />
             {isLoggedIn ? (
               <Link 
-                href="/auth/select-server"
+                href={isLocalDevBypassClient() ? '/developer' : '/auth/select-server'}
                 className="hidden md:inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300 lg:px-5"
               >
                 {t('navbar.continue')}
@@ -598,7 +605,7 @@ export default function CuteNavbar() {
             <div className="mt-6 shrink-0">
               {isLoggedIn ? (
                 <Link
-                  href="/auth/select-server"
+                  href={isLocalDevBypassClient() ? '/developer' : '/auth/select-server'}
                   onClick={() => setMobileOpen(false)}
                   className="inline-flex w-full items-center justify-center rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
                 >

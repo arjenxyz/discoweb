@@ -1,38 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireSessionUser } from '@/lib/auth';
-
-const DEFAULT_DEVELOPER_GUILD_ID = '1465698764453838882';
-const DEFAULT_DEVELOPER_ROLE_ID = '1467580199481639013';
+import { isDeveloper } from '@/lib/developerAuth';
+import { isLocalDevBypassFromRequest } from '@/lib/localDevBypass';
 
 export async function GET(request: NextRequest) {
   try {
+    if (isLocalDevBypassFromRequest(request)) {
+      return NextResponse.json({ hasAccess: true, localDevBypass: true }, { status: 200 });
+    }
+
     const auth = await requireSessionUser(request);
     if (!auth.ok) {
       return auth.response;
     }
-    const discordUserId = auth.userId;
 
-    const botToken = process.env.DISCORD_BOT_TOKEN;
-    if (!botToken) {
-      return NextResponse.json({ error: 'server_error' }, { status: 500 });
-    }
-
-    const developerRoleId = process.env.DEVELOPER_ROLE_ID ?? DEFAULT_DEVELOPER_ROLE_ID;
-    const developerGuildId = process.env.DEVELOPER_GUILD_ID ?? DEFAULT_DEVELOPER_GUILD_ID;
-
-    const developerResponse = await fetch(
-      `https://discord.com/api/guilds/${developerGuildId}/members/${discordUserId}`,
-      {
-        headers: { Authorization: `Bot ${botToken}` },
-      },
-    );
-
-    if (!developerResponse.ok) {
-      return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-    }
-
-    const developerMember = (await developerResponse.json()) as { roles: string[] };
-    if (!developerMember.roles.includes(developerRoleId)) {
+    if (!(await isDeveloper(auth.userId))) {
       return NextResponse.json({ error: 'forbidden' }, { status: 403 });
     }
 

@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { isLocalDevBypass, isLocalDevBypassFromRequest, LOCAL_DEV_USER_ID } from '@/lib/localDevBypass';
 
 const SESSION_COOKIE = 'discord_session';
 const CSRF_COOKIE = 'csrf_token';
@@ -95,16 +96,20 @@ export const clearSessionCookies = (response: NextResponse) => {
 export const getSessionUserId = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
-  if (!token) {
+  if (token) {
+    const payload = verifySessionToken(token);
+    if (payload?.sub) return payload.sub;
+    console.log('[auth] discord_session cookie exists but verification failed (expired or invalid signature)');
+  } else {
     const allCookies = cookieStore.getAll().map(c => c.name);
     console.log('[auth] No discord_session cookie found. Available cookies:', allCookies);
-    return null;
   }
-  const payload = verifySessionToken(token);
-  if (!payload) {
-    console.log('[auth] discord_session cookie exists but verification failed (expired or invalid signature)');
+
+  if (await isLocalDevBypass()) {
+    return LOCAL_DEV_USER_ID;
   }
-  return payload?.sub ?? null;
+
+  return null;
 };
 
 export const assertSameOrigin = (request: Request) => {
@@ -172,10 +177,14 @@ export const requireSessionUser = async (request?: Request) => {
   }
 
   const userId = await getSessionUserId();
-  if (!userId) {
-    return { ok: false as const, response: NextResponse.json({ error: 'unauthorized' }, { status: 401 }) };
+  if (userId) {
+    return { ok: true as const, userId };
   }
 
-  return { ok: true as const, userId };
+  if ((request && isLocalDevBypassFromRequest(request)) || (!request && (await isLocalDevBypass()))) {
+    return { ok: true as const, userId: LOCAL_DEV_USER_ID };
+  }
+
+  return { ok: false as const, response: NextResponse.json({ error: 'unauthorized' }, { status: 401 }) };
 };
 
