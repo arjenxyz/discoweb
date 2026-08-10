@@ -14,7 +14,6 @@ export default function AdminStoreDiscountCreatePage() {
   const [minSpend, setMinSpend] = useState('');
   const [perUserLimit, setPerUserLimit] = useState('1');
   const [expiresAt, setExpiresAt] = useState('');
-  const [isSpecial, setIsSpecial] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -49,7 +48,7 @@ export default function AdminStoreDiscountCreatePage() {
       perUserLimit: perUserLimit ? Number(perUserLimit) : 1,
       status: 'active' as const,
       expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
-      is_special: isSpecial,
+      is_special: false,
       is_welcome: activeTab === 'welcome',
     };
 
@@ -74,7 +73,6 @@ export default function AdminStoreDiscountCreatePage() {
         setMinSpend('');
         setExpiresAt('');
         setPerUserLimit('1');
-        setIsSpecial(false);
       }
     } catch (err: unknown) {
       setMessage({
@@ -230,19 +228,6 @@ export default function AdminStoreDiscountCreatePage() {
               className={`${fieldClass} [color-scheme:dark]`}
             />
           </div>
-
-          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-black/20 px-3.5 py-3">
-            <input
-              type="checkbox"
-              checked={isSpecial}
-              onChange={(e) => setIsSpecial(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black/50 text-[#5865F2] focus:ring-[#5865F2]"
-            />
-            <span className="min-w-0">
-              <span className="block text-sm font-medium text-white/80">Herkese özel</span>
-              <span className="text-xs text-white/40">Sepette herkese görünür.</span>
-            </span>
-          </label>
 
           <div className="pt-1">
             <button
