@@ -2,7 +2,6 @@ import type { IconType } from 'react-icons';
 import {
   LuAward,
   LuBadgePercent,
-  LuChartBar,
   LuClipboardList,
   LuCoins,
   LuLayoutGrid,
@@ -124,7 +123,6 @@ export const ADMIN_MENU: MenuGroup[] = [
     items: [
       { kind: 'link', href: '/admin/wallet', labelKey: 'sidebar.wallet', icon: LuWallet },
       { kind: 'link', href: '/admin/earn-settings', labelKey: 'sidebar.earn_settings', icon: LuCoins },
-      { kind: 'link', href: '/admin/log-channels', labelKey: 'sidebar.channels_logs', icon: LuChartBar },
       { kind: 'link', href: '/admin/quiz', labelKey: 'sidebar.quiz_events', icon: LuTrophy },
     ],
   },

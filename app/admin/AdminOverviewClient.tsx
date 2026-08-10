@@ -17,7 +17,6 @@ import {
   LuPackage,
   LuCoins,
   LuChartBar,
-  LuDatabase,
   LuSettings,
   LuBell,
   LuStore,
@@ -240,7 +239,6 @@ export default function AdminOverviewClient({
             { href: '/admin/notifications/send', label: t('admin.dashboard.action_notify'), icon: <LuBell className="h-5 w-5" />, color: 'text-violet-300' },
             { href: '/admin/store/promos/new', label: t('admin.dashboard.action_promo'), icon: <LuTag className="h-5 w-5" />, color: 'text-pink-300' },
             { href: '/admin/store/discounts/new', label: t('admin.dashboard.action_discount'), icon: <LuCoins className="h-5 w-5" />, color: 'text-amber-300' },
-            { href: '/admin/log-channels', label: t('admin.dashboard.action_log_channels'), icon: <LuDatabase className="h-5 w-5" />, color: 'text-cyan-300' },
             { href: '/admin/earn-settings', label: t('admin.dashboard.earn_settings'), icon: <LuSettings className="h-5 w-5" />, color: 'text-indigo-300' },
             { href: '/admin/guide', label: t('admin.dashboard.action_guide'), icon: <LuStore className="h-5 w-5" />, color: 'text-white/50' },
           ].map((action) => (
