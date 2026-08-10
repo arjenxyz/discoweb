@@ -23,6 +23,7 @@
     "status": "Status",
     "discover": "Jelajahi",
     "continue": "Lanjutkan",
+    "add_bot": "Tambahkan bot ke server",
     "login": "Masuk",
     "connect_discord": "Hubungkan dengan Discord",
     "login_error": "Gagal masuk: Discord client ID atau redirect URI belum dikonfigurasi. Periksa NEXT_PUBLIC_DISCORD_CLIENT_ID dan NEXT_PUBLIC_REDIRECT_URI.",

@@ -2,9 +2,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from '@/lib/i18nContext';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
+import { siteConfig } from '@/config/site';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -129,6 +131,7 @@ function MobileInfoModal({
 
 export default function CuteNavbar() {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -136,6 +139,8 @@ export default function CuteNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ username: string; avatar: string | null } | null>(null);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
+  const onSelectServer = pathname?.startsWith('/auth/select-server') ?? false;
+  const botInviteUrl = siteConfig.bot.inviteUrl;
 
   const FAB_SIZE = 56;
   const FAB_STORAGE_KEY = 'discoweb_mobile_fab_pos';
@@ -544,12 +549,23 @@ export default function CuteNavbar() {
           <div className="flex items-center gap-2 lg:gap-3 shrink-0 min-w-0">
             <LanguageSwitcher />
             {isLoggedIn ? (
-              <Link 
-                href="/auth/select-server"
-                className="hidden md:inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300 lg:px-5"
-              >
-                {t('navbar.continue')}
-              </Link>
+              onSelectServer ? (
+                <a
+                  href={botInviteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden md:inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300 lg:px-5"
+                >
+                  {t('navbar.add_bot')}
+                </a>
+              ) : (
+                <Link
+                  href="/auth/select-server"
+                  className="hidden md:inline-flex items-center justify-center whitespace-nowrap px-4 py-2.5 font-bold text-sm rounded-full bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 hover:bg-[#4752c4] transition-all duration-300 lg:px-5"
+                >
+                  {t('navbar.continue')}
+                </Link>
+              )
             ) : (
               <Link 
                 href={DISCORD_LOGIN_URL}
@@ -663,13 +679,25 @@ export default function CuteNavbar() {
 
             <div className="mt-6 shrink-0">
               {isLoggedIn ? (
-                <Link
-                  href="/auth/select-server"
-                  onClick={() => setMobileOpen(false)}
-                  className="inline-flex w-full items-center justify-center rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
-                >
-                  {t('navbar.continue')}
-                </Link>
+                onSelectServer ? (
+                  <a
+                    href={botInviteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
+                  >
+                    {t('navbar.add_bot')}
+                  </a>
+                ) : (
+                  <Link
+                    href="/auth/select-server"
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#5865F2] py-4 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/30"
+                  >
+                    {t('navbar.continue')}
+                  </Link>
+                )
               ) : (
                 <Link
                   href={DISCORD_LOGIN_URL}

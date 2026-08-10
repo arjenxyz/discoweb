@@ -35,6 +35,7 @@
     "status": "Durum",
     "discover": "Keşfet",
     "continue": "Devam Et",
+    "add_bot": "Botu sunucuya ekle",
     "login": "Giriş Yap",
     "connect_discord": "Discord ile Bağlan",
     "login_error": "Giriş yapılamıyor: Discord istemci kimliği veya redirect URI yapılandırılmamış. Lütfen NEXT_PUBLIC_DISCORD_CLIENT_ID ve NEXT_PUBLIC_REDIRECT_URI değerlerini kontrol edin.",

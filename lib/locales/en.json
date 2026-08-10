@@ -35,6 +35,7 @@
     "status": "Status",
     "discover": "Discover",
     "continue": "Continue",
+    "add_bot": "Add bot to server",
     "login": "Sign In",
     "connect_discord": "Connect with Discord",
     "login_error": "Sign-in failed: Discord client ID or redirect URI is not configured. Please check NEXT_PUBLIC_DISCORD_CLIENT_ID and NEXT_PUBLIC_REDIRECT_URI.",

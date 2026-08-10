@@ -23,6 +23,7 @@
     "status": "Status",
     "discover": "Descobrir",
     "continue": "Continuar",
+    "add_bot": "Adicionar bot ao servidor",
     "login": "Entrar",
     "connect_discord": "Conectar com Discord",
     "login_error": "Falha no login: o client ID ou o redirect URI do Discord não está configurado. Verifique NEXT_PUBLIC_DISCORD_CLIENT_ID e NEXT_PUBLIC_REDIRECT_URI.",

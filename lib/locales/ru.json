@@ -23,6 +23,7 @@
     "status": "Статус",
     "discover": "Обзор",
     "continue": "Продолжить",
+    "add_bot": "Добавить бота на сервер",
     "login": "Войти",
     "connect_discord": "Войти через Discord",
     "login_error": "Ошибка входа: не настроен Discord client ID или redirect URI. Проверьте NEXT_PUBLIC_DISCORD_CLIENT_ID и NEXT_PUBLIC_REDIRECT_URI.",
