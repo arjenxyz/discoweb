@@ -782,64 +782,89 @@ export default function SetupPage() {
               {/* --- STEP 1: LOG MANAGEMENT --- */}
               {currentStep === 1 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-xl font-bold text-white mb-2">Log Yönetimi</h2>
-                  <p className="text-sm text-white/50 mb-6">İşlem logları nereye yazılsın?</p>
+                  <h2 className="text-lg font-bold text-white mb-1">Log Yönetimi</h2>
+                  <p className="text-sm text-white/50 mb-4">İşlem logları nereye yazılsın?</p>
 
-                  <div className="space-y-4">
-                    {/* Option 1: Current Server */}
-                    <button 
+                  <div className="space-y-2.5">
+                    <button
+                      type="button"
                       onClick={() => setLogMode('current')}
-                      className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 flex items-start gap-4 ${logMode === 'current' ? 'bg-[#5865F2]/10 border-[#5865F2] shadow-[0_0_20px_rgba(88,101,242,0.15)] ring-1 ring-[#5865F2]/50' : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'}`}
+                      className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-all duration-200 ${
+                        logMode === 'current'
+                          ? 'border-[#5865F2] bg-[#5865F2]/10 ring-1 ring-[#5865F2]/40'
+                          : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.08]'
+                      }`}
                     >
-                      <div className={`mt-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${logMode === 'current' ? 'border-[#5865F2]' : 'border-white/30'}`}>
-                        {logMode === 'current' && <div className="w-3 h-3 rounded-full bg-[#5865F2]" />}
+                      <div
+                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                          logMode === 'current' ? 'border-[#5865F2]' : 'border-white/30'
+                        }`}
+                      >
+                        {logMode === 'current' && <div className="h-2 w-2 rounded-full bg-[#5865F2]" />}
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-white flex items-center gap-2">
-                          Bu sunucuya kur <span className="px-2 py-0.5 rounded-full bg-[#5865F2]/20 text-[#5865F2] text-[10px] uppercase font-bold">Önerilen</span>
+                      <div className="min-w-0">
+                        <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white">
+                          Bu sunucuya kur
+                          <span className="rounded-md bg-[#5865F2]/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#5865F2]">
+                            Önerilen
+                          </span>
                         </h3>
-                        <p className="text-sm text-white/50 mt-1">DiscoWeb Logs kategorisi burada açılır.</p>
+                        <p className="mt-0.5 text-xs text-white/45">DiscoWeb Logs kategorisi burada açılır.</p>
                       </div>
                     </button>
 
-                    {/* Option 2: Dedicated Server */}
-                    <button 
+                    <button
+                      type="button"
                       onClick={() => setLogMode('dedicated')}
-                      className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 flex items-start gap-4 ${logMode === 'dedicated' ? 'bg-indigo-500/10 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/50' : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'}`}
+                      className={`flex w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left transition-all duration-200 ${
+                        logMode === 'dedicated'
+                          ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/40'
+                          : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.08]'
+                      }`}
                     >
-                      <div className={`mt-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${logMode === 'dedicated' ? 'border-indigo-500' : 'border-white/30'}`}>
-                        {logMode === 'dedicated' && <div className="w-3 h-3 rounded-full bg-indigo-500" />}
+                      <div
+                        className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                          logMode === 'dedicated' ? 'border-indigo-500' : 'border-white/30'
+                        }`}
+                      >
+                        {logMode === 'dedicated' && <div className="h-2 w-2 rounded-full bg-indigo-500" />}
                       </div>
-                      <div className="w-full">
-                        <h3 className="font-semibold text-white">Ayrı log sunucusu</h3>
-                        <p className="text-sm text-white/50 mt-1">Loglar başka bir Discord sunucusuna gider.</p>
-                        
-                        {/* Expandable input for dedicated server */}
-                        <div className={`overflow-hidden transition-all duration-300 ${logMode === 'dedicated' ? 'max-h-32 mt-4 opacity-100' : 'max-h-0 opacity-0'}`}>
-                          <label className="text-xs font-medium text-indigo-300 mb-2 block">Hedef sunucu ID</label>
-                          <input 
-                            type="text" 
+                      <div className="min-w-0 w-full">
+                        <h3 className="text-sm font-semibold text-white">Ayrı log sunucusu</h3>
+                        <p className="mt-0.5 text-xs text-white/45">Loglar başka bir Discord sunucusuna gider.</p>
+
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ${
+                            logMode === 'dedicated' ? 'mt-3 max-h-28 opacity-100' : 'max-h-0 opacity-0'
+                          }`}
+                        >
+                          <label className="mb-1.5 block text-[11px] font-medium text-indigo-300">
+                            Hedef sunucu ID
+                          </label>
+                          <input
+                            type="text"
                             placeholder="123456789012345678"
                             value={targetGuildId}
                             onChange={(e) => setTargetGuildId(e.target.value)}
-                            className="w-full bg-black/40 border border-indigo-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono text-sm"
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-full rounded-lg border border-indigo-500/30 bg-black/40 px-3 py-2 font-mono text-sm text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                           />
-                          <p className="text-[10px] text-indigo-300/60 mt-2 flex items-center gap-1">
-                            <LuCheck className="w-3 h-3" /> Bot o sunucuda olmalı.
+                          <p className="mt-1.5 flex items-center gap-1 text-[10px] text-indigo-300/60">
+                            <LuCheck className="h-3 w-3" /> Bot o sunucuda olmalı.
                           </p>
                         </div>
                       </div>
                     </button>
 
-                    {/* Warning Box */}
-                    <div className="mt-6 rounded-2xl bg-orange-500/10 border border-orange-500/20 p-4 flex items-start gap-3">
-                      <LuLock className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
+                    <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5">
+                      <LuLock className="mt-0.5 h-4 w-4 shrink-0 text-orange-400" />
                       <div>
-                        <h4 className="text-sm font-semibold text-orange-300 mb-1">Dikkat</h4>
-                        <p className="text-xs text-orange-200/70 leading-relaxed">Kurulumda eski log kanalları silinip yeniden açılabilir.</p>
+                        <h4 className="text-xs font-semibold text-orange-300">Dikkat</h4>
+                        <p className="mt-0.5 text-[11px] leading-snug text-orange-200/70">
+                          Kurulumda eski log kanalları silinip yeniden açılabilir.
+                        </p>
                       </div>
                     </div>
-
                   </div>
                 </div>
               )}
