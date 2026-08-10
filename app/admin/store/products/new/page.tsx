@@ -199,7 +199,7 @@ function AdminStoreProductCreatePageContent() {
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Mağaza</p>
           <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">
-            {editId ? 'Ürün Düzenle' : 'Yeni Ürün'}
+            {editId ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
           </h1>
         </div>
         <Link
