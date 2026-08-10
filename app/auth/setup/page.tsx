@@ -3,10 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown, LuTriangleAlert } from 'react-icons/lu';
+import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown } from 'react-icons/lu';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
-
-const ERROR_TOAST_MS = 3800;
 
 interface DiscordRole {
   id: string;
@@ -83,21 +81,9 @@ export default function SetupPage() {
   const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [alreadySetup, setAlreadySetup] = useState(false);
-  const [error, setErrorState] = useState<string>('');
-  const [errorKey, setErrorKey] = useState(0);
+  const [error, setError] = useState<string>('');
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-
-  const setError = useCallback((message: string) => {
-    setErrorState(message);
-    if (message) setErrorKey((key) => key + 1);
-  }, []);
-
-  useEffect(() => {
-    if (!error) return undefined;
-    const timer = window.setTimeout(() => setErrorState(''), ERROR_TOAST_MS);
-    return () => window.clearTimeout(timer);
-  }, [error, errorKey]);
 
   const getRoleNameById = useCallback(
     (roleId: string) => roles.find((role) => role.id === roleId)?.name ?? 'Bilinmeyen Rol',
@@ -364,17 +350,17 @@ export default function SetupPage() {
     return () => clearTimeout(timer);
   }, [redirectCountdown, router]);
 
+  const canGoNext =
+    currentStep === 0
+      ? Boolean(selectedAdminRole && selectedVerifyRole)
+      : currentStep === 1 && logMode === 'dedicated'
+        ? Boolean(targetGuildId.trim())
+        : true;
+
   const handleNext = () => {
-    if (currentStep === 0 && (!selectedAdminRole || !selectedVerifyRole)) {
-      setError('Lütfen rollerin her ikisini de seçin!');
-      return;
-    }
-    if (currentStep === 1 && logMode === 'dedicated' && !targetGuildId) {
-      setError('Özel log sunucusu seçtiğinizde sunucu ID\'sini girmelisiniz!');
-      return;
-    }
+    if (!canGoNext) return;
     setError('');
-    setCurrentStep(c => Math.min(STEPS.length - 1, c + 1));
+    setCurrentStep((c) => Math.min(STEPS.length - 1, c + 1));
   };
 
   // --- LOADING ---
@@ -814,8 +800,14 @@ export default function SetupPage() {
                 
                 {currentStep < STEPS.length - 1 && (
                   <button 
+                    type="button"
                     onClick={handleNext}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold bg-white text-black hover:bg-[#5865F2] hover:text-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_25px_rgba(88,101,242,0.4)]"
+                    disabled={!canGoNext}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                      canGoNext
+                        ? 'bg-white text-black hover:bg-[#5865F2] hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_25px_rgba(88,101,242,0.4)]'
+                        : 'cursor-not-allowed bg-white/15 text-white/35'
+                    }`}
                   >
                     İleri <LuChevronRight className="w-5 h-5" />
                   </button>
@@ -826,52 +818,6 @@ export default function SetupPage() {
 
         </div>
       </main>
-
-      {error && (
-        <div
-          key={errorKey}
-          role="alert"
-          aria-live="assertive"
-          className="pointer-events-none fixed inset-x-0 top-[4.75rem] z-[120] flex justify-center px-4 sm:top-24"
-        >
-          <div className="pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-[#12141c]/95 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-2xl animate-[setupToastIn_0.35s_cubic-bezier(0.22,1,0.36,1)]">
-            <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-red-400 to-red-600" />
-            <div className="flex items-start gap-3 px-4 py-3.5 pl-5">
-              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-500/15 text-red-300 ring-1 ring-red-400/25">
-                <LuTriangleAlert className="h-[18px] w-[18px]" />
-              </span>
-              <div className="min-w-0 flex-1 pt-0.5">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-red-300/80">Uyarı</p>
-                <p className="mt-1 text-sm font-medium leading-5 text-white/90">{error}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setErrorState('')}
-                className="rounded-lg p-1.5 text-white/35 transition hover:bg-white/5 hover:text-white/80"
-                aria-label="Kapat"
-              >
-                <LuX className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="h-0.5 w-full bg-white/5">
-              <div
-                className="h-full origin-left bg-gradient-to-r from-red-400 to-red-500"
-                style={{ animation: `setupToastProgress ${ERROR_TOAST_MS}ms linear forwards` }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-      <style jsx global>{`
-        @keyframes setupToastIn {
-          from { opacity: 0; transform: translateY(-12px) scale(0.98); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes setupToastProgress {
-          from { transform: scaleX(1); }
-          to { transform: scaleX(0); }
-        }
-      `}</style>
     </div>
   );
 }
