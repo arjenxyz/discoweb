@@ -5,7 +5,6 @@ import { setSessionCookies } from '@/lib/auth';
 import { buildAdminGuilds, getServiceSupabase } from '@/lib/discord/buildAdminGuilds';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
-const REQUIRED_ROLE_ID = process.env.DISCORD_REQUIRED_ROLE_ID ?? '1465999952940498975';
 const ADMIN_ROLE_ID = process.env.DISCORD_ADMIN_ROLE_ID;
 
 const getSupabase = () => getServiceSupabase();
@@ -257,7 +256,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Ana sunucudaki rol kontrolü (mevcut sistem için)
+    // Ana sunucudaki admin kontrolü (yanıt isAdmin alanı için)
     let mainGuildMemberResponse: Response;
     try {
       mainGuildMemberResponse = await fetch(
@@ -273,19 +272,15 @@ export async function POST(request: Request) {
         status: 'main_guild_member_fetch_error',
         metadata: { error: String(e) },
       });
-      // continue with hasRole = false; isAdmin = false; // we'll just treat as missing
-      mainGuildMemberResponse = { ok: false, status: 0} as unknown as Response;
+      mainGuildMemberResponse = { ok: false, status: 0 } as unknown as Response;
     }
 
-    let hasRole = false;
     let isAdmin = false;
 
     if (mainGuildMemberResponse.ok) {
       const member = (await mainGuildMemberResponse.json()) as { roles: string[] };
-      hasRole = member.roles.includes(REQUIRED_ROLE_ID);
-      
-      // Supabase'den admin_role_id'yi Ã§ek
-      let adminRoleId = ADMIN_ROLE_ID; // fallback
+
+      let adminRoleId = ADMIN_ROLE_ID;
       if (supabase) {
         const { data: serverData } = await supabase
           .from('servers')
@@ -296,30 +291,13 @@ export async function POST(request: Request) {
           adminRoleId = serverData.admin_role_id;
         }
       }
-      
+
       isAdmin = adminRoleId ? member.roles.includes(adminRoleId) : false;
-
-      console.log(`Ana sunucu kontrolÃ¼: user_roles=${member.roles}, required_role=${REQUIRED_ROLE_ID}, hasRole=${hasRole}, admin_role=${adminRoleId}, isAdmin=${isAdmin}`);
     }
 
-    // Status'u belirle
-    let status: 'ok' | 'needs_rules' | 'no_guilds' = 'no_guilds';
-    
-    if (adminGuilds.length > 0) {
-      // Admin olan sunucu varsa, OK
-      const hasAdminGuild = adminGuilds.some(g => g.isAdmin);
-      if (hasAdminGuild) {
-        status = 'ok';
-      } else {
-        // Admin olmayan ama verify rolÃ¼ olan sunucu varsa, rules gerekli
-        // const needsRules = adminGuilds.some(g => g.verifyRoleId);
-        // status = needsRules ? 'needs_rules' : 'ok';
-        // Kurallar adÄ±mÄ±nÄ± atla - direkt dashboard'a git
-        status = 'ok';
-      }
-    }
+    const status: 'ok' | 'no_guilds' = adminGuilds.length > 0 ? 'ok' : 'no_guilds';
 
-    console.log('Final status determination:', { adminGuilds, hasAdminGuild: adminGuilds.some(g => g.isAdmin), status, isAdmin });
+    console.log('Final status determination:', { adminGuilds, status, isAdmin });
 
     const response = NextResponse.json({ 
       status, 
@@ -351,10 +329,9 @@ export async function POST(request: Request) {
 
     await logWebEvent(request, {
       event: 'discord_role_check',
-      status: hasRole ? 'has_role' : 'missing_role',
+      status: isAdmin ? 'has_admin' : 'ok',
       userId: user.id,
       guildId: selectedGuildId,
-      roleId: REQUIRED_ROLE_ID,
       metadata: { username: user.username },
     });
 

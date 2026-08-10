@@ -78,7 +78,7 @@ function SetupTerminalContent() {
       if (hasRunRef.current) return;
       hasRunRef.current = true;
 
-      if (!adminRoleId || !verifyRoleId) {
+      if (!adminRoleId) {
         setError('Rol bilgileri eksik. Kurulum ekranına geri dönün.');
         setSettingUp(false);
         return;
@@ -97,8 +97,6 @@ function SetupTerminalContent() {
       pushLine(`giriş yapıldı: ${resolvedGuildName}`, 'success');
       await sleep(700);
       pushLine(`admin rolü: ${adminRoleId}`, 'info');
-      await sleep(600);
-      pushLine(`verify rolü: ${verifyRoleId}`, 'info');
       await sleep(900);
       pushLine('discord:kanallari-olustur', 'cmd');
       await sleep(1200);
@@ -118,7 +116,7 @@ function SetupTerminalContent() {
           body: JSON.stringify({
             guildId,
             adminRoleId,
-            verifyRoleId,
+            verifyRoleId: verifyRoleId || null,
           }),
         });
 

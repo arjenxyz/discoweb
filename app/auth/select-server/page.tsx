@@ -102,8 +102,7 @@ export default function SelectServerPage() {
   }, [showAgreementModal]);
 
   const loadGuilds = useCallback(
-    async (currentUserId?: string | null, options?: { redirectIfEmpty?: boolean }) => {
-      const redirectIfEmpty = options?.redirectIfEmpty ?? true;
+    async (currentUserId?: string | null) => {
       const bypass = isLocalDevBypassClient();
       const adminGuilds = localStorage.getItem('adminGuilds');
       const updatedAt = localStorage.getItem('adminGuildsUpdatedAt');
@@ -191,11 +190,6 @@ export default function SelectServerPage() {
           // ignore
         }
         setHasDeveloperAccess(developerAccess);
-
-        if (redirectIfEmpty && filteredGuilds.length === 0 && !developerAccess) {
-          router.replace('/auth/bot-invite');
-          return;
-        }
       } catch {
         if (bypass) {
           setGuilds([LOCAL_DEV_GUILD]);
@@ -247,7 +241,7 @@ export default function SelectServerPage() {
       localStorage.setItem('adminGuildsUpdatedAt', updatedAt);
       setLastUpdatedAt(updatedAt);
       setRefreshMessage('Sunucu listesi güncellendi.');
-      await loadGuilds(currentUserIdRef.current, { redirectIfEmpty: false });
+      await loadGuilds(currentUserIdRef.current);
     } catch {
       setRefreshMessage('Liste güncellenemedi. Biraz sonra tekrar deneyin.');
     } finally {
@@ -381,8 +375,8 @@ export default function SelectServerPage() {
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center backdrop-blur-md sm:col-span-2 lg:col-span-3">
                   <p className="text-sm text-white/70">Erişilebilir sunucu bulunamadı.</p>
                   <p className="mt-2 text-xs text-white/40">
-                    Botun bulunduğu sunucularda üye olduğunuzdan emin olun. Yeni yetki aldıysanız
-                    Yenile ile listeyi güncelleyin.
+                    Botun bulunduğu sunucularda admin/sahip olduğunuzdan emin olun. Liste eksikse
+                    Yenile ile güncelleyin veya üstteki “Botu sunucuya ekle” ile botu davet edin.
                   </p>
                 </div>
               ) : (

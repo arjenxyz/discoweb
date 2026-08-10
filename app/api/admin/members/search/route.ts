@@ -51,9 +51,6 @@ export async function GET(request: Request) {
     .maybeSingle();
 
   const verifyRoleId = server?.verify_role_id ?? null;
-  if (!verifyRoleId) {
-    return NextResponse.json([]);
-  }
 
   const botToken = process.env.DISCORD_BOT_TOKEN;
   if (!botToken) {
@@ -82,7 +79,7 @@ export async function GET(request: Request) {
     if (member.user?.bot) {
       return;
     }
-    if (!member.roles?.includes(verifyRoleId)) {
+    if (verifyRoleId && !member.roles?.includes(verifyRoleId)) {
       return;
     }
     if (seen.has(member.user.id)) {

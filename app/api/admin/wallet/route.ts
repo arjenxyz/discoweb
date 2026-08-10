@@ -245,9 +245,6 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     const verifyRoleId = verifyServer?.verify_role_id ?? null;
-    if (!verifyRoleId) {
-      return NextResponse.json({ error: 'verify_role_missing' }, { status: 400 });
-    }
 
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (botToken) {
@@ -262,7 +259,7 @@ export async function POST(request: Request) {
       if (member.user?.bot) {
         return NextResponse.json({ error: 'target_is_bot' }, { status: 400 });
       }
-      if (!member.roles?.includes(verifyRoleId)) {
+      if (verifyRoleId && !member.roles?.includes(verifyRoleId)) {
         return NextResponse.json({ error: 'target_not_verified' }, { status: 400 });
       }
     }

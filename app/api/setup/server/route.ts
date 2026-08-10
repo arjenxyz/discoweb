@@ -91,13 +91,16 @@ export async function POST(request: Request) {
   try {
     const { guildId, targetGuildId, adminRoleId, verifyRoleId, messageEarnEnabled, voiceEarnEnabled, earnPerMessage, earnPerVoiceMinute, tagBonusMessage, tagBonusVoice, boosterBonusMessage, boosterBonusVoice, economyTier } = await request.json();
 
-    if (!guildId || !adminRoleId || !verifyRoleId) {
-      void logSetupFailed({ guildId: guildId ?? null, userId: null, reason: 'Eksik parametre: guildId, adminRoleId veya verifyRoleId', httpStatus: 400, ip, userAgent });
+    if (!guildId || !adminRoleId) {
+      void logSetupFailed({ guildId: guildId ?? null, userId: null, reason: 'Eksik parametre: guildId veya adminRoleId', httpStatus: 400, ip, userAgent });
       return NextResponse.json(
-        { error: 'guildId, adminRoleId ve verifyRoleId gerekli' },
+        { error: 'guildId ve adminRoleId gerekli' },
         { status: 400 }
       );
     }
+
+    const resolvedVerifyRoleId =
+      typeof verifyRoleId === 'string' && verifyRoleId.trim().length > 0 ? verifyRoleId.trim() : null;
 
     const botToken = process.env.DISCORD_BOT_TOKEN;
     if (!botToken) {
@@ -171,7 +174,7 @@ export async function POST(request: Request) {
     }
 
     // Debug logging for incoming role selections
-    console.log('Setup payload:', { guildId, adminRoleId, verifyRoleId, userId });
+    console.log('Setup payload:', { guildId, adminRoleId, verifyRoleId: resolvedVerifyRoleId, userId });
 
     // Fetch guild roles to validate provided role IDs
     const rolesResponse = await fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
@@ -233,7 +236,7 @@ export async function POST(request: Request) {
     // Validate provided role IDs
     const findRole = (id: string | null) => guildRoles.find(r => r.id === id) || null;
     const adminRoleObj = findRole(adminRoleId);
-    const verifyRoleObj = findRole(verifyRoleId);
+    const verifyRoleObj = resolvedVerifyRoleId ? findRole(resolvedVerifyRoleId) : null;
 
     // Admin role must exist and have admin/manage guild/manage roles perms
     if (!adminRoleObj) {
@@ -247,8 +250,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Seçilen admin rolü gerekli yönetim izinlerine sahip değil' }, { status: 400 });
     }
 
-    if (!verifyRoleObj) {
-      void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `Verify rolü bulunamadı: ${verifyRoleId}`, httpStatus: 400, ip, userAgent });
+    if (resolvedVerifyRoleId && !verifyRoleObj) {
+      void logSetupFailed({ guildId, guildName: guild.name, guildIcon: guild.icon ?? null, userId, reason: `Verify rolü bulunamadı: ${resolvedVerifyRoleId}`, httpStatus: 400, ip, userAgent });
       return NextResponse.json({ error: 'Belirtilen verify rolü sunucuda bulunamadı' }, { status: 400 });
     }
 
@@ -259,7 +262,7 @@ export async function POST(request: Request) {
         .update({
           name: guild.name,
           admin_role_id: adminRoleId,
-          verify_role_id: verifyRoleId,
+          verify_role_id: resolvedVerifyRoleId,
           is_setup: true,
           tag_id: guildId,
           message_earn_enabled: Boolean(messageEarnEnabled),
@@ -296,7 +299,7 @@ export async function POST(request: Request) {
           name: guild.name,
           slug: uniqueSlug,
           admin_role_id: adminRoleId,
-          verify_role_id: verifyRoleId,
+          verify_role_id: resolvedVerifyRoleId,
           is_setup: true,
           tag_id: guildId,
           message_earn_enabled: Boolean(messageEarnEnabled),
@@ -333,7 +336,7 @@ export async function POST(request: Request) {
       registeredBy: userId,
       isSetup: true,
       adminRoleId,
-      verifyRoleId,
+      verifyRoleId: resolvedVerifyRoleId,
     });
 
     // Yeni kurulum başarı logu
@@ -344,7 +347,7 @@ export async function POST(request: Request) {
       ownerId: guild.owner_id ?? userId,
       registeredBy: userId,
       adminRoleId,
-      verifyRoleId,
+      verifyRoleId: resolvedVerifyRoleId,
       economyTier: economyTier ?? 'basic',
       isUpdate: !!existingServer,
       targetGuildId: targetGuildId || null,
@@ -378,7 +381,7 @@ export async function POST(request: Request) {
     }
 
     // Double-check roles stored in DB for debugging
-    console.log('Storing roles (payload):', { adminRoleId, verifyRoleId });
+    console.log('Storing roles (payload):', { adminRoleId, verifyRoleId: resolvedVerifyRoleId });
 
     // Fetch and log the saved server row to ensure values are persisted
     try {

@@ -74,26 +74,25 @@ function DiscordAuthCallbackContent() {
         }
 
         const payload = (await response.json()) as {
-          status: 'ok' | 'needs_rules' | 'no_guilds' | 'error';
+          status: 'ok' | 'no_guilds' | 'error';
           isAdmin?: boolean;
           adminGuilds?: Array<{ id: string; name: string; isAdmin: boolean; isSetup: boolean; verifyRoleId: string | null; isOwner?: boolean }>;
           user?: { id: string; username: string; avatar: string | null; discriminator: string };
         };
 
-        // Kurallar sayfası kaldırıldı, 'needs_rules' kontrolüne gerek yok.
-
         if (payload.status === 'no_guilds') {
-          setStatus('Botumuzun bulunduğu bir sunucu bulunamadı. Yönlendiriliyor...');
-          // Kullanıcı bilgilerini localStorage'a kaydet
+          setStatus('Erişilebilir sunucu bulunamadı. Yönlendiriliyor...');
           if (payload.user) {
             localStorage.setItem('discordUser', JSON.stringify(payload.user));
           }
-          setTimeout(() => router.replace('/auth/bot-invite'), 1200);
+          localStorage.setItem('adminGuilds', JSON.stringify(payload.adminGuilds ?? []));
+          localStorage.setItem('adminGuildsUpdatedAt', new Date().toISOString());
+          setTimeout(() => router.replace('/auth/select-server'), 1200);
           return;
         }
 
         if (payload.status === 'ok') {
-          setStatus('Rol sorgulanıyor... başarılı. Yönlendiriliyor...');
+          setStatus('Giriş başarılı. Yönlendiriliyor...');
           
           console.log('OAuth payload:', payload); // Debug log
           
@@ -114,8 +113,9 @@ function DiscordAuthCallbackContent() {
             return;
           }
           
-          // Hiç erişilebilir sunucu yoksa dashboard'a git
-          setTimeout(() => router.replace('/dashboard'), 1200);
+          localStorage.setItem('adminGuilds', JSON.stringify([]));
+          localStorage.setItem('adminGuildsUpdatedAt', new Date().toISOString());
+          setTimeout(() => router.replace('/auth/select-server'), 1200);
           return;
         }
 

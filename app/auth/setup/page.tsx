@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuUsers, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown } from 'react-icons/lu';
+import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMessageSquare, LuMic, LuTag, LuZap, LuSettings, LuLock, LuRocket, LuWrench, LuHardDrive, LuServer, LuChevronDown } from 'react-icons/lu';
 
 interface DiscordRole {
   id: string;
@@ -21,7 +21,7 @@ interface DiscordUser {
 }
 
 const STEPS = [
-  { id: 'roles',   title: 'Roller',           icon: LuShield,      description: 'Yönetim ve doğrulama rollerini belirleyin' },
+  { id: 'roles',   title: 'Roller',           icon: LuShield,      description: 'Yönetici rolünü belirleyin' },
   { id: 'logs',    title: 'Log Yönetimi',     icon: LuHardDrive,   description: 'Güvenlik loglarının depolanacağı sunucu' },
   { id: 'economy', title: 'Kazanç',            icon: LuSettings,    description: 'Papel kazanç sistemini yapılandırın' },
   { id: 'bonuses', title: 'Bonuslar',          icon: LuZap,         description: 'Tag ve Booster bonus oranlarını ayarlayın' },
@@ -55,7 +55,6 @@ export default function SetupPage() {
   
   // States
   const [selectedAdminRole, setSelectedAdminRole] = useState<string>('');
-  const [selectedVerifyRole, setSelectedVerifyRole] = useState<string>('');
   
   const [logMode, setLogMode] = useState<'current' | 'dedicated'>('current');
   const [targetGuildId, setTargetGuildId] = useState<string>('');
@@ -91,17 +90,12 @@ export default function SetupPage() {
   const roleColorHex = (color: number) => color ? `#${color.toString(16).padStart(6, '0')}` : '#99AAB5';
 
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
-  const [verifyDropdownOpen, setVerifyDropdownOpen] = useState(false);
   const adminDropdownRef = useRef<HTMLDivElement>(null);
-  const verifyDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (adminDropdownRef.current && !adminDropdownRef.current.contains(e.target as Node)) {
         setAdminDropdownOpen(false);
-      }
-      if (verifyDropdownRef.current && !verifyDropdownRef.current.contains(e.target as Node)) {
-        setVerifyDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -158,7 +152,6 @@ export default function SetupPage() {
             setAlreadySetup(true);
             // Pre-fill existing data if modifying setup
             if (setupStatus.admin_role_id) setSelectedAdminRole(setupStatus.admin_role_id);
-            if (setupStatus.verify_role_id) setSelectedVerifyRole(setupStatus.verify_role_id);
             if (setupStatus.earn_per_message != null) setEarnPerMessage(String(setupStatus.earn_per_message));
             if (setupStatus.earn_per_voice_minute != null) setEarnPerVoiceMinute(String(setupStatus.earn_per_voice_minute));
             setMessageEarnEnabled(!!setupStatus.message_earn_enabled);
@@ -187,8 +180,8 @@ export default function SetupPage() {
       setRedirectCountdown(3);
       return;
     }
-    if (!selectedAdminRole || !selectedVerifyRole) {
-      setError('Lütfen hem admin hem de verify rolünü seçin.');
+    if (!selectedAdminRole) {
+      setError('Lütfen yönetici rolünü seçin.');
       return;
     }
     if (!guildId) {
@@ -216,7 +209,7 @@ export default function SetupPage() {
           guildId,
           targetGuildId: logMode === 'dedicated' ? targetGuildId : undefined,
           adminRoleId: selectedAdminRole,
-          verifyRoleId: selectedVerifyRole,
+          verifyRoleId: null,
           messageEarnEnabled,
           voiceEarnEnabled,
           earnPerMessage: messageEarnEnabled ? Number(earnPerMessage) : 0,
@@ -277,7 +270,7 @@ export default function SetupPage() {
   }, [redirectCountdown, router]);
 
   const handleNext = () => {
-    if (currentStep === 0 && (!selectedAdminRole || !selectedVerifyRole)) {
+    if (currentStep === 0 && !selectedAdminRole) {
       setError('Lütfen rollerin her ikisini de seçin!');
       return;
     }
@@ -403,7 +396,7 @@ export default function SetupPage() {
                         Yönetici Rolü
                       </label>
                       <div className="relative" ref={adminDropdownRef}>
-                        <button type="button" onClick={() => { setAdminDropdownOpen(v => !v); setVerifyDropdownOpen(false); }} className={`w-full flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition-all duration-200 ${adminDropdownOpen ? 'border-[#5865F2] bg-[#5865F2]/5 ring-4 ring-[#5865F2]/10' : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'}`}>
+                        <button type="button" onClick={() => { setAdminDropdownOpen(v => !v); }} className={`w-full flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition-all duration-200 ${adminDropdownOpen ? 'border-[#5865F2] bg-[#5865F2]/5 ring-4 ring-[#5865F2]/10' : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'}`}>
                           {selectedAdminRole ? (
                             <span className="flex items-center gap-3">
                               <span className="h-3 w-3 rounded-full shrink-0 shadow-lg" style={{ backgroundColor: roleColorHex(roles.find(r => r.id === selectedAdminRole)?.color ?? 0) }} />
@@ -432,41 +425,6 @@ export default function SetupPage() {
                         )}
                       </div>
                       <p className="mt-2 text-xs text-white/30 ml-2">Bu role sahip üyeler Admin Paneline giriş yapabilir ve ayarları değiştirebilir.</p>
-                    </div>
-
-                    {/* Verify Role */}
-                    <div className="group">
-                      <label className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-white/80">
-                        <LuUsers className="w-4 h-4 text-emerald-400" />
-                        Üye (Doğrulanmış) Rolü
-                      </label>
-                      <div className="relative" ref={verifyDropdownRef}>
-                        <button type="button" onClick={() => { setVerifyDropdownOpen(v => !v); setAdminDropdownOpen(false); }} className={`w-full flex items-center justify-between rounded-2xl border px-5 py-4 text-left transition-all duration-200 ${verifyDropdownOpen ? 'border-emerald-500 bg-emerald-500/5 ring-4 ring-emerald-500/10' : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'}`}>
-                          {selectedVerifyRole ? (
-                            <span className="flex items-center gap-3">
-                              <span className="h-3 w-3 rounded-full shrink-0 shadow-lg" style={{ backgroundColor: roleColorHex(roles.find(r => r.id === selectedVerifyRole)?.color ?? 0) }} />
-                              <span className="text-white font-medium">{getRoleNameById(selectedVerifyRole)}</span>
-                            </span>
-                          ) : (
-                            <span className="text-white/40">Kayıtlı üyelere verilecek rolü seçin...</span>
-                          )}
-                          <LuChevronDown className={`w-5 h-5 text-white/40 transition-transform duration-300 ${verifyDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`} />
-                        </button>
-                        {verifyDropdownOpen && (
-                          <div className="absolute z-50 mt-2 w-full rounded-2xl border border-white/10 bg-[#12141d] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideDown_0.2s_ease-out]">
-                            <div className="max-h-[240px] overflow-y-auto custom-scrollbar p-2 space-y-1">
-                              {roles.map((role) => (
-                                <button key={role.id} type="button" onClick={() => { setSelectedVerifyRole(role.id); setVerifyDropdownOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${selectedVerifyRole === role.id ? 'bg-emerald-500 text-white shadow-md' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}>
-                                  <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: selectedVerifyRole === role.id ? '#fff' : roleColorHex(role.color) }} />
-                                  <span className="font-medium">{role.name}</span>
-                                  {selectedVerifyRole === role.id && <LuCheck className="w-4 h-4 ml-auto" />}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <p className="mt-2 text-xs text-white/30 ml-2">Sisteme kayıt olan üyelerin sahip olacağı, papel kazanabilen temel rol.</p>
                     </div>
                   </div>
                 </div>
