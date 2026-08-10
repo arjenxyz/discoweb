@@ -444,7 +444,7 @@ export default function CuteNavbar() {
               onMouseLeave={() => setIsLogoHovered(false)}
             >
               {isLoggedIn && user ? (
-                <div className="relative z-50 min-w-0">
+                <div className="relative z-50 min-w-0 max-w-[9rem] sm:max-w-[12rem] md:max-w-[14rem]">
                   <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
                     {user.username}
                   </div>
