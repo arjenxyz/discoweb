@@ -24,6 +24,7 @@
     "discover": "Descubrir",
     "continue": "Continuar",
     "add_bot": "Añadir bot al servidor",
+    "back_home_hint": "Haz clic para volver al inicio",
     "login": "Entrar",
     "connect_discord": "Conectar Discord",
     "login_error": "Error de inicio de sesión: el client ID o el redirect URI de Discord no está configurado. Revisa NEXT_PUBLIC_DISCORD_CLIENT_ID y NEXT_PUBLIC_REDIRECT_URI.",

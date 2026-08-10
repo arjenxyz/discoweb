@@ -24,6 +24,7 @@
     "discover": "発見",
     "continue": "続ける",
     "add_bot": "サーバーにBotを追加",
+    "back_home_hint": "クリックしてホームへ",
     "login": "ログイン",
     "connect_discord": "Discordで接続",
     "login_error": "ログインに失敗しました。DiscordクライアントIDまたはリダイレクトURIが設定されていません。NEXT_PUBLIC_DISCORD_CLIENT_ID と NEXT_PUBLIC_REDIRECT_URI を確認してください。",

@@ -468,14 +468,22 @@ export default function CuteNavbar() {
               onMouseLeave={() => setIsLogoHovered(false)}
             >
               {isLoggedIn && user ? (
-                <div className="relative z-50 min-w-0 max-w-[9rem] sm:max-w-[12rem] md:max-w-[14rem]">
+                <Link
+                  href="/"
+                  className="relative z-50 block min-w-0 max-w-[11rem] sm:max-w-[14rem] md:max-w-[16rem]"
+                  aria-label={t('navbar.back_home_hint')}
+                >
                   <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
                     {user.username}
                   </div>
-                  <div className="truncate text-[10px] font-medium text-white/40">DiscoWeb</div>
-                </div>
+                  <div className="truncate text-[10px] font-medium text-white/40 transition-colors hover:text-white/70">
+                    {t('navbar.back_home_hint')}
+                  </div>
+                </Link>
               ) : (
-                <div className="relative z-50 text-xl font-black tracking-tight text-white">DiscoWeb</div>
+                <Link href="/" className="relative z-50 text-xl font-black tracking-tight text-white">
+                  DiscoWeb
+                </Link>
               )}
 
               {!isLoggedIn && (
