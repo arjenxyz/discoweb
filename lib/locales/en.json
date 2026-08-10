@@ -281,6 +281,7 @@
       "admin_fallback": "Admin",
       "role": "Admin",
       "settings": "Panel Settings",
+      "language_settings": "Language Settings",
       "change_server": "Change Server",
       "switch_server_hint": "Choose from the servers you can manage.",
       "switch_server_current": "You're on this server",

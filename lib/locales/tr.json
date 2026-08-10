@@ -281,6 +281,7 @@
       "admin_fallback": "Yetkili",
       "role": "Admin",
       "settings": "Panel Ayarları",
+      "language_settings": "Dil Ayarları",
       "change_server": "Sunucu Değiştir",
       "switch_server_hint": "Yönetebildiğin sunucular arasından seç.",
       "switch_server_current": "Şu an bu sunucudasın",

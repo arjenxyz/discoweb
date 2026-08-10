@@ -4,11 +4,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { LuChevronRight, LuFileText, LuLogOut, LuMenu, LuServer, LuSettings } from 'react-icons/lu';
-import LanguageSwitcher from '@/app/components/LanguageSwitcher';
+import { LuChevronRight, LuFileText, LuLanguages, LuLogOut, LuMenu, LuServer, LuSettings } from 'react-icons/lu';
+import LanguageSwitcher, { LanguagePickerModal } from '@/app/components/LanguageSwitcher';
 import { useTranslation } from '@/lib/i18nContext';
 import type { AdminProfile } from './AdminSidebar';
 import AdminServerSwitchModal from './AdminServerSwitchModal';
+
 
 type AdminTopBarProps = {
   profile: AdminProfile | null;
@@ -52,12 +53,13 @@ export default function AdminTopBar({
   const { t } = useTranslation();
   const pathname = usePathname();
   const [serverSwitchOpen, setServerSwitchOpen] = useState(false);
+  const [languageModalOpen, setLanguageModalOpen] = useState(false);
 
   return (
     <>
       <header
         className={`md:fixed inset-x-0 top-0 flex h-16 items-center border-b border-white/[0.06] bg-[#090b10]/90 px-4 backdrop-blur-xl sm:px-6 transition-all duration-200 ${
-          accountMenuOpen || serverSwitchOpen ? 'z-[9991]' : 'z-30'
+          accountMenuOpen || serverSwitchOpen || languageModalOpen ? 'z-[9991]' : 'z-30'
         } lg:relative lg:inset-auto`}
       >
         <div className="flex min-w-0 items-center gap-2.5">
@@ -80,7 +82,9 @@ export default function AdminTopBar({
         <div className="flex-1" />
 
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+          <div className="hidden lg:block">
+            <LanguageSwitcher />
+          </div>
 
           <div className="relative" ref={accountMenuRef}>
             <button
@@ -200,6 +204,23 @@ export default function AdminTopBar({
                     <LuChevronRight className="h-4 w-4 text-white/25" />
                   </button>
 
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onAccountMenuClose();
+                      setLanguageModalOpen(true);
+                    }}
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-white/70 transition hover:bg-white/[0.05] hover:text-white lg:hidden"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06]">
+                        <LuLanguages className="h-4 w-4" />
+                      </div>
+                      <span className="text-sm font-medium">{t('admin.shell.language_settings')}</span>
+                    </div>
+                    <LuChevronRight className="h-4 w-4 text-white/25" />
+                  </button>
+
                   <Link
                     href="/admin/guide"
                     onClick={onAccountMenuClose}
@@ -236,6 +257,7 @@ export default function AdminTopBar({
       </header>
 
       <AdminServerSwitchModal open={serverSwitchOpen} onClose={() => setServerSwitchOpen(false)} />
+      <LanguagePickerModal open={languageModalOpen} onClose={() => setLanguageModalOpen(false)} />
     </>
   );
 }
