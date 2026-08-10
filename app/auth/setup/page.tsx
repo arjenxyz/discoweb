@@ -85,6 +85,12 @@ export default function SetupPage() {
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
 
+  useEffect(() => {
+    if (!error) return undefined;
+    const timer = window.setTimeout(() => setError(''), 3500);
+    return () => window.clearTimeout(timer);
+  }, [error]);
+
   const getRoleNameById = useCallback(
     (roleId: string) => roles.find((role) => role.id === roleId)?.name ?? 'Bilinmeyen Rol',
     [roles],
@@ -460,13 +466,6 @@ export default function SetupPage() {
 
           {/* Content Area */}
           <div className="bg-[#0c0e14]/80 backdrop-blur-2xl border border-white/10 rounded-[1.75rem] shadow-2xl p-5 sm:p-7 flex flex-col self-start">
-            {error && (
-              <div className="mb-5 rounded-2xl bg-red-500/10 border border-red-500/20 p-4 flex items-start gap-3 animate-[slideDown_0.2s_ease-out]">
-                <LuX className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-                <p className="text-sm text-red-200">{error}</p>
-              </div>
-            )}
-
             <div>
               {/* --- STEP 0: ROLES --- */}
               {currentStep === 0 && (
@@ -819,6 +818,29 @@ export default function SetupPage() {
 
         </div>
       </main>
+
+      {error && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="pointer-events-none fixed inset-x-0 top-20 z-[100] flex justify-center px-4 sm:top-24"
+        >
+          <div className="pointer-events-auto flex max-w-md items-start gap-3 rounded-2xl border border-red-400/30 bg-[#1a0b0e]/95 px-4 py-3 shadow-[0_16px_50px_rgba(0,0,0,0.55)] backdrop-blur-xl animate-[slideDown_0.25s_ease-out]">
+            <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-red-300">
+              <LuX className="h-4 w-4" />
+            </span>
+            <p className="min-w-0 flex-1 pt-1 text-sm font-medium leading-5 text-red-100">{error}</p>
+            <button
+              type="button"
+              onClick={() => setError('')}
+              className="mt-0.5 rounded-lg p-1 text-red-200/60 transition hover:bg-white/5 hover:text-red-100"
+              aria-label="Kapat"
+            >
+              <LuX className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
