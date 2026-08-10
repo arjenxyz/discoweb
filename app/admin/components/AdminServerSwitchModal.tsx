@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LuCheck, LuX } from 'react-icons/lu';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
@@ -58,6 +58,13 @@ function loadCachedGuilds(): SwitchGuild[] {
   }
 }
 
+function clampOffsetY(offsetY: number, panelHeight: number): number {
+  const margin = 16;
+  const maxUp = Math.max(0, (window.innerHeight - panelHeight) / 2 - margin);
+  const maxDown = maxUp;
+  return Math.min(maxDown, Math.max(-maxUp, offsetY));
+}
+
 export default function AdminServerSwitchModal({
   open,
   onClose,
@@ -67,10 +74,18 @@ export default function AdminServerSwitchModal({
 }) {
   const { t } = useTranslation();
   const router = useRouter();
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const dragRef = useRef<{ active: boolean; startY: number; originOffset: number }>({
+    active: false,
+    startY: 0,
+    originOffset: 0,
+  });
   const [guilds, setGuilds] = useState<SwitchGuild[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [switchingId, setSwitchingId] = useState<string | null>(null);
+  const [offsetY, setOffsetY] = useState(0);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -91,8 +106,61 @@ export default function AdminServerSwitchModal({
     setLoading(true);
     setSelectedId(readSelectedGuildId());
     setGuilds(loadCachedGuilds());
+    setOffsetY(0);
     setLoading(false);
   }, [open]);
+
+  const onDragMove = useCallback((clientY: number) => {
+    const drag = dragRef.current;
+    if (!drag.active) return;
+    const panelHeight = panelRef.current?.offsetHeight ?? 320;
+    const next = clampOffsetY(drag.originOffset + (clientY - drag.startY), panelHeight);
+    setOffsetY(next);
+  }, []);
+
+  const endDrag = useCallback(() => {
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    setDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const onPointerMove = (event: PointerEvent) => onDragMove(event.clientY);
+    const onTouchMove = (event: TouchEvent) => {
+      if (!dragRef.current.active) return;
+      event.preventDefault();
+      const touch = event.touches[0];
+      if (touch) onDragMove(touch.clientY);
+    };
+    const onUp = () => endDrag();
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onUp);
+    window.addEventListener('touchcancel', onUp);
+
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onUp);
+      window.removeEventListener('touchcancel', onUp);
+    };
+  }, [endDrag, onDragMove, open]);
+
+  const startDrag = (clientY: number) => {
+    dragRef.current = {
+      active: true,
+      startY: clientY,
+      originOffset: offsetY,
+    };
+    setDragging(true);
+  };
 
   const handleSelect = useCallback(
     (guild: SwitchGuild) => {
@@ -118,7 +186,7 @@ export default function AdminServerSwitchModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[10060] flex items-end justify-center p-4 sm:items-center">
+    <div className="fixed inset-0 z-[10060] flex items-center justify-center p-4">
       <button
         type="button"
         aria-label={t('admin.shell.close_menu')}
@@ -127,28 +195,45 @@ export default function AdminServerSwitchModal({
       />
 
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="admin-switch-server-title"
-        className="relative z-10 flex max-h-[min(80vh,36rem)] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0c0e14] shadow-2xl shadow-black/50"
+        style={{ transform: `translateY(${offsetY}px)` }}
+        className={`relative z-10 flex max-h-[min(80vh,36rem)] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0c0e14] shadow-2xl shadow-black/50 will-change-transform ${
+          dragging ? 'transition-none' : 'transition-transform duration-200 ease-out'
+        }`}
       >
         <div className="pointer-events-none absolute -left-10 -top-16 h-40 w-40 rounded-full bg-[#5865F2]/25 blur-[70px]" />
 
-        <div className="relative flex items-start justify-between gap-3 border-b border-white/[0.06] px-5 py-4">
-          <div className="min-w-0">
-            <h2 id="admin-switch-server-title" className="text-base font-semibold text-white">
-              {t('admin.shell.change_server')}
-            </h2>
-            <p className="mt-0.5 text-xs text-white/40">{t('admin.shell.switch_server_hint')}</p>
+        <div
+          className="relative cursor-grab touch-none select-none active:cursor-grabbing"
+          onPointerDown={(event) => {
+            if ((event.target as HTMLElement).closest('button')) return;
+            event.preventDefault();
+            startDrag(event.clientY);
+          }}
+        >
+          <div className="flex justify-center pt-3">
+            <span className="h-1 w-10 rounded-full bg-white/20" />
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/50 transition hover:bg-white/10 hover:text-white"
-            aria-label={t('admin.shell.close_menu')}
-          >
-            <LuX className="h-4 w-4" />
-          </button>
+
+          <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] px-5 pb-4 pt-3">
+            <div className="min-w-0">
+              <h2 id="admin-switch-server-title" className="text-base font-semibold text-white">
+                {t('admin.shell.change_server')}
+              </h2>
+              <p className="mt-0.5 text-xs text-white/40">{t('admin.shell.switch_server_hint')}</p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/50 transition hover:bg-white/10 hover:text-white"
+              aria-label={t('admin.shell.close_menu')}
+            >
+              <LuX className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3">
