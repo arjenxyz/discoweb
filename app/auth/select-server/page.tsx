@@ -121,44 +121,50 @@ export default function SelectServerPage() {
 
       try {
         const parsedGuilds = JSON.parse(adminGuilds) as Guild[];
-        const filteredGuilds: Guild[] = [];
 
-        for (const guild of parsedGuilds) {
-          try {
-            const response = await fetch(`/api/discord/guild/${guild.id}/member-check`, {
-              method: 'GET',
-              credentials: 'include',
-              cache: 'no-store',
-            });
+        const enriched = await Promise.all(
+          parsedGuilds.map(async (guild) => {
+            try {
+              const response = await fetch(`/api/discord/guild/${guild.id}/member-check`, {
+                method: 'GET',
+                credentials: 'include',
+                cache: 'no-store',
+              });
 
-            if (!response.ok) continue;
+              if (!response.ok) return null;
 
-            const data = (await response.json()) as { isMember: boolean };
-            if (!data.isMember) continue;
+              const data = (await response.json()) as { isMember: boolean };
+              if (!data.isMember) return null;
 
-            let isOwner = Boolean(guild.isOwner);
-            let iconUrl = guild.iconUrl ?? null;
+              let isOwner = Boolean(guild.isOwner);
+              let iconUrl = guild.iconUrl ?? null;
+              let name = guild.name;
 
-            const guildResponse = await fetch(`/api/discord/guild/${guild.id}`, {
-              method: 'GET',
-              credentials: 'include',
-              cache: 'no-store',
-            });
+              const guildResponse = await fetch(`/api/discord/guild/${guild.id}`, {
+                method: 'GET',
+                credentials: 'include',
+                cache: 'no-store',
+              });
 
-            if (guildResponse.ok) {
-              const guildData = (await guildResponse.json()) as {
-                owner_id?: string;
-                icon?: string | null;
-              };
-              isOwner = Boolean(currentUserId) && guildData.owner_id === currentUserId;
-              iconUrl = guildData.icon ?? guild.iconUrl ?? null;
+              if (guildResponse.ok) {
+                const guildData = (await guildResponse.json()) as {
+                  name?: string;
+                  owner_id?: string;
+                  icon?: string | null;
+                };
+                isOwner = Boolean(currentUserId) && guildData.owner_id === currentUserId;
+                if (guildData.icon) iconUrl = guildData.icon;
+                if (guildData.name) name = guildData.name;
+              }
+
+              return { ...guild, name, isOwner, iconUrl };
+            } catch {
+              return null;
             }
+          }),
+        );
 
-            filteredGuilds.push({ ...guild, isOwner, iconUrl });
-          } catch {
-            // skip guild on membership errors
-          }
-        }
+        const filteredGuilds = enriched.filter((guild): guild is Guild => guild !== null);
 
         const withSetupStatus = await Promise.all(
           filteredGuilds.map(async (guild) => {
@@ -177,6 +183,9 @@ export default function SelectServerPage() {
 
         const adminOnlyGuilds = withSetupStatus.filter((g) => g.isAdmin || g.isOwner);
         setGuilds(bypass && adminOnlyGuilds.length === 0 ? [LOCAL_DEV_GUILD] : adminOnlyGuilds);
+        if (adminOnlyGuilds.length > 0) {
+          localStorage.setItem('adminGuilds', JSON.stringify(adminOnlyGuilds));
+        }
 
         let developerAccess = bypass;
         try {
@@ -241,8 +250,8 @@ export default function SelectServerPage() {
       localStorage.setItem('adminGuilds', JSON.stringify(payload.adminGuilds));
       localStorage.setItem('adminGuildsUpdatedAt', updatedAt);
       setLastUpdatedAt(updatedAt);
-      setRefreshMessage('Sunucu listesi güncellendi.');
       await loadGuilds(currentUserIdRef.current);
+      setRefreshMessage('Sunucu listesi güncellendi.');
     } catch {
       setRefreshMessage('Liste güncellenemedi. Biraz sonra tekrar deneyin.');
     } finally {
@@ -424,6 +433,7 @@ export default function SelectServerPage() {
                       >
                         {guild.iconUrl ? (
                           <Image
+                            key={`${guild.id}-${guild.iconUrl}`}
                             src={guild.iconUrl}
                             alt=""
                             width={48}

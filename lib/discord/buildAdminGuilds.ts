@@ -170,7 +170,8 @@ export async function buildAdminGuilds(options: BuildAdminGuildsOptions): Promis
 
       adminGuilds.push({
         id: userGuild.id,
-        name: server?.name ?? userGuild.name,
+        // Prefer live Discord name over possibly stale DB display name
+        name: userGuild.name || server?.name || 'Unknown',
         isAdmin,
         isSetup: Boolean(server?.is_setup),
         verifyRoleId: server?.verify_role_id ?? null,
