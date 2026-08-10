@@ -741,27 +741,39 @@ export default function CuteNavbar() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <h2 className="truncate text-2xl font-black tracking-tight text-white">
-                        {t('navbar.select_menu_hello', { name: user?.username ?? '…' })}
+                      <h2 className="flex min-w-0 items-center gap-1.5 text-2xl font-black tracking-tight text-white">
+                        <span className="truncate">
+                          {t('navbar.select_menu_hello', { name: user?.username ?? '…' })}
+                        </span>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={nicketEmoji}
+                          alt=""
+                          className="h-5 w-5 shrink-0 object-contain"
+                          draggable={false}
+                          aria-hidden
+                        />
                       </h2>
+                      <p className="mt-1 text-sm text-white/45">{t('navbar.select_menu_intro')}</p>
                     </div>
                   </div>
 
-                  <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/50">
-                    {t('navbar.select_menu_intro')}
-                  </p>
-
-                  <ul className="mt-5 space-y-2.5 border-l border-white/10 pl-3.5">
-                    {[
-                      t('navbar.select_menu_tip_1'),
-                      t('navbar.select_menu_tip_2'),
-                      t('navbar.select_menu_tip_3'),
-                    ].map((tip) => (
-                      <li key={tip} className="text-xs leading-5 text-white/40">
-                        {tip}
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-3.5">
+                    <ol className="space-y-2.5">
+                      {[
+                        t('navbar.select_menu_step_1'),
+                        t('navbar.select_menu_step_2'),
+                        t('navbar.select_menu_step_3'),
+                      ].map((step, index) => (
+                        <li key={step} className="flex items-start gap-3">
+                          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#5865F2]/25 text-[11px] font-bold text-[#9eb0ff]">
+                            {index + 1}
+                          </span>
+                          <span className="pt-0.5 text-sm leading-5 text-white/70">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
                 </>
               ) : (
                 <>
