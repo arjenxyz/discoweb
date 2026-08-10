@@ -188,23 +188,6 @@ export default function AdminTopBar({
                     type="button"
                     onClick={() => {
                       onAccountMenuClose();
-                      window.location.href = '/admin/settings';
-                    }}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-white/70 transition hover:bg-white/[0.05] hover:text-white"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06]">
-                        <LuSettings className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">{t('admin.shell.settings')}</span>
-                    </div>
-                    <LuChevronRight className="h-4 w-4 text-white/25" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onAccountMenuClose();
                       setLanguageModalOpen(true);
                     }}
                     className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-white/70 transition hover:bg-white/[0.05] hover:text-white lg:hidden"
@@ -214,6 +197,23 @@ export default function AdminTopBar({
                         <LuLanguages className="h-4 w-4" />
                       </div>
                       <span className="text-sm font-medium">{t('admin.shell.language_settings')}</span>
+                    </div>
+                    <LuChevronRight className="h-4 w-4 text-white/25" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onAccountMenuClose();
+                      window.location.href = '/admin/settings';
+                    }}
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-white/70 transition hover:bg-white/[0.05] hover:text-white"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.06]">
+                        <LuSettings className="h-4 w-4" />
+                      </div>
+                      <span className="text-sm font-medium">{t('admin.shell.settings')}</span>
                     </div>
                     <LuChevronRight className="h-4 w-4 text-white/25" />
                   </button>
