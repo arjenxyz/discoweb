@@ -419,16 +419,11 @@ export default function SetupPage() {
               <p className="text-base font-bold text-white tracking-tight">{guildName}</p>
               <div className="flex items-center gap-2 text-xs text-white/40">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#5865F2] animate-pulse" />
-                Sistem Kurulumu
+                {alreadySetup ? 'Güncelleme Aşaması' : 'Kurulum Aşaması'}
               </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {user?.username && (
-              <span className="hidden max-w-[9rem] truncate text-sm font-medium text-white/70 sm:inline">
-                {user.username}
-              </span>
-            )}
             <button
               onClick={() => router.replace('/auth/select-server')}
               className="text-sm font-medium text-white/50 hover:text-white transition-colors bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl px-4 py-2"
