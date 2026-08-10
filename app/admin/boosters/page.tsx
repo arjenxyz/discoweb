@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { LuPencil, LuTrash2 } from 'react-icons/lu';
 import { StoreListPanel } from '../store/StoreListRow';
+import { useTranslation } from '@/lib/i18nContext';
 
 type BoosterTier = {
   id: string;
@@ -79,6 +80,7 @@ function getRoleIconUrl(role: DiscordRole): string | null {
 }
 
 export default function AdminBoostersPage() {
+  const { t } = useTranslation();
   const [tiers, setTiers] = useState<BoosterTier[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormState>(emptyForm());
@@ -184,8 +186,8 @@ export default function AdminBoostersPage() {
     e.preventDefault();
     setError(null);
     const months = parseInt(form.months_required, 10);
-    if (!form.name.trim()) return setError('İsim zorunludur.');
-    if (!Number.isInteger(months) || months < 1) return setError('Ay gereksinimi en az 1 olmalı.');
+    if (!form.name.trim()) return setError(t('admin.boosters.error_name'));
+    if (!Number.isInteger(months) || months < 1) return setError(t('admin.boosters.error_months'));
     setSaving(true);
 
     const body = {
@@ -212,7 +214,7 @@ export default function AdminBoostersPage() {
     setSaving(false);
     if (!res.ok) {
       const data = (await res.json()) as { message?: string };
-      return setError(data.message ?? 'Bir hata oluştu.');
+      return setError(data.message ?? t('admin.boosters.error_generic'));
     }
     resetForm();
     await load();
@@ -248,8 +250,8 @@ export default function AdminBoostersPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Topluluk</p>
-          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">Booster Ayarları</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">{t('admin.boosters.eyebrow')}</p>
+          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">{t('admin.boosters.title')}</h1>
         </div>
         <button
           onClick={() => {
@@ -263,14 +265,14 @@ export default function AdminBoostersPage() {
               : 'shrink-0 rounded-xl bg-[#5865F2] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#4752c4]'
           }
         >
-          {showForm && !editingId ? 'İptal' : '+ Yeni Kademe'}
+          {showForm && !editingId ? t('admin.boosters.cancel') : t('admin.boosters.new_tier')}
         </button>
       </div>
 
       {/* Form */}
       {showForm && (
         <form onSubmit={(e) => void handleSubmit(e)} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-white">{editingId ? 'Kademeyi Düzenle' : 'Yeni Kademe Oluştur'}</h2>
+          <h2 className="text-sm font-semibold text-white">{editingId ? t('admin.boosters.edit_tier') : t('admin.boosters.create_tier')}</h2>
           {error && (
             <p className="mt-3 rounded-2xl border border-rose-500/20 bg-rose-500/[0.08] px-3.5 py-2.5 text-sm text-rose-200">{error}</p>
           )}
@@ -278,33 +280,33 @@ export default function AdminBoostersPage() {
           <div className="mt-4 space-y-4">
           {/* ── Temel Bilgiler ── */}
           <div>
-            <p className={sectionCls}>Temel Bilgiler</p>
+            <p className={sectionCls}>{t('admin.boosters.section_basic')}</p>
             <div className="mt-2.5 grid gap-3.5 sm:grid-cols-2">
               <div>
-                <label className={labelCls}>İsim *</label>
+                <label className={labelCls}>{t('admin.boosters.name')}</label>
                 <input className={inputCls} maxLength={32} value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="1. Ay Booster" />
+                  onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t('admin.boosters.name_placeholder')} />
               </div>
 
               {/* Emoji picker */}
               <div ref={emojiPickerRef} className="relative">
                 <label className={labelCls}>
-                  Emoji{' '}
-                  <span className="normal-case tracking-normal text-white/25">(unicode veya sunucu emojisi)</span>
+                  {t('admin.boosters.emoji')}{' '}
+                  <span className="normal-case tracking-normal text-white/25">{t('admin.boosters.emoji_hint')}</span>
                 </label>
                 <div className="mt-1.5 flex gap-2">
                   <input
                     className={`${inputCls} mt-0 flex-1`}
                     value={form.emoji}
                     onChange={(e) => setForm({ ...form, emoji: e.target.value })}
-                    placeholder="🚀 veya tıkla →"
+                    placeholder={t('admin.boosters.emoji_placeholder')}
                   />
                   <button
                     type="button"
                     onClick={() => { setShowEmojiPicker(!showEmojiPicker); }}
                     className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white"
                   >
-                    {emojisLoading ? '...' : '😀 Sunucu'}
+                    {emojisLoading ? '...' : t('admin.boosters.server_emojis')}
                   </button>
                 </div>
                 {showEmojiPicker && (
@@ -312,16 +314,16 @@ export default function AdminBoostersPage() {
                     <div className="p-2">
                       <input
                         className={pickerInputCls}
-                        placeholder="Emoji ara..."
+                        placeholder={t('admin.boosters.search_emoji')}
                         value={emojiSearch}
                         onChange={(e) => setEmojiSearch(e.target.value)}
                         autoFocus
                       />
                     </div>
                     <div className="max-h-48 overflow-y-auto p-2 grid grid-cols-6 gap-1">
-                      {emojisLoading && <p className="col-span-6 py-4 text-center text-xs text-white/30">Yükleniyor...</p>}
+                      {emojisLoading && <p className="col-span-6 py-4 text-center text-xs text-white/30">{t('admin.boosters.loading')}</p>}
                       {!emojisLoading && filteredEmojis.length === 0 && (
-                        <p className="col-span-6 py-4 text-center text-xs text-white/30">Emoji bulunamadı</p>
+                        <p className="col-span-6 py-4 text-center text-xs text-white/30">{t('admin.boosters.emoji_not_found')}</p>
                       )}
                       {filteredEmojis.map((emoji) => (
                         <button
@@ -340,14 +342,14 @@ export default function AdminBoostersPage() {
               </div>
 
               <div>
-                <label className={labelCls}>Ay Gereksinimi *</label>
+                <label className={labelCls}>{t('admin.boosters.months_required')}</label>
                 <input type="number" min={1} step={1} className={inputCls} value={form.months_required}
                   onChange={(e) => setForm({ ...form, months_required: e.target.value })} placeholder="3" />
-                <p className="mt-1 text-[11px] text-white/35">Örn: 3 yazarsanız, üye ardışık olarak 3 aydır boost basıyorsa bu kademeye ulaşır.</p>
+                <p className="mt-1 text-[11px] text-white/35">{t('admin.boosters.months_hint')}</p>
               </div>
 
               <div>
-                <label className={labelCls}>Renk</label>
+                <label className={labelCls}>{t('admin.boosters.color')}</label>
                 <div className="mt-1.5 flex gap-2">
                   <input type="color" className="h-[42px] w-12 cursor-pointer rounded-xl border border-white/10 bg-black/25 p-1"
                     value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />
@@ -357,51 +359,51 @@ export default function AdminBoostersPage() {
               </div>
 
               <div>
-                <label className={labelCls}>Sıra No</label>
+                <label className={labelCls}>{t('admin.boosters.sort_order')}</label>
                 <input type="number" min={0} step={1} className={inputCls} value={form.sort_order}
                   onChange={(e) => setForm({ ...form, sort_order: e.target.value })} />
               </div>
 
               <div className="sm:col-span-2">
-                <label className={labelCls}>Açıklama</label>
+                <label className={labelCls}>{t('admin.boosters.description')}</label>
                 <textarea className={`${inputCls} resize-y`} maxLength={200} rows={2} value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Üyeler sunucuyu 3 ay kesintisiz boostlayarak bu rozeti kazanır." />
+                  placeholder={t('admin.boosters.description_placeholder')} />
               </div>
             </div>
           </div>
 
           {/* ── Ödüller ── */}
           <div className="border-t border-white/[0.06] pt-4">
-            <p className={sectionCls}>Ödüller</p>
+            <p className={sectionCls}>{t('admin.boosters.section_rewards')}</p>
             <div className="mt-2.5 grid gap-3.5 sm:grid-cols-2">
               <div>
-                <label className={labelCls}>Aylık Papel Ödülü</label>
+                <label className={labelCls}>{t('admin.boosters.monthly_papel')}</label>
                 <input type="number" min={0} step={1} className={inputCls} value={form.reward_papel}
                   onChange={(e) => setForm({ ...form, reward_papel: e.target.value })} placeholder="0" />
-                <p className="mt-1 text-[11px] text-white/35">Bu kademedeki bir Booster'a her ay verilecek papel miktarı.</p>
+                <p className="mt-1 text-[11px] text-white/35">{t('admin.boosters.monthly_papel_hint')}</p>
               </div>
               <div>
-                <label className={labelCls}>Kazanç Çarpanı (örn: 1.5)</label>
+                <label className={labelCls}>{t('admin.boosters.earn_multiplier')}</label>
                 <input type="number" min={1} step={0.1} className={inputCls} value={form.reward_earn_multiplier}
                   onChange={(e) => setForm({ ...form, reward_earn_multiplier: e.target.value })} placeholder="1.0" />
               </div>
               <div className="sm:col-span-2">
-                <label className={labelCls}>Ödül Mesajı (kullanıcıya gösterilir)</label>
+                <label className={labelCls}>{t('admin.boosters.reward_message')}</label>
                 <input className={inputCls} maxLength={200} value={form.reward_message}
                   onChange={(e) => setForm({ ...form, reward_message: e.target.value })}
-                  placeholder="3 Aylık Kesintisiz Takviye! Bu rozeti kazandın." />
+                  placeholder={t('admin.boosters.reward_message_placeholder')} />
               </div>
             </div>
           </div>
 
           {/* ── Otomatik Rol ── */}
           <div className="border-t border-white/[0.06] pt-4">
-            <p className={sectionCls}>Otomatik Rol Ataması</p>
+            <p className={sectionCls}>{t('admin.boosters.section_role')}</p>
             <div ref={rolePickerRef} className="relative mt-2.5">
               <label className={labelCls}>
-                Rol{' '}
-                <span className="normal-case tracking-normal text-white/25">(kademeye ulaşıldığında otomatik atanır)</span>
+                {t('admin.boosters.role')}{' '}
+                <span className="normal-case tracking-normal text-white/25">{t('admin.boosters.role_hint')}</span>
               </label>
 
               {/* Selected role display */}
@@ -433,9 +435,9 @@ export default function AdminBoostersPage() {
                     <span className="text-xs text-white/30">{selectedRole.id}</span>
                   </>
                 ) : form.role_id ? (
-                  <span className="flex-1 text-white/50">ID: {form.role_id}</span>
+                  <span className="flex-1 text-white/50">{t('admin.boosters.role_id_display', { id: form.role_id })}</span>
                 ) : (
-                  <span className="flex-1 text-white/30">Rol seç veya ID girin...</span>
+                  <span className="flex-1 text-white/30">{t('admin.boosters.role_select')}</span>
                 )}
                 <svg className="h-4 w-4 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -447,7 +449,7 @@ export default function AdminBoostersPage() {
                   <div className="p-2">
                     <input
                       className={pickerInputCls}
-                      placeholder="Rol adı veya ID ara..."
+                      placeholder={t('admin.boosters.search_role')}
                       value={roleSearch}
                       onChange={(e) => { setRoleSearch(e.target.value); if (!roles.length) void loadRoles(); }}
                       onFocus={() => { if (!roles.length) void loadRoles(); }}
@@ -462,10 +464,10 @@ export default function AdminBoostersPage() {
                       className="flex w-full items-center gap-2 px-3 py-2 text-xs text-white/30 hover:bg-white/5 transition"
                     >
                       <span className="h-4 w-4 rounded-full border border-white/10" />
-                      Rol yok (temizle)
+                      {t('admin.boosters.clear_role')}
                     </button>
                     {rolesLoading && (
-                      <p className="px-3 py-4 text-center text-xs text-white/30">Roller yükleniyor...</p>
+                      <p className="px-3 py-4 text-center text-xs text-white/30">{t('admin.boosters.roles_loading')}</p>
                     )}
                     {filteredRoles.map((role) => {
                       const iconUrl = getRoleIconUrl(role);
@@ -493,10 +495,10 @@ export default function AdminBoostersPage() {
                     })}
                     {/* Manual ID input */}
                     <div className="border-t border-white/5 p-2">
-                      <p className="mb-1.5 text-[11px] text-white/35">Veya ID ile gir:</p>
+                      <p className="mb-1.5 text-[11px] text-white/35">{t('admin.boosters.or_enter_id')}</p>
                       <input
                         className={pickerInputCls}
-                        placeholder="Role ID..."
+                        placeholder={t('admin.boosters.role_id_placeholder')}
                         value={form.role_id}
                         onChange={(e) => setForm({ ...form, role_id: e.target.value })}
                       />
@@ -509,9 +511,9 @@ export default function AdminBoostersPage() {
 
           {/* ── Arkaplan Görseli ── */}
           <div className="border-t border-white/[0.06] pt-4">
-            <p className={sectionCls}>Kapak Görseli</p>
+            <p className={sectionCls}>{t('admin.boosters.section_cover')}</p>
             <div className="mt-2.5">
-              <label className={labelCls}>Arkaplan Görseli URL</label>
+              <label className={labelCls}>{t('admin.boosters.bg_url')}</label>
               <input
                 className={inputCls}
                 value={form.background_image}
@@ -522,14 +524,14 @@ export default function AdminBoostersPage() {
                 <div className="mt-2 relative h-20 w-full overflow-hidden rounded-xl border border-white/10 sm:h-24">
                   <Image
                     src={form.background_image}
-                    alt="Arkaplan önizleme"
+                    alt={t('admin.boosters.bg_alt')}
                     fill
                     className="object-cover"
                     unoptimized
                     onError={() => {}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <p className="absolute bottom-2 left-3 text-xs text-white/70">Önizleme</p>
+                  <p className="absolute bottom-2 left-3 text-xs text-white/70">{t('admin.boosters.preview')}</p>
                 </div>
               )}
             </div>
@@ -541,11 +543,11 @@ export default function AdminBoostersPage() {
               disabled={saving}
               className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {saving ? 'Kaydediliyor...' : editingId ? 'Güncelle' : 'Oluştur'}
+              {saving ? t('admin.boosters.saving') : editingId ? t('admin.boosters.update') : t('admin.boosters.create')}
             </button>
             <button type="button" onClick={resetForm}
               className="rounded-xl border border-white/10 bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:text-white">
-              İptal
+              {t('admin.boosters.cancel')}
             </button>
           </div>
           </div>
@@ -554,8 +556,8 @@ export default function AdminBoostersPage() {
 
       {/* Tier List */}
       <div>
-        <p className="mb-2 text-[11px] text-white/35">Üyeler aralıksız boost bastıkları ay süresine göre kademe atlarlar.</p>
-        <StoreListPanel loading={loading} isEmpty={tiers.length === 0} emptyMessage="Henüz booster kademesi oluşturulmadı.">
+        <p className="mb-2 text-[11px] text-white/35">{t('admin.boosters.list_hint')}</p>
+        <StoreListPanel loading={loading} isEmpty={tiers.length === 0} emptyMessage={t('admin.boosters.empty')}>
           {tiers.map((tier) => (
             <div key={tier.id} className="group px-4 py-3.5 transition hover:bg-white/[0.03] sm:px-5">
               <div className="flex items-center gap-3">
@@ -576,24 +578,24 @@ export default function AdminBoostersPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-semibold text-white">{tier.name}</span>
-                    <span className="rounded-md bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-white/45">{tier.months_required} Ay</span>
+                    <span className="rounded-md bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-white/45">{t('admin.boosters.months_short', { count: tier.months_required })}</span>
                     {tier.role_id && (
                       <span className="rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-white/45">
-                        Rol ✓
+                        {t('admin.boosters.role_badge')}
                       </span>
                     )}
                   </div>
                   <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
                     {(tier.reward_papel ?? 0) > 0 && (
                       <p className="text-[11px] text-white/40">
-                        <span className="text-white/25">Papel</span>
+                        <span className="text-white/25">{t('admin.boosters.papel')}</span>
                         <span className="mx-1 text-white/15">·</span>
                         <span className="text-white/55">+{tier.reward_papel}</span>
                       </p>
                     )}
                     {(tier.reward_earn_multiplier ?? 1) > 1 && (
                       <p className="text-[11px] text-white/40">
-                        <span className="text-white/25">Çarpan</span>
+                        <span className="text-white/25">{t('admin.boosters.multiplier')}</span>
                         <span className="mx-1 text-white/15">·</span>
                         <span className="text-white/55">×{tier.reward_earn_multiplier}</span>
                       </p>
@@ -612,8 +614,8 @@ export default function AdminBoostersPage() {
                     type="button"
                     onClick={() => startEdit(tier)}
                     className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-white/45 transition hover:border-white/20 hover:bg-white/[0.04] hover:text-white"
-                    aria-label="Düzenle"
-                    title="Düzenle"
+                    aria-label={t('admin.boosters.edit')}
+                    title={t('admin.boosters.edit')}
                   >
                     <LuPencil className="h-3.5 w-3.5" />
                   </button>
@@ -621,8 +623,8 @@ export default function AdminBoostersPage() {
                     type="button"
                     onClick={() => setConfirmDelete(tier.id)}
                     className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-500/20 text-rose-300/70 transition hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-200"
-                    aria-label="Sil"
-                    title="Sil"
+                    aria-label={t('admin.boosters.delete')}
+                    title={t('admin.boosters.delete')}
                   >
                     <LuTrash2 className="h-3.5 w-3.5" />
                   </button>
@@ -637,16 +639,16 @@ export default function AdminBoostersPage() {
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="w-full max-w-xs rounded-2xl border border-white/10 bg-[#0f111a] p-4 shadow-xl sm:p-5">
-            <h3 className="text-sm font-semibold text-white">Kademe Sil</h3>
-            <p className="mt-2 text-sm text-white/50">Bu booster kademesini silmek istediğinizden emin misiniz?</p>
+            <h3 className="text-sm font-semibold text-white">{t('admin.boosters.delete_title')}</h3>
+            <p className="mt-2 text-sm text-white/50">{t('admin.boosters.delete_confirm')}</p>
             <div className="mt-4 flex gap-2">
               <button onClick={() => void handleDelete(confirmDelete)}
                 className="flex-1 rounded-xl bg-red-600 py-2.5 text-xs font-semibold text-white transition hover:bg-red-500">
-                Sil
+                {t('admin.boosters.delete')}
               </button>
               <button onClick={() => setConfirmDelete(null)}
                 className="flex-1 rounded-xl border border-white/10 bg-white/[0.03] py-2.5 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white">
-                İptal
+                {t('admin.boosters.cancel')}
               </button>
             </div>
           </div>

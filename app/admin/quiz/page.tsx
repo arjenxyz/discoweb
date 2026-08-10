@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { LuTrophy, LuPlus, LuRefreshCw, LuBrain, LuPencil, LuTrash2, LuX, LuMonitor } from 'react-icons/lu';
 import { apiErrorMessage } from '@/lib/apiError';
+import { useTranslation } from '@/lib/i18nContext';
 
 type QuizEvent = {
   id: string;
@@ -32,16 +33,36 @@ type CustomQuestion = {
   translations: Translation[];
 };
 
-const LANG_LABELS: Record<string, string> = {
-  tr: 'Türkçe',
-  en: 'English',
-  'pt-br': 'Português (BR)',
-  es: 'Español',
-  de: 'Deutsch',
-  fr: 'Français',
+type EditDraft = {
+  id: string;
+  category: string | null;
+  difficulty: 'easy' | 'medium' | 'hard' | null;
+  correct_index: number;
+  question: string;
+  options: string[];
+  is_ready: boolean;
 };
 
+const LANG_CODES = ['tr', 'en', 'pt-br', 'es', 'de', 'fr'] as const;
+
+function useQuizLangLabels() {
+  const { t } = useTranslation();
+  return useMemo(
+    () =>
+      ({
+        tr: t('admin.quiz_page.lang_tr'),
+        en: t('admin.quiz_page.lang_en'),
+        'pt-br': t('admin.quiz_page.lang_pt'),
+        es: t('admin.quiz_page.lang_es'),
+        de: t('admin.quiz_page.lang_de'),
+        fr: t('admin.quiz_page.lang_fr'),
+      }) as Record<string, string>,
+    [t],
+  );
+}
+
 export default function AdminQuizPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<'events' | 'questions'>('events');
 
   return (
@@ -51,17 +72,16 @@ export default function AdminQuizPage() {
           <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-[#a5b4ff]">
             <LuMonitor className="h-7 w-7" />
           </span>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Quiz Etkinlikleri</p>
-          <h1 className="mt-2 text-xl font-semibold text-white">Mobil desteklenmiyor</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">{t('admin.quiz_page.mobile_eyebrow')}</p>
+          <h1 className="mt-2 text-xl font-semibold text-white">{t('admin.quiz_page.mobile_title')}</h1>
           <p className="mt-2 text-sm leading-relaxed text-white/50">
-            Bu sayfa yalnızca bilgisayarda kullanılabilir. Quiz etkinliklerini yönetmek için lütfen bir
-            masaüstü veya dizüstü bilgisayardan giriş yapın.
+            {t('admin.quiz_page.mobile_body')}
           </p>
           <Link
             href="/admin"
             className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-white/70 transition hover:border-white/20 hover:text-white"
           >
-            Panele dön
+            {t('admin.quiz_page.back_to_panel')}
           </Link>
         </div>
       </div>
@@ -69,7 +89,7 @@ export default function AdminQuizPage() {
       <div className="hidden min-w-0 text-white lg:block">
         <div className="mb-5 flex items-start gap-3 sm:mb-6 sm:items-center">
           <LuTrophy className="mt-0.5 h-6 w-6 shrink-0 text-amber-400 sm:mt-0" />
-          <h1 className="text-xl font-bold leading-tight sm:text-2xl">Quiz Etkinlikleri (Sunucu)</h1>
+          <h1 className="text-xl font-bold leading-tight sm:text-2xl">{t('admin.quiz_page.title')}</h1>
         </div>
 
         <div className="mb-5 flex w-full gap-1 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-1 sm:mb-6 sm:inline-flex sm:w-auto sm:overflow-visible">
@@ -81,7 +101,7 @@ export default function AdminQuizPage() {
             }`}
           >
             <LuTrophy className="h-4 w-4 shrink-0" />
-            <span className="truncate">Etkinlikler</span>
+            <span className="truncate">{t('admin.quiz_page.tab_events')}</span>
           </button>
           <button
             type="button"
@@ -91,7 +111,7 @@ export default function AdminQuizPage() {
             }`}
           >
             <LuBrain className="h-4 w-4 shrink-0" />
-            <span className="truncate">Özel Sorular</span>
+            <span className="truncate">{t('admin.quiz_page.tab_questions')}</span>
           </button>
         </div>
 
@@ -103,12 +123,14 @@ export default function AdminQuizPage() {
 }
 
 function EventsPanel() {
+  const { t } = useTranslation();
+  const langLabels = useQuizLangLabels();
   const [events, setEvents] = useState<QuizEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({
-    title: 'Sunucu Quiz Etkinliği',
+    title: '',
     description: '',
     lang: 'tr',
     start_at: '',
@@ -123,6 +145,10 @@ function EventsPanel() {
     cp3_pos: 25,
     cp3_reward: 100,
   });
+
+  useEffect(() => {
+    setForm((prev) => (prev.title ? prev : { ...prev, title: t('admin.quiz_page.default_title') }));
+  }, [t]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -142,6 +168,21 @@ function EventsPanel() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const statusLabel = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return t('admin.quiz_page.status_scheduled');
+      case 'live':
+        return t('admin.quiz_page.status_live');
+      case 'finished':
+        return t('admin.quiz_page.status_finished');
+      case 'cancelled':
+        return t('admin.quiz_page.status_cancelled');
+      default:
+        return status;
+    }
+  };
 
   const create = async () => {
     setError(null);
@@ -176,7 +217,7 @@ function EventsPanel() {
   };
 
   const cancel = async (id: string) => {
-    if (!confirm('İptal edilsin mi?')) return;
+    if (!confirm(t('admin.quiz_page.cancel_confirm'))) return;
     await fetch('/api/admin/quiz/events', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -193,14 +234,14 @@ function EventsPanel() {
           onClick={() => load()}
           className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/80 sm:justify-start"
         >
-          <LuRefreshCw className="h-4 w-4" /> Yenile
+          <LuRefreshCw className="h-4 w-4" /> {t('admin.quiz_page.refresh')}
         </button>
         <button
           type="button"
           onClick={() => setShowCreate(true)}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-3 py-2.5 text-sm font-semibold text-black sm:ml-auto"
         >
-          <LuPlus className="h-4 w-4" /> Yeni Etkinlik
+          <LuPlus className="h-4 w-4" /> {t('admin.quiz_page.new_event')}
         </button>
       </div>
 
@@ -214,12 +255,12 @@ function EventsPanel() {
       <div className="space-y-3 md:hidden">
         {loading && (
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
-            Yükleniyor...
+            {t('admin.quiz_page.loading')}
           </div>
         )}
         {!loading && events.length === 0 && (
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
-            Etkinlik yok
+            {t('admin.quiz_page.no_events')}
           </div>
         )}
         {!loading &&
@@ -246,23 +287,23 @@ function EventsPanel() {
                     onClick={() => cancel(e.id)}
                     className="shrink-0 rounded-lg border border-red-500/30 px-2.5 py-1.5 text-xs text-red-300 hover:bg-red-500/10"
                   >
-                    İptal
+                    {t('admin.quiz_page.cancel')}
                   </button>
                 )}
               </div>
               <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
                 <div className="rounded-xl bg-white/[0.04] px-3 py-2">
-                  <dt className="text-white/40">Soru</dt>
+                  <dt className="text-white/40">{t('admin.quiz_page.col_questions')}</dt>
                   <dd className="mt-0.5 font-medium text-white/85">{e.total_questions}</dd>
                 </div>
                 <div className="rounded-xl bg-white/[0.04] px-3 py-2">
-                  <dt className="text-white/40">Havuz</dt>
+                  <dt className="text-white/40">{t('admin.quiz_page.col_pool')}</dt>
                   <dd className="mt-0.5 font-medium text-amber-300">
                     {Number(e.prize_pool_papel).toLocaleString('tr-TR')}
                   </dd>
                 </div>
                 <div className="col-span-2 rounded-xl bg-white/[0.04] px-3 py-2">
-                  <dt className="text-white/40">Checkpoint</dt>
+                  <dt className="text-white/40">{t('admin.quiz_page.col_checkpoint')}</dt>
                   <dd className="mt-0.5 break-words text-white/70">
                     {e.checkpoints.map((c) => `${c.position}→${c.papel_reward}`).join(' · ') || '—'}
                   </dd>
@@ -277,13 +318,13 @@ function EventsPanel() {
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="bg-white/[0.04] text-xs uppercase text-white/50">
             <tr>
-              <th className="px-3 py-2">Durum</th>
-              <th className="px-3 py-2">Dil</th>
-              <th className="px-3 py-2">Başlık</th>
-              <th className="px-3 py-2">Başlangıç</th>
-              <th className="px-3 py-2">Soru</th>
-              <th className="px-3 py-2">Havuz</th>
-              <th className="px-3 py-2">Checkpoint</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_status')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_lang')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_title')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_start')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_questions')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_pool')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_checkpoint')}</th>
               <th className="px-3 py-2"></th>
             </tr>
           </thead>
@@ -291,14 +332,14 @@ function EventsPanel() {
             {loading && (
               <tr>
                 <td colSpan={8} className="px-3 py-6 text-center text-white/40">
-                  Yükleniyor...
+                  {t('admin.quiz_page.loading')}
                 </td>
               </tr>
             )}
             {!loading && events.length === 0 && (
               <tr>
                 <td colSpan={8} className="px-3 py-6 text-center text-white/40">
-                  Etkinlik yok
+                  {t('admin.quiz_page.no_events')}
                 </td>
               </tr>
             )}
@@ -331,7 +372,7 @@ function EventsPanel() {
                         onClick={() => cancel(e.id)}
                         className="rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10"
                       >
-                        İptal
+                        {t('admin.quiz_page.cancel')}
                       </button>
                     )}
                   </td>
@@ -345,7 +386,7 @@ function EventsPanel() {
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
           <div className="flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#0f1116] shadow-2xl sm:max-h-[90vh] sm:rounded-2xl">
             <div className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-4 py-4 sm:px-6">
-              <h2 className="text-lg font-semibold text-white">Yeni Etkinlik</h2>
+              <h2 className="text-lg font-semibold text-white">{t('admin.quiz_page.create_title')}</h2>
               <button
                 type="button"
                 onClick={() => setShowCreate(false)}
@@ -357,7 +398,7 @@ function EventsPanel() {
             <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6">
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block text-sm text-white/70 sm:col-span-2">
-                  Başlık
+                  {t('admin.quiz_page.field_title')}
                   <input
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -365,7 +406,7 @@ function EventsPanel() {
                   />
                 </label>
                 <label className="block text-sm text-white/70 sm:col-span-2">
-                  Açıklama
+                  {t('admin.quiz_page.field_description')}
                   <textarea
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -374,24 +415,24 @@ function EventsPanel() {
                   />
                 </label>
                 <label className="block text-sm text-white/70">
-                  Dil
+                  {t('admin.quiz_page.field_lang')}
                   <select
                     value={form.lang}
                     onChange={(e) => setForm({ ...form, lang: e.target.value })}
                     className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
                   >
-                    {Object.entries(LANG_LABELS).map(([c, l]) => (
+                    {LANG_CODES.map((c) => (
                       <option key={c} value={c}>
-                        {l} ({c})
+                        {langLabels[c]} ({c})
                       </option>
                     ))}
                   </select>
                   <span className="mt-1 block text-xs text-white/40">
-                    Soru havuzunda bu dilde <strong>{form.total_questions}</strong> hazır soru olmalı.
+                    {t('admin.quiz_page.lang_ready_hint', { count: form.total_questions })}
                   </span>
                 </label>
                 <label className="block text-sm text-white/70">
-                  Toplam Soru
+                  {t('admin.quiz_page.total_questions')}
                   <input
                     type="number"
                     min={1}
@@ -402,7 +443,7 @@ function EventsPanel() {
                   />
                 </label>
                 <label className="block text-sm text-white/70">
-                  Soru Başı Süre (sn)
+                  {t('admin.quiz_page.seconds_per_q')}
                   <input
                     type="number"
                     min={5}
@@ -415,7 +456,7 @@ function EventsPanel() {
                   />
                 </label>
                 <label className="block text-sm text-white/70">
-                  Yanlış Hakkı
+                  {t('admin.quiz_page.wrong_allowed')}
                   <input
                     type="number"
                     min={1}
@@ -426,7 +467,7 @@ function EventsPanel() {
                   />
                 </label>
                 <label className="block text-sm text-white/70">
-                  Başlangıç
+                  {t('admin.quiz_page.start_at')}
                   <input
                     type="datetime-local"
                     value={form.start_at}
@@ -435,7 +476,7 @@ function EventsPanel() {
                   />
                 </label>
                 <label className="block text-sm text-white/70">
-                  Havuz (Papel)
+                  {t('admin.quiz_page.pool_papel')}
                   <input
                     type="number"
                     value={form.prize_pool_papel}
@@ -446,21 +487,21 @@ function EventsPanel() {
               </div>
               <div className="mt-4 rounded-lg border border-white/5 bg-white/[0.02] p-3">
                 <div className="mb-2 text-xs font-semibold uppercase text-white/50">
-                  Checkpoint Ödülleri
+                  {t('admin.quiz_page.checkpoint_rewards')}
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   {[
-                    { label: 'CP 1', pos: 'cp1_pos', rew: 'cp1_reward' },
-                    { label: 'CP 2', pos: 'cp2_pos', rew: 'cp2_reward' },
-                    { label: 'Final', pos: 'cp3_pos', rew: 'cp3_reward' },
+                    { label: t('admin.quiz_page.cp1'), pos: 'cp1_pos', rew: 'cp1_reward' },
+                    { label: t('admin.quiz_page.cp2'), pos: 'cp2_pos', rew: 'cp2_reward' },
+                    { label: t('admin.quiz_page.final'), pos: 'cp3_pos', rew: 'cp3_reward' },
                   ].map((c) => (
                     <div
-                      key={c.label}
+                      key={c.pos}
                       className="rounded-md border border-white/10 bg-white/[0.03] p-2 text-xs"
                     >
                       <div className="text-white/60">{c.label}</div>
                       <label className="mt-1 block text-white/50">
-                        Pozisyon
+                        {t('admin.quiz_page.position')}
                         <input
                           type="number"
                           value={form[c.pos as keyof typeof form] as number}
@@ -469,7 +510,7 @@ function EventsPanel() {
                         />
                       </label>
                       <label className="mt-1 block text-white/50">
-                        Papel
+                        {t('admin.quiz_page.papel')}
                         <input
                           type="number"
                           value={form[c.rew as keyof typeof form] as number}
@@ -488,14 +529,14 @@ function EventsPanel() {
                 onClick={() => setShowCreate(false)}
                 className="rounded-md border border-white/10 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5"
               >
-                İptal
+                {t('admin.quiz_page.cancel')}
               </button>
               <button
                 type="button"
                 onClick={create}
                 className="rounded-md bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400"
               >
-                Oluştur
+                {t('admin.quiz_page.create')}
               </button>
             </div>
           </div>
@@ -506,6 +547,8 @@ function EventsPanel() {
 }
 
 function CustomQuestionsPanel() {
+  const { t } = useTranslation();
+  const langLabels = useQuizLangLabels();
   const [items, setItems] = useState<CustomQuestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -533,7 +576,7 @@ function CustomQuestionsPanel() {
 
   const save = async (q: EditDraft) => {
     if (!q.question.trim() || q.options.some((o) => !o.trim())) {
-      setError('Soru ve 4 şık dolu olmalı');
+      setError(t('admin.quiz_page.error_fill'));
       return;
     }
     try {
@@ -567,7 +610,7 @@ function CustomQuestionsPanel() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm('Silinsin mi?')) return;
+    if (!confirm(t('admin.quiz_page.delete_confirm'))) return;
     await fetch('/api/admin/quiz/questions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -578,17 +621,17 @@ function CustomQuestionsPanel() {
 
   const openEdit = (q: CustomQuestion | null) => {
     if (q) {
-      const t = q.translations.find((tr) => tr.lang === editingLang) ?? q.translations[0];
+      const tr = q.translations.find((item) => item.lang === editingLang) ?? q.translations[0];
       setEditing({
         id: q.id,
         category: q.category,
         difficulty: q.difficulty,
         correct_index: q.correct_index,
-        question: t?.question ?? '',
-        options: t?.options ?? ['', '', '', ''],
-        is_ready: t?.is_ready ?? true,
+        question: tr?.question ?? '',
+        options: tr?.options ?? ['', '', '', ''],
+        is_ready: tr?.is_ready ?? true,
       });
-      if (t?.lang) setEditingLang(t.lang);
+      if (tr?.lang) setEditingLang(tr.lang);
     } else {
       setEditing({
         id: '',
@@ -610,18 +653,18 @@ function CustomQuestionsPanel() {
           onClick={() => load()}
           className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/80 sm:justify-start"
         >
-          <LuRefreshCw className="h-4 w-4" /> Yenile
+          <LuRefreshCw className="h-4 w-4" /> {t('admin.quiz_page.refresh')}
         </button>
         <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/70">
-          <span className="shrink-0 text-xs text-white/40">Editör dili:</span>
+          <span className="shrink-0 text-xs text-white/40">{t('admin.quiz_page.editor_lang')}</span>
           <select
             value={editingLang}
             onChange={(e) => setEditingLang(e.target.value)}
             className="min-w-0 flex-1 bg-transparent text-white focus:outline-none"
           >
-            {Object.entries(LANG_LABELS).map(([c, l]) => (
+            {LANG_CODES.map((c) => (
               <option key={c} value={c} className="bg-[#0f1116]">
-                {l}
+                {langLabels[c]}
               </option>
             ))}
           </select>
@@ -631,7 +674,7 @@ function CustomQuestionsPanel() {
           onClick={() => openEdit(null)}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-3 py-2.5 text-sm font-semibold text-white sm:ml-auto"
         >
-          <LuPlus className="h-4 w-4" /> Yeni Soru
+          <LuPlus className="h-4 w-4" /> {t('admin.quiz_page.new_question')}
         </button>
       </div>
 
@@ -644,42 +687,45 @@ function CustomQuestionsPanel() {
       <div className="space-y-3 md:hidden">
         {loading && (
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
-            Yükleniyor...
+            {t('admin.quiz_page.loading')}
           </div>
         )}
         {!loading && items.length === 0 && (
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center text-sm text-white/40">
-            Sunucuya özel soru yok
+            {t('admin.quiz_page.no_custom_questions')}
           </div>
         )}
         {!loading &&
           items.map((q) => {
-            const t = q.translations.find((tr) => tr.lang === editingLang);
+            const tr = q.translations.find((item) => item.lang === editingLang);
             return (
               <article key={q.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="mb-2 flex flex-wrap gap-1">
-                      {q.translations.map((tr) => (
+                      {q.translations.map((item) => (
                         <span
-                          key={tr.lang}
+                          key={item.lang}
                           className={`rounded px-1.5 py-0.5 text-xs ${
-                            tr.is_ready
+                            item.is_ready
                               ? 'bg-emerald-500/15 text-emerald-300'
                               : 'bg-amber-500/15 text-amber-300'
                           }`}
                         >
-                          {tr.lang}
+                          {item.lang}
                         </span>
                       ))}
                     </div>
                     <p className="line-clamp-3 text-sm text-white/85">
-                      {t?.question || (
-                        <span className="text-white/30">— bu dilde çevrilmemiş —</span>
+                      {tr?.question || (
+                        <span className="text-white/30">{t('admin.quiz_page.not_translated')}</span>
                       )}
                     </p>
                     <p className="mt-2 text-xs text-white/40">
-                      Doğru: {'ABCD'[q.correct_index]} · {q.difficulty ?? '—'}
+                      {t('admin.quiz_page.correct_meta', {
+                        letter: 'ABCD'[q.correct_index],
+                        difficulty: q.difficulty ?? '—',
+                      })}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
@@ -708,10 +754,10 @@ function CustomQuestionsPanel() {
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-white/[0.04] text-xs uppercase text-white/50">
             <tr>
-              <th className="px-3 py-2">Diller</th>
-              <th className="px-3 py-2">Soru ({editingLang})</th>
-              <th className="px-3 py-2">Doğru</th>
-              <th className="px-3 py-2">Zorluk</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_langs')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_question', { lang: editingLang })}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_correct')}</th>
+              <th className="px-3 py-2">{t('admin.quiz_page.col_difficulty')}</th>
               <th className="px-3 py-2"></th>
             </tr>
           </thead>
@@ -719,42 +765,42 @@ function CustomQuestionsPanel() {
             {loading && (
               <tr>
                 <td colSpan={5} className="px-3 py-6 text-center text-white/40">
-                  Yükleniyor...
+                  {t('admin.quiz_page.loading')}
                 </td>
               </tr>
             )}
             {!loading && items.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-3 py-6 text-center text-white/40">
-                  Sunucuya özel soru yok
+                  {t('admin.quiz_page.no_custom_questions')}
                 </td>
               </tr>
             )}
             {!loading &&
               items.map((q) => {
-                const t = q.translations.find((tr) => tr.lang === editingLang);
+                const tr = q.translations.find((item) => item.lang === editingLang);
                 return (
                   <tr key={q.id} className="hover:bg-white/[0.02]">
                     <td className="px-3 py-2 text-white/60">
                       <div className="flex flex-wrap gap-1">
-                        {q.translations.map((tr) => (
+                        {q.translations.map((item) => (
                           <span
-                            key={tr.lang}
+                            key={item.lang}
                             className={`rounded px-1.5 py-0.5 text-xs ${
-                              tr.is_ready
+                              item.is_ready
                                 ? 'bg-emerald-500/15 text-emerald-300'
                                 : 'bg-amber-500/15 text-amber-300'
                             }`}
                           >
-                            {tr.lang}
+                            {item.lang}
                           </span>
                         ))}
                       </div>
                     </td>
                     <td className="max-w-[400px] px-3 py-2 text-white/80">
                       <div className="line-clamp-2">
-                        {t?.question || (
-                          <span className="text-white/30">— bu dilde çevrilmemiş —</span>
+                        {tr?.question || (
+                          <span className="text-white/30">{t('admin.quiz_page.not_translated')}</span>
                         )}
                       </div>
                     </td>
@@ -791,12 +837,12 @@ function CustomQuestionsPanel() {
             <div className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-4 py-4 sm:px-6">
               <div>
                 <h2 className="text-lg font-semibold text-white">
-                  {editing.id ? 'Soruyu düzenle' : 'Yeni soru'}
+                  {editing.id ? t('admin.quiz_page.edit_question') : t('admin.quiz_page.new_question_title')}
                 </h2>
                 <p className="text-xs text-white/50">
-                  Dil:{' '}
+                  {t('admin.quiz_page.lang_label')}{' '}
                   <span className="font-mono text-indigo-300">
-                    {LANG_LABELS[editingLang] ?? editingLang}
+                    {langLabels[editingLang] ?? editingLang}
                   </span>
                 </p>
               </div>
@@ -810,7 +856,7 @@ function CustomQuestionsPanel() {
             </div>
             <div className="custom-scrollbar min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 sm:px-6">
               <label className="block text-sm text-white/70">
-                Soru
+                {t('admin.quiz_page.field_question')}
                 <textarea
                   value={editing.question}
                   onChange={(e) => setEditing({ ...editing, question: e.target.value })}
@@ -830,7 +876,7 @@ function CustomQuestionsPanel() {
                         onChange={() => setEditing({ ...editing, correct_index: i })}
                         className="accent-emerald-500"
                       />
-                      Doğru
+                      {t('admin.quiz_page.option_correct')}
                     </label>
                   </div>
                   <input
@@ -846,7 +892,7 @@ function CustomQuestionsPanel() {
               ))}
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="block text-sm text-white/70">
-                  Kategori
+                  {t('admin.quiz_page.category')}
                   <input
                     value={editing.category ?? ''}
                     onChange={(e) => setEditing({ ...editing, category: e.target.value })}
@@ -854,7 +900,7 @@ function CustomQuestionsPanel() {
                   />
                 </label>
                 <label className="block text-sm text-white/70">
-                  Zorluk
+                  {t('admin.quiz_page.difficulty')}
                   <select
                     value={editing.difficulty ?? ''}
                     onChange={(e) =>
@@ -866,9 +912,9 @@ function CustomQuestionsPanel() {
                     className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2.5 text-sm text-white"
                   >
                     <option value="">—</option>
-                    <option value="easy">Kolay</option>
-                    <option value="medium">Orta</option>
-                    <option value="hard">Zor</option>
+                    <option value="easy">{t('admin.quiz_page.difficulty_easy')}</option>
+                    <option value="medium">{t('admin.quiz_page.difficulty_medium')}</option>
+                    <option value="hard">{t('admin.quiz_page.difficulty_hard')}</option>
                   </select>
                 </label>
               </div>
@@ -879,7 +925,7 @@ function CustomQuestionsPanel() {
                   onChange={(e) => setEditing({ ...editing, is_ready: e.target.checked })}
                   className="accent-emerald-500"
                 />
-                Bu dilde hazır (is_ready)
+                {t('admin.quiz_page.ready_lang')}
               </label>
             </div>
             <div className="flex shrink-0 justify-end gap-2 border-t border-white/[0.06] px-4 py-4 sm:px-6">
@@ -888,14 +934,14 @@ function CustomQuestionsPanel() {
                 onClick={() => setEditing(null)}
                 className="rounded-md border border-white/10 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5"
               >
-                İptal
+                {t('admin.quiz_page.cancel')}
               </button>
               <button
                 type="button"
                 onClick={() => save(editing)}
                 className="rounded-md bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-400"
               >
-                Kaydet
+                {t('admin.quiz_page.save')}
               </button>
             </div>
           </div>
@@ -904,16 +950,6 @@ function CustomQuestionsPanel() {
     </div>
   );
 }
-
-type EditDraft = {
-  id: string;
-  category: string | null;
-  difficulty: 'easy' | 'medium' | 'hard' | null;
-  correct_index: number;
-  question: string;
-  options: string[];
-  is_ready: boolean;
-};
 
 function badgeStyle(status: string) {
   switch (status) {
@@ -927,20 +963,5 @@ function badgeStyle(status: string) {
       return 'bg-red-500/15 text-red-300 border-red-500/30';
     default:
       return 'bg-white/10 text-white/60 border-white/10';
-  }
-}
-
-function statusLabel(status: string) {
-  switch (status) {
-    case 'scheduled':
-      return 'Planlandı';
-    case 'live':
-      return 'Canlı';
-    case 'finished':
-      return 'Bitti';
-    case 'cancelled':
-      return 'İptal';
-    default:
-      return status;
   }
 }

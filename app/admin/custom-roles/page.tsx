@@ -6,6 +6,7 @@ import { LuCheck, LuClock, LuSearch, LuShield, LuX } from 'react-icons/lu';
 import DiscordProfileRolePreview from '../components/DiscordProfileRolePreview';
 import type { CustomRoleRequestRow } from '@/lib/customRoles/types';
 import { discordColorToHex } from '@/lib/customRoles/types';
+import { useTranslation } from '@/lib/i18nContext';
 
 type MemberHit = {
   id: string;
@@ -15,21 +16,9 @@ type MemberHit = {
   avatarUrl: string;
 };
 
-const STATUS_TABS = [
-  { id: 'pending', label: 'Bekleyen' },
-  { id: 'active', label: 'Aktif' },
-  { id: 'all', label: 'Tümü' },
-] as const;
-
-const DURATION_PRESETS = [
-  { hours: 24, label: '24 saat' },
-  { hours: 72, label: '3 gün' },
-  { hours: 168, label: '7 gün' },
-  { hours: 720, label: '30 gün' },
-];
-
 export default function AdminCustomRolesPage() {
-  const [tab, setTab] = useState<(typeof STATUS_TABS)[number]['id']>('pending');
+  const { t } = useTranslation();
+  const [tab, setTab] = useState<'pending' | 'active' | 'all'>('pending');
   const [requests, setRequests] = useState<CustomRoleRequestRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +36,27 @@ export default function AdminCustomRolesPage() {
   const [saving, setSaving] = useState(false);
   const [actionMsg, setActionMsg] = useState<string | null>(null);
 
+  const statusTabs = useMemo(
+    () =>
+      [
+        { id: 'pending' as const, label: t('admin.custom_roles.tab_pending') },
+        { id: 'active' as const, label: t('admin.custom_roles.tab_active') },
+        { id: 'all' as const, label: t('admin.custom_roles.tab_all') },
+      ] as const,
+    [t],
+  );
+
+  const durationPresets = useMemo(
+    () =>
+      [
+        { hours: 24, label: t('admin.custom_roles.duration_24h') },
+        { hours: 72, label: t('admin.custom_roles.duration_3d') },
+        { hours: 168, label: t('admin.custom_roles.duration_7d') },
+        { hours: 720, label: t('admin.custom_roles.duration_30d') },
+      ] as const,
+    [t],
+  );
+
   const activeRequest = useMemo(
     () => requests.find((r) => r.id === approveId) ?? null,
     [requests, approveId],
@@ -59,17 +69,17 @@ export default function AdminCustomRolesPage() {
       const res = await fetch(`/api/admin/custom-role-requests?status=${tab}`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(res.status === 403 ? 'Bu sayfaya erişim yetkiniz yok.' : 'Talepler yüklenemedi.');
+        setError(res.status === 403 ? t('admin.custom_roles.forbidden') : t('admin.custom_roles.load_error'));
         setRequests([]);
         return;
       }
       setRequests(data.requests ?? []);
     } catch {
-      setError('Bağlantı hatası.');
+      setError(t('admin.custom_roles.connection_error'));
     } finally {
       setLoading(false);
     }
-  }, [tab]);
+  }, [tab, t]);
 
   useEffect(() => {
     void load();
@@ -80,7 +90,7 @@ export default function AdminCustomRolesPage() {
       setMembers([]);
       return;
     }
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       setMemberSearchLoading(true);
       fetch(`/api/admin/members/search?q=${encodeURIComponent(memberQuery.trim())}&limit=10`)
         .then((r) => r.json())
@@ -88,7 +98,7 @@ export default function AdminCustomRolesPage() {
         .catch(() => setMembers([]))
         .finally(() => setMemberSearchLoading(false));
     }, 300);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [memberQuery, approveId]);
 
   const openApprove = (row: CustomRoleRequestRow) => {
@@ -112,7 +122,7 @@ export default function AdminCustomRolesPage() {
   const submitApprove = async () => {
     if (!approveId || !selectedMember) return;
     if (!hierarchyAck) {
-      setActionMsg('Rol hiyerarşisi uyarısını onaylamanız gerekir.');
+      setActionMsg(t('admin.custom_roles.need_hierarchy_ack'));
       return;
     }
     setSaving(true);
@@ -133,30 +143,30 @@ export default function AdminCustomRolesPage() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         if (data.error === 'bot_hierarchy') {
-          setActionMsg(data.message ?? 'Bot rolü yetersiz. Rolü Discord\'da yukarı taşıyın.');
+          setActionMsg(data.message ?? t('admin.custom_roles.bot_hierarchy'));
         } else if (data.error === 'hierarchy_ack_required') {
-          setActionMsg('Hiyerarşi onay kutusunu işaretleyin.');
+          setActionMsg(t('admin.custom_roles.hierarchy_checkbox'));
         } else {
-          setActionMsg('Rol oluşturulamadı. Tekrar deneyin.');
+          setActionMsg(t('admin.custom_roles.create_failed'));
         }
         return;
       }
       if (data.hierarchy_warning) {
-        setActionMsg('Rol oluşturuldu. Rolü botun üstüne taşımayı unutmayın.');
+        setActionMsg(t('admin.custom_roles.created_move_up'));
       } else {
-        setActionMsg('Rol oluşturuldu ve kayıt güncellendi.');
+        setActionMsg(t('admin.custom_roles.created_ok'));
       }
       closeApprove();
       await load();
     } catch {
-      setActionMsg('İşlem başarısız.');
+      setActionMsg(t('admin.custom_roles.action_failed'));
     } finally {
       setSaving(false);
     }
   };
 
   const reject = async (id: string) => {
-    if (!confirm('Bu talebi reddetmek istediğinize emin misiniz?')) return;
+    if (!confirm(t('admin.custom_roles.reject_confirm'))) return;
     const res = await fetch(`/api/admin/custom-role-requests/${id}/reject`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -168,25 +178,25 @@ export default function AdminCustomRolesPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Özel Rol Talepleri</h1>
+        <h1 className="text-2xl font-bold text-white">{t('admin.custom_roles.title')}</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Çekiliş kazananlarını aratın, süreyi belirleyin, Discord&apos;da rolü oluşturun. Süre dolunca bot rolü siler.
+          {t('admin.custom_roles.subtitle')}
         </p>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {STATUS_TABS.map((t) => (
+        {statusTabs.map((tabItem) => (
           <button
-            key={t.id}
+            key={tabItem.id}
             type="button"
-            onClick={() => setTab(t.id)}
+            onClick={() => setTab(tabItem.id)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-              tab === t.id
+              tab === tabItem.id
                 ? 'bg-indigo-500/20 text-indigo-300'
                 : 'bg-slate-800/60 text-slate-400 hover:text-slate-200'
             }`}
           >
-            {t.label}
+            {tabItem.label}
           </button>
         ))}
       </div>
@@ -203,9 +213,9 @@ export default function AdminCustomRolesPage() {
       )}
 
       {loading ? (
-        <p className="text-sm text-slate-500">Yükleniyor…</p>
+        <p className="text-sm text-slate-500">{t('admin.custom_roles.loading')}</p>
       ) : requests.length === 0 ? (
-        <p className="text-sm text-slate-500">Bu filtrede talep yok.</p>
+        <p className="text-sm text-slate-500">{t('admin.custom_roles.empty')}</p>
       ) : (
         <ul className="space-y-3">
           {requests.map((row) => (
@@ -231,13 +241,18 @@ export default function AdminCustomRolesPage() {
                     <p className="mt-2 text-sm text-slate-400">{row.requester_note}</p>
                   )}
                   <p className="mt-1 font-mono text-xs text-slate-600">
-                    Talep: {row.requester_id}
-                    {row.target_user_id ? ` → ${row.target_user_id}` : ''}
+                    {t('admin.custom_roles.request_label', {
+                      id: row.target_user_id
+                        ? `${row.requester_id} → ${row.target_user_id}`
+                        : row.requester_id,
+                    })}
                   </p>
                   {row.expires_at && (
                     <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
                       <LuClock className="h-3.5 w-3.5" />
-                      Bitiş: {new Date(row.expires_at).toLocaleString('tr-TR')}
+                      {t('admin.custom_roles.expires', {
+                        date: new Date(row.expires_at).toLocaleString('tr-TR'),
+                      })}
                     </p>
                   )}
                 </div>
@@ -246,7 +261,7 @@ export default function AdminCustomRolesPage() {
                     roleName={row.role_name}
                     roleColor={row.role_color}
                     roleIconUrl={row.role_icon_url}
-                    displayName="Kazanan Üye"
+                    displayName={t('admin.custom_roles.winner_member')}
                   />
                 </div>
                 {row.status === 'pending' && (
@@ -257,7 +272,7 @@ export default function AdminCustomRolesPage() {
                       className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600"
                     >
                       <LuCheck className="h-4 w-4" />
-                      Rolü Oluştur
+                      {t('admin.custom_roles.create_role')}
                     </button>
                     <button
                       type="button"
@@ -265,7 +280,7 @@ export default function AdminCustomRolesPage() {
                       className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800"
                     >
                       <LuX className="h-4 w-4" />
-                      Reddet
+                      {t('admin.custom_roles.reject')}
                     </button>
                   </div>
                 )}
@@ -279,7 +294,9 @@ export default function AdminCustomRolesPage() {
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 sm:items-center">
           <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 shadow-xl">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-800 bg-slate-900 px-5 py-4">
-              <h2 className="text-lg font-semibold text-white">Rolü Oluştur — {activeRequest.role_name}</h2>
+              <h2 className="text-lg font-semibold text-white">
+                {t('admin.custom_roles.modal_title', { name: activeRequest.role_name })}
+              </h2>
               <button
                 type="button"
                 onClick={closeApprove}
@@ -292,7 +309,7 @@ export default function AdminCustomRolesPage() {
             <div className="grid gap-6 p-5 lg:grid-cols-2">
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-medium text-slate-500">Kazanan üye ara</label>
+                  <label className="text-xs font-medium text-slate-500">{t('admin.custom_roles.search_member')}</label>
                   <div className="relative mt-1">
                     <LuSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                     <input
@@ -301,12 +318,12 @@ export default function AdminCustomRolesPage() {
                         setMemberQuery(e.target.value);
                         setSelectedMember(null);
                       }}
-                      placeholder="Kullanıcı adı veya ID"
+                      placeholder={t('admin.custom_roles.search_placeholder')}
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 py-2 pl-9 pr-3 text-sm text-white outline-none focus:border-indigo-500/50"
                     />
                   </div>
                   {memberSearchLoading && (
-                    <p className="mt-2 text-xs text-slate-500">Aranıyor…</p>
+                    <p className="mt-2 text-xs text-slate-500">{t('admin.custom_roles.searching')}</p>
                   )}
                   {members.length > 0 && (
                     <ul className="mt-2 max-h-40 overflow-y-auto rounded-lg border border-slate-800">
@@ -342,9 +359,9 @@ export default function AdminCustomRolesPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-slate-500">Süre</label>
+                  <label className="text-xs font-medium text-slate-500">{t('admin.custom_roles.duration')}</label>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {DURATION_PRESETS.map((p) => (
+                    {durationPresets.map((p) => (
                       <button
                         key={p.hours}
                         type="button"
@@ -370,11 +387,11 @@ export default function AdminCustomRolesPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-slate-500">Çekiliş etiketi (isteğe bağlı)</label>
+                  <label className="text-xs font-medium text-slate-500">{t('admin.custom_roles.raffle_label')}</label>
                   <input
                     value={raffleLabel}
                     onChange={(e) => setRaffleLabel(e.target.value.slice(0, 120))}
-                    placeholder="Örn. Mart 2026 Çekilişi"
+                    placeholder={t('admin.custom_roles.raffle_placeholder')}
                     className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
                   />
                 </div>
@@ -386,7 +403,7 @@ export default function AdminCustomRolesPage() {
                     onChange={(e) => setAutoAssign(e.target.checked)}
                     className="rounded"
                   />
-                  Rol oluşturulduktan sonra kazanan üyeye otomatik ver
+                  {t('admin.custom_roles.auto_assign')}
                 </label>
 
                 <label className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-100">
@@ -397,8 +414,7 @@ export default function AdminCustomRolesPage() {
                     className="mt-0.5 rounded"
                   />
                   <span>
-                    <LuShield className="mb-1 inline h-3.5 w-3.5" /> Rolün botun altında kalabileceğini ve ikonun
-                    görünmeyebileceğini biliyorum; gerekirse Discord&apos;da rolü yukarı taşıyacağım.
+                    <LuShield className="mb-1 inline h-3.5 w-3.5" /> {t('admin.custom_roles.hierarchy_ack')}
                   </span>
                 </label>
 
@@ -412,7 +428,7 @@ export default function AdminCustomRolesPage() {
                   onClick={() => void submitApprove()}
                   className="w-full rounded-lg bg-indigo-500 py-2.5 text-sm font-medium text-white hover:bg-indigo-600 disabled:opacity-40"
                 >
-                  {saving ? 'Oluşturuluyor…' : 'Created Rol — Discord\'da Oluştur'}
+                  {saving ? t('admin.custom_roles.creating') : t('admin.custom_roles.create_discord')}
                 </button>
               </div>
 
@@ -421,7 +437,7 @@ export default function AdminCustomRolesPage() {
                   roleName={activeRequest.role_name}
                   roleColor={activeRequest.role_color}
                   roleIconUrl={activeRequest.role_icon_url}
-                  username={selectedMember?.username ?? 'kazanan'}
+                  username={selectedMember?.username ?? t('admin.custom_roles.fallback_username')}
                   displayName={
                     selectedMember?.displayName ??
                     selectedMember?.nickname ??
