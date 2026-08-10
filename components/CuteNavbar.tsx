@@ -601,74 +601,87 @@ export default function CuteNavbar() {
 
           {onSelectServer && <div className="hidden flex-1 md:block" aria-hidden />}
 
-          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0 min-w-0">
-            {/* Home: always show language. Elsewhere: desktop only (mobile sheet has it). */}
+          <div className="flex shrink-0 items-center gap-2 min-w-0 sm:gap-2.5">
+            {/* Preferences */}
             <div className={onHome ? 'block' : 'hidden md:block'}>
               <LanguageSwitcher />
             </div>
 
-            {onSelectServer && isDeveloper && (
-              <Link
-                href="/developer"
-                className="hidden md:inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-3 text-xs font-semibold text-white/85 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/20 hover:text-white"
-              >
-                <LuCode className="h-3.5 w-3.5 shrink-0 opacity-90" />
-                {t('navbar.developer')}
-              </Link>
+            {onSelectServer && (
+              <>
+                <span className="hidden h-5 w-px shrink-0 bg-white/15 md:block" aria-hidden />
+
+                {/* Workflow actions */}
+                <div className="hidden items-center gap-2 md:flex">
+                  {isDeveloper && (
+                    <Link
+                      href="/developer"
+                      className="inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-3 text-xs font-semibold text-white/85 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/20 hover:text-white"
+                    >
+                      <LuCode className="h-3.5 w-3.5 shrink-0 opacity-90" />
+                      {t('navbar.developer')}
+                    </Link>
+                  )}
+                  {isLoggedIn && (
+                    <a
+                      href={botInviteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#4752c4] lg:px-5 lg:text-sm"
+                    >
+                      {t('navbar.add_bot')}
+                    </a>
+                  )}
+                </div>
+
+                {isLoggedIn && (
+                  <>
+                    <span className="hidden h-5 w-px shrink-0 bg-white/15 md:block" aria-hidden />
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      title={t('navbar.logout')}
+                      aria-label={t('navbar.logout')}
+                      className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/50 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
+                    >
+                      <LuLogOut className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
+              </>
             )}
 
-            {onSelectServer && isLoggedIn && (
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="hidden md:inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/10 px-3 text-xs font-semibold text-white/55 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
-              >
-                <LuLogOut className="h-3.5 w-3.5 shrink-0" />
-                {t('navbar.logout')}
-              </button>
-            )}
-
-            {isLoggedIn ? (
-              onSelectServer ? (
-                <a
-                  href={botInviteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden md:inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#4752c4] lg:px-5 lg:text-sm"
-                >
-                  {t('navbar.add_bot')}
-                </a>
-              ) : (
+            {!onSelectServer &&
+              (isLoggedIn ? (
                 <Link
                   href="/auth/select-server"
                   className="hidden md:inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#4752c4] lg:px-5 lg:text-sm"
                 >
                   {t('navbar.continue')}
                 </Link>
-              )
-            ) : (
-              <Link
-                href={DISCORD_LOGIN_URL}
-                onMouseEnter={() => setOpenMenu('login')}
-                onMouseLeave={() => setOpenMenu(null)}
-                onClick={(e) => {
-                  if (!DISCORD_CLIENT_ID || !DISCORD_LOGIN_URL || DISCORD_LOGIN_URL === '/') {
-                    e.preventDefault();
-                    console.warn('DISCORD login blocked: missing env vars', { DISCORD_CLIENT_ID, DISCORD_LOGIN_URL });
-                    alert(t('navbar.login_error'));
-                    return;
-                  }
-                }}
-                className={`hidden md:inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-xs font-bold transition-all duration-300 lg:px-5 lg:text-sm ${
-                  openMenu === 'login'
-                    ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
-                    : 'text-white hover:bg-white/10'
-                }`}
-              >
-                <DiscordIcon className="h-4 w-4 shrink-0 opacity-90" />
-                {t('navbar.login')}
-              </Link>
-            )}
+              ) : (
+                <Link
+                  href={DISCORD_LOGIN_URL}
+                  onMouseEnter={() => setOpenMenu('login')}
+                  onMouseLeave={() => setOpenMenu(null)}
+                  onClick={(e) => {
+                    if (!DISCORD_CLIENT_ID || !DISCORD_LOGIN_URL || DISCORD_LOGIN_URL === '/') {
+                      e.preventDefault();
+                      console.warn('DISCORD login blocked: missing env vars', { DISCORD_CLIENT_ID, DISCORD_LOGIN_URL });
+                      alert(t('navbar.login_error'));
+                      return;
+                    }
+                  }}
+                  className={`hidden md:inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-xs font-bold transition-all duration-300 lg:px-5 lg:text-sm ${
+                    openMenu === 'login'
+                      ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/30 scale-105'
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  <DiscordIcon className="h-4 w-4 shrink-0 opacity-90" />
+                  {t('navbar.login')}
+                </Link>
+              ))}
           </div>
         </nav>
       </div>
