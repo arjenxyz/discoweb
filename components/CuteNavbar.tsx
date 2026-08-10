@@ -584,7 +584,7 @@ export default function CuteNavbar() {
             <div className={onHome ? 'block' : 'hidden md:block'}>
               <LanguageSwitcher />
             </div>
-            {isDeveloper && (
+            {isDeveloper && onSelectServer && (
               <Link
                 href="/developer"
                 className="hidden md:inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-3 text-xs font-semibold text-white/85 transition hover:border-[#5865F2]/40 hover:bg-[#5865F2]/20 hover:text-white lg:px-3.5"
@@ -690,7 +690,7 @@ export default function CuteNavbar() {
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
-              {isDeveloper && (
+              {isDeveloper && onSelectServer && (
                 <Link
                   href="/developer"
                   onClick={() => setMobileOpen(false)}
