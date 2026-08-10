@@ -690,15 +690,60 @@ export default function CuteNavbar() {
 
           <div className="relative z-10 flex h-full flex-col px-6 pb-8 pt-28">
             <div className="mb-10">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
-                DiscoWeb
-              </p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight text-white break-words">
-                {t('navbar.mobile_greeting')}
-              </h2>
-              <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-white/45 break-words">
-                {t('navbar.mobile_welcome')}
-              </p>
+              {onSelectServer ? (
+                <>
+                  <div className="flex items-center gap-3.5">
+                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/15 bg-[#1e1f22]">
+                      {user?.avatar ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={user.avatar}
+                          alt=""
+                          className="h-full w-full object-cover"
+                          draggable={false}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-[#5865F2]/25 text-lg font-black text-white">
+                          {(user?.username ?? '?').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="truncate text-2xl font-black tracking-tight text-white">
+                        {t('navbar.select_menu_hello', { name: user?.username ?? '…' })}
+                      </h2>
+                    </div>
+                  </div>
+
+                  <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/50">
+                    {t('navbar.select_menu_intro')}
+                  </p>
+
+                  <ul className="mt-5 space-y-2.5 border-l border-white/10 pl-3.5">
+                    {[
+                      t('navbar.select_menu_tip_1'),
+                      t('navbar.select_menu_tip_2'),
+                      t('navbar.select_menu_tip_3'),
+                    ].map((tip) => (
+                      <li key={tip} className="text-xs leading-5 text-white/40">
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
+                    DiscoWeb
+                  </p>
+                  <h2 className="mt-2 text-3xl font-black tracking-tight text-white break-words">
+                    {t('navbar.mobile_greeting')}
+                  </h2>
+                  <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-white/45 break-words">
+                    {t('navbar.mobile_welcome')}
+                  </p>
+                </>
+              )}
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto pb-2">
