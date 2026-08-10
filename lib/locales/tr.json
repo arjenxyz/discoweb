@@ -273,6 +273,7 @@
       "admin_fallback": "Yetkili",
       "role": "Admin",
       "settings": "Panel Ayarları",
+      "change_server": "Sunucu Değiştir",
       "logout": "Çıkış Yap"
     },
     "guide": {

@@ -273,6 +273,7 @@
       "admin_fallback": "Admin",
       "role": "Admin",
       "settings": "Panel Settings",
+      "change_server": "Change Server",
       "logout": "Log Out"
     },
     "guide": {

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LuChevronRight, LuFileText, LuLogOut, LuMenu, LuSettings, LuX } from 'react-icons/lu';
+import { LuChevronRight, LuFileText, LuLogOut, LuMenu, LuServer, LuSettings, LuX } from 'react-icons/lu';
 import LanguageSwitcher from '@/app/components/LanguageSwitcher';
 import { useTranslation } from '@/lib/i18nContext';
 import type { AdminProfile } from './AdminSidebar';
@@ -115,19 +115,68 @@ export default function AdminTopBar({
 
           {accountMenuOpen && (
             <div className="absolute right-0 top-[calc(100%+8px)] z-[60] w-[300px] overflow-hidden rounded-2xl border border-white/10 bg-[#0c0e14] shadow-2xl shadow-black/50 origin-top-right">
-              <div className="relative h-[88px] overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/30 via-violet-600/15 to-transparent" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(88,101,242,0.25),transparent_60%)]" />
-                <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-[#0c0e14] to-transparent" />
-                <div className="absolute bottom-3 left-4 right-4">
-                  <p className="truncate text-base font-bold text-white">
-                    {profile?.username ?? t('admin.shell.admin_fallback')}
-                  </p>
-                  <p className="text-[11px] text-white/45">{profile?.guildName}</p>
+              <div className="relative overflow-hidden border-b border-white/10 px-4 pb-4 pt-4">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#5865F2]/35 via-[#5865F2]/10 to-transparent" />
+                <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-[#5865F2]/30 blur-2xl" />
+                <div className="relative flex items-center gap-3">
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-white/15 bg-[#1e1f22] shadow-lg shadow-black/30">
+                    {profile ? (
+                      <Image
+                        src={profile.avatarUrl}
+                        alt=""
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-[#5865F2]/25 text-sm font-bold text-white">
+                        ?
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-base font-bold text-white">
+                      {profile?.username ?? t('admin.shell.admin_fallback')}
+                    </p>
+                    <div className="mt-1 flex min-w-0 items-center gap-2">
+                      {profile?.guildIcon ? (
+                        <Image
+                          src={profile.guildIcon}
+                          alt=""
+                          width={16}
+                          height={16}
+                          unoptimized
+                          className="h-4 w-4 shrink-0 rounded-md object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-md bg-[#5865F2]/25 text-[9px] font-bold text-[#a5b4ff]">
+                          {(profile?.guildName ?? 'S').charAt(0)}
+                        </span>
+                      )}
+                      <p className="truncate text-[11px] text-white/50">
+                        {profile?.guildName ?? t('admin.shell.default_server')}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="p-2 space-y-1">
+              <div className="space-y-1 p-2">
+                <Link
+                  href="/auth/select-server"
+                  onClick={onAccountMenuClose}
+                  className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-white/70 transition hover:bg-white/[0.05] hover:text-white"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5865F2]/20 text-[#a5b4ff]">
+                      <LuServer className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm font-medium">{t('admin.shell.change_server')}</span>
+                  </div>
+                  <LuChevronRight className="h-4 w-4 text-white/25" />
+                </Link>
+
                 <button
                   type="button"
                   onClick={() => {
@@ -150,7 +199,7 @@ export default function AdminTopBar({
                   onClick={onAccountMenuClose}
                   className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 transition ${
                     pathname.startsWith('/admin/guide')
-                      ? 'bg-indigo-500/10 text-indigo-200'
+                      ? 'bg-[#5865F2]/15 text-[#c7d0ff]'
                       : 'text-white/70 hover:bg-white/[0.05] hover:text-white'
                   }`}
                 >
