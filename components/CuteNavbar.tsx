@@ -724,8 +724,12 @@ export default function CuteNavbar() {
             <div className="mb-10">
               {onSelectServer ? (
                 <>
-                  <div className="flex items-center gap-3.5">
-                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/15 bg-[#1e1f22]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#5865F2]">
+                    {t('navbar.select_menu_eyebrow')}
+                  </p>
+
+                  <div className="mt-3 flex items-center gap-3.5">
+                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/15 bg-[#1e1f22] shadow-[0_0_24px_rgba(88,101,242,0.2)]">
                       {user?.avatar ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -754,25 +758,48 @@ export default function CuteNavbar() {
                           aria-hidden
                         />
                       </h2>
-                      <p className="mt-1 text-sm text-white/45">{t('navbar.select_menu_intro')}</p>
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-3.5">
-                    <ol className="space-y-2.5">
+                  <p className="mt-4 text-sm leading-relaxed text-white/55">
+                    {t('navbar.select_menu_intro')}
+                  </p>
+
+                  <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02]">
+                    <div className="border-b border-white/[0.06] px-3.5 py-2.5">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/35">
+                        {t('navbar.select_menu_guide_title')}
+                      </p>
+                    </div>
+                    <ol className="divide-y divide-white/[0.06]">
                       {[
-                        t('navbar.select_menu_step_1'),
-                        t('navbar.select_menu_step_2'),
-                        t('navbar.select_menu_step_3'),
+                        {
+                          title: t('navbar.select_menu_step_1_title'),
+                          body: t('navbar.select_menu_step_1_body'),
+                        },
+                        {
+                          title: t('navbar.select_menu_step_2_title'),
+                          body: t('navbar.select_menu_step_2_body'),
+                        },
+                        {
+                          title: t('navbar.select_menu_step_3_title'),
+                          body: t('navbar.select_menu_step_3_body'),
+                        },
                       ].map((step, index) => (
-                        <li key={step} className="flex items-start gap-3">
-                          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#5865F2]/25 text-[11px] font-bold text-[#9eb0ff]">
+                        <li key={step.title} className="flex items-start gap-3 px-3.5 py-3">
+                          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#5865F2]/30 text-xs font-bold text-white shadow-[0_0_16px_rgba(88,101,242,0.25)]">
                             {index + 1}
                           </span>
-                          <span className="pt-0.5 text-sm leading-5 text-white/70">{step}</span>
+                          <div className="min-w-0 pt-0.5">
+                            <p className="text-sm font-semibold text-white">{step.title}</p>
+                            <p className="mt-0.5 text-xs leading-5 text-white/45">{step.body}</p>
+                          </div>
                         </li>
                       ))}
                     </ol>
+                    <p className="border-t border-white/[0.06] px-3.5 py-2.5 text-[11px] leading-4 text-white/35">
+                      {t('navbar.select_menu_note')}
+                    </p>
                   </div>
                 </>
               ) : (
