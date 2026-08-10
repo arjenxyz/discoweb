@@ -23,7 +23,7 @@ import {
   LuStore,
 } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
-import { getLocaleTag } from '@/lib/i18n/languages';
+import { getLocaleTag, type LanguageCode } from '@/lib/i18n/languages';
 
 type OverviewStats = {
   rangeHours: number;
@@ -50,7 +50,7 @@ type Props = {
 };
 
 // Locale-aware number formatting
-const useNumberFormat = (language: string) =>
+const useNumberFormat = (language: LanguageCode) =>
   useMemo(() => new Intl.NumberFormat(getLocaleTag(language)), [language]);
 
 function StatCard({
