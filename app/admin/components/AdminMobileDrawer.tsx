@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { LuLogOut, LuServer, LuX } from 'react-icons/lu';
+import { LuX } from 'react-icons/lu';
 import { useTranslation } from '@/lib/i18nContext';
 
 const logoWhiteStyle: React.CSSProperties = {
@@ -27,12 +26,10 @@ const logoBlueStyle: React.CSSProperties = {
 export default function AdminMobileDrawer({
   open,
   onClose,
-  onLogout,
   children,
 }: {
   open: boolean;
   onClose: () => void;
-  onLogout: () => void;
   children: React.ReactNode;
 }) {
   const { t } = useTranslation();
@@ -78,28 +75,6 @@ export default function AdminMobileDrawer({
           </div>
 
           <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto pr-0.5">{children}</div>
-
-          <div className="mt-4 shrink-0 space-y-2 border-t border-white/[0.06] pt-4">
-            <Link
-              href="/auth/select-server"
-              onClick={onClose}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] py-3 text-sm font-semibold text-white shadow-lg shadow-[#5865F2]/25 transition hover:bg-[#4752c4]"
-            >
-              <LuServer className="h-4 w-4" />
-              {t('admin.shell.change_server')}
-            </Link>
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                onLogout();
-              }}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium text-white/45 transition hover:bg-white/[0.04] hover:text-white/80"
-            >
-              <LuLogOut className="h-4 w-4" />
-              {t('admin.shell.logout')}
-            </button>
-          </div>
         </div>
       </aside>
     </div>

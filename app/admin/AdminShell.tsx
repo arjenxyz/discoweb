@@ -185,7 +185,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <AdminMobileDrawer
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
-        onLogout={handleLogout}
       >
         <AdminSidebar
           {...sidebarProps}
