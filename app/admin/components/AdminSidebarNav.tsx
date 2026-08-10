@@ -42,22 +42,30 @@ function NavLinkItem({
     return (
       <Link
         href={href}
-        className={`group flex w-full items-center gap-3 rounded-2xl px-2.5 py-2.5 transition-all duration-200 ${
+        className={`group relative flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-200 ${
           active
-            ? 'bg-[#5865F2] text-white shadow-lg shadow-[#5865F2]/25'
-            : 'text-white/60 hover:bg-white/5 hover:text-white'
+            ? 'bg-[#5865F2]/12 text-white'
+            : 'text-white/55 hover:bg-white/[0.04] hover:text-white'
         }`}
       >
+        {active && (
+          <span
+            aria-hidden
+            className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[#5865F2]"
+          />
+        )}
         <span
           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
             active
-              ? 'bg-white/15 text-white'
+              ? 'bg-[#5865F2]/25 text-[#c7d0ff]'
               : 'bg-white/[0.04] text-white/40 group-hover:bg-white/[0.08] group-hover:text-white/75'
           }`}
         >
           <Icon className="h-4 w-4" />
         </span>
-        <span className="truncate text-[15px] font-medium">{t(labelKey)}</span>
+        <span className={`truncate text-[15px] ${active ? 'font-semibold' : 'font-medium'}`}>
+          {t(labelKey)}
+        </span>
       </Link>
     );
   }
@@ -120,12 +128,18 @@ function NavExpandableItem({
         <button
           type="button"
           onClick={onToggle}
-          className={`group flex w-full items-center gap-3 rounded-2xl px-2.5 py-2.5 transition-all duration-200 ${
+          className={`group relative flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-200 ${
             highlighted
-              ? 'bg-[#5865F2]/15 text-white ring-1 ring-[#5865F2]/35'
-              : 'text-white/60 hover:bg-white/5 hover:text-white'
+              ? 'bg-[#5865F2]/10 text-white'
+              : 'text-white/55 hover:bg-white/[0.04] hover:text-white'
           }`}
         >
+          {active && (
+            <span
+              aria-hidden
+              className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[#5865F2]"
+            />
+          )}
           <span
             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
               highlighted
@@ -135,7 +149,9 @@ function NavExpandableItem({
           >
             <item.icon className="h-4 w-4" />
           </span>
-          <span className="flex-1 truncate text-left text-[15px] font-medium">{t(item.labelKey)}</span>
+          <span className={`flex-1 truncate text-left text-[15px] ${highlighted ? 'font-semibold' : 'font-medium'}`}>
+            {t(item.labelKey)}
+          </span>
           <LuChevronDown
             className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
               isOpen ? 'rotate-180 text-[#a5b4ff]' : 'text-white/25'
@@ -149,7 +165,7 @@ function NavExpandableItem({
           }`}
         >
           <div className="overflow-hidden">
-            <div className="ml-2 space-y-0.5 rounded-2xl border border-white/10 bg-black/25 p-1.5 backdrop-blur-sm">
+            <div className="ml-3 space-y-0.5 border-l border-white/[0.06] py-1 pl-3">
               {item.sections.flatMap((section) =>
                 section.items.map((sub) => {
                   const SubIcon = sub.icon;
@@ -158,13 +174,17 @@ function NavExpandableItem({
                     <Link
                       key={sub.href}
                       href={sub.href}
-                      className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-sm transition-colors ${
+                      className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-colors ${
                         subActive
-                          ? 'bg-[#5865F2] font-medium text-white shadow-md shadow-[#5865F2]/25'
-                          : 'text-white/50 hover:bg-white/5 hover:text-white'
+                          ? 'bg-[#5865F2]/12 font-semibold text-white'
+                          : 'text-white/45 hover:bg-white/[0.04] hover:text-white'
                       }`}
                     >
-                      <SubIcon className={`h-3.5 w-3.5 shrink-0 ${subActive ? 'opacity-100' : 'opacity-50'}`} />
+                      <SubIcon
+                        className={`h-3.5 w-3.5 shrink-0 ${
+                          subActive ? 'text-[#a5b4ff]' : 'opacity-50'
+                        }`}
+                      />
                       <span className="truncate">{t(sub.labelKey)}</span>
                     </Link>
                   );
