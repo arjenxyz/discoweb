@@ -73,6 +73,7 @@ function RoleSelectDropdown({
   hint,
   placeholder,
   icon: Icon,
+  iconSrc,
   accent,
   roles,
   value,
@@ -81,7 +82,8 @@ function RoleSelectDropdown({
   label: string;
   hint: string;
   placeholder: string;
-  icon: typeof LuShield;
+  icon?: typeof LuShield;
+  iconSrc?: string;
   accent: RoleSelectAccent;
   roles: DiscordRole[];
   value: string;
@@ -130,7 +132,17 @@ function RoleSelectDropdown({
   return (
     <div>
       <label className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-white/80">
-        <Icon className={`h-4 w-4 ${accentIcon}`} />
+        {iconSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={iconSrc}
+            alt=""
+            draggable={false}
+            className="h-5 w-5 shrink-0 object-contain"
+          />
+        ) : Icon ? (
+          <Icon className={`h-4 w-4 ${accentIcon}`} />
+        ) : null}
         {label}
       </label>
 
@@ -662,7 +674,7 @@ export default function SetupPage() {
                       label="Yönetici Rolü"
                       hint="Bu rolle Admin Paneline girilir."
                       placeholder="Admin rolünü seçin..."
-                      icon={LuShield}
+                      iconSrc="/gif/112771-staff.gif"
                       accent="blue"
                       roles={adminRoles}
                       value={selectedAdminRole}
