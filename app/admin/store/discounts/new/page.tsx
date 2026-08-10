@@ -203,6 +203,7 @@ export default function AdminStoreDiscountCreatePage() {
                   placeholder="Sınırsız"
                   className={fieldClass}
                 />
+                <p className="mt-1 text-[11px] text-white/35">Kodun toplam kaç kez kullanılabileceği.</p>
               </div>
             )}
           </div>
@@ -229,6 +230,7 @@ export default function AdminStoreDiscountCreatePage() {
                   placeholder="1"
                   className={fieldClass}
                 />
+                <p className="mt-1 text-[11px] text-white/35">Bir kullanıcının bu kodu kaç kez kullanabileceği.</p>
               </div>
             </div>
           )}
