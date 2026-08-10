@@ -728,8 +728,8 @@ export default function CuteNavbar() {
                     {t('navbar.select_menu_eyebrow')}
                   </p>
 
-                  <div className="mt-3 flex items-center gap-3.5">
-                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/15 bg-[#1e1f22] shadow-[0_0_24px_rgba(88,101,242,0.2)]">
+                  <div className="mt-3 flex items-center gap-3">
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/15 bg-[#1e1f22]">
                       {user?.avatar ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -739,13 +739,13 @@ export default function CuteNavbar() {
                           draggable={false}
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-[#5865F2]/25 text-lg font-black text-white">
+                        <div className="flex h-full w-full items-center justify-center bg-[#5865F2]/25 text-sm font-black text-white">
                           {(user?.username ?? '?').charAt(0).toUpperCase()}
                         </div>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <h2 className="flex min-w-0 items-center gap-1.5 text-2xl font-black tracking-tight text-white">
+                      <h2 className="flex min-w-0 items-center gap-1.5 text-lg font-bold tracking-tight text-white">
                         <span className="truncate">
                           {t('navbar.select_menu_hello', { name: user?.username ?? '…' })}
                         </span>
@@ -753,7 +753,7 @@ export default function CuteNavbar() {
                         <img
                           src={nicketEmoji}
                           alt=""
-                          className="h-5 w-5 shrink-0 object-contain"
+                          className="h-4 w-4 shrink-0 object-contain"
                           draggable={false}
                           aria-hidden
                         />
