@@ -9,6 +9,7 @@ import { LuArrowRight, LuCode, LuDatabase, LuLock, LuShield, LuSettings } from '
 import CuteNavbar from '@/components/CuteNavbar';
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
+import { siteConfig } from '@/config/site';
 
 const ubuntu = Ubuntu({ subsets: ['latin'], weight: ['400', '700'] });
 
@@ -333,7 +334,7 @@ export default function SelectServerPage() {
               olduğunuz sunucular listelenir.
             </p>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mt-10 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <h2 className="text-sm font-semibold text-white/90">Sunucularınız</h2>
                 {lastUpdatedAt && (
@@ -341,27 +342,21 @@ export default function SelectServerPage() {
                     Son güncelleme: {new Date(lastUpdatedAt).toLocaleString('tr-TR')}
                   </p>
                 )}
-                {!localBypass && (
-                  <p className="mt-2 max-w-xl text-xs leading-5 text-white/40">
-                    Listede sunucu yoksa veya yeni admin olduğunuz sunucu görünmüyorsa{' '}
-                    <span className="text-white/60">Yenile</span>&apos;ye basın.
-                  </p>
-                )}
-                {refreshMessage && (
-                  <p className="mt-1.5 text-xs text-[#9eb0ff]">{refreshMessage}</p>
-                )}
               </div>
               {!localBypass && (
                 <button
                   type="button"
                   disabled={isRefreshing}
                   onClick={() => void handleRefreshGuilds()}
-                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium text-[#9eb0ff] transition hover:bg-white/5 hover:text-white disabled:cursor-wait disabled:opacity-60"
+                  className="shrink-0 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white/20 hover:bg-white/10 hover:text-white disabled:cursor-wait disabled:opacity-60"
                 >
                   {isRefreshing ? 'Yenileniyor…' : 'Yenile'}
                 </button>
               )}
             </div>
+            {refreshMessage && (
+              <p className="mt-2 text-xs text-[#9eb0ff]">{refreshMessage}</p>
+            )}
 
             <div
               className={`mt-4 ${
@@ -371,12 +366,32 @@ export default function SelectServerPage() {
               }`}
             >
               {guilds.length === 0 ? (
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center backdrop-blur-md sm:col-span-2 lg:col-span-3">
-                  <p className="text-sm text-white/70">Erişilebilir sunucu bulunamadı.</p>
-                  <p className="mt-2 text-xs text-white/40">
-                    Botun bulunduğu sunucularda admin/sahip olduğunuzdan emin olun. Liste eksikse
-                    Yenile ile güncelleyin veya üstteki “Botu sunucuya ekle” ile botu davet edin.
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-7 text-left backdrop-blur-md sm:col-span-1">
+                  <p className="text-sm font-medium text-white/80">Erişilebilir sunucu bulunamadı.</p>
+                  <p className="mt-2 text-xs leading-5 text-white/45">
+                    Botun bulunduğu sunucularda admin veya sahip olduğunuzdan emin olun. Liste
+                    eksikse yenileyin ya da botu sunucuya ekleyin.
                   </p>
+                  {!localBypass && (
+                    <div className="mt-5 flex flex-wrap items-center gap-2">
+                      <a
+                        href={siteConfig.bot.inviteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-9 items-center justify-center rounded-full bg-[#5865F2] px-4 text-xs font-bold text-white transition hover:bg-[#4752c4]"
+                      >
+                        Botu sunucuya ekle
+                      </a>
+                      <button
+                        type="button"
+                        disabled={isRefreshing}
+                        onClick={() => void handleRefreshGuilds()}
+                        className="inline-flex h-9 items-center justify-center rounded-full border border-white/15 px-4 text-xs font-semibold text-white/75 transition hover:border-white/25 hover:bg-white/5 hover:text-white disabled:cursor-wait disabled:opacity-60"
+                      >
+                        {isRefreshing ? 'Yenileniyor…' : 'Yenile'}
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 guilds.map((guild) => {
