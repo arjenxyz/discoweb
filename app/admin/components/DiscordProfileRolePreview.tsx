@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { discordColorToHex } from '@/lib/customRoles/types';
+import { useTranslation } from '@/lib/i18nContext';
 import { DiscordRoleOverflowPill, DiscordRolePill } from './DiscordRolePill';
 
 type Props = {
@@ -22,17 +23,18 @@ export default function DiscordProfileRolePreview({
   roleName,
   roleColor,
   roleIconUrl,
-  username = 'kullanici',
+  username,
   displayName,
   avatarUrl,
 }: Props) {
+  const { t } = useTranslation();
   const hex =
     typeof roleColor === 'string'
       ? roleColor.startsWith('#')
         ? roleColor
         : discordColorToHex(parseInt(roleColor, 10) || 0x5865f2)
       : discordColorToHex(roleColor);
-  const label = displayName || username;
+  const label = displayName || username || t('admin.discord_preview.default_username');
 
   return (
     <div className="overflow-hidden rounded-lg border border-[#1e1f22] bg-[#313338]">
@@ -50,7 +52,9 @@ export default function DiscordProfileRolePreview({
           </div>
         </div>
         <p className="text-sm font-bold text-[#f2f3f5]">{label}</p>
-        <p className="mt-2 text-[11px] font-bold uppercase text-[#b5bac1]">Roller</p>
+        <p className="mt-2 text-[11px] font-bold uppercase text-[#b5bac1]">
+          {t('admin.discord_preview.roles')}
+        </p>
         <div className="mt-1.5 flex flex-wrap gap-1">
           {CONTEXT_ROLES.map((r) => (
             <DiscordRolePill key={r.name} name={r.name} colorHex={r.color} />

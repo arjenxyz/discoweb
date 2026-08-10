@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
+import { getLocaleTag } from '@/lib/i18n/languages';
 
 type MaintenanceFlag = {
   id: string;
@@ -17,39 +19,40 @@ type UpdaterProfile = {
   avatarUrl: string;
 };
 
-const LABELS: Record<string, string> = {
-  site: 'Site Geneli',
-  store: 'Mağaza',
-  transactions: 'İşlemler',
-  tracking: 'Mağaza Takip',
-  promotions: 'Promosyon',
-  discounts: 'İndirim Kodu',
-  transfers: 'Papel Gönder',
-  bot: 'Discord Bot',
-  activity: 'Activity',
+const LABEL_KEYS: Record<string, string> = {
+  site: 'admin.maintenance_page.label_site',
+  store: 'admin.maintenance_page.label_store',
+  transactions: 'admin.maintenance_page.label_transactions',
+  tracking: 'admin.maintenance_page.label_tracking',
+  promotions: 'admin.maintenance_page.label_promotions',
+  discounts: 'admin.maintenance_page.label_discounts',
+  transfers: 'admin.maintenance_page.label_transfers',
+  bot: 'admin.maintenance_page.label_bot',
+  activity: 'admin.maintenance_page.label_activity',
 };
 
-const DESCRIPTION: Record<string, string> = {
-  site: 'Tüm paneli bakım moduna alır.',
-  store: 'Mağaza sayfaları ve satın alma akışları.',
-  transactions: 'İşlem ve geçmiş ekranları.',
-  tracking: 'Mağaza takip ve rol süreleri.',
-  promotions: 'Promosyon kodu kullanımı.',
-  discounts: 'İndirim kodu kullanımı.',
-  transfers: 'Papel gönderme işlemleri.',
-  bot: 'Discord botunun durumunu değiştirir.',
-  activity: 'Activity API ve veri güncelleme akışını kontrol eder.',
+const DESCRIPTION_KEYS: Record<string, string> = {
+  site: 'admin.maintenance_page.desc_site',
+  store: 'admin.maintenance_page.desc_store',
+  transactions: 'admin.maintenance_page.desc_transactions',
+  tracking: 'admin.maintenance_page.desc_tracking',
+  promotions: 'admin.maintenance_page.desc_promotions',
+  discounts: 'admin.maintenance_page.desc_discounts',
+  transfers: 'admin.maintenance_page.desc_transfers',
+  bot: 'admin.maintenance_page.desc_bot',
+  activity: 'admin.maintenance_page.desc_activity',
 };
 
 export default function AdminMaintenancePage() {
+  const { t, language } = useTranslation();
   const [flags, setFlags] = useState<MaintenanceFlag[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [updaterProfiles, setUpdaterProfiles] = useState<Record<string, UpdaterProfile>>({});
   const dateFormatter = useMemo(
-    () => new Intl.DateTimeFormat('tr-TR', { dateStyle: 'short', timeStyle: 'short' }),
-    [],
+    () => new Intl.DateTimeFormat(getLocaleTag(language), { dateStyle: 'short', timeStyle: 'short' }),
+    [language],
   );
   const activeCount = useMemo(() => flags.filter((flag) => flag.is_active).length, [flags]);
   const lastUpdated = useMemo(() => {
@@ -76,9 +79,11 @@ export default function AdminMaintenancePage() {
         if (!response.ok) {
           const payload = (await response.json().catch(() => ({}))) as { error?: string; detail?: string };
           if (response.status === 403) {
-            setError('Bu sayfaya erişim yetkiniz yok.');
+            setError(t('admin.maintenance_page.forbidden'));
           } else {
-            setError(`Bakım ayarları yüklenemedi. ${payload.detail ?? ''}`.trim());
+            setError(
+              t('admin.maintenance_page.load_error_detail', { detail: payload.detail ?? '' }).trim(),
+            );
           }
           setLoading(false);
           return;
@@ -90,13 +95,13 @@ export default function AdminMaintenancePage() {
         setFlags(data.flags ?? []);
         setUpdaterProfiles(data.updaterProfiles ?? {});
       } catch {
-        setError('Bakım ayarları yüklenemedi.');
+        setError(t('admin.maintenance_page.load_error'));
       }
       setLoading(false);
     };
 
     load();
-  }, []);
+  }, [t]);
 
   const updateFlag = async (flag: MaintenanceFlag, next: boolean) => {
     setSavingKey(flag.key);
@@ -109,7 +114,7 @@ export default function AdminMaintenancePage() {
       });
       if (!response.ok) {
         const payload = (await response.json().catch(() => ({}))) as { detail?: string };
-        setError(`Güncelleme başarısız oldu. ${payload.detail ?? ''}`.trim());
+        setError(t('admin.maintenance_page.update_error_detail', { detail: payload.detail ?? '' }).trim());
         setSavingKey(null);
         return;
       }
@@ -120,7 +125,7 @@ export default function AdminMaintenancePage() {
       setFlags(data.flags ?? []);
       setUpdaterProfiles(data.updaterProfiles ?? {});
     } catch {
-      setError('Güncelleme başarısız oldu.');
+      setError(t('admin.maintenance_page.update_error'));
     }
     setSavingKey(null);
   };
@@ -136,7 +141,7 @@ export default function AdminMaintenancePage() {
       });
       if (!response.ok) {
         const payload = (await response.json().catch(() => ({}))) as { detail?: string };
-        setError(`Not güncellenemedi. ${payload.detail ?? ''}`.trim());
+        setError(t('admin.maintenance_page.note_error_detail', { detail: payload.detail ?? '' }).trim());
         setSavingKey(null);
         return;
       }
@@ -147,7 +152,7 @@ export default function AdminMaintenancePage() {
       setFlags(data.flags ?? []);
       setUpdaterProfiles(data.updaterProfiles ?? {});
     } catch {
-      setError('Not güncellenemedi.');
+      setError(t('admin.maintenance_page.note_error'));
     }
     setSavingKey(null);
   };
@@ -155,11 +160,11 @@ export default function AdminMaintenancePage() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Admin</p>
-        <h1 className="mt-2 text-2xl font-semibold">Bakım Yönetimi</h1>
-        <p className="mt-1 text-sm text-white/60">
-          Bu panel yalnızca admin + bakım yetki rolü olan kişiler içindir. Kritik modülleri bakım moduna alabilirsiniz.
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">
+          {t('admin.maintenance_page.eyebrow')}
         </p>
+        <h1 className="mt-2 text-2xl font-semibold">{t('admin.maintenance_page.title')}</h1>
+        <p className="mt-1 text-sm text-white/60">{t('admin.maintenance_page.subtitle')}</p>
       </div>
 
       {error && (
@@ -170,23 +175,31 @@ export default function AdminMaintenancePage() {
 
       {loading ? (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/60">
-          Bakım ayarları yükleniyor...
+          {t('admin.maintenance_page.loading')}
         </div>
       ) : (
         <div className="space-y-4">
           <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">Aktif bakım</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+                {t('admin.maintenance_page.active_count')}
+              </p>
               <p className="mt-2 text-2xl font-semibold text-white">{activeCount}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">Toplam modül</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+                {t('admin.maintenance_page.total_modules')}
+              </p>
               <p className="mt-2 text-2xl font-semibold text-white">{flags.length}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">Son güncelleme</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+                {t('admin.maintenance_page.last_update')}
+              </p>
               <p className="mt-2 text-sm text-white/80">
-                {lastUpdated ? dateFormatter.format(new Date(lastUpdated)) : 'Bilinmiyor'}
+                {lastUpdated
+                  ? dateFormatter.format(new Date(lastUpdated))
+                  : t('admin.maintenance_page.unknown')}
               </p>
             </div>
           </div>
@@ -196,9 +209,13 @@ export default function AdminMaintenancePage() {
               <div key={flag.key} className="rounded-2xl border border-white/10 bg-white/5 p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-white">{LABELS[flag.key] ?? flag.key}</p>
+                    <p className="text-sm font-semibold text-white">
+                      {LABEL_KEYS[flag.key] ? t(LABEL_KEYS[flag.key]) : flag.key}
+                    </p>
                     <p className="mt-1 text-xs text-white/50">
-                      {DESCRIPTION[flag.key] ?? 'Modül bakım kontrolü.'}
+                      {DESCRIPTION_KEYS[flag.key]
+                        ? t(DESCRIPTION_KEYS[flag.key])
+                        : t('admin.maintenance_page.module_fallback')}
                     </p>
                   </div>
                   <button
@@ -211,21 +228,37 @@ export default function AdminMaintenancePage() {
                         : 'bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25'
                     }`}
                   >
-                    {savingKey === flag.key ? 'Güncelleniyor...' : flag.is_active ? 'Bakımı Kapat' : 'Bakımı Aç'}
+                    {savingKey === flag.key
+                      ? t('admin.maintenance_page.updating')
+                      : flag.is_active
+                        ? t('admin.maintenance_page.turn_off')
+                        : t('admin.maintenance_page.turn_on')}
                   </button>
                 </div>
                 <div className="mt-4">
-                  <label className="text-[11px] uppercase tracking-[0.2em] text-white/40">Not</label>
+                  <label className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+                    {t('admin.maintenance_page.note')}
+                  </label>
                   <textarea
                     className="mt-2 min-h-[70px] w-full rounded-xl border border-white/10 bg-[#0b0d12]/60 px-3 py-2 text-xs text-white/80 placeholder:text-white/40"
-                    placeholder="Bakım nedeni veya planlanan süre..."
+                    placeholder={t('admin.maintenance_page.note_placeholder')}
                     value={flag.reason ?? ''}
                     onChange={(event) => updateReason(flag, event.target.value)}
                   />
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] text-white/40">
-                  <span>Durum: {flag.is_active ? 'Aktif bakım' : 'Normal'}</span>
-                  <span>Son güncelleme: {dateFormatter.format(new Date(flag.updated_at))}</span>
+                  <span>
+                    {t('admin.maintenance_page.status', {
+                      status: flag.is_active
+                        ? t('admin.maintenance_page.status_active')
+                        : t('admin.maintenance_page.status_normal'),
+                    })}
+                  </span>
+                  <span>
+                    {t('admin.maintenance_page.last_updated', {
+                      date: dateFormatter.format(new Date(flag.updated_at)),
+                    })}
+                  </span>
                   <span className="flex items-center gap-2">
                     {flag.updated_by && updaterProfiles[flag.updated_by] ? (
                       <>
@@ -234,10 +267,18 @@ export default function AdminMaintenancePage() {
                           alt="avatar"
                           className="h-5 w-5 rounded-full border border-white/10"
                         />
-                        <span>Güncelleyen: {updaterProfiles[flag.updated_by].name}</span>
+                        <span>
+                          {t('admin.maintenance_page.updated_by', {
+                            name: updaterProfiles[flag.updated_by].name,
+                          })}
+                        </span>
                       </>
                     ) : (
-                      <span>Güncelleyen: {flag.updated_by ?? 'Bilinmiyor'}</span>
+                      <span>
+                        {t('admin.maintenance_page.updated_by', {
+                          name: flag.updated_by ?? t('admin.maintenance_page.unknown'),
+                        })}
+                      </span>
                     )}
                   </span>
                 </div>

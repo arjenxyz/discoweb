@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
 
 type ChannelConfig = {
   channel_type:
@@ -18,26 +19,29 @@ type ChannelConfig = {
   is_active: boolean;
 };
 
-const CHANNEL_LABELS: Record<ChannelConfig['channel_type'], string> = {
-  user_main: 'Üye • Genel',
-  user_auth: 'Üye • Kimlik',
-  user_roles: 'Üye • Roller',
-  user_exchange: 'Üye • Değişim',
-  user_store: 'Üye • Mağaza',
-  admin_main: 'Admin • Genel',
-  admin_wallet: 'Admin • Cüzdan',
-  admin_store: 'Admin • Mağaza',
-  admin_notifications: 'Admin • Bildirim',
-  admin_settings: 'Admin • Ayarlar',
+const CHANNEL_LABEL_KEYS: Record<ChannelConfig['channel_type'], string> = {
+  user_main: 'admin.log_channels.channel_user_main',
+  user_auth: 'admin.log_channels.channel_user_auth',
+  user_roles: 'admin.log_channels.channel_user_roles',
+  user_exchange: 'admin.log_channels.channel_user_exchange',
+  user_store: 'admin.log_channels.channel_user_store',
+  admin_main: 'admin.log_channels.channel_admin_main',
+  admin_wallet: 'admin.log_channels.channel_admin_wallet',
+  admin_store: 'admin.log_channels.channel_admin_store',
+  admin_notifications: 'admin.log_channels.channel_admin_notifications',
+  admin_settings: 'admin.log_channels.channel_admin_settings',
 };
 
 export default function LogChannelsPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [configs, setConfigs] = useState<ChannelConfig[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [testing, setTesting] = useState<string | null>(null);
+
+  const channelLabel = (type: ChannelConfig['channel_type']) => t(CHANNEL_LABEL_KEYS[type]);
 
   useEffect(() => {
     const load = async () => {
@@ -82,9 +86,9 @@ export default function LogChannelsPage() {
       const channels = duplicates
         .flatMap(([, list]) => list)
         .filter((value, index, arr) => arr.indexOf(value) === index)
-        .map((type) => CHANNEL_LABELS[type])
+        .map((type) => channelLabel(type))
         .join(', ');
-      setError(`Bu link zaten var. Çakışan kanallar: ${channels}`);
+      setError(t('admin.log_channels.duplicate_error', { channels }));
       setSaving(false);
       return;
     }
@@ -107,7 +111,7 @@ export default function LogChannelsPage() {
       } catch {
         // ignore parse errors
       }
-      setError(`Kaydetme başarısız oldu. Lütfen tekrar deneyin.${detail}`);
+      setError(t('admin.log_channels.save_error', { detail }));
       setSaving(false);
       return;
     }
@@ -125,7 +129,7 @@ export default function LogChannelsPage() {
       body: JSON.stringify({ channelType }),
     });
     if (!response.ok) {
-      let message = 'Test mesajı gönderilemedi.';
+      let message = t('admin.log_channels.test_error');
       try {
         const payload = (await response.json()) as { error?: string; detail?: string };
         if (payload?.detail) {
@@ -151,7 +155,7 @@ export default function LogChannelsPage() {
     >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">{CHANNEL_LABELS[config.channel_type]}</h2>
+          <h2 className="text-lg font-semibold">{channelLabel(config.channel_type)}</h2>
           <p className="mt-1 text-xs text-white/50">{config.channel_type}</p>
         </div>
         <label className="flex items-center gap-2 text-xs text-white/60">
@@ -161,7 +165,7 @@ export default function LogChannelsPage() {
             onChange={(event) => handleChange(config.channel_type, 'is_active', event.target.checked)}
             className="h-4 w-4 accent-indigo-400"
           />
-          Aktif
+          {t('admin.log_channels.active')}
         </label>
       </div>
       <button
@@ -170,17 +174,19 @@ export default function LogChannelsPage() {
         disabled={testing === config.channel_type}
         className="mt-3 rounded-xl border border-white/10 px-3 py-2 text-xs text-white/60 transition hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {testing === config.channel_type ? 'Test ediliyor...' : 'Webhook Testi'}
+        {testing === config.channel_type
+          ? t('admin.log_channels.testing')
+          : t('admin.log_channels.webhook_test')}
       </button>
       <input
         value={config.webhook_url}
         onChange={(event) => handleChange(config.channel_type, 'webhook_url', event.target.value)}
-        placeholder="Discord webhook URL"
+        placeholder={t('admin.log_channels.webhook_placeholder')}
         className="mt-4 w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
       />
       {config.webhook_url && (
         <p className="mt-2 break-all text-[11px] text-white/50">
-          Mevcut URL: {config.webhook_url}
+          {t('admin.log_channels.current_url', { url: config.webhook_url })}
         </p>
       )}
     </div>
@@ -189,22 +195,24 @@ export default function LogChannelsPage() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Admin</p>
-        <h1 className="mt-2 text-2xl font-semibold">Log Kanal Ayarları</h1>
-        <p className="mt-1 text-sm text-white/60">Webhook kanallarını buradan yönetebilirsiniz.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">
+          {t('admin.log_channels.eyebrow')}
+        </p>
+        <h1 className="mt-2 text-2xl font-semibold">{t('admin.log_channels.title')}</h1>
+        <p className="mt-1 text-sm text-white/60">{t('admin.log_channels.subtitle')}</p>
       </div>
 
       {loading ? (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-          <p className="text-sm text-white/70">Log ayarları yükleniyor...</p>
+          <p className="text-sm text-white/70">{t('admin.log_channels.loading')}</p>
         </div>
       ) : (
         <div className="space-y-8">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold">Üye Logları</h2>
-                <p className="text-xs text-white/50">Kullanıcı erişimleri ve işlemleri</p>
+                <h2 className="text-lg font-semibold">{t('admin.log_channels.user_logs')}</h2>
+                <p className="text-xs text-white/50">{t('admin.log_channels.user_logs_desc')}</p>
               </div>
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
@@ -214,8 +222,8 @@ export default function LogChannelsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold">Admin Logları</h2>
-                <p className="text-xs text-white/50">Yönetici işlemleri ve sistem değişiklikleri</p>
+                <h2 className="text-lg font-semibold">{t('admin.log_channels.admin_logs')}</h2>
+                <p className="text-xs text-white/50">{t('admin.log_channels.admin_logs_desc')}</p>
               </div>
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
@@ -226,7 +234,7 @@ export default function LogChannelsPage() {
       )}
 
       {error && <p className="text-sm text-rose-300">{error}</p>}
-      {success && <p className="text-sm text-emerald-300">Kaydedildi.</p>}
+      {success && <p className="text-sm text-emerald-300">{t('admin.log_channels.saved')}</p>}
 
       <div className="flex flex-wrap items-center gap-3">
         <button
@@ -235,9 +243,9 @@ export default function LogChannelsPage() {
           disabled={saving}
           className="rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(99,102,241,0.45)] transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {saving ? 'Kaydediliyor...' : 'Kaydet'}
+          {saving ? t('admin.log_channels.saving') : t('admin.log_channels.save')}
         </button>
-        <span className="text-xs text-white/50">Webhooklar kaydedilince anında aktif olur.</span>
+        <span className="text-xs text-white/50">{t('admin.log_channels.webhook_hint')}</span>
       </div>
     </div>
   );
