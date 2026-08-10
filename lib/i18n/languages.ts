@@ -8,6 +8,7 @@ import fr from '../locales/fr.json';
 import ja from '../locales/ja.json';
 import ko from '../locales/ko.json';
 import ru from '../locales/ru.json';
+import hu from '../locales/hu.json';
 
 export type LanguageCode =
   | 'en'
@@ -19,7 +20,8 @@ export type LanguageCode =
   | 'fr'
   | 'ja'
   | 'ko'
-  | 'ru';
+  | 'ru'
+  | 'hu';
 
 export type LanguageDefinition = {
   code: LanguageCode;
@@ -39,6 +41,7 @@ export const SUPPORTED_LANGUAGES: readonly LanguageDefinition[] = [
   { code: 'de', label: 'German', nativeLabel: 'Deutsch', country: 'Germany' },
   { code: 'tr', label: 'Turkish', nativeLabel: 'Türkçe', country: 'Türkiye' },
   { code: 'fr', label: 'French', nativeLabel: 'Français', country: 'France' },
+  { code: 'hu', label: 'Hungarian', nativeLabel: 'Magyar', country: 'Hungary' },
   { code: 'ja', label: 'Japanese', nativeLabel: '日本語', country: 'Japan' },
   { code: 'ko', label: 'Korean', nativeLabel: '한국어', country: 'South Korea' },
   { code: 'ru', label: 'Russian', nativeLabel: 'Русский', country: 'Russia' },
@@ -54,6 +57,7 @@ const LOCALE_TAGS: Record<LanguageCode, string> = {
   de: 'de-DE',
   tr: 'tr-TR',
   fr: 'fr-FR',
+  hu: 'hu-HU',
   ja: 'ja-JP',
   ko: 'ko-KR',
   ru: 'ru-RU',
@@ -83,6 +87,7 @@ export const translations: Record<LanguageCode, Translations> = {
   es: mergeLocale(en, es),
   de: mergeLocale(en, de),
   fr: mergeLocale(en, fr),
+  hu: mergeLocale(en, hu),
   ja: mergeLocale(en, ja),
   ko: mergeLocale(en, ko),
   ru: mergeLocale(en, ru),

@@ -100,6 +100,15 @@ function FlagSvg({ code }: { code: LanguageCode }) {
           <rect x="16" width="8" height="24" fill="#ED2939" />
         </CircleClip>
       );
+    case 'hu':
+      // Hungary
+      return (
+        <CircleClip id={clipId}>
+          <rect width="24" height="8" fill="#CE2939" />
+          <rect y="8" width="24" height="8" fill="#fff" />
+          <rect y="16" width="24" height="8" fill="#477050" />
+        </CircleClip>
+      );
     case 'ja':
       // Japan
       return (
