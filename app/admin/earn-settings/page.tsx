@@ -48,6 +48,7 @@ type EarnSettings = {
   booster_bonus_message: number;
   booster_bonus_voice: number;
   earn_channels?: EarnChannels | null;
+  _boosterBonusEnabled?: boolean;
   _guildPreview?: {
     name: string;
     icon: string | null;
@@ -98,8 +99,8 @@ export default function EarnSettingsPage() {
   useEffect(() => {
     if (!settings || !initialSettings) return setHasChanges(false);
     // _guildPreview gibi UI alanlarını kıyaslamadan çıkarıyoruz
-    const cleanSettings = { ...settings, _guildPreview: undefined };
-    const cleanInitial = { ...initialSettings, _guildPreview: undefined };
+    const cleanSettings = { ...settings, _guildPreview: undefined, _boosterBonusEnabled: undefined, _channels: undefined };
+    const cleanInitial = { ...initialSettings, _guildPreview: undefined, _boosterBonusEnabled: undefined, _channels: undefined };
     setHasChanges(JSON.stringify(cleanSettings) !== JSON.stringify(cleanInitial));
   }, [settings, initialSettings]);
 
@@ -113,12 +114,18 @@ export default function EarnSettingsPage() {
       const res = await fetch('/api/admin/earn-settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings),
+        body: JSON.stringify({
+          ...settings,
+          message_earn_enabled: true,
+          voice_earn_enabled: true,
+        }),
       });
       if (!res.ok) throw new Error(t('admin.earn.save_error'));
       
+      const next = { ...settings, message_earn_enabled: true, voice_earn_enabled: true };
       setMessage(t('admin.earn.save_success'));
-      setInitialSettings(settings);
+      setSettings(next);
+      setInitialSettings(next);
       setHasChanges(false);
     } catch {
       setError(t('admin.earn.save_error'));
@@ -185,22 +192,11 @@ export default function EarnSettingsPage() {
         
         {/* KART 1: MESAJ */}
         <div className="relative overflow-hidden rounded-2xl bg-[#0f1116] border border-white/5 p-6 group hover:border-white/10 transition-colors">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
+            <div className="mb-6 flex items-center gap-3">
                 <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
                   <LuMessageSquare size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-white">{t('admin.earn.message_activity')}</h2>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={settings.message_earn_enabled}
-                  onChange={(e) => setSettings({ ...settings, message_earn_enabled: e.target.checked })}
-                  className="sr-only peer" 
-                />
-                <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-              </label>
             </div>
 
             <div className="space-y-4">
@@ -225,22 +221,11 @@ export default function EarnSettingsPage() {
 
         {/* KART 2: SES */}
         <div className="relative overflow-hidden rounded-2xl bg-[#0f1116] border border-white/5 p-6 group hover:border-white/10 transition-colors">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
+            <div className="mb-6 flex items-center gap-3">
                 <div className="p-2.5 rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20">
                   <LuMic size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-white">{t('admin.earn.voice_chat')}</h2>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={settings.voice_earn_enabled}
-                  onChange={(e) => setSettings({ ...settings, voice_earn_enabled: e.target.checked })}
-                  className="sr-only peer" 
-                />
-                <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:bg-violet-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-              </label>
             </div>
 
             <div className="space-y-4">
@@ -334,17 +319,51 @@ export default function EarnSettingsPage() {
 
                 {/* SAĞ: BOOSTER */}
                 <div className="space-y-6 md:border-l md:border-white/5 md:pl-8">
-                     <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20">
-                          <LuZap size={20} />
+                     <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20">
+                            <LuZap size={20} />
+                          </div>
+                          <div>
+                              <h2 className="text-lg font-bold text-white">{t('admin.earn.booster_bonus')}</h2>
+                              <p className="text-xs text-zinc-500">{t('admin.earn.booster_bonus_desc')}</p>
+                          </div>
                         </div>
-                        <div>
-                            <h2 className="text-lg font-bold text-white">{t('admin.earn.booster_bonus')}</h2>
-                            <p className="text-xs text-zinc-500">{t('admin.earn.booster_bonus_desc')}</p>
-                        </div>
+                        <label className="relative inline-flex cursor-pointer items-center">
+                          <input
+                            type="checkbox"
+                            checked={(settings.booster_bonus_message ?? 0) > 0 || (settings.booster_bonus_voice ?? 0) > 0 || settings._boosterBonusEnabled === true}
+                            onChange={(e) => {
+                              const enabled = e.target.checked;
+                              if (!enabled) {
+                                setSettings({
+                                  ...settings,
+                                  booster_bonus_message: 0,
+                                  booster_bonus_voice: 0,
+                                  _boosterBonusEnabled: false,
+                                });
+                                return;
+                              }
+                              setSettings({
+                                ...settings,
+                                _boosterBonusEnabled: true,
+                                booster_bonus_message: settings.booster_bonus_message || 0,
+                                booster_bonus_voice: settings.booster_bonus_voice || 0,
+                              });
+                            }}
+                            className="peer sr-only"
+                          />
+                          <div className="h-6 w-11 rounded-full bg-zinc-800 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-fuchsia-600 peer-checked:after:translate-x-full peer-focus:outline-none" />
+                        </label>
                      </div>
 
-                     <div className="grid grid-cols-2 gap-4 pt-2">
+                     <div className={`grid grid-cols-2 gap-4 pt-2 ${
+                       (settings.booster_bonus_message ?? 0) > 0 ||
+                       (settings.booster_bonus_voice ?? 0) > 0 ||
+                       settings._boosterBonusEnabled
+                         ? ''
+                         : 'pointer-events-none opacity-50'
+                     }`}>
                         <div>
                             <label className="block text-xs font-medium text-zinc-500 uppercase mb-1.5">{t('admin.earn.message_bonus')}</label>
                             <input type="number" min={0} step="0.01" value={settings?.booster_bonus_message ?? 0} onChange={(e) => updateNumber('booster_bonus_message', Number(e.target.value))} className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/5 text-white font-mono focus:ring-2 focus:ring-fuchsia-500/50 outline-none" />
