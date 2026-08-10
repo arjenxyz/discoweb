@@ -273,20 +273,19 @@ export default function SelectServerPage() {
       <div className="pointer-events-none absolute bottom-20 right-10 h-96 w-96 rounded-full bg-[#7289DA]/15 blur-3xl" />
 
       <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 pb-16 pt-32 md:px-8 lg:px-12">
-        <div className="mx-auto w-full max-w-xl flex-1">
-          <section className="min-w-0">
+        <section className="w-full min-w-0 flex-1">
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
               DiscoWeb
             </p>
-            <h1 className="mt-3 text-balance text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+            <h1 className="mt-3 max-w-3xl text-balance text-3xl font-extrabold tracking-tight text-white md:text-5xl">
               Sunucu seçin
             </h1>
-            <p className="mt-3 max-w-lg text-pretty text-sm leading-relaxed text-[#cbd5db] md:text-base">
+            <p className="mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-[#cbd5db] md:text-base">
               Yönetmek istediğiniz Discord sunucusunu seçin. Yalnızca sahip olduğunuz veya admin
               olduğunuz sunucular listelenir.
             </p>
 
-            <div className="mt-8 flex items-end justify-between gap-3">
+            <div className="mt-10 flex items-end justify-between gap-3">
               <div>
                 <h2 className="text-sm font-semibold text-white/90">Sunucularınız</h2>
                 {lastUpdatedAt && (
@@ -306,9 +305,15 @@ export default function SelectServerPage() {
               )}
             </div>
 
-            <div className="mt-4 space-y-2">
+            <div
+              className={`mt-4 ${
+                guilds.length > 1
+                  ? 'grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3'
+                  : 'grid grid-cols-1 gap-3 sm:max-w-xl'
+              }`}
+            >
               {guilds.length === 0 ? (
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center backdrop-blur-md">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center backdrop-blur-md sm:col-span-2 lg:col-span-3">
                   <p className="text-sm text-white/70">Erişilebilir sunucu bulunamadı.</p>
                   <p className="mt-2 text-xs text-white/40">
                     Botun bulunduğu sunucularda üye olduğunuzdan emin olun.
@@ -323,7 +328,7 @@ export default function SelectServerPage() {
                   return (
                     <div
                       key={guild.id}
-                      className={`group relative flex w-full items-center gap-3 rounded-2xl border px-4 py-3.5 text-left transition-all ${
+                      className={`group relative flex min-h-[5.5rem] w-full items-center gap-3 rounded-2xl border px-4 py-3.5 text-left transition-all ${
                         guild.isSetup
                           ? 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.08]'
                           : canSetup
@@ -399,8 +404,7 @@ export default function SelectServerPage() {
                 })
               )}
             </div>
-          </section>
-        </div>
+        </section>
 
         <p className="mt-10 text-center text-xs text-[#99AAB5]/75">Copyright Discoweb 2026</p>
       </main>
