@@ -346,9 +346,6 @@ export default function SelectServerPage() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
               DiscoWeb
             </p>
-            <h1 className="mt-3 max-w-3xl text-balance text-3xl font-extrabold tracking-tight text-white md:text-5xl">
-              {t('select_server.title')}
-            </h1>
 
             <div className="mt-10 flex items-center justify-between gap-3">
               <div className="min-w-0">
