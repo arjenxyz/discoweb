@@ -1,0 +1,420 @@
+{
+  "sidebar": {
+    "dashboard": "Ana Ekran",
+    "bot_settings": "Bot Ayarları",
+    "channels_logs": "Kanallar ve Loglar",
+    "earn_settings": "Kazanç Ayarları",
+    "wallet": "Bakiye Yönetimi",
+    "store": "Mağaza (Market)",
+    "user_management": "Kullanıcı Yönetimi",
+    "global_announcements": "Küresel Duyuru",
+    "back_to_select": "Sunucu Seçimine Dön",
+    "quiz_events": "Quiz Etkinlikleri"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "success": "Başarılı"
+  },
+  "home": {
+    "loading": "Yükleniyor...",
+    "loading_progress": "Yükleniyor... {progress}%",
+    "welcome": "DiscoWeb'e Hoş Geldiniz",
+    "description": "Discord sunucu sahipleri ve yöneticileri için tasarlanmış bir yönetim paneli — yalnızca admin yetkisine sahip kişiler giriş yapıp topluluklarını yönetebilir.",
+    "copyright": "DiscoWeb | 2026 © Tüm hakları saklıdır",
+    "banner_alt": "Discord Banner",
+    "decorative_cat": "Dekoratif kedi"
+  },
+  "navbar": {
+    "beta": "Beta",
+    "home": "Ana Sayfa",
+    "store": "Mağaza",
+    "developer": "Developer",
+    "status": "Status",
+    "discover": "Keşfet",
+    "continue": "Devam Et",
+    "login": "Giriş Yap",
+    "connect_discord": "Discord ile Bağlan",
+    "login_error": "Giriş yapılamıyor: Discord istemci kimliği veya redirect URI yapılandırılmamış. Lütfen NEXT_PUBLIC_DISCORD_CLIENT_ID ve NEXT_PUBLIC_REDIRECT_URI değerlerini kontrol edin.",
+    "mobile_greeting": "Merhaba!",
+    "mobile_welcome": "DiscoWeb dünyasına hoş geldin.",
+    "home_overview": "Genel Bakış",
+    "home_features": "Özellikler",
+    "home_panel_title": "Yalnızca sunucu adminleri",
+    "home_panel_body": "DiscoWeb sunucu sahipleri ve yöneticileri için tasarlandı. Normal üyeler panele giremez; yalnızca admin yetkisi olanlar giriş yapıp araçları yönetebilir.",
+    "home_panel_note": "Discord ile giriş yap, sonra yönettiğin sunucuyu seç.",
+    "store_products": "Ürünler",
+    "store_campaigns": "Kampanyalar",
+    "developer_about": "Hakkında",
+    "developer_support": "Canlı Destek",
+    "developer_panel_title": "Arjen",
+    "developer_panel_body": "Invincible ve SüngerBob hayranıyım. DiscoWeb tamamen gönüllü — bundan para kazanmıyorum. İhtiyacı olan sistemleri kuruyor, en sevdiğim karakterleri içine katıyor ve onların izlenmesini istiyorum.",
+    "developer_panel_note": "Ücretsiz. Gönüllü. Karakterlerle dolu.",
+    "status_system": "Sistem Durumu",
+    "status_incidents": "Olaylar",
+    "status_history": "Geçmiş",
+    "discover_community": "Topluluk",
+    "discover_blog": "Blog",
+    "discover_support": "Destek"
+  },
+  "promo": {
+    "title": "Promosyon Kodu",
+    "subtitle": "Kodunuzu girin, Papel bakiyenize eklensin.",
+    "placeholder": "Kodu girin",
+    "redeem": "Kullan",
+    "success": "{amount} Papel hesabınıza eklendi!",
+    "error": {
+      "empty": "Lütfen bir kod girin.",
+      "generic": "Promosyon kodu kullanılamadı.",
+      "invalid": "Geçersiz promosyon kodu.",
+      "unauthorized": "Giriş yapmanız gerekiyor.",
+      "server": "Sunucu bulunamadı.",
+      "wrong_server": "Bu kod bu sunucuya ait değil.",
+      "expired": "Kodun süresi dolmuş.",
+      "limit": "Kodun kullanım limiti dolmuş.",
+      "already_used": "Bu kodu zaten kullandınız.",
+      "maintenance": "Promosyon sistemi bakımda."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Yönetim Paneli",
+      "active": "Aktif",
+      "unconfigured": "Kurulmamış",
+      "default_server_name": "Yönetim Merkezi",
+      "subtitle": "Sunucunuzun genel durumunu ve istatistiklerini buradan takip edin.",
+      "refresh": "Yenile",
+      "earn_settings": "Kazanç Ayarları",
+      "maintenance_mode": "Bakım Modu",
+      "server_activity": "Sunucu Aktivitesi",
+      "messages_24h": "Mesaj (Son 24 Saat)",
+      "total": "Toplam",
+      "voice_24h": "Sesli Dakika (Son 24 Saat)",
+      "total_min": "Toplam: {0} dk",
+      "registered_members": "Kayıtlı Üye",
+      "wallets_created": "{0} cüzdan oluşturulmuş",
+      "tag_owner": "Tag Sahibi",
+      "booster": "Booster",
+      "stats_error": "İstatistik verileri yüklenemedi. Lütfen sayfayı yenileyin.",
+      "quick_actions": "Hızlı İşlemler",
+      "action_new_product": "Yeni Ürün Oluştur",
+      "action_wallet": "Bakiye Yönetimi",
+      "action_notify": "Bildirim Gönder",
+      "action_promo": "Promosyon Kodu Oluştur",
+      "action_discount": "İndirim Kodu Oluştur",
+      "action_log_channels": "Log Kanalları",
+      "action_guide": "Kullanım Kılavuzu",
+      "access_denied_title": "Erişim Reddedildi",
+      "access_denied_body": "Bu sunucuda yönetici yetkiniz yok.",
+      "back_home": "Ana Sayfaya Dön",
+      "load_failed": "Admin verileri yüklenemedi. Sunucu ayarlarını ve yetkileri kontrol edin."
+    },
+    "wallet": {
+      "eyebrow": "Admin",
+      "title": "Bakiye Yönetimi",
+      "subtitle": "Kullanıcılara veya tüm üyelere papel ekleyin/silin.",
+      "operation": "İşlem",
+      "scope": "Kapsam",
+      "mode_add": "Bakiye Ekle",
+      "mode_remove": "Bakiye Sil",
+      "scope_user": "Tek Kullanıcı",
+      "scope_all": "Tüm Kullanıcılar",
+      "search_label": "Kullanıcı ara (nickname / username)",
+      "search_placeholder": "Örn: night, newli",
+      "searching": "Aranıyor...",
+      "no_results": "Sonuç bulunamadı.",
+      "user_id_label": "Kullanıcı Discord ID",
+      "user_id_placeholder": "1234567890",
+      "clear_selection": "Seçimi temizle",
+      "amount_label": "Miktar (papel)",
+      "amount_placeholder": "100",
+      "presets_label": "Hazır mesajlar",
+      "presets_select": "Seçiniz",
+      "amount_hint": "{amount} yer tutucusu otomatik tutar ile değişir.",
+      "description_required": "Açıklama (zorunlu)",
+      "description_optional": "Açıklama (opsiyonel)",
+      "description_placeholder": "Örn: Bakım telafisi, etkinlik ödülü vb.",
+      "image_label": "Görsel URL (opsiyonel)",
+      "image_placeholder": "https://...",
+      "submit_loading": "İşleniyor...",
+      "submit": "Uygula",
+      "error_invalid_amount": "Geçerli bir miktar girin.",
+      "error_user_required": "Kullanıcı ID zorunlu.",
+      "error_message_required": "Papel eklerken açıklama zorunludur.",
+      "error_failed": "İşlem başarısız.",
+      "success_all": "Tüm kullanıcılara işlem uygulandı. Toplam: {count}",
+      "success_single": "İşlem başarılı.",
+      "presets": {
+        "add_maintenance": { "label": "Bakım telafisi mesajı", "text": "Merhaba, kısa süreli bakım nedeniyle telafi olarak {amount} papel hesabınıza eklendi. Anlayışınız için teşekkürler." },
+        "add_event": { "label": "Etkinlik/başarı ödülü", "text": "Tebrikler! Etkinlik katkınız için {amount} papel ödülünüz hesabınıza aktarıldı. Keyifle kullanın." },
+        "add_gift": { "label": "Topluluk teşekkür hediyesi", "text": "Topluluğumuza verdiğiniz destek için teşekkürler. Size {amount} papel hediye ediyoruz." },
+        "add_refund": { "label": "Hata telafisi/iade", "text": "Yaşanan aksaklık için üzgünüz. Telafi olarak {amount} papel bakiyenize eklendi." },
+        "add_milestone": { "label": "Seviye/katkı ödülü", "text": "Topluluk katkınız için teşekkürler! {amount} papel ödülünüz hesabınıza aktarıldı." },
+        "add_support": { "label": "Destek teşekkür", "text": "Destek talebiniz sonrası iyi niyet hediyesi olarak {amount} papel hesabınıza yansıdı." },
+        "remove_penalty": { "label": "Kural ihlali/ceza kesintisi", "text": "Kural ihlali nedeniyle hesabınızdan {amount} papel düşülmüştür." },
+        "remove_chargeback": { "label": "Hatalı işlem düzeltmesi", "text": "Hatalı işlem düzeltmesi kapsamında {amount} papel bakiyenizden düşüldü." },
+        "remove_fee": { "label": "İşlem ücreti", "text": "İşlem ücreti olarak {amount} papel bakiyenizden düşüldü." },
+        "remove_refund": { "label": "İade geri çekimi", "text": "İade iptali nedeniyle {amount} papel bakiyenizden düşüldü." },
+        "all_maintenance": { "label": "Bakım telafisi (tüm üyeler)", "text": "Planlı bakım nedeniyle telafi olarak {amount} papel tüm üye bakiyelerine eklendi. Teşekkürler." },
+        "all_announcement": { "label": "Topluluk teşvik (genel)", "text": "Topluluk motivasyonu için {amount} papel tüm üyelere tanımlandı. Keyifle kullanın." },
+        "all_event": { "label": "Etkinlik ödülü (genel)", "text": "Etkinlik katılım teşekkürü olarak {amount} papel tüm üyelere aktarıldı." },
+        "all_season": { "label": "Sezon kapanışı bonusu", "text": "Sezon kapanışı kapsamında {amount} papel tüm üyelere bonus olarak eklendi." },
+        "all_promo": { "label": "Promosyon teşviki", "text": "Yeni dönem teşviki için {amount} papel tüm üye bakiyelerine yüklendi." },
+        "all_loyalty": { "label": "Sadakat teşekkür", "text": "Topluluğa katkılarınız için {amount} papel tüm üyelerimize hediye edildi." },
+        "remove_all_adjustment": { "label": "Genel bakiye düzeltmesi", "text": "Genel bakiye düzeltmesi kapsamında tüm üyelere {amount} papel düşümü uygulanmıştır." },
+        "remove_all_fee": { "label": "Genel işlem ücreti", "text": "Genel işlem ücreti nedeniyle tüm üyelere {amount} papel kesinti uygulanmıştır." }
+      },
+      "mail": {
+        "title_add": "Bakiye Eklendi",
+        "title_remove": "Bakiye Çıkarıldı",
+        "title_add_all": "Toplu Bakiye Eklendi",
+        "title_remove_all": "Toplu Bakiye Çıkarıldı",
+        "heading_add": "✅ Bakiye Eklendi",
+        "heading_remove": "❌ Bakiye Çıkarıldı",
+        "heading_add_all": "✅ Toplu Bakiye Eklendi",
+        "heading_remove_all": "❌ Toplu Bakiye Çıkarıldı",
+        "amount_label": "İşlem Tutarı:",
+        "amount_value": "{sign}{amount} Papel",
+        "description_label": "İşlem Açıklaması:",
+        "footer_single": "Bu işlem sistem tarafından gerçekleştirilmiştir.",
+        "footer_all": "Bu toplu işlem sistem tarafından gerçekleştirilmiştir."
+      }
+    },
+    "earn": {
+      "title": "Kazanç Ayarları",
+      "subtitle": "Sunucu ekonomisini buradan yönetin.",
+      "undo": "Geri Al",
+      "saving": "Kaydediliyor...",
+      "save": "Değişiklikleri Kaydet",
+      "load_error": "Ayarlar yüklenirken bir hata oluştu.",
+      "save_error": "Ayarlar kaydedilemedi.",
+      "save_success": "Ayarlar başarıyla kaydedildi.",
+      "data_error": "Veri yüklenemedi.",
+      "verified_role_mock": "@Doğrulanmış Üye",
+      "message_activity": "Mesaj Aktivitesi",
+      "earn_per_message": "Mesaj Başına Kazanç",
+      "voice_chat": "Sesli Sohbet",
+      "earn_per_voice": "Dakika Başına Kazanç",
+      "tag_bonus": "Etiket Bonusu",
+      "tag_bonus_desc": "Sunucunuzun etiketini takanlara ödül.",
+      "tag_check_label": "Bu sunucu için etiket kontrolü yapılacak:",
+      "message_bonus": "Mesaj Bonusu",
+      "voice_bonus": "Ses Bonusu",
+      "tag_not_configured": "Sunucuda etiket yapılandırılmamış. Etiket zorunluluğunu etkinleştirmek için önce Discord üzerinde uygun bir etiket yapılandırın veya bot yapılandırmasını tamamlayın.",
+      "booster_bonus": "Booster Bonusu",
+      "booster_bonus_desc": "Takviye yapan üyelere ekstra ödül.",
+      "security_title": "Güvenlik & Doğrulama",
+      "security_desc": "Bu alan, botun kimlere ödül vereceğini belirler. Boş bırakılırsa tüm üyeler ödül alır.",
+      "verify_role_label": "Doğrulama Rolü ID'si",
+      "verify_role_placeholder": "Rol ID'si girin",
+      "channels_title": "Kazanç Kanalları",
+      "channels_load_error": "Kanal bilgisi yüklenemedi.",
+      "channels_desc": "Hangi kanallarda papel kazanılacağını belirleyin.",
+      "mode_all_label": "Tüm Kanallar",
+      "mode_all_desc": "Her kanalda kazanç aktif",
+      "mode_whitelist_label": "Beyaz Liste",
+      "mode_whitelist_desc": "Sadece seçilen kanallarda kazanç",
+      "mode_blacklist_label": "Kara Liste",
+      "mode_blacklist_desc": "Seçilen kanallar hariç kazanç",
+      "message_channels": "Mesaj Kanalları",
+      "voice_channels": "Sesli Kanallar",
+      "categories": "Kategoriler",
+      "text_channels": "Metin Kanalları",
+      "voice_channel_list": "Ses Kanalları",
+      "summary_whitelist": "Sadece şu kanallarda kazanç aktif:",
+      "summary_blacklist": "Şu kanallar hariç kazanç aktif:",
+      "suffix_message": "(mesaj)",
+      "suffix_voice": "(ses)",
+      "no_channels_selected": "Henüz kanal seçilmedi."
+    },
+    "menu": {
+      "group_general": "Genel",
+      "group_store": "Mağaza",
+      "group_community": "Topluluk",
+      "group_management": "Yönetim",
+      "section_create": "Oluştur",
+      "section_lists": "Listeler",
+      "section_badges": "Tag Rozeti",
+      "new_product": "Yeni Ürün",
+      "new_promo": "Promosyon Kodu",
+      "new_discount": "İndirim Kodu",
+      "product_list": "Ürün Listesi",
+      "promo_list": "Promosyon Listesi",
+      "discount_list": "İndirim Listesi",
+      "tag_booster": "Tag & Booster",
+      "tag_settings": "Tag Ayarları",
+      "booster_settings": "Booster Ayarları",
+      "custom_roles": "Özel Rol Talepleri"
+    },
+    "shell": {
+      "default_server": "Veri Merkezi",
+      "panel_label": "Yönetim Paneli",
+      "collapse": "Kenar çubuğunu daralt",
+      "expand": "Kenar çubuğunu genişlet",
+      "guide": "Kullanım Kılavuzu",
+      "developer": "Geliştirici Paneli",
+      "open_menu": "Menüyü aç",
+      "close_menu": "Menüyü kapat",
+      "menu_title": "Menü",
+      "admin_fallback": "Yetkili",
+      "role": "Admin",
+      "settings": "Panel Ayarları",
+      "logout": "Çıkış Yap"
+    },
+    "guide": {
+      "eyebrow": "Dokümantasyon",
+      "title": "Admin Kullanım Kılavuzu",
+      "subtitle": "DiscoWeb yönetim panelinin tüm modüllerini adım adım öğrenin. Güncel özellikler, en iyi uygulamalar ve sık sorulan sorular tek bir yerde.",
+      "search_placeholder": "Modül veya konu ara…",
+      "toc_title": "İçindekiler",
+      "tips_label": "Pratik İpuçları",
+      "open_page": "Sayfaya Git",
+      "stat_modules": "modül",
+      "stat_steps": "kurulum adımı",
+      "stat_faq": "SSS",
+      "no_results": "Aramanızla eşleşen bölüm bulunamadı.",
+      "clear_search": "Aramayı temizle",
+      "roadmap_title": "İlk Kurulum Yol Haritası",
+      "roadmap_subtitle": "Sunucunuzu canlıya almak için önerilen sıra.",
+      "quick_title": "Hızlı Erişim",
+      "quick_subtitle": "En sık kullanılan sayfalara tek tıkla ulaşın.",
+      "faq_title": "Sık Sorulan Sorular",
+      "faq_subtitle": "Karşılaşılan sorunlar ve çözüm önerileri.",
+      "cta_title": "Kuruluma hazır mısınız?",
+      "cta_desc": "Rolleri tanımlayın, log kanallarını bağlayın ve ekonomiyi yapılandırdıktan sonra ana ekrandan sunucunuzu izlemeye başlayın.",
+      "cta_settings": "Sunucu Ayarları",
+      "cta_dashboard": "Ana Ekrana Dön",
+      "quick": {
+        "new_product": "Yeni Ürün Oluştur",
+        "wallet": "Bakiye Yönetimi",
+        "earn": "Kazanç Ayarları",
+        "logs": "Kanallar ve Loglar",
+        "settings": "Sunucu Ayarları",
+        "announce": "Küresel Duyuru"
+      },
+      "roadmap": {
+        "login": {
+          "title": "Giriş & Sunucu Seçimi",
+          "desc": "Discord OAuth ile giriş yapın, yöneteceğiniz sunucuyu seçin."
+        },
+        "roles": {
+          "title": "Rol Yapılandırması",
+          "desc": "Admin ve onaylı üye rollerini Panel Ayarları'ndan tanımlayın."
+        },
+        "logs": {
+          "title": "Log Kanalları",
+          "desc": "Webhook URL'lerini ekleyin ve bağlantıyı test edin."
+        },
+        "economy": {
+          "title": "Ekonomi & Mağaza",
+          "desc": "Kazanç ayarları, ürünler ve promosyonları yapılandırın."
+        },
+        "launch": {
+          "title": "Canlıya Al & İzle",
+          "desc": "Ana ekrandan istatistikleri takip edin ve sunucunuzu izlemeye başlayın."
+        }
+      },
+      "sections": {
+        "dashboard": {
+          "title": "Ana Ekran",
+          "desc": "Sunucunuzun nabzını tutan merkezi kontrol paneli. Mesaj, ses, üye, cüzdan ve tag/booster metriklerini son 24 saat ve toplam bazında görüntüleyin.",
+          "tip1": "Yenile düğmesiyle istatistikleri anlık güncelleyebilirsiniz.",
+          "tip2": "Hızlı İşlemler kartları en sık kullanılan sayfalara kısayol sağlar.",
+          "tip3": "Tag sahibi ve booster sayıları topluluk katılımını ölçmenize yardımcı olur."
+        },
+        "store": {
+          "title": "Mağaza Yönetimi",
+          "desc": "Discord rolü satan ürünler, papel paketi sunan promosyon kodları ve yüzde indirim kodlarını tek merkezden yönetin.",
+          "tip1": "Ürün oluştururken rol adıyla arama yapın; bot rol ID'sini otomatik doldurur.",
+          "tip2": "Promosyon kodları papel yükler, kullanım limiti ve süre tanımlanabilir.",
+          "tip3": "İndirim kodları yüzde bazlıdır; mağaza alışverişlerinde uygulanır.",
+          "tip4": "Pasif ürünler listede kalır ancak satın alınamaz — geçici kapatma için idealdir."
+        },
+        "earn": {
+          "title": "Kazanç Ayarları",
+          "desc": "Mesaj ve sesli sohbet kazanç oranlarını, tag/booster bonuslarını, doğrulama rolünü ve kanal filtrelerini (tüm/beyaz liste/kara liste) yapılandırın.",
+          "tip1": "Doğrulama rolü boş bırakılırsa tüm üyeler ödül alır; doluysa yalnızca o role sahip üyeler.",
+          "tip2": "Tag zorunluluğu için sunucuda Discord tag yapılandırması gerekir.",
+          "tip3": "Kanal modu ile kazancı belirli metin/ses kanallarına veya kategorilere sınırlayabilirsiniz.",
+          "tip4": "Değişiklikleri kaydetmeden önce Geri Al ile son haline dönebilirsiniz."
+        },
+        "wallet": {
+          "title": "Bakiye Yönetimi",
+          "desc": "Tek kullanıcıya veya tüm üyelere papel ekleyin veya çıkarın. Hazır mesaj şablonları, açıklama zorunluluğu ve otomatik bildirim maili desteklenir.",
+          "tip1": "Papel eklerken açıklama zorunludur; {amount} yer tutucusu otomatik doldurulur.",
+          "tip2": "Kullanıcı araması nickname veya username ile çalışır.",
+          "tip3": "Toplu işlemlerde tüm üye bakiyeleri etkilenir — dikkatli kullanın."
+        },
+        "logs": {
+          "title": "Kanallar ve Loglar",
+          "desc": "Üye ve admin olaylarını ayrı webhook kanallarına yönlendirin. Kimlik, roller, mağaza, cüzdan, bildirim ve ayar logları ayrı ayrı izlenebilir.",
+          "tip1": "Aynı webhook URL birden fazla kanala atanamaz — sistem bunu engeller.",
+          "tip2": "Webhook Testi ile bağlantıyı kaydetmeden önce doğrulayın.",
+          "tip3": "Üye kanalları: genel, kimlik, roller, değişim, mağaza. Admin kanalları: genel, cüzdan, mağaza, bildirim, ayarlar.",
+          "tip4": "Pasif kanallar log almaz; geçici kapatma için is_active kullanın."
+        },
+        "community": {
+          "title": "Tag & Booster",
+          "desc": "Tag rozet kademeleri ve booster ödül katmanlarını tanımlayın. Gün/ay şartı, papel ödülü, kazanç çarpanı ve rol ataması yapılandırılabilir.",
+          "tip1": "Tag Ayarları sayfasında kademe oluşturup sıralama, emoji ve arka plan görseli ekleyin.",
+          "tip2": "Booster Ayarları, sunucu takviye süresine göre ödül katmanları sunar.",
+          "tip3": "Kazanç Ayarları'ndaki tag/booster bonusları bu kademelerle birlikte çalışır."
+        },
+        "settings": {
+          "title": "Sunucu Ayarları",
+          "desc": "Admin rolü, onaylı üye rolü, onay eşiği ve davet ödülü gibi temel sunucu tercihlerini yönetin. Panel Ayarları menüsünden erişilir.",
+          "tip1": "Admin rolü panel erişimini belirler; bot bu rolden daha üstte olmalıdır.",
+          "tip2": "Onaylı üye rolü mağaza ve kazanç sistemine erişimi kontrol eder.",
+          "tip3": "Kurulumu kaldırma seçeneği sunucu bağlantısını sıfırlar — yalnızca gerekli durumlarda kullanın."
+        },
+        "maintenance": {
+          "title": "Bakım Modu",
+          "desc": "Site, mağaza, işlemler, promosyon, indirim, transfer, bot ve activity akışlarını ayrı ayrı bakıma alın.",
+          "tip1": "Granüler bayraklar sayesinde yalnızca etkilenen modül kapatılır.",
+          "tip2": "Her değişiklik güncelleyen kullanıcı ve zaman damgasıyla kaydedilir."
+        },
+        "announcements": {
+          "title": "Küresel Duyuru",
+          "desc": "Tüm DiscoWeb kullanıcılarına görünen duyurular oluşturun. Başlık, içerik, detay URL'si ve medya görseli desteklenir.",
+          "tip1": "Başlık ve içerik zorunludur; görsel ve detay linki isteğe bağlıdır.",
+          "tip2": "Yayınlanan duyurular platform genelinde görünür — dikkatli kullanın."
+        },
+        "security": {
+          "title": "Güvenlik Merkezi",
+          "desc": "Rol hiyerarşisi, webhook yönetimi, service role key ve şüpheli olay izleme hakkında en iyi uygulamalar.",
+          "tip1": "SUPABASE_SERVICE_ROLE_KEY yalnızca sunucu tarafında saklanmalıdır.",
+          "tip2": "Webhook URL'lerini yalnızca güvenilir admin ekibi yönetmelidir.",
+          "tip3": "Bot rolü, otomatik atanacak tüm rollerden daha üstte konumlandırılmalıdır."
+        }
+      },
+      "faq": {
+        "access": {
+          "q": "Admin paneline kimler erişebilir?",
+          "a": "Sunucu Ayarları'nda tanımlanan admin rolüne sahip Discord üyeleri panele erişir. Rol panelden veya DISCORD_ADMIN_ROLE_ID ortam değişkeniyle belirlenebilir."
+        },
+        "roles": {
+          "q": "Rol aramasında sonuç çıkmıyor, ne yapmalıyım?",
+          "a": "En az 2 karakter yazın. Botun sunucuda rol listesini okuma izni olduğundan ve bot rolünün hedef rolden üstte olduğundan emin olun."
+        },
+        "logs": {
+          "q": "Loglar Discord'a düşmüyor, ne kontrol etmeliyim?",
+          "a": "Webhook URL'sinin geçerli olduğunu, kanalın aktif (is_active) olduğunu ve aynı URL'nin başka kanala atanmadığını doğrulayın. Webhook Testi ile bağlantıyı test edin."
+        },
+        "orders": {
+          "q": "Mağaza siparişleri neden başarısız oluyor?",
+          "a": "Bot çevrimdışı olabilir, rol hiyerarşisi hatalı olabilir veya hedef rol bot rolünden üstte olabilir. Mağaza bakım modunun kapalı olduğunu kontrol edin."
+        },
+        "earn": {
+          "q": "Üyeler papel kazanamıyor, olası nedenler neler?",
+          "a": "Kazanç Ayarları'nda mesaj/ses kazancının açık olduğunu, doğrulama rolü gereksinimini, kanal filtresini (beyaz/kara liste) ve tag zorunluluğunu kontrol edin."
+        },
+        "wallet": {
+          "q": "Bakiye işlemi sonrası mail gitmiyor?",
+          "a": "Papel düşme işlemlerinde admin mail API'si devreye girer. API yanıt kodunu kontrol edin; ekleme işlemlerinde ödül maili bot tarafından gönderilir."
+        }
+      }
+    }
+  }
+}

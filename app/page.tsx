@@ -1,0 +1,203 @@
+"use client";
+import Image from 'next/image';
+import Link from 'next/link';
+import CuteNavbar from '../components/CuteNavbar';
+import { Ubuntu } from "next/font/google";
+import { useState, useEffect } from 'react';
+import { useTranslation } from '@/lib/i18nContext';
+
+const ubuntu = Ubuntu({ subsets: ["latin"], weight: ["400", "700"] });
+
+const contentGuardClass =
+  "select-none [&_img]:pointer-events-none [&_img]:select-none [&_img]:[-webkit-user-drag:none] [&_img]:[user-drag:none]";
+
+function preventDefault(e: { preventDefault: () => void }) {
+  e.preventDefault();
+}
+
+export default function Home() {
+  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('discoweb_loaded')) {
+      setIsLoading(false);
+      return;
+    }
+
+    const progressTimer = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          sessionStorage.setItem('discoweb_loaded', 'true');
+          setIsLoading(false);
+          return 100;
+        }
+        return prev + 2;
+      });
+    }, 100);
+
+    return () => {
+      clearInterval(progressTimer);
+    };
+  }, []);
+
+  // Page-wide: block right-click, image drag/save, and copy/cut
+  useEffect(() => {
+    const blockContext = (e: Event) => e.preventDefault();
+    const blockDrag = (e: DragEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target?.closest(
+          'img, picture, svg, video, canvas, a[href$=".gif"], a[href$=".png"], a[href$=".jpg"], a[href$=".webp"]',
+        )
+      ) {
+        e.preventDefault();
+      }
+    };
+    const blockClipboard = (e: ClipboardEvent) => e.preventDefault();
+    const blockKeys = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if ((e.ctrlKey || e.metaKey) && ['s', 'u', 'c', 'x', 'a', 'p'].includes(key)) {
+        e.preventDefault();
+      }
+      if (key === 'f12') e.preventDefault();
+    };
+
+    document.addEventListener('contextmenu', blockContext);
+    document.addEventListener('dragstart', blockDrag);
+    document.addEventListener('copy', blockClipboard);
+    document.addEventListener('cut', blockClipboard);
+    document.addEventListener('keydown', blockKeys);
+
+    return () => {
+      document.removeEventListener('contextmenu', blockContext);
+      document.removeEventListener('dragstart', blockDrag);
+      document.removeEventListener('copy', blockClipboard);
+      document.removeEventListener('cut', blockClipboard);
+      document.removeEventListener('keydown', blockKeys);
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div
+        className={`h-screen bg-black flex items-center justify-center relative overflow-hidden ${contentGuardClass}`}
+        onContextMenu={preventDefault}
+        onCopy={preventDefault}
+        onCut={preventDefault}
+        onDragStart={preventDefault}
+      >
+        {/* Loading Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#5865F2]/10 to-[#7289DA]/10"></div>
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#5865F2]/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-[#7289DA]/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+        <div className="text-center z-10">
+          <div className="relative inline-block leading-none mb-8">
+            <img
+              src="/gif/BM.gif"
+              alt=""
+              draggable={false}
+              className="absolute left-1/2 transform -translate-x-1/2 translate-y-8 bottom-full block pointer-events-none select-none"
+              style={{ margin: 0 }}
+            />
+            <h1 className={`text-4xl md:text-6xl font-extrabold text-white ${ubuntu.className}`}>DiscoWeb</h1>
+          </div>
+
+          {/* Loading Bar */}
+          <div className="w-64 h-2 bg-white/20 rounded-full overflow-hidden mb-4">
+            <div
+              className="h-full bg-gradient-to-r from-[#5865F2] to-[#7289DA] rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+
+          <p className="text-[#cbd5db] text-sm animate-pulse">
+            {t('home.loading_progress', { progress })}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`h-screen text-white overflow-hidden relative ${contentGuardClass}`}
+      onContextMenu={preventDefault}
+      onCopy={preventDefault}
+      onCut={preventDefault}
+      onDragStart={preventDefault}
+    >
+      <CuteNavbar />
+
+      <header className="fixed top-8 left-0 right-0 z-50 bg-transparent">
+        <div className="flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-8 lg:px-12 mx-auto">
+          <div aria-hidden className="h-6 w-6" />
+          <div aria-hidden className="h-6 w-6" />
+        </div>
+      </header>
+
+      <div className="absolute top-20 left-10 w-72 h-72 bg-[#5865F2]/20 rounded-full blur-3xl animate-glow-pulse"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#7289DA]/15 rounded-full blur-3xl"></div>
+
+      <main className="relative h-full">
+        <div className="absolute inset-0 z-10 px-6">
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl">
+            <div className="w-full flex flex-col md:flex-row md:items-center items-center gap-8">
+              <div className="flex-1 text-center md:text-left md:pl-4 lg:pl-6">
+                <h1 className={`text-3xl md:text-5xl lg:text-6xl font-extrabold text-white ${ubuntu.className}`}>
+                  {t('home.welcome')}
+                </h1>
+                <p className="mt-4 text-sm md:text-lg text-[#cbd5db] leading-relaxed break-words px-2">
+                  {t('home.description')}
+                </p>
+              </div>
+
+              <div className="flex-1 w-full max-w-md md:max-w-lg">
+                <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] mx-auto">
+                  <Image
+                    src="/gif/indir.gif"
+                    alt={t('home.banner_alt')}
+                    fill
+                    className="object-contain pointer-events-none select-none"
+                    unoptimized
+                    priority
+                    draggable={false}
+                    onContextMenu={preventDefault}
+                    onDragStart={preventDefault}
+                  />
+                </div>
+                <div className="mt-4">
+                  <div className="relative inline-block leading-none">
+                    <img
+                      src="/gif/cat.gif"
+                      alt=""
+                      draggable={false}
+                      className="absolute left-1/2 transform -translate-x-1/2 translate-y-60 bottom-full block pointer-events-none select-none"
+                      style={{ margin: 0 }}
+                    />
+                    <h2 className="sr-only">{t('home.decorative_cat')}</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Developer Credits - Bottom */}
+      <div className="absolute bottom-4 left-0 right-0 z-20 px-6">
+        <div className="flex items-center justify-center gap-3 text-xs text-[#99AAB5] opacity-75">
+          <span>Copyright Discoweb 2026</span>
+          <Link
+            href="/status"
+            className="text-[#99AAB5] hover:text-white underline underline-offset-2 transition-colors"
+          >
+            Discoweb Status
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
