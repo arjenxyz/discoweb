@@ -436,5 +436,155 @@
     "opening": "Opening...",
     "docs": "Documentation",
     "back": "Go back"
+  },
+  "setup": {
+    "access_denied_title": "Access Denied",
+    "access_denied_body": "You must be the server owner or an administrator to run setup.",
+    "back": "Go back",
+    "cancel": "Cancel",
+    "steps_heading": "Steps",
+    "close": "Close",
+    "no_roles": "No roles found",
+    "guild_alt": "Server",
+    "phase_update": "Update phase",
+    "phase_setup": "Setup phase",
+    "step": {
+      "roles": {
+        "title": "Roles",
+        "desc": "Choose admin and member roles"
+      },
+      "logs": {
+        "title": "Log management",
+        "desc": "Where logs will be written"
+      },
+      "economy": {
+        "title": "Earnings",
+        "desc": "Papel earning rates"
+      },
+      "bonuses": {
+        "title": "Bonuses",
+        "desc": "Extra Tag and boost earnings"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "Confirm and start"
+      }
+    },
+    "roles": {
+      "heading": "System roles",
+      "sub": "Choose Discord roles for the admin panel and member access.",
+      "admin_label": "Administrator role",
+      "admin_hint": "This role can enter the Admin Panel.",
+      "admin_placeholder": "Select admin role...",
+      "member_label": "Member role",
+      "member_hint": "Base role for registered members; they earn papel.",
+      "member_placeholder": "Select member role..."
+    },
+    "logs": {
+      "heading": "Log management",
+      "sub": "Where should activity logs be written?",
+      "current_title": "Install on this server",
+      "recommended": "Recommended",
+      "current_desc": "A DiscoWeb Logs category will be created here.",
+      "dedicated_title": "Separate log server",
+      "dedicated_desc": "Logs go to another Discord server.",
+      "target_id": "Target server ID",
+      "checking": "Checking…",
+      "found": "Server found",
+      "found_named": "Server found: {name}",
+      "invalid_id": "Invalid server ID",
+      "not_found": "No server found for this ID, or the bot is not on that server",
+      "bot_must_be": "The bot must be on that server.",
+      "warning_title": "Caution",
+      "warning_body": "During setup, old log channels may be deleted and recreated."
+    },
+    "economy": {
+      "heading": "Economy",
+      "sub": "Set papel rates for messages and voice.",
+      "message_title": "Message earnings",
+      "message_sub": "For each message",
+      "message_unit": "Papel / message",
+      "voice_title": "Voice earnings",
+      "voice_sub": "For each voice minute",
+      "voice_unit": "Papel / min"
+    },
+    "bonuses": {
+      "heading": "Bonuses",
+      "sub": "Extra papel for Tag and boost.",
+      "tag_title": "Tag bonus",
+      "tag_sub": "Members with the server tag in their name",
+      "boost_title": "Boost bonus",
+      "boost_sub": "Members who boost the server",
+      "message": "Message",
+      "voice_min": "Voice / min"
+    },
+    "confirm": {
+      "ready_title": "Ready",
+      "ready_body": "Settings look good. Starting applies them to the server.",
+      "start": "Start setup",
+      "running": "Setup in progress"
+    },
+    "nav": {
+      "back": "Back",
+      "next": "Next"
+    },
+    "error": {
+      "guild_info": "Could not load server information",
+      "guild_roles": "Could not load server roles",
+      "bot_inactive": "Bot setup is not active on this server. Contact the owner or an administrator.",
+      "load_failed": "An error occurred while loading server information.",
+      "roles_required": "Please select both the admin and verify roles.",
+      "guild_missing": "Server information was not found.",
+      "failed": "Setup failed",
+      "generic": "An error occurred during setup."
+    },
+    "marks": {
+      "ok": "SUCCESS",
+      "fail": "FAILED",
+      "done": "completed"
+    },
+    "progress": {
+      "permissions": "> Verifying permissions...",
+      "api": "> Starting Bot API integration...",
+      "webhooks": "> Preparing webhook services...",
+      "log_server": "> Configuring log server...",
+      "mock_roles": "> Linking sample roles...",
+      "economy": "> Writing economy settings...",
+      "bonuses": "> Applying bonus rules...",
+      "mock_done": "> Localhost mock setup completed.",
+      "success": "> SETUP SUCCESS!",
+      "log_ok": "> Log setup: SUCCESS",
+      "log_fail": "> Log setup: FAILED (make sure the bot is on the server)",
+      "db": "> Database records created...",
+      "done": "> Setup completed successfully!",
+      "redirect": "> Redirecting to the Admin Panel...",
+      "fail": "> SETUP FAILED!"
+    },
+    "terminal": {
+      "missing_roles": "Role information is missing. Return to the setup screen.",
+      "unknown_guild": "Unknown",
+      "logged_in": "signed in: {name}",
+      "admin_role": "admin role: {id}",
+      "verify_role": "verify role: {id}",
+      "creating_categories": "creating channel categories...",
+      "channels_created": "channels created",
+      "preparing_webhooks": "preparing webhooks...",
+      "failed": "Setup failed",
+      "category_ok": "category validation: ok",
+      "created_channels": "created channels:",
+      "webhook_created": "webhook created: {name} ({type})",
+      "db_writing": "database: writing records...",
+      "success": "setup: success",
+      "redirecting": "redirecting user...",
+      "countdown": "admin panel opens in {seconds} seconds...",
+      "error_generic": "An error occurred during setup.",
+      "fail_line": "setup: failed",
+      "error_label": "✕ error",
+      "loading": "Loading...",
+      "path": "~/data-center/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "Preparing system..."
   }
 }

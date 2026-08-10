@@ -436,5 +436,155 @@
     "opening": "Wird geöffnet...",
     "docs": "Dokumentation",
     "back": "Zurück"
+  },
+  "setup": {
+    "access_denied_title": "Zugriff verweigert",
+    "access_denied_body": "Du musst Serverbesitzer oder Administrator sein, um das Setup auszuführen.",
+    "back": "Zurück",
+    "cancel": "Abbrechen",
+    "steps_heading": "Schritte",
+    "close": "Schließen",
+    "no_roles": "Keine Rollen gefunden",
+    "guild_alt": "Server",
+    "phase_update": "Aktualisierungsphase",
+    "phase_setup": "Setup-Phase",
+    "step": {
+      "roles": {
+        "title": "Rollen",
+        "desc": "Admin- und Mitgliederrollen wählen"
+      },
+      "logs": {
+        "title": "Log-Verwaltung",
+        "desc": "Wohin Logs geschrieben werden"
+      },
+      "economy": {
+        "title": "Verdienste",
+        "desc": "Papel-Verdienstraten"
+      },
+      "bonuses": {
+        "title": "Boni",
+        "desc": "Extra-Verdienste für Tag und Boost"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "Bestätigen und starten"
+      }
+    },
+    "roles": {
+      "heading": "Systemrollen",
+      "sub": "Wähle Discord-Rollen für das Admin-Panel und den Mitgliederzugriff.",
+      "admin_label": "Administratorrolle",
+      "admin_hint": "Diese Rolle kann das Admin-Panel betreten.",
+      "admin_placeholder": "Admin-Rolle auswählen...",
+      "member_label": "Mitgliederrolle",
+      "member_hint": "Basisrolle für registrierte Mitglieder; sie verdienen Papel.",
+      "member_placeholder": "Mitgliederrolle auswählen..."
+    },
+    "logs": {
+      "heading": "Log-Verwaltung",
+      "sub": "Wohin sollen Aktivitätslogs geschrieben werden?",
+      "current_title": "Auf diesem Server installieren",
+      "recommended": "Empfohlen",
+      "current_desc": "Hier wird eine DiscoWeb Logs-Kategorie erstellt.",
+      "dedicated_title": "Separater Log-Server",
+      "dedicated_desc": "Logs gehen an einen anderen Discord-Server.",
+      "target_id": "Ziel-Server-ID",
+      "checking": "Wird geprüft…",
+      "found": "Server gefunden",
+      "found_named": "Server gefunden: {name}",
+      "invalid_id": "Ungültige Server-ID",
+      "not_found": "Kein Server für diese ID gefunden, oder der Bot ist nicht auf diesem Server",
+      "bot_must_be": "Der Bot muss auf diesem Server sein.",
+      "warning_title": "Vorsicht",
+      "warning_body": "Während des Setups können alte Log-Kanäle gelöscht und neu erstellt werden."
+    },
+    "economy": {
+      "heading": "Wirtschaft",
+      "sub": "Papel-Raten für Nachrichten und Sprache festlegen.",
+      "message_title": "Nachrichtenverdienst",
+      "message_sub": "Pro Nachricht",
+      "message_unit": "Papel / Nachricht",
+      "voice_title": "Sprachverdienst",
+      "voice_sub": "Pro Sprachminute",
+      "voice_unit": "Papel / Min."
+    },
+    "bonuses": {
+      "heading": "Boni",
+      "sub": "Extra-Papel für Tag und Boost.",
+      "tag_title": "Tag-Bonus",
+      "tag_sub": "Mitglieder mit dem Server-Tag im Namen",
+      "boost_title": "Boost-Bonus",
+      "boost_sub": "Mitglieder, die den Server boosten",
+      "message": "Nachricht",
+      "voice_min": "Sprache / Min."
+    },
+    "confirm": {
+      "ready_title": "Bereit",
+      "ready_body": "Die Einstellungen sehen gut aus. Beim Start werden sie auf den Server angewendet.",
+      "start": "Setup starten",
+      "running": "Setup läuft"
+    },
+    "nav": {
+      "back": "Zurück",
+      "next": "Weiter"
+    },
+    "error": {
+      "guild_info": "Serverinformationen konnten nicht geladen werden",
+      "guild_roles": "Serverrollen konnten nicht geladen werden",
+      "bot_inactive": "Das Bot-Setup ist auf diesem Server nicht aktiv. Kontaktiere den Besitzer oder einen Administrator.",
+      "load_failed": "Beim Laden der Serverinformationen ist ein Fehler aufgetreten.",
+      "roles_required": "Bitte wähle sowohl die Admin- als auch die Verify-Rolle.",
+      "guild_missing": "Serverinformationen wurden nicht gefunden.",
+      "failed": "Setup fehlgeschlagen",
+      "generic": "Während des Setups ist ein Fehler aufgetreten."
+    },
+    "marks": {
+      "ok": "ERFOLG",
+      "fail": "FEHLGESCHLAGEN",
+      "done": "abgeschlossen"
+    },
+    "progress": {
+      "permissions": "> Berechtigungen werden geprüft...",
+      "api": "> Bot-API-Integration wird gestartet...",
+      "webhooks": "> Webhook-Dienste werden vorbereitet...",
+      "log_server": "> Log-Server wird konfiguriert...",
+      "mock_roles": "> Beispielrollen werden verknüpft...",
+      "economy": "> Wirtschaftseinstellungen werden geschrieben...",
+      "bonuses": "> Bonusregeln werden angewendet...",
+      "mock_done": "> Localhost-Mock-Setup abgeschlossen.",
+      "success": "> SETUP ERFOLGREICH!",
+      "log_ok": "> Log-Setup: ERFOLG",
+      "log_fail": "> Log-Setup: FEHLGESCHLAGEN (stelle sicher, dass der Bot auf dem Server ist)",
+      "db": "> Datenbankeinträge erstellt...",
+      "done": "> Setup erfolgreich abgeschlossen!",
+      "redirect": "> Weiterleitung zum Admin-Panel...",
+      "fail": "> SETUP FEHLGESCHLAGEN!"
+    },
+    "terminal": {
+      "missing_roles": "Rolleninformationen fehlen. Kehre zum Setup-Bildschirm zurück.",
+      "unknown_guild": "Unbekannt",
+      "logged_in": "angemeldet: {name}",
+      "admin_role": "Admin-Rolle: {id}",
+      "verify_role": "Verify-Rolle: {id}",
+      "creating_categories": "Kanalkategorien werden erstellt...",
+      "channels_created": "Kanäle erstellt",
+      "preparing_webhooks": "Webhooks werden vorbereitet...",
+      "failed": "Setup fehlgeschlagen",
+      "category_ok": "Kategorieprüfung: ok",
+      "created_channels": "erstellte Kanäle:",
+      "webhook_created": "Webhook erstellt: {name} ({type})",
+      "db_writing": "database: Einträge werden geschrieben...",
+      "success": "setup: erfolgreich",
+      "redirecting": "Benutzer wird weitergeleitet...",
+      "countdown": "Admin-Panel öffnet in {seconds} Sekunden...",
+      "error_generic": "Während des Setups ist ein Fehler aufgetreten.",
+      "fail_line": "setup: fehlgeschlagen",
+      "error_label": "✕ Fehler",
+      "loading": "Wird geladen...",
+      "path": "~/daten-zentrum/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "System wird vorbereitet..."
   }
 }

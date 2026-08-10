@@ -436,5 +436,155 @@
     "opening": "Membuka...",
     "docs": "Dokumentasi",
     "back": "Kembali"
+  },
+  "setup": {
+    "access_denied_title": "Akses ditolak",
+    "access_denied_body": "Anda harus menjadi pemilik server atau administrator untuk menjalankan Setup.",
+    "back": "Kembali",
+    "cancel": "Batal",
+    "steps_heading": "Langkah",
+    "close": "Tutup",
+    "no_roles": "Tidak ada peran ditemukan",
+    "guild_alt": "Server",
+    "phase_update": "Fase pembaruan",
+    "phase_setup": "Fase Setup",
+    "step": {
+      "roles": {
+        "title": "Peran",
+        "desc": "Pilih peran admin dan anggota"
+      },
+      "logs": {
+        "title": "Manajemen log",
+        "desc": "Tempat log akan ditulis"
+      },
+      "economy": {
+        "title": "Penghasilan",
+        "desc": "Tarif penghasilan Papel"
+      },
+      "bonuses": {
+        "title": "Bonus",
+        "desc": "Penghasilan ekstra Tag dan boost"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "Konfirmasi dan mulai"
+      }
+    },
+    "roles": {
+      "heading": "Peran sistem",
+      "sub": "Pilih peran Discord untuk panel admin dan akses anggota.",
+      "admin_label": "Peran administrator",
+      "admin_hint": "Peran ini dapat masuk ke Panel Admin.",
+      "admin_placeholder": "Pilih peran admin...",
+      "member_label": "Peran anggota",
+      "member_hint": "Peran dasar untuk anggota terdaftar; mereka memperoleh papel.",
+      "member_placeholder": "Pilih peran anggota..."
+    },
+    "logs": {
+      "heading": "Manajemen log",
+      "sub": "Di mana log aktivitas harus ditulis?",
+      "current_title": "Pasang di server ini",
+      "recommended": "Direkomendasikan",
+      "current_desc": "Kategori DiscoWeb Logs akan dibuat di sini.",
+      "dedicated_title": "Server log terpisah",
+      "dedicated_desc": "Log dikirim ke server Discord lain.",
+      "target_id": "ID server target",
+      "checking": "Memeriksa…",
+      "found": "Server ditemukan",
+      "found_named": "Server ditemukan: {name}",
+      "invalid_id": "ID server tidak valid",
+      "not_found": "Tidak ada server untuk ID ini, atau bot tidak ada di server tersebut",
+      "bot_must_be": "Bot harus berada di server tersebut.",
+      "warning_title": "Perhatian",
+      "warning_body": "Selama Setup, saluran log lama mungkin dihapus dan dibuat ulang."
+    },
+    "economy": {
+      "heading": "Ekonomi",
+      "sub": "Atur tarif papel untuk pesan dan suara.",
+      "message_title": "Penghasilan pesan",
+      "message_sub": "Untuk setiap pesan",
+      "message_unit": "Papel / pesan",
+      "voice_title": "Penghasilan suara",
+      "voice_sub": "Untuk setiap menit suara",
+      "voice_unit": "Papel / mnt"
+    },
+    "bonuses": {
+      "heading": "Bonus",
+      "sub": "Papel ekstra untuk Tag dan boost.",
+      "tag_title": "Bonus Tag",
+      "tag_sub": "Anggota dengan tag server di nama mereka",
+      "boost_title": "Bonus Boost",
+      "boost_sub": "Anggota yang boost server",
+      "message": "Pesan",
+      "voice_min": "Suara / mnt"
+    },
+    "confirm": {
+      "ready_title": "Siap",
+      "ready_body": "Pengaturan terlihat baik. Memulai akan menerapkannya ke server.",
+      "start": "Mulai Setup",
+      "running": "Setup sedang berlangsung"
+    },
+    "nav": {
+      "back": "Kembali",
+      "next": "Berikutnya"
+    },
+    "error": {
+      "guild_info": "Tidak dapat memuat informasi server",
+      "guild_roles": "Tidak dapat memuat peran server",
+      "bot_inactive": "Setup bot tidak aktif di server ini. Hubungi pemilik atau administrator.",
+      "load_failed": "Terjadi kesalahan saat memuat informasi server.",
+      "roles_required": "Pilih peran admin dan verify.",
+      "guild_missing": "Informasi server tidak ditemukan.",
+      "failed": "Setup gagal",
+      "generic": "Terjadi kesalahan selama Setup."
+    },
+    "marks": {
+      "ok": "BERHASIL",
+      "fail": "GAGAL",
+      "done": "selesai"
+    },
+    "progress": {
+      "permissions": "> Memverifikasi izin...",
+      "api": "> Memulai integrasi Bot API...",
+      "webhooks": "> Menyiapkan layanan webhook...",
+      "log_server": "> Mengonfigurasi server log...",
+      "mock_roles": "> Menghubungkan peran contoh...",
+      "economy": "> Menulis pengaturan ekonomi...",
+      "bonuses": "> Menerapkan aturan bonus...",
+      "mock_done": "> Setup mock localhost selesai.",
+      "success": "> SETUP BERHASIL!",
+      "log_ok": "> Setup log: BERHASIL",
+      "log_fail": "> Setup log: GAGAL (pastikan bot ada di server)",
+      "db": "> Catatan database dibuat...",
+      "done": "> Setup berhasil diselesaikan!",
+      "redirect": "> Mengalihkan ke Panel Admin...",
+      "fail": "> SETUP GAGAL!"
+    },
+    "terminal": {
+      "missing_roles": "Informasi peran hilang. Kembali ke layar Setup.",
+      "unknown_guild": "Tidak diketahui",
+      "logged_in": "masuk: {name}",
+      "admin_role": "peran admin: {id}",
+      "verify_role": "peran verify: {id}",
+      "creating_categories": "membuat kategori saluran...",
+      "channels_created": "saluran dibuat",
+      "preparing_webhooks": "menyiapkan webhook...",
+      "failed": "Setup gagal",
+      "category_ok": "validasi kategori: ok",
+      "created_channels": "saluran yang dibuat:",
+      "webhook_created": "webhook dibuat: {name} ({type})",
+      "db_writing": "database: menulis catatan...",
+      "success": "setup: berhasil",
+      "redirecting": "mengalihkan pengguna...",
+      "countdown": "panel admin terbuka dalam {seconds} detik...",
+      "error_generic": "Terjadi kesalahan selama Setup.",
+      "fail_line": "setup: gagal",
+      "error_label": "✕ kesalahan",
+      "loading": "Memuat...",
+      "path": "~/pusat-data/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "Menyiapkan sistem..."
   }
 }

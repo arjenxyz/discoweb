@@ -436,5 +436,155 @@
     "opening": "Megnyitás...",
     "docs": "Dokumentáció",
     "back": "Vissza"
+  },
+  "setup": {
+    "access_denied_title": "Hozzáférés megtagadva",
+    "access_denied_body": "A Setup futtatásához szervertulajdonosnak vagy adminisztrátornak kell lenned.",
+    "back": "Vissza",
+    "cancel": "Mégse",
+    "steps_heading": "Lépések",
+    "close": "Bezárás",
+    "no_roles": "Nem található szerepkör",
+    "guild_alt": "Szerver",
+    "phase_update": "Frissítési fázis",
+    "phase_setup": "Setup fázis",
+    "step": {
+      "roles": {
+        "title": "Szerepkörök",
+        "desc": "Válaszd ki az admin és tag szerepköröket"
+      },
+      "logs": {
+        "title": "Naplókezelés",
+        "desc": "Hová íródnak a naplók"
+      },
+      "economy": {
+        "title": "Kereset",
+        "desc": "Papel kereseti arányok"
+      },
+      "bonuses": {
+        "title": "Bónuszok",
+        "desc": "Extra Tag és boost keresetek"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "Megerősítés és indítás"
+      }
+    },
+    "roles": {
+      "heading": "Rendszerszerepkörök",
+      "sub": "Válassz Discord szerepköröket az admin panelhez és a tagok hozzáféréséhez.",
+      "admin_label": "Adminisztrátori szerepkör",
+      "admin_hint": "Ez a szerepkör beléphet az Admin Panelbe.",
+      "admin_placeholder": "Admin szerepkör kiválasztása...",
+      "member_label": "Tag szerepkör",
+      "member_hint": "Alapszerepkör a regisztrált tagoknak; ők papel-t keresnek.",
+      "member_placeholder": "Tag szerepkör kiválasztása..."
+    },
+    "logs": {
+      "heading": "Naplókezelés",
+      "sub": "Hová kerüljenek az aktivitási naplók?",
+      "current_title": "Telepítés erre a szerverre",
+      "recommended": "Ajánlott",
+      "current_desc": "Itt létrejön egy DiscoWeb Logs kategória.",
+      "dedicated_title": "Külön naplószerver",
+      "dedicated_desc": "A naplók egy másik Discord szerverre mennek.",
+      "target_id": "Cél szerver ID",
+      "checking": "Ellenőrzés…",
+      "found": "Szerver megtalálva",
+      "found_named": "Szerver megtalálva: {name}",
+      "invalid_id": "Érvénytelen szerver ID",
+      "not_found": "Nincs szerver ezzel az ID-vel, vagy a bot nincs azon a szerveren",
+      "bot_must_be": "A botnak azon a szerveren kell lennie.",
+      "warning_title": "Figyelem",
+      "warning_body": "A Setup során a régi naplócsatornák törölhetők és újra létrehozhatók."
+    },
+    "economy": {
+      "heading": "Gazdaság",
+      "sub": "Állítsd be a papel arányokat üzenetekre és hangra.",
+      "message_title": "Üzenetkereset",
+      "message_sub": "Üzenetenként",
+      "message_unit": "Papel / üzenet",
+      "voice_title": "Hangkereset",
+      "voice_sub": "Hangpercenként",
+      "voice_unit": "Papel / perc"
+    },
+    "bonuses": {
+      "heading": "Bónuszok",
+      "sub": "Extra papel Tagért és boostért.",
+      "tag_title": "Tag bónusz",
+      "tag_sub": "Tagok, akiknek a szerver tagje van a nevükben",
+      "boost_title": "Boost bónusz",
+      "boost_sub": "Tagok, akik boostolják a szervert",
+      "message": "Üzenet",
+      "voice_min": "Hang / perc"
+    },
+    "confirm": {
+      "ready_title": "Kész",
+      "ready_body": "A beállítások jónak tűnnek. Az indítás alkalmazza őket a szerverre.",
+      "start": "Setup indítása",
+      "running": "Setup folyamatban"
+    },
+    "nav": {
+      "back": "Vissza",
+      "next": "Tovább"
+    },
+    "error": {
+      "guild_info": "Nem sikerült betölteni a szerverinformációkat",
+      "guild_roles": "Nem sikerült betölteni a szerver szerepköreit",
+      "bot_inactive": "A bot Setup nincs aktív ezen a szerveren. Lépj kapcsolatba a tulajdonossal vagy egy adminisztrátorral.",
+      "load_failed": "Hiba történt a szerverinformációk betöltésekor.",
+      "roles_required": "Válaszd ki az admin és a verify szerepkört is.",
+      "guild_missing": "A szerverinformáció nem található.",
+      "failed": "A Setup sikertelen",
+      "generic": "Hiba történt a Setup során."
+    },
+    "marks": {
+      "ok": "SIKERES",
+      "fail": "SIKERTELEN",
+      "done": "kész"
+    },
+    "progress": {
+      "permissions": "> Jogosultságok ellenőrzése...",
+      "api": "> Bot API integráció indítása...",
+      "webhooks": "> Webhook szolgáltatások előkészítése...",
+      "log_server": "> Naplószerver konfigurálása...",
+      "mock_roles": "> Mintaszerepkörök összekapcsolása...",
+      "economy": "> Gazdasági beállítások írása...",
+      "bonuses": "> Bónuszszabályok alkalmazása...",
+      "mock_done": "> Localhost mock Setup kész.",
+      "success": "> SETUP SIKERES!",
+      "log_ok": "> Napló Setup: SIKERES",
+      "log_fail": "> Napló Setup: SIKERTELEN (győződj meg róla, hogy a bot a szerveren van)",
+      "db": "> Adatbázis rekordok létrehozva...",
+      "done": "> Setup sikeresen befejezve!",
+      "redirect": "> Átirányítás az Admin Panelre...",
+      "fail": "> SETUP SIKERTELEN!"
+    },
+    "terminal": {
+      "missing_roles": "Hiányoznak a szerepkör-adatok. Térj vissza a Setup képernyőre.",
+      "unknown_guild": "Ismeretlen",
+      "logged_in": "bejelentkezve: {name}",
+      "admin_role": "admin szerepkör: {id}",
+      "verify_role": "verify szerepkör: {id}",
+      "creating_categories": "csatornakategóriák létrehozása...",
+      "channels_created": "csatornák létrehozva",
+      "preparing_webhooks": "webhookok előkészítése...",
+      "failed": "A Setup sikertelen",
+      "category_ok": "kategória ellenőrzés: ok",
+      "created_channels": "létrehozott csatornák:",
+      "webhook_created": "webhook létrehozva: {name} ({type})",
+      "db_writing": "database: rekordok írása...",
+      "success": "setup: sikeres",
+      "redirecting": "felhasználó átirányítása...",
+      "countdown": "az admin panel {seconds} másodperc múlva megnyílik...",
+      "error_generic": "Hiba történt a Setup során.",
+      "fail_line": "setup: sikertelen",
+      "error_label": "✕ hiba",
+      "loading": "Betöltés...",
+      "path": "~/adat-kozpont/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "Rendszer előkészítése..."
   }
 }

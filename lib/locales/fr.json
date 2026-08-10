@@ -436,5 +436,155 @@
     "opening": "Ouverture...",
     "docs": "Documentation",
     "back": "Retour"
+  },
+  "setup": {
+    "access_denied_title": "Accès refusé",
+    "access_denied_body": "Vous devez être le propriétaire du serveur ou un administrateur pour lancer le Setup.",
+    "back": "Retour",
+    "cancel": "Annuler",
+    "steps_heading": "Étapes",
+    "close": "Fermer",
+    "no_roles": "Aucun rôle trouvé",
+    "guild_alt": "Serveur",
+    "phase_update": "Phase de mise à jour",
+    "phase_setup": "Phase de Setup",
+    "step": {
+      "roles": {
+        "title": "Rôles",
+        "desc": "Choisir les rôles admin et membre"
+      },
+      "logs": {
+        "title": "Gestion des logs",
+        "desc": "Où les logs seront écrits"
+      },
+      "economy": {
+        "title": "Gains",
+        "desc": "Taux de gain de Papel"
+      },
+      "bonuses": {
+        "title": "Bonus",
+        "desc": "Gains supplémentaires Tag et boost"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "Confirmer et démarrer"
+      }
+    },
+    "roles": {
+      "heading": "Rôles système",
+      "sub": "Choisissez les rôles Discord pour le panneau admin et l’accès des membres.",
+      "admin_label": "Rôle administrateur",
+      "admin_hint": "Ce rôle peut accéder au Panneau Admin.",
+      "admin_placeholder": "Sélectionner le rôle admin...",
+      "member_label": "Rôle membre",
+      "member_hint": "Rôle de base des membres inscrits ; ils gagnent du papel.",
+      "member_placeholder": "Sélectionner le rôle membre..."
+    },
+    "logs": {
+      "heading": "Gestion des logs",
+      "sub": "Où les logs d’activité doivent-ils être écrits ?",
+      "current_title": "Installer sur ce serveur",
+      "recommended": "Recommandé",
+      "current_desc": "Une catégorie DiscoWeb Logs sera créée ici.",
+      "dedicated_title": "Serveur de logs séparé",
+      "dedicated_desc": "Les logs vont vers un autre serveur Discord.",
+      "target_id": "ID du serveur cible",
+      "checking": "Vérification…",
+      "found": "Serveur trouvé",
+      "found_named": "Serveur trouvé : {name}",
+      "invalid_id": "ID de serveur invalide",
+      "not_found": "Aucun serveur trouvé pour cet ID, ou le bot n’est pas sur ce serveur",
+      "bot_must_be": "Le bot doit être sur ce serveur.",
+      "warning_title": "Attention",
+      "warning_body": "Pendant le Setup, d’anciens salons de logs peuvent être supprimés et recréés."
+    },
+    "economy": {
+      "heading": "Économie",
+      "sub": "Définissez les taux de papel pour les messages et la voix.",
+      "message_title": "Gains par message",
+      "message_sub": "Pour chaque message",
+      "message_unit": "Papel / message",
+      "voice_title": "Gains vocaux",
+      "voice_sub": "Pour chaque minute vocale",
+      "voice_unit": "Papel / min"
+    },
+    "bonuses": {
+      "heading": "Bonus",
+      "sub": "Papel supplémentaire pour Tag et boost.",
+      "tag_title": "Bonus Tag",
+      "tag_sub": "Membres avec le tag du serveur dans leur nom",
+      "boost_title": "Bonus Boost",
+      "boost_sub": "Membres qui boostent le serveur",
+      "message": "Message",
+      "voice_min": "Voix / min"
+    },
+    "confirm": {
+      "ready_title": "Prêt",
+      "ready_body": "Les paramètres semblent corrects. Le démarrage les applique au serveur.",
+      "start": "Démarrer le Setup",
+      "running": "Setup en cours"
+    },
+    "nav": {
+      "back": "Retour",
+      "next": "Suivant"
+    },
+    "error": {
+      "guild_info": "Impossible de charger les informations du serveur",
+      "guild_roles": "Impossible de charger les rôles du serveur",
+      "bot_inactive": "Le Setup du bot n’est pas actif sur ce serveur. Contactez le propriétaire ou un administrateur.",
+      "load_failed": "Une erreur s’est produite lors du chargement des informations du serveur.",
+      "roles_required": "Veuillez sélectionner les rôles admin et verify.",
+      "guild_missing": "Informations du serveur introuvables.",
+      "failed": "Échec du Setup",
+      "generic": "Une erreur s’est produite pendant le Setup."
+    },
+    "marks": {
+      "ok": "SUCCÈS",
+      "fail": "ÉCHEC",
+      "done": "terminé"
+    },
+    "progress": {
+      "permissions": "> Vérification des permissions...",
+      "api": "> Démarrage de l’intégration Bot API...",
+      "webhooks": "> Préparation des services webhook...",
+      "log_server": "> Configuration du serveur de logs...",
+      "mock_roles": "> Liaison des rôles d’exemple...",
+      "economy": "> Écriture des paramètres d’économie...",
+      "bonuses": "> Application des règles de bonus...",
+      "mock_done": "> Setup mock localhost terminé.",
+      "success": "> SETUP RÉUSSI !",
+      "log_ok": "> Setup des logs : SUCCÈS",
+      "log_fail": "> Setup des logs : ÉCHEC (assurez-vous que le bot est sur le serveur)",
+      "db": "> Enregistrements de base de données créés...",
+      "done": "> Setup terminé avec succès !",
+      "redirect": "> Redirection vers le Panneau Admin...",
+      "fail": "> ÉCHEC DU SETUP !"
+    },
+    "terminal": {
+      "missing_roles": "Informations de rôles manquantes. Revenez à l’écran de Setup.",
+      "unknown_guild": "Inconnu",
+      "logged_in": "connecté : {name}",
+      "admin_role": "rôle admin : {id}",
+      "verify_role": "rôle verify : {id}",
+      "creating_categories": "création des catégories de salons...",
+      "channels_created": "salons créés",
+      "preparing_webhooks": "préparation des webhooks...",
+      "failed": "Échec du Setup",
+      "category_ok": "validation de catégorie : ok",
+      "created_channels": "salons créés :",
+      "webhook_created": "webhook créé : {name} ({type})",
+      "db_writing": "database : écriture des enregistrements...",
+      "success": "setup : succès",
+      "redirecting": "redirection de l’utilisateur...",
+      "countdown": "le panneau admin s’ouvre dans {seconds} secondes...",
+      "error_generic": "Une erreur s’est produite pendant le Setup.",
+      "fail_line": "setup : échec",
+      "error_label": "✕ erreur",
+      "loading": "Chargement...",
+      "path": "~/centre-de-donnees/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "Préparation du système..."
   }
 }

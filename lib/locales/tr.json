@@ -436,5 +436,155 @@
     "opening": "Açılıyor...",
     "docs": "Dokümantasyon",
     "back": "Geri Dön"
+  },
+  "setup": {
+    "access_denied_title": "Erişim Reddedildi",
+    "access_denied_body": "Kurulum için sunucu sahibi veya yönetici olmalısınız.",
+    "back": "Geri Dön",
+    "cancel": "İptal",
+    "steps_heading": "Adımlar",
+    "close": "Kapat",
+    "no_roles": "Rol bulunamadı",
+    "guild_alt": "Sunucu",
+    "phase_update": "Güncelleme Aşaması",
+    "phase_setup": "Kurulum Aşaması",
+    "step": {
+      "roles": {
+        "title": "Roller",
+        "desc": "Admin ve üye rollerini seçin"
+      },
+      "logs": {
+        "title": "Log Yönetimi",
+        "desc": "Logların yazılacağı yer"
+      },
+      "economy": {
+        "title": "Kazanç",
+        "desc": "Papel kazanç oranları"
+      },
+      "bonuses": {
+        "title": "Bonuslar",
+        "desc": "Tag ve boost ek kazançları"
+      },
+      "confirm": {
+        "title": "Kurulum",
+        "desc": "Onayla ve başlat"
+      }
+    },
+    "roles": {
+      "heading": "Sistem Rolleri",
+      "sub": "Admin paneli ve üye erişimi için Discord rollerini seçin.",
+      "admin_label": "Yönetici Rolü",
+      "admin_hint": "Bu rolle Admin Paneline girilir.",
+      "admin_placeholder": "Admin rolünü seçin...",
+      "member_label": "Üye Rolü",
+      "member_hint": "Kayıtlı üyelerin temel rolü; papel kazanır.",
+      "member_placeholder": "Üye rolünü seçin..."
+    },
+    "logs": {
+      "heading": "Log Yönetimi",
+      "sub": "İşlem logları nereye yazılsın?",
+      "current_title": "Bu sunucuya kur",
+      "recommended": "Önerilen",
+      "current_desc": "DiscoWeb Logs kategorisi burada açılır.",
+      "dedicated_title": "Ayrı log sunucusu",
+      "dedicated_desc": "Loglar başka bir Discord sunucusuna gider.",
+      "target_id": "Hedef sunucu ID",
+      "checking": "Kontrol ediliyor…",
+      "found": "Sunucu bulundu",
+      "found_named": "Sunucu bulundu: {name}",
+      "invalid_id": "Geçersiz sunucu ID",
+      "not_found": "Bu ID ile sunucu bulunamadı veya bot o sunucuda değil",
+      "bot_must_be": "Bot o sunucuda olmalı.",
+      "warning_title": "Dikkat",
+      "warning_body": "Kurulumda eski log kanalları silinip yeniden açılabilir."
+    },
+    "economy": {
+      "heading": "Ekonomi",
+      "sub": "Mesaj ve ses için papel oranlarını ayarlayın.",
+      "message_title": "Mesaj Kazancı",
+      "message_sub": "Her mesaj için",
+      "message_unit": "Papel / mesaj",
+      "voice_title": "Ses Kazancı",
+      "voice_sub": "Her ses dakikası için",
+      "voice_unit": "Papel / dk"
+    },
+    "bonuses": {
+      "heading": "Bonuslar",
+      "sub": "Tag ve boost için ekstra papel.",
+      "tag_title": "Tag Bonusu",
+      "tag_sub": "İsminde sunucu tagı olanlar",
+      "boost_title": "Boost Bonusu",
+      "boost_sub": "Sunucuyu boostlayanlar",
+      "message": "Mesaj",
+      "voice_min": "Ses / dk"
+    },
+    "confirm": {
+      "ready_title": "Hazır",
+      "ready_body": "Ayarlar tamam. Başlatınca sunucuya uygulanır.",
+      "start": "Kurulumu Başlat",
+      "running": "Kurulum sürüyor"
+    },
+    "nav": {
+      "back": "Geri",
+      "next": "İleri"
+    },
+    "error": {
+      "guild_info": "Sunucu bilgileri alınamadı",
+      "guild_roles": "Sunucu rolleri alınamadı",
+      "bot_inactive": "Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.",
+      "load_failed": "Sunucu bilgileri yüklenirken hata oluştu.",
+      "roles_required": "Lütfen hem admin hem de verify rolünü seçin.",
+      "guild_missing": "Sunucu bilgisi bulunamadı.",
+      "failed": "Kurulum başarısız",
+      "generic": "Kurulum sırasında hata oluştu."
+    },
+    "marks": {
+      "ok": "BAŞARILI",
+      "fail": "BAŞARISIZ",
+      "done": "tamamlandı"
+    },
+    "progress": {
+      "permissions": "> İzinler doğrulanıyor...",
+      "api": "> Bot API entegrasyonu başlatılıyor...",
+      "webhooks": "> Webhook servisleri hazırlanıyor...",
+      "log_server": "> Log sunucusu yapılandırılıyor...",
+      "mock_roles": "> Örnek roller bağlanıyor...",
+      "economy": "> Ekonomi ayarları yazılıyor...",
+      "bonuses": "> Bonus kuralları uygulanıyor...",
+      "mock_done": "> Localhost mock kurulum tamamlandı.",
+      "success": "> KURULUM BAŞARILI!",
+      "log_ok": "> Log Kurulumu: BAŞARILI",
+      "log_fail": "> Log Kurulumu: BAŞARISIZ (Lütfen botun sunucuda olduğundan emin olun)",
+      "db": "> Veritabanı kayıtları oluşturuldu...",
+      "done": "> Kurulum başarıyla tamamlandı!",
+      "redirect": "> Admin Paneline yönlendiriliyorsunuz...",
+      "fail": "> KURULUM BAŞARISIZ!"
+    },
+    "terminal": {
+      "missing_roles": "Rol bilgileri eksik. Kurulum ekranına geri dönün.",
+      "unknown_guild": "Bilinmiyor",
+      "logged_in": "giriş yapıldı: {name}",
+      "admin_role": "admin rolü: {id}",
+      "verify_role": "verify rolü: {id}",
+      "creating_categories": "kanal kategorileri oluşturuluyor...",
+      "channels_created": "kanallar oluşturuldu",
+      "preparing_webhooks": "webhooklar hazırlanıyor...",
+      "failed": "Kurulum başarısız",
+      "category_ok": "kategori doğrulama: tamam",
+      "created_channels": "oluşturulan kanallar:",
+      "webhook_created": "webhook oluşturuldu: {name} ({type})",
+      "db_writing": "database: kayıtlar yazılıyor...",
+      "success": "kurulum: başarılı",
+      "redirecting": "kullanıcı yönlendiriliyor...",
+      "countdown": "admin paneli {seconds} saniye içinde açılacak...",
+      "error_generic": "Kurulum sırasında hata oluştu.",
+      "fail_line": "kurulum: başarısız",
+      "error_label": "✕ hata",
+      "loading": "Yükleniyor...",
+      "path": "~/veri-merkezi/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "Sistem hazırlanıyor..."
   }
 }

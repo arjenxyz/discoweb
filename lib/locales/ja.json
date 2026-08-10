@@ -436,5 +436,155 @@
     "opening": "開いています...",
     "docs": "ドキュメント",
     "back": "戻る"
+  },
+  "setup": {
+    "access_denied_title": "アクセス拒否",
+    "access_denied_body": "Setup を実行するには、サーバー所有者または管理者である必要があります。",
+    "back": "戻る",
+    "cancel": "キャンセル",
+    "steps_heading": "手順",
+    "close": "閉じる",
+    "no_roles": "ロールが見つかりません",
+    "guild_alt": "サーバー",
+    "phase_update": "更新フェーズ",
+    "phase_setup": "Setup フェーズ",
+    "step": {
+      "roles": {
+        "title": "ロール",
+        "desc": "管理者とメンバーのロールを選択"
+      },
+      "logs": {
+        "title": "ログ管理",
+        "desc": "ログの書き込み先"
+      },
+      "economy": {
+        "title": "収益",
+        "desc": "Papel の獲得レート"
+      },
+      "bonuses": {
+        "title": "ボーナス",
+        "desc": "Tag とブーストの追加収益"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "確認して開始"
+      }
+    },
+    "roles": {
+      "heading": "システムロール",
+      "sub": "管理パネルとメンバーアクセス用の Discord ロールを選択してください。",
+      "admin_label": "管理者ロール",
+      "admin_hint": "このロールは管理パネルに入れます。",
+      "admin_placeholder": "管理者ロールを選択...",
+      "member_label": "メンバーロール",
+      "member_hint": "登録メンバーの基本ロール。papel を獲得します。",
+      "member_placeholder": "メンバーロールを選択..."
+    },
+    "logs": {
+      "heading": "ログ管理",
+      "sub": "アクティビティログはどこに書き込みますか？",
+      "current_title": "このサーバーにインストール",
+      "recommended": "おすすめ",
+      "current_desc": "ここに DiscoWeb Logs カテゴリが作成されます。",
+      "dedicated_title": "別のログサーバー",
+      "dedicated_desc": "ログは別の Discord サーバーに送られます。",
+      "target_id": "対象サーバー ID",
+      "checking": "確認中…",
+      "found": "サーバーが見つかりました",
+      "found_named": "サーバーが見つかりました: {name}",
+      "invalid_id": "無効なサーバー ID",
+      "not_found": "この ID のサーバーが見つからないか、ボットがそのサーバーにいません",
+      "bot_must_be": "ボットはそのサーバーにいる必要があります。",
+      "warning_title": "注意",
+      "warning_body": "Setup 中に古いログチャンネルが削除され、再作成される場合があります。"
+    },
+    "economy": {
+      "heading": "経済",
+      "sub": "メッセージとボイスの papel レートを設定します。",
+      "message_title": "メッセージ収益",
+      "message_sub": "メッセージごと",
+      "message_unit": "Papel / メッセージ",
+      "voice_title": "ボイス収益",
+      "voice_sub": "ボイス 1 分ごと",
+      "voice_unit": "Papel / 分"
+    },
+    "bonuses": {
+      "heading": "ボーナス",
+      "sub": "Tag とブーストの追加 papel。",
+      "tag_title": "Tag ボーナス",
+      "tag_sub": "名前にサーバーの Tag があるメンバー",
+      "boost_title": "ブーストボーナス",
+      "boost_sub": "サーバーをブーストするメンバー",
+      "message": "メッセージ",
+      "voice_min": "ボイス / 分"
+    },
+    "confirm": {
+      "ready_title": "準備完了",
+      "ready_body": "設定は問題なさそうです。開始するとサーバーに適用されます。",
+      "start": "Setup を開始",
+      "running": "Setup 進行中"
+    },
+    "nav": {
+      "back": "戻る",
+      "next": "次へ"
+    },
+    "error": {
+      "guild_info": "サーバー情報を読み込めませんでした",
+      "guild_roles": "サーバーロールを読み込めませんでした",
+      "bot_inactive": "このサーバーではボットの Setup が有効ではありません。所有者または管理者に連絡してください。",
+      "load_failed": "サーバー情報の読み込み中にエラーが発生しました。",
+      "roles_required": "管理者ロールと verify ロールの両方を選択してください。",
+      "guild_missing": "サーバー情報が見つかりませんでした。",
+      "failed": "Setup に失敗しました",
+      "generic": "Setup 中にエラーが発生しました。"
+    },
+    "marks": {
+      "ok": "成功",
+      "fail": "失敗",
+      "done": "完了"
+    },
+    "progress": {
+      "permissions": "> 権限を確認しています...",
+      "api": "> Bot API 連携を開始しています...",
+      "webhooks": "> webhook サービスを準備しています...",
+      "log_server": "> ログサーバーを設定しています...",
+      "mock_roles": "> サンプルロールを接続しています...",
+      "economy": "> 経済設定を書き込んでいます...",
+      "bonuses": "> ボーナスルールを適用しています...",
+      "mock_done": "> ローカルホストのモック Setup が完了しました。",
+      "success": "> SETUP 成功！",
+      "log_ok": "> ログ Setup: 成功",
+      "log_fail": "> ログ Setup: 失敗（ボットがサーバーにいることを確認してください）",
+      "db": "> データベースレコードを作成しました...",
+      "done": "> Setup が正常に完了しました！",
+      "redirect": "> 管理パネルへリダイレクトしています...",
+      "fail": "> SETUP 失敗！"
+    },
+    "terminal": {
+      "missing_roles": "ロール情報が不足しています。Setup 画面に戻ってください。",
+      "unknown_guild": "不明",
+      "logged_in": "サインイン済み: {name}",
+      "admin_role": "管理者ロール: {id}",
+      "verify_role": "verify ロール: {id}",
+      "creating_categories": "チャンネルカテゴリを作成中...",
+      "channels_created": "チャンネルを作成しました",
+      "preparing_webhooks": "webhook を準備中...",
+      "failed": "Setup に失敗しました",
+      "category_ok": "カテゴリ検証: ok",
+      "created_channels": "作成されたチャンネル:",
+      "webhook_created": "webhook 作成: {name} ({type})",
+      "db_writing": "database: レコードを書き込み中...",
+      "success": "setup: 成功",
+      "redirecting": "ユーザーをリダイレクト中...",
+      "countdown": "管理パネルは {seconds} 秒後に開きます...",
+      "error_generic": "Setup 中にエラーが発生しました。",
+      "fail_line": "setup: 失敗",
+      "error_label": "✕ エラー",
+      "loading": "読み込み中...",
+      "path": "~/data-center/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "システムを準備しています..."
   }
 }

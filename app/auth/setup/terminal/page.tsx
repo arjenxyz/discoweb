@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18nContext';
 
 function SetupTerminalContent() {
   const router = useRouter();
   const params = useSearchParams();
+  const { t } = useTranslation();
   const adminRoleId = params.get('adminRoleId') ?? '';
   const verifyRoleId = params.get('verifyRoleId') ?? '';
 
@@ -79,12 +81,12 @@ function SetupTerminalContent() {
       hasRunRef.current = true;
 
       if (!adminRoleId || !verifyRoleId) {
-        setError('Rol bilgileri eksik. Kurulum ekranına geri dönün.');
+        setError(t('setup.terminal.missing_roles'));
         setSettingUp(false);
         return;
       }
 
-      const resolvedGuildName = (await loadGuildName()) || guildName || 'Bilinmiyor';
+      const resolvedGuildName = (await loadGuildName()) || guildName || t('setup.terminal.unknown_guild');
 
       pushLine('npm install', 'cmd');
       await sleep(1400);
@@ -94,21 +96,21 @@ function SetupTerminalContent() {
       await sleep(900);
       pushLine(`cd ${guildId || 'server'}`, 'cmd');
       await sleep(800);
-      pushLine(`giriş yapıldı: ${resolvedGuildName}`, 'success');
+      pushLine(t('setup.terminal.logged_in', { name: resolvedGuildName }), 'success');
       await sleep(700);
-      pushLine(`admin rolü: ${adminRoleId}`, 'info');
+      pushLine(t('setup.terminal.admin_role', { id: adminRoleId }), 'info');
       await sleep(600);
-      pushLine(`verify rolü: ${verifyRoleId}`, 'info');
+      pushLine(t('setup.terminal.verify_role', { id: verifyRoleId }), 'info');
       await sleep(900);
       pushLine('discord:kanallari-olustur', 'cmd');
       await sleep(1200);
-      pushLine('kanal kategorileri oluşturuluyor...', 'info');
+      pushLine(t('setup.terminal.creating_categories'), 'info');
       await sleep(1200);
-      pushLine('kanallar oluşturuldu', 'success');
+      pushLine(t('setup.terminal.channels_created'), 'success');
       await sleep(700);
       pushLine('discord:webhook-olustur', 'cmd');
       await sleep(1200);
-      pushLine('webhooklar hazırlanıyor...', 'info');
+      pushLine(t('setup.terminal.preparing_webhooks'), 'info');
       await sleep(900);
 
       try {
@@ -125,7 +127,7 @@ function SetupTerminalContent() {
         if (!response.ok) {
           const errorData = await response.json();
           const detail = errorData?.detail ? ` (${errorData.detail})` : '';
-          throw new Error((errorData.error || 'Kurulum başarısız') + detail);
+          throw new Error((errorData.error || t('setup.terminal.failed')) + detail);
         }
 
         const payload = (await response.json()) as {
@@ -134,11 +136,11 @@ function SetupTerminalContent() {
           createdChannels?: Array<{ type: string; name: string; id?: string; webhookUrl?: string | null }>;
         };
 
-        pushLine('kategori doğrulama: tamam', 'success');
+        pushLine(t('setup.terminal.category_ok'), 'success');
 
         const createdChannels = payload.createdChannels ?? [];
         if (createdChannels.length) {
-          pushLine('oluşturulan kanallar:', 'info');
+          pushLine(t('setup.terminal.created_channels'), 'info');
           for (const channel of createdChannels) {
             await sleep(160);
             pushLine(`• ${channel.name} (${channel.type})`, 'info');
@@ -147,15 +149,18 @@ function SetupTerminalContent() {
         if (createdChannels.length) {
           for (const channel of createdChannels) {
             await sleep(360);
-            pushLine(`webhook oluşturuldu: ${channel.name} (${channel.type})`, channel.webhookUrl ? 'success' : 'warn');
+            pushLine(
+              t('setup.terminal.webhook_created', { name: channel.name, type: channel.type }),
+              channel.webhookUrl ? 'success' : 'warn',
+            );
           }
         }
 
-        pushLine('database: kayıtlar yazılıyor...', 'info');
+        pushLine(t('setup.terminal.db_writing'), 'info');
         await sleep(1200);
-        pushLine('kurulum: başarılı', 'success');
+        pushLine(t('setup.terminal.success'), 'success');
         await sleep(900);
-        pushLine('kullanıcı yönlendiriliyor...', 'info');
+        pushLine(t('setup.terminal.redirecting'), 'info');
 
         try {
           const stored = localStorage.getItem('adminGuilds');
@@ -169,15 +174,15 @@ function SetupTerminalContent() {
         }
 
         for (let i = 5; i >= 1; i -= 1) {
-          pushLine(`admin paneli ${i} saniye içinde açılacak...`, 'info');
+          pushLine(t('setup.terminal.countdown', { seconds: i }), 'info');
           await sleep(1000);
         }
 
         router.replace('/admin');
       } catch (setupError) {
         console.error('Setup error:', setupError);
-        setError(setupError instanceof Error ? setupError.message : 'Kurulum sırasında hata oluştu.');
-        pushLine('kurulum: başarısız', 'warn');
+        setError(setupError instanceof Error ? setupError.message : t('setup.terminal.error_generic'));
+        pushLine(t('setup.terminal.fail_line'), 'warn');
       } finally {
         setSettingUp(false);
       }
@@ -187,7 +192,6 @@ function SetupTerminalContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Title bar'da son çalıştırılan komandu göster
   const lastCmd = [...terminalLines].reverse().find((l) => l.tone === 'cmd')?.text;
 
   return (
@@ -201,14 +205,11 @@ function SetupTerminalContent() {
         padding: '56px 16px',
       }}
     >
-      {/* ── Global keyframes + terminal-specific styles ── */}
       <style>{`
         @keyframes cursor-blink {
           0%, 100% { opacity: 1; }
           50%      { opacity: 0; }
         }
-
-        /* Block cursor */
         .term-cursor {
           display: inline-block;
           width: 8px;
@@ -219,8 +220,6 @@ function SetupTerminalContent() {
           animation: cursor-blink 1.05s step-end infinite;
           box-shadow: 0 0 6px rgba(74, 222, 128, 0.55);
         }
-
-        /* CRT scanlines overlay */
         .term-scanlines {
           position: relative;
         }
@@ -238,8 +237,6 @@ function SetupTerminalContent() {
           pointer-events: none;
           z-index: 10;
         }
-
-        /* Webkit scrollbar — minimal, dark */
         .term-scroll::-webkit-scrollbar        { width: 5px; }
         .term-scroll::-webkit-scrollbar-track   { background: transparent; }
         .term-scroll::-webkit-scrollbar-thumb   { background: #252830; border-radius: 3px; }
@@ -247,9 +244,6 @@ function SetupTerminalContent() {
       `}</style>
 
       <div style={{ width: '100%', maxWidth: '740px' }}>
-        {/* ════════════════════════════════════════════════
-            TERMINAL WINDOW
-            ════════════════════════════════════════════════ */}
         <div
           style={{
             borderRadius: '10px',
@@ -263,7 +257,6 @@ function SetupTerminalContent() {
             ].join(', '),
           }}
         >
-          {/* ── Title Bar ── */}
           <div
             style={{
               display: 'flex',
@@ -274,14 +267,12 @@ function SetupTerminalContent() {
               borderBottom: '1px solid #1c1f26',
             }}
           >
-            {/* Traffic-light dots */}
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
               <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f57', boxShadow: '0 0 4px rgba(255,95,87,0.45)' }} />
               <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#febc2e', boxShadow: '0 0 3px rgba(254,188,46,0.35)' }} />
               <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#28c840', boxShadow: '0 0 4px rgba(40,200,64,0.4)' }} />
             </div>
 
-            {/* Centered path / command */}
             <div style={{ flex: 1, textAlign: 'center' }}>
               <span
                 style={{
@@ -291,11 +282,10 @@ function SetupTerminalContent() {
                   letterSpacing: '0.015em',
                 }}
               >
-                {lastCmd || 'bash'} &nbsp;—&nbsp; ~/veri-merkezi/setup
+                {lastCmd || 'bash'} &nbsp;—&nbsp; {t('setup.terminal.path')}
               </span>
             </div>
 
-            {/* Live / Done indicator */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
               <div
                 style={{
@@ -315,12 +305,11 @@ function SetupTerminalContent() {
                   transition: 'color 0.3s',
                 }}
               >
-                {settingUp ? 'running' : 'done'}
+                {settingUp ? t('setup.terminal.running') : t('setup.terminal.done')}
               </span>
             </div>
           </div>
 
-          {/* ── Terminal Body ── */}
           <div
             ref={terminalRef}
             className="term-scanlines term-scroll"
@@ -335,8 +324,6 @@ function SetupTerminalContent() {
             }}
           >
             <div style={{ position: 'relative', zIndex: 5 }}>
-
-              {/* Empty state — just the prompt + cursor */}
               {terminalLines.length === 0 && (
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
                   <span style={{ color: '#6366f1', textShadow: '0 0 6px rgba(99,102,241,0.3)', userSelect: 'none' }}>$</span>
@@ -344,12 +331,10 @@ function SetupTerminalContent() {
                 </div>
               )}
 
-              {/* Lines */}
               {terminalLines.map((line, index) => {
-                const isLast     = index === terminalLines.length - 1;
+                const isLast = index === terminalLines.length - 1;
                 const showCursor = isLast && settingUp;
 
-                /* ─── Command line ─── */
                 if (line.tone === 'cmd') {
                   return (
                     <div
@@ -367,11 +352,10 @@ function SetupTerminalContent() {
                   );
                 }
 
-                /* ─── Output line ─── */
                 const OUTPUT_STYLES = {
                   success: { color: '#4ade80', textShadow: '0 0 5px rgba(74,222,128,0.22)' },
-                  warn:    { color: '#f87171', textShadow: '0 0 5px rgba(248,113,113,0.22)' },
-                  info:    { color: '#94a3b8', textShadow: 'none' },
+                  warn: { color: '#f87171', textShadow: '0 0 5px rgba(248,113,113,0.22)' },
+                  info: { color: '#94a3b8', textShadow: 'none' },
                 } as const;
 
                 const style = OUTPUT_STYLES[line.tone ?? 'info'];
@@ -387,9 +371,6 @@ function SetupTerminalContent() {
           </div>
         </div>
 
-        {/* ════════════════════════════════════════════════
-            ERROR BLOCK  (terminal-style)
-            ════════════════════════════════════════════════ */}
         {error && (
           <div
             style={{
@@ -400,7 +381,6 @@ function SetupTerminalContent() {
               background: 'rgba(248,113,113,0.04)',
             }}
           >
-            {/* Mini title bar for error */}
             <div
               style={{
                 display: 'flex',
@@ -420,7 +400,7 @@ function SetupTerminalContent() {
                   letterSpacing: '0.1em',
                 }}
               >
-                ✕ hata
+                {t('setup.terminal.error_label')}
               </span>
             </div>
             <p
@@ -441,9 +421,14 @@ function SetupTerminalContent() {
   );
 }
 
+function TerminalFallback() {
+  const { t } = useTranslation();
+  return <div>{t('setup.terminal.loading')}</div>;
+}
+
 export default function SetupTerminalPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<TerminalFallback />}>
       <SetupTerminalContent />
     </Suspense>
   );

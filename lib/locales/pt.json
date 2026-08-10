@@ -436,5 +436,155 @@
     "opening": "Abrindo...",
     "docs": "Documentação",
     "back": "Voltar"
+  },
+  "setup": {
+    "access_denied_title": "Acesso negado",
+    "access_denied_body": "Você precisa ser o dono ou administrador do servidor para executar o Setup.",
+    "back": "Voltar",
+    "cancel": "Cancelar",
+    "steps_heading": "Etapas",
+    "close": "Fechar",
+    "no_roles": "Nenhum cargo encontrado",
+    "guild_alt": "Servidor",
+    "phase_update": "Fase de atualização",
+    "phase_setup": "Fase de Setup",
+    "step": {
+      "roles": {
+        "title": "Cargos",
+        "desc": "Escolha os cargos de admin e membro"
+      },
+      "logs": {
+        "title": "Gestão de logs",
+        "desc": "Onde os logs serão escritos"
+      },
+      "economy": {
+        "title": "Ganhos",
+        "desc": "Taxas de ganho de Papel"
+      },
+      "bonuses": {
+        "title": "Bônus",
+        "desc": "Ganhos extras de Tag e boost"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "Confirmar e iniciar"
+      }
+    },
+    "roles": {
+      "heading": "Cargos do sistema",
+      "sub": "Escolha os cargos Discord para o painel admin e o acesso de membros.",
+      "admin_label": "Cargo de administrador",
+      "admin_hint": "Este cargo pode entrar no Painel Admin.",
+      "admin_placeholder": "Selecione o cargo admin...",
+      "member_label": "Cargo de membro",
+      "member_hint": "Cargo base dos membros registrados; eles ganham papel.",
+      "member_placeholder": "Selecione o cargo de membro..."
+    },
+    "logs": {
+      "heading": "Gestão de logs",
+      "sub": "Onde os logs de atividade devem ser escritos?",
+      "current_title": "Instalar neste servidor",
+      "recommended": "Recomendado",
+      "current_desc": "Uma categoria DiscoWeb Logs será criada aqui.",
+      "dedicated_title": "Servidor de log separado",
+      "dedicated_desc": "Os logs vão para outro servidor Discord.",
+      "target_id": "ID do servidor de destino",
+      "checking": "Verificando…",
+      "found": "Servidor encontrado",
+      "found_named": "Servidor encontrado: {name}",
+      "invalid_id": "ID de servidor inválido",
+      "not_found": "Nenhum servidor encontrado para este ID, ou o bot não está nesse servidor",
+      "bot_must_be": "O bot precisa estar nesse servidor.",
+      "warning_title": "Atenção",
+      "warning_body": "Durante o Setup, canais de log antigos podem ser apagados e recriados."
+    },
+    "economy": {
+      "heading": "Economia",
+      "sub": "Defina as taxas de papel para mensagens e voz.",
+      "message_title": "Ganhos por mensagem",
+      "message_sub": "Por cada mensagem",
+      "message_unit": "Papel / mensagem",
+      "voice_title": "Ganhos por voz",
+      "voice_sub": "Por cada minuto de voz",
+      "voice_unit": "Papel / min"
+    },
+    "bonuses": {
+      "heading": "Bônus",
+      "sub": "Papel extra por Tag e boost.",
+      "tag_title": "Bônus de Tag",
+      "tag_sub": "Membros com a tag do servidor no nome",
+      "boost_title": "Bônus de Boost",
+      "boost_sub": "Membros que dão boost no servidor",
+      "message": "Mensagem",
+      "voice_min": "Voz / min"
+    },
+    "confirm": {
+      "ready_title": "Pronto",
+      "ready_body": "As configurações estão ok. Ao iniciar, serão aplicadas ao servidor.",
+      "start": "Iniciar Setup",
+      "running": "Setup em andamento"
+    },
+    "nav": {
+      "back": "Voltar",
+      "next": "Avançar"
+    },
+    "error": {
+      "guild_info": "Não foi possível carregar as informações do servidor",
+      "guild_roles": "Não foi possível carregar os cargos do servidor",
+      "bot_inactive": "O Setup do bot não está ativo neste servidor. Contate o dono ou um administrador.",
+      "load_failed": "Ocorreu um erro ao carregar as informações do servidor.",
+      "roles_required": "Selecione os cargos de admin e verify.",
+      "guild_missing": "Informações do servidor não encontradas.",
+      "failed": "Setup falhou",
+      "generic": "Ocorreu um erro durante o Setup."
+    },
+    "marks": {
+      "ok": "SUCESSO",
+      "fail": "FALHOU",
+      "done": "concluído"
+    },
+    "progress": {
+      "permissions": "> Verificando permissões...",
+      "api": "> Iniciando integração da Bot API...",
+      "webhooks": "> Preparando serviços de webhook...",
+      "log_server": "> Configurando servidor de logs...",
+      "mock_roles": "> Vinculando cargos de exemplo...",
+      "economy": "> Gravando configurações de economia...",
+      "bonuses": "> Aplicando regras de bônus...",
+      "mock_done": "> Setup mock de localhost concluído.",
+      "success": "> SETUP CONCLUÍDO!",
+      "log_ok": "> Setup de logs: SUCESSO",
+      "log_fail": "> Setup de logs: FALHOU (confirme que o bot está no servidor)",
+      "db": "> Registros do banco criados...",
+      "done": "> Setup concluído com sucesso!",
+      "redirect": "> Redirecionando para o Painel Admin...",
+      "fail": "> SETUP FALHOU!"
+    },
+    "terminal": {
+      "missing_roles": "Informações de cargo ausentes. Volte à tela de Setup.",
+      "unknown_guild": "Desconhecido",
+      "logged_in": "conectado: {name}",
+      "admin_role": "cargo admin: {id}",
+      "verify_role": "cargo verify: {id}",
+      "creating_categories": "criando categorias de canais...",
+      "channels_created": "canais criados",
+      "preparing_webhooks": "preparando webhooks...",
+      "failed": "Setup falhou",
+      "category_ok": "validação de categoria: ok",
+      "created_channels": "canais criados:",
+      "webhook_created": "webhook criado: {name} ({type})",
+      "db_writing": "database: gravando registros...",
+      "success": "setup: sucesso",
+      "redirecting": "redirecionando usuário...",
+      "countdown": "painel admin abre em {seconds} segundos...",
+      "error_generic": "Ocorreu um erro durante o Setup.",
+      "fail_line": "setup: falhou",
+      "error_label": "✕ erro",
+      "loading": "Carregando...",
+      "path": "~/centro-de-dados/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "Preparando o sistema..."
   }
 }

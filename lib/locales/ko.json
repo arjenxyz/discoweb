@@ -436,5 +436,155 @@
     "opening": "여는 중...",
     "docs": "문서",
     "back": "돌아가기"
+  },
+  "setup": {
+    "access_denied_title": "액세스 거부됨",
+    "access_denied_body": "Setup을 실행하려면 서버 소유자이거나 관리자여야 합니다.",
+    "back": "뒤로",
+    "cancel": "취소",
+    "steps_heading": "단계",
+    "close": "닫기",
+    "no_roles": "역할을 찾을 수 없음",
+    "guild_alt": "서버",
+    "phase_update": "업데이트 단계",
+    "phase_setup": "Setup 단계",
+    "step": {
+      "roles": {
+        "title": "역할",
+        "desc": "관리자 및 멤버 역할 선택"
+      },
+      "logs": {
+        "title": "로그 관리",
+        "desc": "로그가 기록될 위치"
+      },
+      "economy": {
+        "title": "수익",
+        "desc": "Papel 적립 비율"
+      },
+      "bonuses": {
+        "title": "보너스",
+        "desc": "Tag 및 부스트 추가 수익"
+      },
+      "confirm": {
+        "title": "Setup",
+        "desc": "확인 후 시작"
+      }
+    },
+    "roles": {
+      "heading": "시스템 역할",
+      "sub": "관리자 패널과 멤버 접근을 위한 Discord 역할을 선택하세요.",
+      "admin_label": "관리자 역할",
+      "admin_hint": "이 역할은 관리자 패널에 들어갈 수 있습니다.",
+      "admin_placeholder": "관리자 역할 선택...",
+      "member_label": "멤버 역할",
+      "member_hint": "등록된 멤버의 기본 역할이며 papel을 적립합니다.",
+      "member_placeholder": "멤버 역할 선택..."
+    },
+    "logs": {
+      "heading": "로그 관리",
+      "sub": "활동 로그를 어디에 기록할까요?",
+      "current_title": "이 서버에 설치",
+      "recommended": "권장",
+      "current_desc": "여기에 DiscoWeb Logs 카테고리가 생성됩니다.",
+      "dedicated_title": "별도 로그 서버",
+      "dedicated_desc": "로그가 다른 Discord 서버로 전송됩니다.",
+      "target_id": "대상 서버 ID",
+      "checking": "확인 중…",
+      "found": "서버를 찾았습니다",
+      "found_named": "서버를 찾았습니다: {name}",
+      "invalid_id": "잘못된 서버 ID",
+      "not_found": "이 ID에 해당하는 서버가 없거나 봇이 해당 서버에 없습니다",
+      "bot_must_be": "봇이 해당 서버에 있어야 합니다.",
+      "warning_title": "주의",
+      "warning_body": "Setup 중 기존 로그 채널이 삭제되고 다시 생성될 수 있습니다."
+    },
+    "economy": {
+      "heading": "경제",
+      "sub": "메시지와 음성에 대한 papel 비율을 설정하세요.",
+      "message_title": "메시지 수익",
+      "message_sub": "메시지당",
+      "message_unit": "Papel / 메시지",
+      "voice_title": "음성 수익",
+      "voice_sub": "음성 분당",
+      "voice_unit": "Papel / 분"
+    },
+    "bonuses": {
+      "heading": "보너스",
+      "sub": "Tag 및 부스트에 대한 추가 papel.",
+      "tag_title": "Tag 보너스",
+      "tag_sub": "이름에 서버 태그가 있는 멤버",
+      "boost_title": "부스트 보너스",
+      "boost_sub": "서버를 부스트하는 멤버",
+      "message": "메시지",
+      "voice_min": "음성 / 분"
+    },
+    "confirm": {
+      "ready_title": "준비 완료",
+      "ready_body": "설정이 괜찮아 보입니다. 시작하면 서버에 적용됩니다.",
+      "start": "Setup 시작",
+      "running": "Setup 진행 중"
+    },
+    "nav": {
+      "back": "뒤로",
+      "next": "다음"
+    },
+    "error": {
+      "guild_info": "서버 정보를 불러올 수 없습니다",
+      "guild_roles": "서버 역할을 불러올 수 없습니다",
+      "bot_inactive": "이 서버에서 봇 Setup이 활성 상태가 아닙니다. 소유자 또는 관리자에게 문의하세요.",
+      "load_failed": "서버 정보를 불러오는 중 오류가 발생했습니다.",
+      "roles_required": "관리자 역할과 verify 역할을 모두 선택하세요.",
+      "guild_missing": "서버 정보를 찾을 수 없습니다.",
+      "failed": "Setup 실패",
+      "generic": "Setup 중 오류가 발생했습니다."
+    },
+    "marks": {
+      "ok": "성공",
+      "fail": "실패",
+      "done": "완료"
+    },
+    "progress": {
+      "permissions": "> 권한 확인 중...",
+      "api": "> Bot API 연동 시작 중...",
+      "webhooks": "> webhook 서비스 준비 중...",
+      "log_server": "> 로그 서버 구성 중...",
+      "mock_roles": "> 샘플 역할 연결 중...",
+      "economy": "> 경제 설정 기록 중...",
+      "bonuses": "> 보너스 규칙 적용 중...",
+      "mock_done": "> 로컬호스트 mock Setup 완료.",
+      "success": "> SETUP 성공!",
+      "log_ok": "> 로그 Setup: 성공",
+      "log_fail": "> 로그 Setup: 실패 (봇이 서버에 있는지 확인하세요)",
+      "db": "> 데이터베이스 기록 생성됨...",
+      "done": "> Setup이 성공적으로 완료되었습니다!",
+      "redirect": "> 관리자 패널로 이동 중...",
+      "fail": "> SETUP 실패!"
+    },
+    "terminal": {
+      "missing_roles": "역할 정보가 없습니다. Setup 화면으로 돌아가세요.",
+      "unknown_guild": "알 수 없음",
+      "logged_in": "로그인됨: {name}",
+      "admin_role": "관리자 역할: {id}",
+      "verify_role": "verify 역할: {id}",
+      "creating_categories": "채널 카테고리 생성 중...",
+      "channels_created": "채널 생성됨",
+      "preparing_webhooks": "webhook 준비 중...",
+      "failed": "Setup 실패",
+      "category_ok": "카테고리 검증: ok",
+      "created_channels": "생성된 채널:",
+      "webhook_created": "webhook 생성됨: {name} ({type})",
+      "db_writing": "database: 기록 작성 중...",
+      "success": "setup: 성공",
+      "redirecting": "사용자 리디렉션 중...",
+      "countdown": "관리자 패널이 {seconds}초 후에 열립니다...",
+      "error_generic": "Setup 중 오류가 발생했습니다.",
+      "fail_line": "setup: 실패",
+      "error_label": "✕ 오류",
+      "loading": "로딩 중...",
+      "path": "~/data-center/setup",
+      "running": "running",
+      "done": "done"
+    },
+    "loading": "시스템 준비 중..."
   }
 }

@@ -8,6 +8,7 @@ import { LuShield, LuX, LuLoader, LuChevronRight, LuChevronLeft, LuCheck, LuMess
 import { isLocalDevBypassClient } from '@/lib/localDevBypass';
 import { lockBodyScroll } from '@/lib/lockBodyScroll';
 import staffRoleGif from './staff-role.gif';
+import { useTranslation } from '@/lib/i18nContext';
 import {
   LOCAL_DEV_MOCK_GUILD_NAME,
   LOCAL_DEV_MOCK_LOG_GUILD_ID,
@@ -78,6 +79,7 @@ function RoleSelectDropdown({
   value: string;
   onChange: (roleId: string) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<DropdownPos | null>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -170,7 +172,7 @@ function RoleSelectDropdown({
           <>
             <button
               type="button"
-              aria-label="Kapat"
+              aria-label={t('setup.close')}
               className="fixed inset-0 z-[190] cursor-default bg-black/70 backdrop-blur-md"
               onClick={() => setOpen(false)}
             />
@@ -202,7 +204,7 @@ function RoleSelectDropdown({
                   style={{ maxHeight: pos.maxHeight }}
                 >
                   {options.length === 0 ? (
-                    <p className="px-3 py-6 text-center text-xs text-white/40">Rol bulunamadı</p>
+                    <p className="px-3 py-6 text-center text-xs text-white/40">{t('setup.no_roles')}</p>
                   ) : (
                     options.map((role) => {
                       const isSelected = role.id === value;
@@ -244,13 +246,15 @@ function RoleSelectDropdown({
   );
 }
 
-const STEPS = [
-  { id: 'roles',   title: 'Roller',           icon: LuShield,      description: 'Admin ve üye rollerini seçin' },
-  { id: 'logs',    title: 'Log Yönetimi',     icon: LuHardDrive,   description: 'Logların yazılacağı yer' },
-  { id: 'economy', title: 'Kazanç',            icon: LuSettings,    description: 'Papel kazanç oranları' },
-  { id: 'bonuses', title: 'Bonuslar',          icon: LuZap,         description: 'Tag ve boost ek kazançları' },
-  { id: 'confirm', title: 'Kurulum',           icon: LuCheck,       description: 'Onayla ve başlat' },
-];
+function buildSteps(t: (key: string) => string) {
+  return [
+    { id: 'roles', title: t('setup.step.roles.title'), icon: LuShield, description: t('setup.step.roles.desc') },
+    { id: 'logs', title: t('setup.step.logs.title'), icon: LuHardDrive, description: t('setup.step.logs.desc') },
+    { id: 'economy', title: t('setup.step.economy.title'), icon: LuSettings, description: t('setup.step.economy.desc') },
+    { id: 'bonuses', title: t('setup.step.bonuses.title'), icon: LuZap, description: t('setup.step.bonuses.desc') },
+    { id: 'confirm', title: t('setup.step.confirm.title'), icon: LuCheck, description: t('setup.step.confirm.desc') },
+  ];
+}
 
 function readSelectedGuildId(): string | null {
   if (typeof window === 'undefined') return null;
@@ -261,6 +265,8 @@ function readSelectedGuildId(): string | null {
 }
 
 export default function SetupPage() {
+  const { t } = useTranslation();
+  const STEPS = buildSteps(t);
   const router = useRouter();
   const [user, setUser] = useState<DiscordUser | null>(() => {
     if (typeof window !== 'undefined') {
@@ -484,7 +490,7 @@ export default function SetupPage() {
             setIsAdmin(true);
             if (!targetGuildId) setTargetGuildId(LOCAL_DEV_MOCK_LOG_GUILD_ID);
           } else {
-            throw new Error('Sunucu bilgileri alınamadı');
+            throw new Error(t('setup.error.guild_info'));
           }
         } else {
           const guildData = (await guildResponse.json()) as {
@@ -505,7 +511,7 @@ export default function SetupPage() {
               setRoles(LOCAL_DEV_MOCK_ROLES as unknown as DiscordRole[]);
               setIsAdmin(true);
             } else {
-              throw new Error('Sunucu rolleri alınamadı');
+              throw new Error(t('setup.error.guild_roles'));
             }
           } else {
             const rolesData = (await rolesResponse.json()) as DiscordRole[];
@@ -540,7 +546,7 @@ export default function SetupPage() {
               setIsAdmin(isServerOwner || userHasAdminRole);
 
               if (!isServerOwner && adminRolesForPerm.length === 0) {
-                setError('Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.');
+                setError(t('setup.error.bot_inactive'));
               }
             }
           }
@@ -584,7 +590,7 @@ export default function SetupPage() {
           setGuildName((prev) => prev || LOCAL_DEV_MOCK_GUILD_NAME);
           setError('');
         } else {
-          setError('Sunucu bilgileri yüklenirken hata oluştu.');
+          setError(t('setup.error.load_failed'));
         }
       } finally {
         setLoading(false);
@@ -598,11 +604,11 @@ export default function SetupPage() {
 
   const handleSetup = async () => {
     if (!selectedAdminRole || !selectedVerifyRole) {
-      setError('Lütfen hem admin hem de verify rolünü seçin.');
+      setError(t('setup.error.roles_required'));
       return;
     }
     if (!guildId) {
-      setError('Sunucu bilgisi bulunamadı.');
+      setError(t('setup.error.guild_missing'));
       return;
     }
 
@@ -611,26 +617,26 @@ export default function SetupPage() {
     setError('');
 
     setTerminalLines([
-      '> İzinler doğrulanıyor...',
-      '> Bot API entegrasyonu başlatılıyor...',
-      '> Webhook servisleri hazırlanıyor...',
+      t('setup.progress.permissions'),
+      t('setup.progress.api'),
+      t('setup.progress.webhooks'),
     ]);
 
     try {
-      setTerminalLines((prev) => [...prev, '> Log sunucusu yapılandırılıyor...']);
+      setTerminalLines((prev) => [...prev, t('setup.progress.log_server')]);
 
       if (isLocalDevBypassClient()) {
         await sleep(500);
-        setTerminalLines((prev) => [...prev, '> Örnek roller bağlanıyor...']);
+        setTerminalLines((prev) => [...prev, t('setup.progress.mock_roles')]);
         await sleep(450);
-        setTerminalLines((prev) => [...prev, '> Ekonomi ayarları yazılıyor...']);
+        setTerminalLines((prev) => [...prev, t('setup.progress.economy')]);
         await sleep(450);
-        setTerminalLines((prev) => [...prev, '> Bonus kuralları uygulanıyor...']);
+        setTerminalLines((prev) => [...prev, t('setup.progress.bonuses')]);
         await sleep(450);
         setTerminalLines((prev) => [
           ...prev,
-          '> Localhost mock kurulum tamamlandı.',
-          '> KURULUM BAŞARILI!',
+          t('setup.progress.mock_done'),
+          t('setup.progress.success'),
         ]);
         setSetupCompleted(true);
         setAlreadySetup(true);
@@ -669,17 +675,17 @@ export default function SetupPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Kurulum başarısız');
+        throw new Error(errorData.error || t('setup.error.failed'));
       }
 
       const resData = await response.json();
 
       setTerminalLines((prev) => [
         ...prev, 
-        `> Log Kurulumu: ${resData.logSetupSuccess ? 'BAŞARILI' : 'BAŞARISIZ (Lütfen botun sunucuda olduğundan emin olun)'}`,
-        '> Veritabanı kayıtları oluşturuldu...',
-        '> Kurulum başarıyla tamamlandı!', 
-        '> Admin Paneline yönlendiriliyorsunuz...'
+        resData.logSetupSuccess ? t('setup.progress.log_ok') : t('setup.progress.log_fail'),
+        t('setup.progress.db'),
+        t('setup.progress.done'), 
+        t('setup.progress.redirect')
       ]);
       
       setSetupCompleted(true);
@@ -696,8 +702,8 @@ export default function SetupPage() {
       } catch {}
     } catch (setupError) {
       console.error('Setup error:', setupError);
-      setError(setupError instanceof Error ? setupError.message : 'Kurulum sırasında hata oluştu.');
-      setTerminalLines((prev) => [...prev, '> KURULUM BAŞARISIZ!']);
+      setError(setupError instanceof Error ? setupError.message : t('setup.error.generic'));
+      setTerminalLines((prev) => [...prev, t('setup.progress.fail')]);
     } finally {
       setSettingUp(false);
     }
@@ -736,7 +742,7 @@ export default function SetupPage() {
           <div className="absolute -inset-20 rounded-full bg-[#5865F2]/20 blur-3xl animate-pulse" />
           <div className="relative text-center">
             <LuLoader className="w-12 h-12 animate-spin mx-auto mb-4 text-[#5865F2]" />
-            <p className="text-sm font-medium tracking-wide text-white/70">Sistem Hazırlanıyor...</p>
+            <p className="text-sm font-medium tracking-wide text-white/70">{t('setup.loading')}</p>
           </div>
         </div>
       </div>
@@ -752,10 +758,10 @@ export default function SetupPage() {
           <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
             <LuShield className="w-10 h-10 text-red-500" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">Erişim Reddedildi</h1>
-          <p className="text-white/60 mb-8 text-sm">Kurulum için sunucu sahibi veya yönetici olmalısınız.</p>
+          <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">{t('setup.access_denied_title')}</h1>
+          <p className="text-white/60 mb-8 text-sm">{t('setup.access_denied_body')}</p>
           <button onClick={() => router.replace('/auth/select-server')} className="w-full bg-white/5 hover:bg-white/10 text-white font-medium py-3 rounded-xl transition-all border border-white/10 hover:border-white/20">
-            Geri Dön
+            {t('setup.back')}
           </button>
         </div>
       </div>
@@ -774,7 +780,7 @@ export default function SetupPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
             {guildIcon ? (
-              <Image src={guildIcon} alt={guildName || 'Sunucu'} width={44} height={44} className="h-11 w-11 rounded-2xl border border-white/10 object-cover shadow-lg" />
+              <Image src={guildIcon} alt={guildName || t('setup.guild_alt')} width={44} height={44} className="h-11 w-11 rounded-2xl border border-white/10 object-cover shadow-lg" />
             ) : (
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-lg font-bold text-white/80 shadow-lg">
                 {guildName ? guildName.charAt(0).toUpperCase() : 'S'}
@@ -784,7 +790,7 @@ export default function SetupPage() {
               <p className="text-base font-bold text-white tracking-tight">{guildName}</p>
               <div className="flex items-center gap-2 text-xs text-white/40">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#5865F2] animate-pulse" />
-                {alreadySetup ? 'Güncelleme Aşaması' : 'Kurulum Aşaması'}
+                {alreadySetup ? t('setup.phase_update') : t('setup.phase_setup')}
               </div>
             </div>
           </div>
@@ -793,7 +799,7 @@ export default function SetupPage() {
               onClick={() => router.replace('/auth/select-server')}
               className="text-sm font-medium text-white/50 hover:text-white transition-colors bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl px-4 py-2"
             >
-              İptal
+              {t('setup.cancel')}
             </button>
           </div>
         </div>
@@ -804,7 +810,7 @@ export default function SetupPage() {
           
           {/* Sidebar / Steps */}
           <div className="hidden md:flex flex-col gap-2 self-start">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-white/30 mb-4 px-3">Adımlar</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-white/30 mb-4 px-3">{t('setup.steps_heading')}</h2>
             {STEPS.map((step, i) => {
               const StepIcon = step.icon;
               const isActive = i === currentStep;
@@ -829,14 +835,14 @@ export default function SetupPage() {
               {/* --- STEP 0: ROLES --- */}
               {currentStep === 0 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-xl font-bold text-white mb-2">Sistem Rolleri</h2>
-                  <p className="text-sm text-white/50 mb-6">Admin paneli ve üye erişimi için Discord rollerini seçin.</p>
+                  <h2 className="text-xl font-bold text-white mb-2">{t('setup.roles.heading')}</h2>
+                  <p className="text-sm text-white/50 mb-6">{t('setup.roles.sub')}</p>
 
                   <div className="space-y-5">
                     <RoleSelectDropdown
-                      label="Yönetici Rolü"
-                      hint="Bu rolle Admin Paneline girilir."
-                      placeholder="Admin rolünü seçin..."
+                      label={t('setup.roles.admin_label')}
+                      hint={t('setup.roles.admin_hint')}
+                      placeholder={t('setup.roles.admin_placeholder')}
                       iconSrc={staffRoleGif.src}
                       accent="blue"
                       roles={adminRoles}
@@ -844,9 +850,9 @@ export default function SetupPage() {
                       onChange={setSelectedAdminRole}
                     />
                     <RoleSelectDropdown
-                      label="Üye Rolü"
-                      hint="Kayıtlı üyelerin temel rolü; papel kazanır."
-                      placeholder="Üye rolünü seçin..."
+                      label={t('setup.roles.member_label')}
+                      hint={t('setup.roles.member_hint')}
+                      placeholder={t('setup.roles.member_placeholder')}
                       icon={LuUsers}
                       accent="blue"
                       roles={memberRoles}
@@ -860,8 +866,8 @@ export default function SetupPage() {
               {/* --- STEP 1: LOG MANAGEMENT --- */}
               {currentStep === 1 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="text-lg font-bold text-white mb-1">Log Yönetimi</h2>
-                  <p className="text-sm text-white/50 mb-4">İşlem logları nereye yazılsın?</p>
+                  <h2 className="text-lg font-bold text-white mb-1">{t('setup.logs.heading')}</h2>
+                  <p className="text-sm text-white/50 mb-4">{t('setup.logs.sub')}</p>
 
                   <div className="space-y-2.5">
                     <button
@@ -882,12 +888,12 @@ export default function SetupPage() {
                       </div>
                       <div className="min-w-0">
                         <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white">
-                          Bu sunucuya kur
+                          {t('setup.logs.current_title')}
                           <span className="rounded-md bg-[#5865F2]/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#5865F2]">
-                            Önerilen
+                            {t('setup.logs.recommended')}
                           </span>
                         </h3>
-                        <p className="mt-0.5 text-xs text-white/45">DiscoWeb Logs kategorisi burada açılır.</p>
+                        <p className="mt-0.5 text-xs text-white/45">{t('setup.logs.current_desc')}</p>
                       </div>
                     </button>
 
@@ -908,8 +914,8 @@ export default function SetupPage() {
                         {logMode === 'dedicated' && <div className="h-2 w-2 rounded-full bg-indigo-500" />}
                       </div>
                       <div className="min-w-0 w-full">
-                        <h3 className="text-sm font-semibold text-white">Ayrı log sunucusu</h3>
-                        <p className="mt-0.5 text-xs text-white/45">Loglar başka bir Discord sunucusuna gider.</p>
+                        <h3 className="text-sm font-semibold text-white">{t('setup.logs.dedicated_title')}</h3>
+                        <p className="mt-0.5 text-xs text-white/45">{t('setup.logs.dedicated_desc')}</p>
 
                         <div
                           className={`overflow-hidden transition-all duration-300 ${
@@ -917,7 +923,7 @@ export default function SetupPage() {
                           }`}
                         >
                           <label className="mb-1.5 block text-[11px] font-medium text-indigo-300">
-                            Hedef sunucu ID
+                            {t('setup.logs.target_id')}
                           </label>
                           <input
                             type="text"
@@ -946,28 +952,27 @@ export default function SetupPage() {
                           >
                             {targetGuildStatus === 'checking' && (
                               <>
-                                <LuLoader className="h-3 w-3 animate-spin" /> Kontrol ediliyor…
+                                <LuLoader className="h-3 w-3 animate-spin" /> {t('setup.logs.checking')}
                               </>
                             )}
                             {targetGuildStatus === 'ok' && (
                               <>
-                                <LuCheck className="h-3 w-3" /> Sunucu bulundu
-                                {targetGuildName ? `: ${targetGuildName}` : ''}
+                                <LuCheck className="h-3 w-3" /> {targetGuildName ? t('setup.logs.found_named', { name: targetGuildName }) : t('setup.logs.found')}
                               </>
                             )}
                             {targetGuildStatus === 'invalid' && (
                               <>
-                                <LuX className="h-3 w-3" /> Geçersiz sunucu ID
+                                <LuX className="h-3 w-3" /> {t('setup.logs.invalid_id')}
                               </>
                             )}
                             {targetGuildStatus === 'not_found' && (
                               <>
-                                <LuX className="h-3 w-3" /> Bu ID ile sunucu bulunamadı veya bot o sunucuda değil
+                                <LuX className="h-3 w-3" /> {t('setup.logs.not_found')}
                               </>
                             )}
                             {targetGuildStatus === 'idle' && (
                               <>
-                                <LuCheck className="h-3 w-3" /> Bot o sunucuda olmalı.
+                                <LuCheck className="h-3 w-3" /> {t('setup.logs.bot_must_be')}
                               </>
                             )}
                           </p>
@@ -978,9 +983,9 @@ export default function SetupPage() {
                     <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2.5">
                       <LuLock className="mt-0.5 h-4 w-4 shrink-0 text-orange-400" />
                       <div>
-                        <h4 className="text-xs font-semibold text-orange-300">Dikkat</h4>
+                        <h4 className="text-xs font-semibold text-orange-300">{t('setup.logs.warning_title')}</h4>
                         <p className="mt-0.5 text-[11px] leading-snug text-orange-200/70">
-                          Kurulumda eski log kanalları silinip yeniden açılabilir.
+                          {t('setup.logs.warning_body')}
                         </p>
                       </div>
                     </div>
@@ -991,8 +996,8 @@ export default function SetupPage() {
               {/* --- STEP 2: ECONOMY --- */}
               {currentStep === 2 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="mb-1 text-lg font-bold text-white">Ekonomi</h2>
-                  <p className="mb-4 text-sm text-white/50">Mesaj ve ses için papel oranlarını ayarlayın.</p>
+                  <h2 className="mb-1 text-lg font-bold text-white">{t('setup.economy.heading')}</h2>
+                  <p className="mb-4 text-sm text-white/50">{t('setup.economy.sub')}</p>
 
                   <div className="space-y-2.5">
                     <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3.5 py-3">
@@ -1001,8 +1006,8 @@ export default function SetupPage() {
                           <LuMessageSquare className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-sm font-semibold text-white">Mesaj Kazancı</h3>
-                          <p className="text-[11px] text-white/45">Her mesaj için</p>
+                          <h3 className="text-sm font-semibold text-white">{t('setup.economy.message_title')}</h3>
+                          <p className="text-[11px] text-white/45">{t('setup.economy.message_sub')}</p>
                         </div>
                       </div>
                       <div className="mt-2.5 flex items-center gap-2.5 pl-11">
@@ -1014,7 +1019,7 @@ export default function SetupPage() {
                           onChange={(e) => setEarnPerMessage(e.target.value)}
                           className="w-20 rounded-lg border border-emerald-500/30 bg-black/40 px-2.5 py-1.5 text-center text-sm font-bold text-emerald-400 focus:border-emerald-500 focus:outline-none"
                         />
-                        <span className="text-xs text-white/50">Papel / mesaj</span>
+                        <span className="text-xs text-white/50">{t('setup.economy.message_unit')}</span>
                       </div>
                     </div>
 
@@ -1024,8 +1029,8 @@ export default function SetupPage() {
                           <LuMic className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-sm font-semibold text-white">Ses Kazancı</h3>
-                          <p className="text-[11px] text-white/45">Her ses dakikası için</p>
+                          <h3 className="text-sm font-semibold text-white">{t('setup.economy.voice_title')}</h3>
+                          <p className="text-[11px] text-white/45">{t('setup.economy.voice_sub')}</p>
                         </div>
                       </div>
                       <div className="mt-2.5 flex items-center gap-2.5 pl-11">
@@ -1037,7 +1042,7 @@ export default function SetupPage() {
                           onChange={(e) => setEarnPerVoiceMinute(e.target.value)}
                           className="w-20 rounded-lg border border-indigo-500/30 bg-black/40 px-2.5 py-1.5 text-center text-sm font-bold text-indigo-400 focus:border-indigo-500 focus:outline-none"
                         />
-                        <span className="text-xs text-white/50">Papel / dk</span>
+                        <span className="text-xs text-white/50">{t('setup.economy.voice_unit')}</span>
                       </div>
                     </div>
                   </div>
@@ -1047,8 +1052,8 @@ export default function SetupPage() {
               {/* --- STEP 3: BONUSES --- */}
               {currentStep === 3 && (
                 <div className="animate-[fadeIn_0.4s_ease-out]">
-                  <h2 className="mb-1 text-lg font-bold text-white">Bonuslar</h2>
-                  <p className="mb-4 text-sm text-white/50">Tag ve boost için ekstra papel.</p>
+                  <h2 className="mb-1 text-lg font-bold text-white">{t('setup.bonuses.heading')}</h2>
+                  <p className="mb-4 text-sm text-white/50">{t('setup.bonuses.sub')}</p>
 
                   <div className="space-y-2.5">
                     <div
@@ -1069,8 +1074,8 @@ export default function SetupPage() {
                           <LuTag className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-sm font-semibold text-white">Tag Bonusu</h3>
-                          <p className="text-[11px] text-white/45">İsminde sunucu tagı olanlar</p>
+                          <h3 className="text-sm font-semibold text-white">{t('setup.bonuses.tag_title')}</h3>
+                          <p className="text-[11px] text-white/45">{t('setup.bonuses.tag_sub')}</p>
                         </div>
                         <button
                           type="button"
@@ -1090,7 +1095,7 @@ export default function SetupPage() {
                       {tagBonusEnabled && (
                         <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
                           <div>
-                            <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">{t('setup.bonuses.message')}</label>
                             <input
                               type="number"
                               min="0"
@@ -1101,7 +1106,7 @@ export default function SetupPage() {
                             />
                           </div>
                           <div>
-                            <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">{t('setup.bonuses.voice_min')}</label>
                             <input
                               type="number"
                               min="0"
@@ -1133,8 +1138,8 @@ export default function SetupPage() {
                           <LuRocket className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-sm font-semibold text-white">Boost Bonusu</h3>
-                          <p className="text-[11px] text-white/45">Sunucuyu boostlayanlar</p>
+                          <h3 className="text-sm font-semibold text-white">{t('setup.bonuses.boost_title')}</h3>
+                          <p className="text-[11px] text-white/45">{t('setup.bonuses.boost_sub')}</p>
                         </div>
                         <button
                           type="button"
@@ -1154,7 +1159,7 @@ export default function SetupPage() {
                       {boosterBonusEnabled && (
                         <div className="mt-2.5 grid grid-cols-2 gap-2 pl-11">
                           <div>
-                            <label className="mb-1 block text-[10px] font-medium text-white/40">Mesaj</label>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">{t('setup.bonuses.message')}</label>
                             <input
                               type="number"
                               min="0"
@@ -1165,7 +1170,7 @@ export default function SetupPage() {
                             />
                           </div>
                           <div>
-                            <label className="mb-1 block text-[10px] font-medium text-white/40">Ses / dk</label>
+                            <label className="mb-1 block text-[10px] font-medium text-white/40">{t('setup.bonuses.voice_min')}</label>
                             <input
                               type="number"
                               min="0"
@@ -1191,15 +1196,15 @@ export default function SetupPage() {
                         <div className="absolute inset-0 rounded-full border-4 border-[#5865F2]/20 border-t-[#5865F2] animate-spin-slow" />
                         <LuServer className="w-10 h-10 text-[#5865F2]" />
                       </div>
-                      <h2 className="text-2xl font-bold text-white mb-3">Hazır</h2>
-                      <p className="text-white/60 mb-8 max-w-md mx-auto">Ayarlar tamam. Başlatınca sunucuya uygulanır.</p>
+                      <h2 className="text-2xl font-bold text-white mb-3">{t('setup.confirm.ready_title')}</h2>
+                      <p className="text-white/60 mb-8 max-w-md mx-auto">{t('setup.confirm.ready_body')}</p>
                       <button onClick={handleSetup} className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-4 px-12 rounded-2xl transition-all shadow-[0_0_30px_rgba(88,101,242,0.4)] hover:shadow-[0_0_50px_rgba(88,101,242,0.6)] hover:-translate-y-1">
-                        Kurulumu Başlat
+                        {t('setup.confirm.start')}
                       </button>
                     </div>
                   ) : (
                     <div className="w-full">
-                      <h2 className="text-xl font-bold text-white mb-6 text-center">Kurulum sürüyor</h2>
+                      <h2 className="text-xl font-bold text-white mb-6 text-center">{t('setup.confirm.running')}</h2>
                       
                       {/* Premium Terminal / Logger */}
                       <div className="bg-[#020204] rounded-2xl border border-white/10 p-6 font-mono text-sm h-64 overflow-hidden relative shadow-inner">
@@ -1208,8 +1213,8 @@ export default function SetupPage() {
                         
                         <div className="flex flex-col justify-end h-full space-y-2 relative z-0">
                           {terminalLines.map((line, i) => {
-                            const isError = line.includes('BAŞARISIZ');
-                            const isSuccess = line.includes('BAŞARILI') || line.includes('tamamlandı');
+                            const isError = line.includes(t('setup.marks.fail'));
+                            const isSuccess = line.includes(t('setup.marks.ok')) || line.includes(t('setup.marks.done'));
                             return (
                               <div key={i} className={`animate-[slideUp_0.3s_ease-out] flex items-start gap-2 ${isError ? 'text-red-400' : isSuccess ? 'text-emerald-400 font-bold' : 'text-indigo-300'}`}>
                                 <span className="opacity-50 select-none">~</span>
@@ -1238,7 +1243,7 @@ export default function SetupPage() {
                   disabled={currentStep === 0}
                   className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all ${currentStep === 0 ? 'opacity-0 pointer-events-none' : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'}`}
                 >
-                  <LuChevronLeft className="w-5 h-5" /> Geri
+                  <LuChevronLeft className="w-5 h-5" /> {t('setup.nav.back')}
                 </button>
                 
                 {currentStep < STEPS.length - 1 && (
@@ -1252,7 +1257,7 @@ export default function SetupPage() {
                         : 'cursor-not-allowed bg-white/15 text-white/35'
                     }`}
                   >
-                    İleri <LuChevronRight className="w-5 h-5" />
+                    {t('setup.nav.next')} <LuChevronRight className="w-5 h-5" />
                   </button>
                 )}
               </div>
