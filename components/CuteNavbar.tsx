@@ -143,6 +143,9 @@ export default function CuteNavbar() {
   const onSelectServer = pathname?.startsWith('/auth/select-server') ?? false;
   const onHome = pathname === '/' || pathname === '';
   const botInviteUrl = siteConfig.bot.inviteUrl;
+  /** Select-server mobile menu open → home-like brand bar; closed → user identity */
+  const selectServerMenuBrand = onSelectServer && mobileOpen;
+  const showUserIdentity = onSelectServer && isLoggedIn && !!user && !mobileOpen;
 
   const FAB_SIZE = 56;
   const FAB_STORAGE_KEY = 'discoweb_mobile_fab_pos';
@@ -445,10 +448,10 @@ export default function CuteNavbar() {
         {/* Navbar Container: overflow-visible önemli */}
         <nav className="relative flex items-center justify-between gap-4 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl shadow-2xl transition-colors duration-300 overflow-visible">
           
-          {/* Logo / kullanıcı — home keeps DiscoWeb brand; other signed-in pages show identity */}
+          {/* Logo / kullanıcı — home brand; select-server identity (or home brand while mobile menu open) */}
           <div className="flex min-w-0 items-center gap-3">
             <div className="relative z-50 h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#1e1f22] transition-transform hover:scale-110">
-              {!onHome && isLoggedIn && user?.avatar ? (
+              {showUserIdentity && user?.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={user.avatar}
@@ -456,7 +459,7 @@ export default function CuteNavbar() {
                   className="h-full w-full object-cover"
                   draggable={false}
                 />
-              ) : !onHome && isLoggedIn && user ? (
+              ) : showUserIdentity && user ? (
                 <div className="flex h-full w-full items-center justify-center bg-white/10 text-sm font-black text-white">
                   {user.username.charAt(0).toUpperCase()}
                 </div>
@@ -471,7 +474,7 @@ export default function CuteNavbar() {
               onMouseEnter={() => setIsLogoHovered(true)}
               onMouseLeave={() => setIsLogoHovered(false)}
             >
-              {!onHome && isLoggedIn && user ? (
+              {showUserIdentity && user ? (
                 <Link
                   href="/"
                   className="relative z-50 block min-w-0 max-w-[11rem] sm:max-w-[14rem] md:max-w-[16rem]"
@@ -490,7 +493,7 @@ export default function CuteNavbar() {
                 </Link>
               )}
 
-              {(onHome || !isLoggedIn) && (
+              {(onHome || !isLoggedIn || selectServerMenuBrand) && (
                 <div
                   className={`absolute left-1/2 top-[60%] z-0 -translate-x-1/2 transition-all duration-500 ${
                     isLogoHovered
@@ -583,8 +586,8 @@ export default function CuteNavbar() {
           {onSelectServer && <div className="hidden flex-1 md:block" aria-hidden />}
 
           <div className="flex shrink-0 items-center gap-2 min-w-0 sm:gap-2.5">
-            {/* Preferences */}
-            <div className={onHome ? 'block' : 'hidden md:block'}>
+            {/* Preferences: home always; select-server only while mobile menu open; else desktop */}
+            <div className={onHome || selectServerMenuBrand ? 'block' : 'hidden md:block'}>
               <LanguageSwitcher />
             </div>
 
@@ -732,7 +735,7 @@ export default function CuteNavbar() {
             </nav>
 
             <div className="mt-6 shrink-0 space-y-3">
-              {!onHome && <LanguageSwitcher variant="menu" />}
+              {!onHome && !onSelectServer && <LanguageSwitcher variant="menu" />}
 
               {isLoggedIn ? (
                 onSelectServer ? (
