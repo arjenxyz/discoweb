@@ -279,8 +279,7 @@ export default function SelectServerPage() {
       <div className="pointer-events-none absolute bottom-20 right-10 h-96 w-96 rounded-full bg-[#7289DA]/15 blur-3xl" />
 
       <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 pb-16 pt-32 md:px-8 lg:px-12">
-        <div className="grid flex-1 items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-          {/* Left: copy + actions */}
+        <div className="mx-auto w-full max-w-xl flex-1">
           <section className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5865F2]">
               DiscoWeb
@@ -437,23 +436,6 @@ export default function SelectServerPage() {
                   );
                 })
               )}
-            </div>
-          </section>
-
-          {/* Right: visual */}
-          <section className="relative hidden min-h-[320px] lg:block">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative h-[420px] w-full max-w-md">
-                <Image
-                  src="/gif/from.gif"
-                  alt=""
-                  fill
-                  className="object-contain drop-shadow-2xl"
-                  unoptimized
-                  priority
-                  draggable={false}
-                />
-              </div>
             </div>
           </section>
         </div>
