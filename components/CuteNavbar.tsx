@@ -134,6 +134,7 @@ export default function CuteNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<{ username: string; avatar: string | null } | null>(null);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
 
   const FAB_SIZE = 56;
@@ -233,11 +234,29 @@ export default function CuteNavbar() {
   }, [mobileOpen]);
 
   useEffect(() => {
-    // Check if user is logged in via localStorage + validate session cookie
     const checkLoginStatus = async () => {
-      // Localhost development: treat as signed-in without Discord OAuth
+      // Prefer live session (/api/auth/me) — also covers localhost bypass
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+        if (res.ok) {
+          const data = (await res.json()) as {
+            username?: string | null;
+            avatar?: string | null;
+          };
+          setIsLoggedIn(true);
+          setUser({
+            username: data.username?.trim() || 'Local Dev',
+            avatar: data.avatar ?? null,
+          });
+          return;
+        }
+      } catch {
+        // fall through to localStorage heuristics
+      }
+
       if (isLocalDevBypassClient()) {
         setIsLoggedIn(true);
+        setUser({ username: 'Local Dev', avatar: null });
         return;
       }
 
@@ -247,31 +266,36 @@ export default function CuteNavbar() {
 
       if (!hasLocalData) {
         setIsLoggedIn(false);
+        setUser(null);
         return;
       }
 
-      // Verify session cookie is still valid
       try {
-        const res = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
-        if (res.ok) {
-          setIsLoggedIn(true);
-        } else {
-          // Session expired — clear stale localStorage
-          console.log('Session expired, clearing stale localStorage');
-          localStorage.removeItem('discordUser');
-          localStorage.removeItem('adminGuilds');
-          localStorage.removeItem('adminGuildsUpdatedAt');
-          setIsLoggedIn(false);
-        }
+        const parsed = JSON.parse(discordUser!) as {
+          username?: string;
+          global_name?: string;
+          avatar?: string | null;
+          id?: string;
+        };
+        const avatar =
+          parsed.avatar && parsed.id
+            ? parsed.avatar.startsWith('http')
+              ? parsed.avatar
+              : `https://cdn.discordapp.com/avatars/${parsed.id}/${parsed.avatar}.png?size=96`
+            : null;
+        setIsLoggedIn(true);
+        setUser({
+          username: parsed.global_name || parsed.username || 'Discord User',
+          avatar,
+        });
       } catch {
-        // Network error — keep showing logged-in state, will fail at select-server
-        setIsLoggedIn(hasLocalData);
+        setIsLoggedIn(true);
+        setUser(null);
       }
     };
 
     checkLoginStatus();
 
-    // Listen for storage changes (in case login happens in another tab)
     const handleStorageChange = () => {
       checkLoginStatus();
     };
@@ -386,38 +410,65 @@ export default function CuteNavbar() {
         {/* Navbar Container: overflow-visible önemli */}
         <nav className="relative flex items-center justify-between gap-4 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl shadow-2xl transition-colors duration-300 overflow-visible">
           
-          {/* Logo Kısmı */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#5865F2] p-0.5 shadow-lg shadow-[#5865F2]/20 group cursor-pointer transition-transform hover:scale-110 relative z-50">
-              <div className="w-full h-full bg-[#1e1f22] rounded-[10px] overflow-hidden">
-                <img src="/gif/cat.gif" alt="avatar" className="w-full h-full object-cover" />
+          {/* Logo / kullanıcı */}
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="relative z-50 h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#5865F2] p-0.5 shadow-lg shadow-[#5865F2]/20 transition-transform hover:scale-110">
+              <div className="h-full w-full overflow-hidden rounded-[10px] bg-[#1e1f22]">
+                {isLoggedIn && user?.avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.avatar}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    draggable={false}
+                  />
+                ) : isLoggedIn && user ? (
+                  <div className="flex h-full w-full items-center justify-center bg-[#5865F2] text-sm font-black text-white">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src="/gif/cat.gif" alt="" className="h-full w-full object-cover" draggable={false} />
+                )}
               </div>
             </div>
-            
-            {/* --- İNTERAKTİF LOGO --- */}
-            <div 
-              className="relative flex items-center gap-1 cursor-pointer h-full group"
+
+            <div
+              className="relative flex h-full min-w-0 cursor-pointer items-center gap-1 group"
               onMouseEnter={() => setIsLogoHovered(true)}
               onMouseLeave={() => setIsLogoHovered(false)}
             >
-              {/* Z-Index 50: Yazının penguenin üzerinde kalmasını sağlar */}
-              <div className="text-white font-black text-xl tracking-tight z-50 relative">DiscoWeb</div>
-
-              {/* --- ASILI PENGUEN GIF --- */}
-              <div className={`absolute top-[60%] left-1/2 -translate-x-1/2 z-0 transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) ${
-                isLogoHovered 
-                  ? 'opacity-100 translate-y-0 rotate-0' 
-                  : 'opacity-0 -translate-y-12 -rotate-12 pointer-events-none'
-              }`}>
-                <div className="w-[280px] drop-shadow-2xl filter brightness-110">
-                  <img 
-                    src="/gif/asılıpengu.gif" 
-                    alt="Hanging Penguin" 
-                    className="w-full h-full object-contain"
-                  />
+              {isLoggedIn && user ? (
+                <div className="relative z-50 min-w-0">
+                  <div className="truncate text-lg font-black tracking-tight text-white md:text-xl">
+                    {user.username}
+                  </div>
+                  <div className="truncate text-[10px] font-medium text-white/40">DiscoWeb</div>
                 </div>
-              </div>
+              ) : (
+                <div className="relative z-50 text-xl font-black tracking-tight text-white">DiscoWeb</div>
+              )}
 
+              {!isLoggedIn && (
+                <div
+                  className={`absolute left-1/2 top-[60%] z-0 -translate-x-1/2 transition-all duration-500 ${
+                    isLogoHovered
+                      ? 'translate-y-0 rotate-0 opacity-100'
+                      : 'pointer-events-none -translate-y-12 -rotate-12 opacity-0'
+                  }`}
+                  style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+                >
+                  <div className="w-[280px] drop-shadow-2xl filter brightness-110">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/gif/asılıpengu.gif"
+                      alt=""
+                      className="h-full w-full object-contain"
+                      draggable={false}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
