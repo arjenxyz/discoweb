@@ -1,10 +1,13 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect } from 'react';
 import { LuMegaphone, LuCircleCheck, LuTriangleAlert, LuSend, LuWrench } from 'react-icons/lu';
 import { BROADCAST_TEMPLATES, BroadcastTemplate } from '@/lib/broadcastTemplates';
 
 export default function BroadcastPage() {
+  const { t } = useTranslation();
   const [selectedTemplate, setSelectedTemplate] = useState<BroadcastTemplate | null>(null);
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [includeEveryone, setIncludeEveryone] = useState(true);
@@ -57,14 +60,14 @@ export default function BroadcastPage() {
 
   const handleSend = async () => {
     if (!customTitle || !customContent) {
-      setStatus({ type: 'error', message: 'Başlık ve içerik boş olamaz.' });
+      setStatus({ type: 'error', message: t('developer.broadcast.err_empty') });
       return;
     }
 
     // Check if variables are filled
     const parsedText = getParsedContent();
     if (parsedText.includes('{') && parsedText.includes('}')) {
-      if (!window.confirm('Bazı değişkenleri doldurmadınız, metin içinde {değişken} şeklinde gözükecek. Yine de göndermek istiyor musunuz?')) {
+      if (!window.confirm(t('developer.broadcast.confirm_vars'))) {
         return;
       }
     }
@@ -87,10 +90,10 @@ export default function BroadcastPage() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Gönderim başarısız.');
+        throw new Error(data.error || t('developer.broadcast.send_failed'));
       }
 
-      setStatus({ type: 'success', message: `Başarılı! ${data.successCount} sunucuya iletildi, ${data.failCount} hata.` });
+      setStatus({ type: 'success', message: t('developer.broadcast.success', { ok: data.successCount, fail: data.failCount }) });
       // Clear after success
       setTimeout(() => setStatus(null), 5000);
     } catch (err: any) {
@@ -109,8 +112,8 @@ export default function BroadcastPage() {
           <LuMegaphone className="w-6 h-6 text-indigo-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Toplu Yayın (Broadcast)</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Tüm sunuculardaki developer-duyuru kanallarına anında mesaj gönderin.</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.broadcast.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.broadcast.subtitle')}</p>
         </div>
       </div>
 
@@ -125,13 +128,13 @@ export default function BroadcastPage() {
         {/* Sol Kolon: Kontroller */}
         <div className="space-y-6">
           <div className="bg-[#18191c]/50 backdrop-blur-xl border border-white/5 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Şablon Seçimi</h2>
+            <h2 className="text-lg font-semibold text-white mb-4">{t('developer.broadcast.template_pick')}</h2>
             <select
               className="w-full bg-[#2b2d31] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
               onChange={handleTemplateSelect}
               value={selectedTemplate?.id || ''}
             >
-              <option value="">-- Şablon Seçin veya Özel Yazın --</option>
+              <option value="">{t('developer.broadcast.template_placeholder')}</option>
               {BROADCAST_TEMPLATES.map(tpl => (
                 <option key={tpl.id} value={tpl.id}>
                   [{tpl.category}] {tpl.title}
@@ -141,22 +144,22 @@ export default function BroadcastPage() {
 
             <div className="mt-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase mb-2">Başlık</label>
+                <label className="block text-xs font-semibold text-white/50 uppercase mb-2">{t('developer.common.title')}</label>
                 <input
                   type="text"
                   value={customTitle}
                   onChange={e => setCustomTitle(e.target.value)}
-                  placeholder="Mesaj başlığı..."
+                  placeholder={t('developer.broadcast.title_placeholder')}
                   className="w-full bg-[#2b2d31] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                 />
               </div>
               
               <div>
-                <label className="block text-xs font-semibold text-white/50 uppercase mb-2">İçerik</label>
+                <label className="block text-xs font-semibold text-white/50 uppercase mb-2">{t('developer.common.content')}</label>
                 <textarea
                   value={customContent}
                   onChange={e => setCustomContent(e.target.value)}
-                  placeholder="Mesaj içeriği..."
+                  placeholder={t('developer.broadcast.content_placeholder')}
                   rows={6}
                   className="w-full bg-[#2b2d31] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y"
                 />
@@ -181,7 +184,7 @@ export default function BroadcastPage() {
           {activeVariables.length > 0 && (
             <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-6">
               <h2 className="text-sm font-semibold text-indigo-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <LuWrench className="w-4 h-4" /> Değişkenleri Doldurun
+                <LuWrench className="w-4 h-4" /> {t('developer.broadcast.fill_vars')}
               </h2>
               <div className="space-y-4">
                 {activeVariables.map(v => (
@@ -204,7 +207,7 @@ export default function BroadcastPage() {
         {/* Sağ Kolon: Önizleme */}
         <div className="space-y-6">
           <div className="bg-[#18191c]/50 backdrop-blur-xl border border-white/5 rounded-2xl p-6 sticky top-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Discord Önizlemesi</h2>
+            <h2 className="text-lg font-semibold text-white mb-4">{t('developer.broadcast.preview')}</h2>
             
             <div className="bg-[#313338] rounded-md p-4 max-w-sm">
               {includeEveryone && (
@@ -224,7 +227,7 @@ export default function BroadcastPage() {
                 )}
                 
                 <div className="text-sm text-[#dbdee1] whitespace-pre-wrap">
-                  {getParsedContent() || 'Mesaj içeriği burada görünecek...'}
+                  {getParsedContent() || t('developer.broadcast.preview_empty')}
                 </div>
               </div>
             </div>
@@ -239,7 +242,7 @@ export default function BroadcastPage() {
               ) : (
                 <>
                   <LuSend className="w-5 h-5" />
-                  Tüm Sunuculara Gönder
+                  {t('developer.broadcast.send_all')}
                 </>
               )}
             </button>

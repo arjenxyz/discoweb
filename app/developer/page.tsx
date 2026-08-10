@@ -1,4 +1,6 @@
 'use client';
+
+import { useTranslation } from '@/lib/i18nContext';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -17,6 +19,7 @@ type SystemStats = {
 
 
 export default function DeveloperPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -50,26 +53,26 @@ export default function DeveloperPage() {
     try {
       const r = await fetch('/api/developer/sync-members', { method: 'POST', credentials: 'include' });
       const d: { message?: string; error?: string } = await r.json();
-      setSyncMessage(r.ok ? (d.message || 'Tamamlandı.') : (d.error || 'Başarısız.'));
+      setSyncMessage(r.ok ? (d.message || t('developer.home.sync_done')) : (d.error || t('developer.home.sync_failed')));
       loadStats();
-    } catch { setSyncMessage('Hata oluştu.'); }
+    } catch { setSyncMessage(t('developer.home.sync_error')); }
     finally { setSyncLoading(false); }
   };
 
   const statCards = [
-    { label: 'Üye', value: stats?.totalMembers ?? 0, icon: LuUsers, color: 'from-indigo-500/20 to-indigo-600/5', border: 'border-indigo-500/20', iconColor: 'text-indigo-400' },
+    { label: t('developer.home.stat_member'), value: stats?.totalMembers ?? 0, icon: LuUsers, color: 'from-indigo-500/20 to-indigo-600/5', border: 'border-indigo-500/20', iconColor: 'text-indigo-400' },
     { label: 'Sunucu', value: stats?.totalServers ?? 0, icon: LuDatabase, color: 'from-violet-500/20 to-violet-600/5', border: 'border-violet-500/20', iconColor: 'text-violet-400' },
-    { label: 'Sipariş', value: stats?.totalOrders ?? 0, icon: LuShoppingBag, color: 'from-emerald-500/20 to-emerald-600/5', border: 'border-emerald-500/20', iconColor: 'text-emerald-400' },
-    { label: 'Bildirim', value: stats?.totalNotifications ?? 0, icon: LuBell, color: 'from-amber-500/20 to-amber-600/5', border: 'border-amber-500/20', iconColor: 'text-amber-400' },
-    { label: 'Hata', value: stats?.totalErrors ?? 0, icon: LuTriangleAlert, color: 'from-rose-500/20 to-rose-600/5', border: 'border-rose-500/20', iconColor: 'text-rose-400' },
-    { label: 'Mail', value: stats?.totalMails ?? 0, icon: LuMail, color: 'from-cyan-500/20 to-cyan-600/5', border: 'border-cyan-500/20', iconColor: 'text-cyan-400' },
+    { label: t('developer.home.stat_order'), value: stats?.totalOrders ?? 0, icon: LuShoppingBag, color: 'from-emerald-500/20 to-emerald-600/5', border: 'border-emerald-500/20', iconColor: 'text-emerald-400' },
+    { label: t('developer.home.stat_notification'), value: stats?.totalNotifications ?? 0, icon: LuBell, color: 'from-amber-500/20 to-amber-600/5', border: 'border-amber-500/20', iconColor: 'text-amber-400' },
+    { label: t('developer.reports.filter_bug'), value: stats?.totalErrors ?? 0, icon: LuTriangleAlert, color: 'from-rose-500/20 to-rose-600/5', border: 'border-rose-500/20', iconColor: 'text-rose-400' },
+    { label: t('developer.home.stat_mail'), value: stats?.totalMails ?? 0, icon: LuMail, color: 'from-cyan-500/20 to-cyan-600/5', border: 'border-cyan-500/20', iconColor: 'text-cyan-400' },
   ];
 
   const quickActions = [
-    { label: 'Kullanıcı Sorgula', desc: 'Tekil arama', href: '/developer/user-lookup', icon: LuSearch, color: 'bg-indigo-500/15 text-indigo-300 ring-indigo-400/20' },
-    { label: 'Sunucular', desc: 'Toplu görünüm', href: '/developer/all-servers', icon: LuGlobe, color: 'bg-sky-500/15 text-sky-300 ring-sky-400/20' },
-    { label: 'Bakım', desc: 'Modül durumları', href: '/developer/maintenance', icon: LuWrench, color: 'bg-amber-500/15 text-amber-300 ring-amber-400/20' },
-    { label: 'API Test', desc: 'Endpoint testi', href: '/developer/api-test', icon: LuZap, color: 'bg-pink-500/15 text-pink-300 ring-pink-400/20' },
+    { label: t('developer.user_lookup.title'), desc: t('developer.home.qa_lookup_desc'), href: '/developer/user-lookup', icon: LuSearch, color: 'bg-indigo-500/15 text-indigo-300 ring-indigo-400/20' },
+    { label: t('developer.servers.title'), desc: t('developer.home.qa_servers_desc'), href: '/developer/all-servers', icon: LuGlobe, color: 'bg-sky-500/15 text-sky-300 ring-sky-400/20' },
+    { label: t('developer.home.qa_maintenance'), desc: t('developer.home.qa_maintenance_desc'), href: '/developer/maintenance', icon: LuWrench, color: 'bg-amber-500/15 text-amber-300 ring-amber-400/20' },
+    { label: t('developer.api_test.title'), desc: t('developer.home.qa_api_desc'), href: '/developer/api-test', icon: LuZap, color: 'bg-pink-500/15 text-pink-300 ring-pink-400/20' },
   ];
 
   return (
@@ -101,7 +104,7 @@ export default function DeveloperPage() {
               <span style={shimmerStyle}>Developer</span>
               <span style={shimmerBlue}> Dashboard</span>
             </h1>
-            <p className="text-sm text-white/25 mt-1">Sistem sağlığı, istatistikler ve AI komuta merkezi</p>
+            <p className="text-sm text-white/25 mt-1">{t('developer.home.subtitle')}</p>
           </div>
           <button onClick={loadStats} className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/40 hover:text-white transition-all backdrop-blur-md">
             <LuRefreshCw className={`w-3.5 h-3.5 ${statsLoading ? 'animate-spin' : ''}`} /> Yenile
@@ -134,7 +137,7 @@ export default function DeveloperPage() {
             {/* Quick Actions */}
             <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-white/70">Hızlı İşlemler</h2>
+                <h2 className="text-sm font-bold text-white/70">{t('developer.home.quick_actions')}</h2>
                 <LuActivity className="w-4 h-4 text-[#5865F2]/40" />
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -159,7 +162,7 @@ export default function DeveloperPage() {
                 <button onClick={handleSync} disabled={syncLoading}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-[#5865F2]/20 bg-[#5865F2]/10 text-sm font-semibold text-[#5865F2] hover:bg-[#5865F2]/15 transition-all disabled:opacity-50">
                   <LuRefreshCw className={`w-4 h-4 ${syncLoading ? 'animate-spin' : ''}`} />
-                  {syncLoading ? 'Senkronize Ediliyor...' : 'Discord Üyelerini Senkronize Et'}
+                  {syncLoading ? t('developer.home.syncing') : t('developer.home.sync_members')}
                 </button>
                 {syncMessage && <p className="mt-2 text-xs text-center text-[#5865F2]/70">{syncMessage}</p>}
               </div>
@@ -170,17 +173,17 @@ export default function DeveloperPage() {
               <h2 className="text-sm font-bold text-white/70 mb-4">Sistem Durumu</h2>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: 'Veritabanı', warn: false },
-                  { label: 'Discord Bot', warn: false },
+                  { label: t('developer.home.health_db'), warn: false },
+                  { label: t('developer.home.health_bot'), warn: false },
                   { label: 'OAuth', warn: false },
-                  { label: 'Bakım Modu', warn: stats?.maintenanceActive ?? false },
+                  { label: t('developer.home.health_maintenance'), warn: stats?.maintenanceActive ?? false },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5">
                     <span className="text-xs text-white/50">{item.label}</span>
                     <div className="flex items-center gap-1.5">
                       <div className={`w-1.5 h-1.5 rounded-full ${item.warn ? 'bg-amber-400' : 'bg-emerald-400'}`} />
                       <span className={`text-[10px] font-medium ${item.warn ? 'text-amber-300' : 'text-emerald-300'}`}>
-                        {item.label === 'Bakım Modu' ? (item.warn ? 'Aktif' : 'Kapalı') : 'Çalışıyor'}
+                        {item.label === t('developer.home.health_maintenance') ? (item.warn ? t('developer.common.active') : t('developer.home.status_off')) : t('developer.home.status_ok')}
                       </span>
                     </div>
                   </div>
@@ -189,8 +192,8 @@ export default function DeveloperPage() {
               <div className="mt-3 flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#5865F2]/8 border border-[#5865F2]/15">
                 <LuShield className="w-4 h-4 text-[#5865F2] flex-shrink-0" />
                 <div>
-                  <p className="text-xs font-semibold text-white">Güvenli Oturum</p>
-                  <p className="text-[10px] text-white/30">Discord Developer rolü doğrulandı</p>
+                  <p className="text-xs font-semibold text-white">{t('developer.home.secure_session')}</p>
+                  <p className="text-[10px] text-white/30">{t('developer.home.secure_session_desc')}</p>
                 </div>
               </div>
             </div>
@@ -205,23 +208,23 @@ export default function DeveloperPage() {
                     <LuShield className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-white">Developer Panel Güncellemesi</h2>
-                    <p className="text-sm text-white/40">Ekonomi ve borsa yönetimine ait araçlar kaldırıldı.</p>
+                    <h2 className="text-lg font-semibold text-white">{t('developer.home.update_title')}</h2>
+                    <p className="text-sm text-white/40">{t('developer.home.update_body')}</p>
                   </div>
                 </div>
                 <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3">Mevcut araçlar</h3>
+                  <h3 className="text-sm font-semibold text-white mb-3">{t('developer.home.tools_title')}</h3>
                   <ul className="space-y-2 text-sm text-white/60">
-                    <li>Sunucu ve kullanıcı yönetimi</li>
-                    <li>Bakım ve sistem durumu</li>
-                    <li>Cache yönetimi</li>
-                    <li>API testi ve konfigürasyon</li>
+                    <li>{t('developer.home.tool_1')}</li>
+                    <li>{t('developer.home.tool_2')}</li>
+                    <li>{t('developer.home.tool_3')}</li>
+                    <li>{t('developer.home.tool_4')}</li>
                   </ul>
                 </div>
               </div>
               <div className="mt-6 rounded-3xl border border-white/10 bg-[#5865F2]/5 p-5">
                 <p className="text-xs uppercase tracking-[0.2em] text-white/30 mb-3">Not</p>
-                <p className="text-sm leading-6 text-white/60">Borsa ve ekonomi özellikleriyle ilgili sayfalar, menüler ve API çağrıları bu panelden kaldırılmıştır.</p>
+                <p className="text-sm leading-6 text-white/60">{t('developer.home.update_note')}</p>
               </div>
             </div>
           </div>

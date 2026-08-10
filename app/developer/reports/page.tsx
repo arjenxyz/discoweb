@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect, useCallback } from 'react';
 import { LuBug, LuMessageSquare } from 'react-icons/lu';
 
@@ -16,17 +18,17 @@ type ReportAdminItem = {
 };
 
 const REPORT_STATUS_OPTIONS = [
-  { value: 'reviewing',     label: 'İnceleniyor',     cls: 'border-amber-400/25 bg-amber-500/10 text-amber-300' },
-  { value: 'need_info',     label: 'Bilgi Bekleniyor',cls: 'border-blue-400/25 bg-blue-500/10 text-blue-300' },
-  { value: 'critical',      label: 'Kritik Hata',     cls: 'border-red-400/25 bg-red-500/10 text-red-300' },
-  { value: 'fixed_pending', label: 'Çözüldü/Onay',    cls: 'border-cyan-400/25 bg-cyan-500/10 text-cyan-300' },
-  { value: 'planned_next',  label: 'Plana Alındı',    cls: 'border-teal-400/25 bg-teal-500/10 text-teal-300' },
-  { value: 'long_term',     label: 'Uzun Vadeli',     cls: 'border-purple-400/25 bg-purple-500/10 text-purple-300' },
-  { value: 'resolved',      label: 'Çözümlendi',      cls: 'border-emerald-400/25 bg-emerald-500/10 text-emerald-300' },
-  { value: 'not_found',     label: 'Bulunamadı',      cls: 'border-red-400/25 bg-red-500/10 text-red-300' },
-  { value: 'duplicate',     label: 'Tekrar Eden',     cls: 'border-white/10 bg-white/5 text-white/50' },
-  { value: 'invalid',       label: 'Geçersiz',        cls: 'border-white/10 bg-white/5 text-white/30' },
-  { value: 'closed',        label: 'Kapatıldı',       cls: 'border-white/10 bg-white/5 text-white/30' },
+  { value: 'reviewing',     label: t('developer.reports.status_reviewing'),     cls: 'border-amber-400/25 bg-amber-500/10 text-amber-300' },
+  { value: 'need_info',     label: t('developer.reports.status_need_info'),cls: 'border-blue-400/25 bg-blue-500/10 text-blue-300' },
+  { value: 'critical',      label: t('developer.reports.status_critical'),     cls: 'border-red-400/25 bg-red-500/10 text-red-300' },
+  { value: 'fixed_pending', label: t('developer.reports.status_fixed_pending'),    cls: 'border-cyan-400/25 bg-cyan-500/10 text-cyan-300' },
+  { value: 'planned_next',  label: t('developer.reports.status_planned'),    cls: 'border-teal-400/25 bg-teal-500/10 text-teal-300' },
+  { value: 'long_term',     label: t('developer.reports.status_long_term'),     cls: 'border-purple-400/25 bg-purple-500/10 text-purple-300' },
+  { value: 'resolved',      label: t('developer.reports.status_resolved'),      cls: 'border-emerald-400/25 bg-emerald-500/10 text-emerald-300' },
+  { value: 'not_found',     label: t('developer.reports.status_not_found'),      cls: 'border-red-400/25 bg-red-500/10 text-red-300' },
+  { value: 'duplicate',     label: t('developer.reports.status_duplicate'),     cls: 'border-white/10 bg-white/5 text-white/50' },
+  { value: 'invalid',       label: t('developer.reports.status_invalid'),        cls: 'border-white/10 bg-white/5 text-white/30' },
+  { value: 'closed',        label: t('developer.reports.status_closed'),       cls: 'border-white/10 bg-white/5 text-white/30' },
 ];
 
 const REPORT_STATUS_BADGE: Record<string, string> = {
@@ -45,6 +47,7 @@ const REPORT_STATUS_BADGE: Record<string, string> = {
 };
 
 export default function ReportsPage() {
+  const { t } = useTranslation();
   const [reports, setReports] = useState<ReportAdminItem[]>([]);
   const [filter, setFilter] = useState('open');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -100,8 +103,8 @@ export default function ReportsPage() {
           <LuBug className="h-5 w-5 text-[#7289da]" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Hata Bildirimleri & Öneriler</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Kullanıcıların gönderdiği hata ve önerileri yönetin.</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.reports.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.reports.subtitle')}</p>
         </div>
       </div>
 
@@ -117,7 +120,7 @@ export default function ReportsPage() {
             ))}
           </div>
           <div className="flex gap-2">
-            {[{ v: 'all', l: 'Tümü' }, { v: 'bug', l: '🐛 Hata' }, { v: 'suggestion', l: '💡 Öneri' }].map(({ v, l }) => (
+            {[{ v: 'all', l: t('developer.common.all') }, { v: 'bug', l: t('developer.reports.filter_bug') }, { v: 'suggestion', l: t('developer.reports.filter_suggestion') }].map(({ v, l }) => (
               <button key={v} onClick={() => setTypeFilter(v)}
                 className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition ${typeFilter === v ? 'border-[#5865F2]/40 bg-[#5865F2]/15 text-[#7289da]' : 'border-white/10 text-white/40 hover:text-white/70 hover:bg-white/5'}`}>
                 {l}
@@ -131,7 +134,7 @@ export default function ReportsPage() {
         {/* List */}
         <div className="flex flex-col gap-4 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
           {loading ? (
-            <p className="text-sm text-white/40 text-center py-8">Yükleniyor...</p>
+            <p className="text-sm text-white/40 text-center py-8">{t('developer.common.loading')}</p>
           ) : reports.length > 0 ? (
             reports.map((r) => (
               <div key={r.id} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-colors overflow-hidden flex flex-col">
@@ -149,7 +152,7 @@ export default function ReportsPage() {
                         )}
                       </div>
                       <div className="flex flex-wrap gap-3 text-[11px] text-white/40">
-                        <span>Gönderen: <strong className="text-white/70">{r.user_id}</strong></span>
+                        <span>{t('developer.reports.sender')} <strong className="text-white/70">{r.user_id}</strong></span>
                         {r.guild_id && <span>Sunucu: <strong className="text-white/70">{r.guild_id}</strong></span>}
                       </div>
                     </div>
@@ -170,7 +173,7 @@ export default function ReportsPage() {
                 {r.dev_note && (
                   <div className="mx-5 mb-4 rounded-xl border border-[#5865F2]/20 bg-[#5865F2]/5 px-4 py-3 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-[#5865F2]" />
-                    <p className="text-xs text-[#7289da] font-bold mb-1">Geliştirici Notu</p>
+                    <p className="text-xs text-[#7289da] font-bold mb-1">{t('developer.reports.dev_note')}</p>
                     <p className="text-[13px] text-white/70 leading-relaxed">{r.dev_note}</p>
                   </div>
                 )}
@@ -190,7 +193,7 @@ export default function ReportsPage() {
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="Kullanıcıya veya takıma not ekle..."
+                      placeholder={t('developer.reports.note_placeholder')}
                       value={noteInputs[r.id] ?? ''}
                       onChange={(e) => setNoteInputs((p) => ({ ...p, [r.id]: e.target.value }))}
                       className="flex-1 rounded-xl border border-white/10 bg-black/50 px-4 py-2.5 text-xs text-white placeholder-white/30 outline-none focus:border-[#5865F2]/50 transition-colors"
@@ -208,7 +211,7 @@ export default function ReportsPage() {
           ) : (
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-white/30">
               <LuBug className="w-12 h-12 text-white/10" />
-              <p className="text-sm font-medium">Bu kriterlere uygun bildirim bulunamadı.</p>
+              <p className="text-sm font-medium">{t('developer.reports.empty')}</p>
             </div>
           )}
         </div>

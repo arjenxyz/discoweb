@@ -39,6 +39,7 @@ import {
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
+import { useTranslation } from '@/lib/i18nContext';
 
 const ubuntu = Ubuntu({ subsets: ['latin'], weight: ['400', '700'] });
 
@@ -50,67 +51,67 @@ type UserInfo = {
 
 type NavItem = {
   href: string;
-  label: string;
+  labelKey: string;
   icon: React.ElementType;
 };
 
 type NavGroup = {
-  category: string;
+  categoryKey: string;
   items: NavItem[];
 };
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    category: 'GENEL',
+    categoryKey: 'developer.nav.cat_general',
     items: [
-      { href: '/developer', label: 'Dashboard', icon: LuLayoutDashboard },
-      { href: '/developer/user-lookup', label: 'Kullanıcı Sorgula', icon: LuSearch },
-      { href: '/developer/users', label: 'Kullanıcılar', icon: LuUsers },
-      { href: '/developer/servers', label: 'Sunucular', icon: LuDatabase },
-      { href: '/developer/all-servers', label: 'Sunucular & Üyeler', icon: LuGlobe },
+      { href: '/developer', labelKey: 'developer.nav.dashboard', icon: LuLayoutDashboard },
+      { href: '/developer/user-lookup', labelKey: 'developer.nav.user_lookup', icon: LuSearch },
+      { href: '/developer/users', labelKey: 'developer.nav.users', icon: LuUsers },
+      { href: '/developer/servers', labelKey: 'developer.nav.servers', icon: LuDatabase },
+      { href: '/developer/all-servers', labelKey: 'developer.nav.all_servers', icon: LuGlobe },
     ],
   },
   {
-    category: 'AKTİVİTE & İÇERİK',
+    categoryKey: 'developer.nav.cat_activity',
     items: [
-      { href: '/developer/economy-apps', label: 'Ekonomi Başvuruları', icon: LuClipboardList },
-      { href: '/developer/ads', label: 'Reklamlar', icon: LuMegaphone },
-      { href: '/developer/weekly-tasks', label: 'Haftalık Görevler', icon: LuListChecks },
-      { href: '/developer/announcements', label: 'Duyurular', icon: LuMessageSquare },
-      { href: '/developer/quiz/events', label: 'Quiz Etkinlikleri', icon: LuTrophy },
-      { href: '/developer/quiz/questions', label: 'Quiz Soru Bankası', icon: LuBrain },
+      { href: '/developer/economy-apps', labelKey: 'developer.nav.economy_apps', icon: LuClipboardList },
+      { href: '/developer/ads', labelKey: 'developer.nav.ads', icon: LuMegaphone },
+      { href: '/developer/weekly-tasks', labelKey: 'developer.nav.weekly_tasks', icon: LuListChecks },
+      { href: '/developer/announcements', labelKey: 'developer.nav.announcements', icon: LuMessageSquare },
+      { href: '/developer/quiz/events', labelKey: 'developer.nav.quiz_events', icon: LuTrophy },
+      { href: '/developer/quiz/questions', labelKey: 'developer.nav.quiz_questions', icon: LuBrain },
     ],
   },
   {
-    category: 'MODERASYON',
+    categoryKey: 'developer.nav.cat_moderation',
     items: [
-      { href: '/developer/suspicious', label: 'Şüpheli Aktiviteler', icon: LuTriangleAlert },
-      { href: '/developer/reports', label: 'Hata Bildirimleri', icon: LuBug },
-      { href: '/developer/bans', label: 'Yasaklamalar', icon: LuShield },
-      { href: '/developer/logs', label: 'Sistem Logları', icon: LuScrollText },
+      { href: '/developer/suspicious', labelKey: 'developer.nav.suspicious', icon: LuTriangleAlert },
+      { href: '/developer/reports', labelKey: 'developer.nav.reports', icon: LuBug },
+      { href: '/developer/bans', labelKey: 'developer.nav.bans', icon: LuShield },
+      { href: '/developer/logs', labelKey: 'developer.nav.logs', icon: LuScrollText },
     ],
   },
   {
-    category: 'SİSTEM',
+    categoryKey: 'developer.nav.cat_system',
     items: [
-      { href: '/developer/broadcast', label: 'Toplu Yayın (Broadcast)', icon: LuMegaphone },
-      { href: '/developer/api-test', label: 'API Test', icon: LuFlaskConical },
-      { href: '/developer/clear-data', label: 'Veri Temizleme', icon: LuTrash2 },
+      { href: '/developer/broadcast', labelKey: 'developer.nav.broadcast', icon: LuMegaphone },
+      { href: '/developer/api-test', labelKey: 'developer.nav.api_test', icon: LuFlaskConical },
+      { href: '/developer/clear-data', labelKey: 'developer.nav.clear_data', icon: LuTrash2 },
     ],
   },
   {
-    category: 'BOT KONTROL MERKEZİ',
+    categoryKey: 'developer.nav.cat_bot',
     items: [
-      { href: '/developer/bot/analytics', label: 'Sistem Analizi', icon: LuTrendingUp },
-      { href: '/developer/bot/identity', label: 'Kimlik Yönetimi', icon: LuCpu },
+      { href: '/developer/bot/analytics', labelKey: 'developer.nav.bot_analytics', icon: LuTrendingUp },
+      { href: '/developer/bot/identity', labelKey: 'developer.nav.bot_identity', icon: LuCpu },
     ],
   },
 ];
 
 export default function DeveloperLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const router = useRouter();
-  const pathname = usePathname();
-  const [user, setUser] = useState<UserInfo | null>(null);
+  const pathname = usePathname();  const [user, setUser] = useState<UserInfo | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
   const [accessAllowed, setAccessAllowed] = useState(false);
   const [accessError, setAccessError] = useState<string | null>(null);
@@ -144,17 +145,17 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
           setAccessAllowed(true);
           setAccessError(null);
         } else if (response.status === 401 || data.error === 'unauthorized') {
-          setAccessError('Giriş yapmanız gerekiyor.');
+          setAccessError(t('developer.layout.need_login'));
           setAccessAllowed(false);
         } else if (response.status === 403 || data.error === 'forbidden') {
-          setAccessError('Bu panele erişim izniniz yok.');
+          setAccessError(t('developer.layout.access_denied_default'));
           setAccessAllowed(false);
         } else {
-          setAccessError('Geliştirici paneli doğrulaması yapılamadı.');
+          setAccessError(t('developer.layout.verify_failed'));
           setAccessAllowed(false);
         }
       } catch {
-        setAccessError('Geliştirici paneli doğrulaması yapılamadı.');
+        setAccessError(t('developer.layout.verify_failed'));
         setAccessAllowed(false);
       } finally {
         setAccessLoading(false);
@@ -228,7 +229,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
           <div className="w-56 h-[3px] bg-white/[0.06] rounded-full overflow-hidden">
             <div className="h-full w-2/3 bg-gradient-to-r from-[#5865F2] via-[#7289DA] to-[#5865F2] rounded-full animate-pulse" />
           </div>
-          <p className="text-sm text-white/40 tracking-wide">Developer yetkisi kontrol ediliyor...</p>
+          <p className="text-sm text-white/40 tracking-wide">{t('developer.layout.checking_access')}</p>
         </div>
       </div>
     );
@@ -250,14 +251,14 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
             <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(244,63,94,0.2)]">
               <LuShield className="w-8 h-8 text-rose-400" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Erişim Engellendi</h1>
-            <p className="text-white/40 text-sm mb-8 leading-relaxed">{accessError ?? 'Bu panele erişim izniniz yok.'}</p>
+            <h1 className="text-2xl font-bold text-white mb-2">{t('developer.layout.access_denied')}</h1>
+            <p className="text-white/40 text-sm mb-8 leading-relaxed">{accessError ?? t('developer.layout.access_denied_default')}</p>
             <button
               type="button"
               onClick={() => router.replace('/dashboard')}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#5865F2] text-white font-semibold text-sm shadow-[0_0_20px_rgba(88,101,242,0.3)] hover:bg-[#4752C4] hover:shadow-[0_0_30px_rgba(88,101,242,0.4)] transition-all duration-200"
             >
-              Panele Dön
+              {t('developer.layout.back_to_panel')}
             </button>
           </div>
         </div>
@@ -273,12 +274,12 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   const SidebarNavContent = ({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?: () => void }) => (
     <nav className="flex-1 overflow-y-auto py-3 scrollbar-hidden">
       {NAV_GROUPS.map((group) => (
-        <div key={group.category} className="mb-2">
+        <div key={group.categoryKey} className="mb-2">
           {/* Category label */}
           {!collapsed && (
             <div className="px-4 py-2">
               <span className="text-[9px] font-bold tracking-[0.2em] text-white/20 uppercase">
-                {group.category}
+                {t(group.categoryKey)}
               </span>
             </div>
           )}
@@ -291,11 +292,12 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
             {group.items.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
+              const label = t(item.labelKey);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  title={collapsed ? item.label : undefined}
+                  title={collapsed ? label : undefined}
                   onClick={onNavClick}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group relative ${
                     active
@@ -304,7 +306,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
                   } ${collapsed ? 'justify-center' : ''}`}
                 >
                   <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${active ? 'text-[#5865F2]' : 'text-white/50 group-hover:text-white/70'}`} />
-                  {!collapsed && <span className="truncate">{item.label}</span>}
+                  {!collapsed && <span className="truncate">{label}</span>}
                   {active && !collapsed && (
                     <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#5865F2] shadow-[0_0_6px_rgba(88,101,242,0.8)]" />
                   )}
@@ -415,7 +417,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
                 <button
                   type="button"
                   onClick={handleLogout}
-                  title="Çıkış Yap"
+                  title={t('developer.nav.logout')}
                   className="flex items-center justify-center p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-rose-400/60 hover:text-rose-300 hover:bg-rose-500/10 transition-all"
                 >
                   <LuLogOut className="w-4 h-4" />
@@ -483,7 +485,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
             <button
               type="button"
               onClick={handleLogout}
-              title="Çıkış Yap"
+              title={t('developer.nav.logout')}
               className="flex items-center justify-center p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-rose-400/50 hover:text-rose-300 hover:bg-rose-500/10 transition-all"
             >
               <LuLogOut className="w-3.5 h-3.5" />
@@ -528,7 +530,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
           {notificationMenuOpen && (
             <div className="absolute right-0 top-[calc(100%+8px)] w-56 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0d0f14]/95 backdrop-blur-xl shadow-2xl">
               <div className="border-b border-white/[0.06] px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Bildirimler</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">{t('developer.nav.notifications')}</p>
               </div>
               <div className="p-2 space-y-1">
                 <Link
@@ -537,7 +539,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
                   className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white"
                 >
                   <LuBell className="h-4 w-4 text-white/40" />
-                  Bildirim Gönder
+                  {t('developer.nav.notifications_send')}
                 </Link>
                 <Link
                   href="/developer/notifications/history"
@@ -545,7 +547,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
                   className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white"
                 >
                   <LuFileText className="h-4 w-4 text-white/40" />
-                  Bildirim Geçmişi
+                  {t('developer.nav.notifications_history')}
                 </Link>
               </div>
             </div>

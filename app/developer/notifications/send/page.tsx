@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -23,62 +25,63 @@ type Template = {
 const ANNOUNCEMENT_TEMPLATES: Template[] = [
   {
     value: 'maintenance',
-    label: 'Bakım bilgilendirmesi',
-    title: 'Planlı bakım',
+    label: t('developer.notifications_send.tpl_maint_label'),
+    title: t('developer.notifications_send.tpl_maint_title'),
     type: 'announcement',
-    body: 'Kısa süreli bakım çalışması yapıyoruz. Bu sürede bazı özellikler geçici olarak kullanılamayabilir. Anlayışınız için teşekkürler.',
+    body: t('developer.notifications_send.tpl_maint_body'),
   },
   {
     value: 'event',
-    label: 'Etkinlik duyurusu',
-    title: 'Etkinlik zamanı!',
+    label: t('developer.notifications_send.tpl_event_label'),
+    title: t('developer.notifications_send.tpl_event_title'),
     type: 'announcement',
-    body: 'Topluluk etkinliğimiz başlıyor. Katılım detayları ve saat bilgileri için duyuru kanalını kontrol edin.',
+    body: t('developer.notifications_send.tpl_event_body'),
   },
   {
     value: 'rules',
-    label: 'Kural hatırlatması',
-    title: 'Topluluk kuralları hatırlatması',
+    label: t('developer.notifications_send.tpl_rules_label'),
+    title: t('developer.notifications_send.tpl_rules_title'),
     type: 'announcement',
-    body: 'Huzurlu bir ortam için kurallara dikkat edelim. İhlal tespitinde yaptırımlar uygulanabilir.',
+    body: t('developer.notifications_send.tpl_rules_body'),
   },
   {
     value: 'store',
-    label: 'Mağaza güncellemesi',
-    title: 'Mağazada yeni ürünler',
+    label: t('developer.notifications_send.tpl_store_label'),
+    title: t('developer.notifications_send.tpl_store_title'),
     type: 'announcement',
-    body: 'Mağazamıza yeni ürünler eklendi. Güncel ürünleri incelemek için mağaza sekmesine göz atabilirsiniz.',
+    body: t('developer.notifications_send.tpl_store_body'),
   },
 ];
 
 const MAIL_TEMPLATES: Template[] = [
   {
     value: 'account',
-    label: 'Hesap bilgilendirmesi',
-    title: 'Hesap bilgilendirmesi',
+    label: t('developer.notifications_send.tpl_account_label'),
+    title: t('developer.notifications_send.tpl_account_label'),
     type: 'mail',
-    body: 'Merhaba, hesabınızla ilgili önemli bir bilgilendirme yapmak istiyoruz. Detaylar için bağlantıyı kullanabilirsiniz.',
+    body: t('developer.notifications_send.tpl_account_body'),
     detailsUrl: 'https://',
   },
   {
     value: 'warning',
-    label: 'Uyarı mesajı',
-    title: 'Uyarı',
+    label: t('developer.notifications_send.tpl_warn_label'),
+    title: t('developer.notifications_send.tpl_warn_title'),
     type: 'mail',
-    body: 'Topluluk kurallarına uygun davranmanız önemlidir. Tekrarlayan ihlallerde işlem uygulanacaktır.',
+    body: t('developer.notifications_send.tpl_warn_body'),
     detailsUrl: '',
   },
   {
     value: 'info',
-    label: 'Genel bilgi (kişisel)',
-    title: 'Bilgilendirme',
+    label: t('developer.notifications_send.tpl_info_label'),
+    title: t('developer.notifications_send.tpl_info_title'),
     type: 'mail',
-    body: 'Size özel bilgilendirme: Sorularınız için moderasyon ekibiyle iletişime geçebilirsiniz.',
+    body: t('developer.notifications_send.tpl_info_body'),
     detailsUrl: '',
   },
 ];
 
 export default function AdminNotificationSendPage() {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [type, setType] = useState<'announcement' | 'mail'>('announcement');
@@ -134,7 +137,7 @@ export default function AdminNotificationSendPage() {
     setError(null);
 
     if (type === 'mail' && !selectedMember) {
-      setError('Mail göndermek için üye seçmelisiniz.');
+      setError(t('developer.notifications_send.need_member'));
       setSaving(false);
       return;
     }
@@ -156,9 +159,9 @@ export default function AdminNotificationSendPage() {
     if (!response.ok) {
       const data = (await response.json().catch(() => ({}))) as { error?: string };
       if (data.error === 'target_required') {
-        setError('Mail göndermek için üye seçmelisiniz.');
+        setError(t('developer.notifications_send.need_member'));
       } else {
-        setError('Bildirim gönderilemedi.');
+        setError(t('developer.notifications_send.send_failed'));
       }
       setSaving(false);
       return;
@@ -181,21 +184,21 @@ export default function AdminNotificationSendPage() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Admin</p>
-        <h1 className="mt-2 text-2xl font-semibold">Bildirim Gönder</h1>
-        <p className="mt-1 text-sm text-white/60">Üyelere duyuru veya mail formatında bildirim gönderin.</p>
+        <h1 className="mt-2 text-2xl font-semibold">{t('developer.notifications_send.submit')}</h1>
+        <p className="mt-1 text-sm text-white/60">{t('developer.notifications_send.subtitle')}</p>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="grid gap-4">
           <div className="rounded-2xl border border-white/10 bg-[#0b0d12]/60 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Yeni Bildirim</p>
-            <p className="mt-2 text-sm text-white/60">Duyuru ya da mail formatında bildirim gönderin.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">{t('developer.notifications_send.form_title')}</p>
+            <p className="mt-2 text-sm text-white/60">{t('developer.notifications_send.form_desc')}</p>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             <input
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="Başlık"
+              placeholder={t('developer.common.title')}
               className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
             />
             <select
@@ -203,12 +206,12 @@ export default function AdminNotificationSendPage() {
               onChange={(event) => setType(event.target.value as 'announcement' | 'mail')}
               className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
             >
-              <option value="announcement">Duyuru</option>
-              <option value="mail">Mail</option>
+              <option value="announcement">{t('developer.announcements.mode_post')}</option>
+              <option value="mail">{t('developer.home.stat_mail')}</option>
             </select>
           </div>
           <div>
-            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Şablonlar</label>
+            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">{t('developer.notifications_send.templates')}</label>
             <div className="mt-2 grid gap-3 md:grid-cols-2">
               <select
                 value={template}
@@ -224,7 +227,7 @@ export default function AdminNotificationSendPage() {
                 }}
                 className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
               >
-                <option value="">Şablon seç</option>
+                <option value="">{t('developer.notifications_send.pick_template')}</option>
                 {templateOptions.map((item) => (
                   <option key={item.value} value={item.value}>
                     {item.label}
@@ -235,7 +238,7 @@ export default function AdminNotificationSendPage() {
                 <input
                   value={detailsUrl}
                   onChange={(event) => setDetailsUrl(event.target.value)}
-                  placeholder="Detay bağlantısı"
+                  placeholder={t('developer.notifications_history.detail_link')}
                   className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
                 />
               )}
@@ -243,14 +246,14 @@ export default function AdminNotificationSendPage() {
           </div>
           {type === 'mail' && (
             <div className="grid gap-3">
-              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Hedef Üye</label>
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">{t('developer.notifications_send.target_member')}</label>
               <input
                 value={memberQuery}
                 onChange={(event) => setMemberQuery(event.target.value)}
-                placeholder="Üye adı ya da ID"
+                placeholder={t('developer.notifications_send.member_placeholder')}
                 className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
               />
-              {memberLoading && <p className="text-xs text-white/40">Aranıyor...</p>}
+              {memberLoading && <p className="text-xs text-white/40">{t('developer.common.searching')}</p>}
               {!memberLoading && memberResults.length > 0 && (
                 <div className="grid gap-2 rounded-xl border border-white/10 bg-[#0b0d12]/60 p-2">
                   {memberResults.map((member) => (
@@ -281,13 +284,13 @@ export default function AdminNotificationSendPage() {
               )}
               {selectedMember && (
                 <div className="rounded-xl border border-white/10 bg-[#0b0d12]/60 p-3 text-sm text-white/70">
-                  <p>Seçilen üye: {selectedMember.nickname ?? selectedMember.displayName ?? selectedMember.username}</p>
+                  <p>{t('developer.notifications_send.selected_member', { name: selectedMember.nickname ?? selectedMember.displayName ?? selectedMember.username })}</p>
                 </div>
               )}
             </div>
           )}
           <div>
-            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Görsel</label>
+            <label className="text-xs font-semibold uppercase tracking-[0.3em] text-white/40">{t('developer.notifications_send.image')}</label>
             <input
               value={imageUrl}
               onChange={(event) => setImageUrl(event.target.value)}
@@ -310,7 +313,7 @@ export default function AdminNotificationSendPage() {
           <textarea
             value={body}
             onChange={(event) => setBody(event.target.value)}
-            placeholder="Bildirim içeriği"
+            placeholder={t('developer.notifications_send.body_placeholder')}
             rows={4}
             className="w-full rounded-xl border border-white/10 bg-[#0b0d12]/70 px-4 py-3 text-sm text-white/80 focus:border-indigo-400 focus:outline-none"
           />
@@ -322,7 +325,7 @@ export default function AdminNotificationSendPage() {
           disabled={saving || !title || !body}
           className="mt-4 rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {saving ? 'Gönderiliyor...' : 'Bildirim Gönder'}
+          {saving ? t('developer.common.sending') : t('developer.notifications_send.submit')}
         </button>
       </div>
     </div>

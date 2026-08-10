@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useEffect, useState } from 'react';
 import { LuGlobe, LuUsers, LuChevronDown, LuSearch } from 'react-icons/lu';
 
@@ -15,6 +17,7 @@ type ServerWithMembers = {
 };
 
 export default function DeveloperAllServersPage() {
+  const { t } = useTranslation();
   const [servers, setServers] = useState<ServerWithMembers[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,10 +31,10 @@ export default function DeveloperAllServersPage() {
       try {
         setLoading(true);
         const res = await fetch('/api/developer/servers-members', { credentials: 'include', cache: 'no-store' });
-        if (!res.ok) { setError('Veriler yüklenemedi.'); return; }
+        if (!res.ok) { setError(t('developer.common.load_failed')); return; }
         const data = await res.json();
         setServers(data.items ?? []);
-      } catch { setError('Veriler yüklenemedi.'); }
+      } catch { setError(t('developer.common.load_failed')); }
       finally { setLoading(false); }
     };
     load();
@@ -46,12 +49,12 @@ export default function DeveloperAllServersPage() {
       const res = await fetch(`/api/developer/invite?guild_id=${guildId}`);
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Davet oluşturulamadı.');
+        alert(data.error || t('developer.servers.invite_failed'));
         return;
       }
       window.open(data.invite_url, '_blank', 'noopener,noreferrer');
     } catch (err) {
-      alert('Bir hata oluştu.');
+      alert(t('developer.common.error_generic'));
     } finally {
       setLoadingInvites(prev => ({ ...prev, [guildId]: false }));
     }
@@ -61,7 +64,7 @@ export default function DeveloperAllServersPage() {
     e.stopPropagation();
     if (leavingGuilds[guildId]) return;
 
-    if (!window.confirm('Botu bu sunucudan çıkarmak istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+    if (!window.confirm(t('developer.servers.confirm_leave'))) {
       return;
     }
 
@@ -74,12 +77,12 @@ export default function DeveloperAllServersPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Bot sunucudan çıkarılamadı.');
+        alert(data.error || t('developer.servers.leave_failed'));
         return;
       }
-      alert('Bot sunucudan başarıyla çıkarıldı!');
+      alert(t('developer.servers.leave_success'));
     } catch (err) {
-      alert('Bir hata oluştu.');
+      alert(t('developer.common.error_generic'));
     } finally {
       setLeavingGuilds(prev => ({ ...prev, [guildId]: false }));
     }
@@ -95,14 +98,14 @@ export default function DeveloperAllServersPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Sunucular & Üyeler</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">{servers.length} sunucu, {totalMembers} toplam üye</p>
+          <h1 className="text-2xl font-bold text-white">{t('developer.all_servers.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.all_servers.subtitle', { servers: servers.length, members: totalMembers })}</p>
         </div>
         <div className="relative">
           <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
           <input
             type="text"
-            placeholder="Sunucu ara..."
+            placeholder={t('developer.all_servers.search_placeholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:border-[#5865F2]/50 focus:outline-none w-full md:w-64 transition-all"
@@ -148,7 +151,7 @@ export default function DeveloperAllServersPage() {
                             : 'bg-rose-500/15 text-rose-500 border-rose-500/20 hover:bg-rose-500/25 cursor-pointer'
                         }`}
                       >
-                        {leavingGuilds[server.discord_id!] ? 'Çıkarılıyor...' : 'Çıkar'}
+                        {leavingGuilds[server.discord_id!] ? t('developer.servers.leaving') : t('developer.servers.leave')}
                       </div>
                       <div
                         role="button"
@@ -161,7 +164,7 @@ export default function DeveloperAllServersPage() {
                             : 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20 hover:bg-[#5865F2]/25 cursor-pointer'
                         }`}
                       >
-                        {loadingInvites[server.discord_id!] ? 'Alınıyor...' : 'Davet Linki Al'}
+                        {loadingInvites[server.discord_id!] ? t('developer.servers.getting_invite') : t('developer.servers.get_invite')}
                       </div>
                     </>
                   )}
@@ -172,7 +175,7 @@ export default function DeveloperAllServersPage() {
                   <div className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${
                     server.is_setup ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' : 'bg-amber-500/15 text-amber-300 border border-amber-500/20'
                   }`}>
-                    {server.is_setup ? 'Kurulu' : 'Bekliyor'}
+                    {server.is_setup ? t('developer.servers.installed') : t('developer.servers.pending')}
                   </div>
                   <LuChevronDown className={`w-4 h-4 text-white/30 transition-transform ${expandedServer === server.id ? 'rotate-180' : ''}`} />
                 </div>
@@ -186,7 +189,7 @@ export default function DeveloperAllServersPage() {
                         <div className="w-6 h-6 rounded-md bg-[#5865F2]/20 flex items-center justify-center">
                           <LuUsers className="w-3 h-3 text-[#5865F2]" />
                         </div>
-                        <span className="text-xs text-white/70 truncate">{member.username ?? 'Bilinmeyen'}</span>
+                        <span className="text-xs text-white/70 truncate">{member.username ?? t('developer.common.unknown')}</span>
                       </div>
                     ))}
                   </div>
@@ -194,13 +197,13 @@ export default function DeveloperAllServersPage() {
               )}
               {expandedServer === server.id && server.members.length === 0 && (
                 <div className="px-5 pb-5 border-t border-white/5">
-                  <p className="mt-4 text-xs text-white/30 text-center py-4">Bu sunucuda kayıtlı üye yok.</p>
+                  <p className="mt-4 text-xs text-white/30 text-center py-4">{t('developer.all_servers.no_members')}</p>
                 </div>
               )}
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="py-12 text-center text-sm text-white/30">Sonuç bulunamadı.</div>
+            <div className="py-12 text-center text-sm text-white/30">{t('developer.common.not_found')}</div>
           )}
         </div>
       )}

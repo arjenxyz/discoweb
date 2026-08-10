@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect } from 'react';
 import { LuHardDrive, LuTrash2, LuRefreshCw, LuDatabase, LuClock, LuActivity, LuCpu } from 'react-icons/lu';
 
@@ -21,6 +23,7 @@ interface CacheEntry {
 }
 
 export default function CachePage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<CacheStats | null>(null);
@@ -33,12 +36,12 @@ export default function CachePage() {
     try {
       setLoading(true);
       const res = await fetch('/api/developer/cache/stats', { credentials: 'include', cache: 'no-store' });
-      if (!res.ok) throw new Error('Yüklenemedi');
+      if (!res.ok) throw new Error(t('developer.cache.load_failed'));
       const data = await res.json();
       setStats(data.stats);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bilinmeyen hata');
+      setError(err instanceof Error ? err.message : t('developer.cache.unknown_error'));
     } finally {
       setLoading(false);
     }
@@ -47,7 +50,7 @@ export default function CachePage() {
   const loadEntries = async () => {
     try {
       const res = await fetch('/api/developer/cache/entries', { credentials: 'include', cache: 'no-store' });
-      if (!res.ok) throw new Error('Yüklenemedi');
+      if (!res.ok) throw new Error(t('developer.cache.load_failed'));
       const data = await res.json();
       setEntries(data.entries || []);
     } catch {
@@ -60,13 +63,13 @@ export default function CachePage() {
       setClearing(true);
       setClearMsg(null);
       const res = await fetch('/api/developer/cache/clear', { method: 'POST', credentials: 'include', cache: 'no-store' });
-      if (!res.ok) throw new Error('Temizlenemedi');
+      if (!res.ok) throw new Error(t('developer.cache.clear_failed'));
       const data = await res.json();
       setClearMsg(data.message || 'Cache temizlendi.');
       await loadStats();
       if (showEntries) await loadEntries();
     } catch (err) {
-      setClearMsg(err instanceof Error ? err.message : 'Hata');
+      setClearMsg(err instanceof Error ? err.message : t('developer.reports.filter_bug'));
     } finally {
       setClearing(false);
     }
@@ -88,7 +91,7 @@ export default function CachePage() {
   };
 
   const formatTTL = (ttl: number) => {
-    if (ttl <= 0) return 'Süresi dolmuş';
+    if (ttl <= 0) return t('developer.cache.expired');
     const m = Math.floor(ttl / 60);
     const s = ttl % 60;
     return m > 0 ? `${m}dk ${s}sn` : `${s}sn`;
@@ -98,8 +101,8 @@ export default function CachePage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Cache Yönetimi</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Sunucu tarafı cache istatistikleri ve yönetimi.</p>
+          <h1 className="text-2xl font-bold text-white">{t('developer.cache.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.cache.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <button type="button" onClick={loadStats} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-all">
@@ -130,11 +133,11 @@ export default function CachePage() {
           {/* Stat Cards */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
-              { label: 'Cache Anahtarları', value: stats?.totalKeys ?? 0, icon: LuDatabase, color: 'text-indigo-400', border: 'border-indigo-500/20', bg: 'from-indigo-500/20 to-indigo-600/10' },
-              { label: 'Cache Boyutu', value: stats?.memoryUsage ?? '0 MB', icon: LuHardDrive, color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'from-emerald-500/20 to-emerald-600/10' },
+              { label: t('developer.cache.keys'), value: stats?.totalKeys ?? 0, icon: LuDatabase, color: 'text-indigo-400', border: 'border-indigo-500/20', bg: 'from-indigo-500/20 to-indigo-600/10' },
+              { label: t('developer.cache.size'), value: stats?.memoryUsage ?? '0 MB', icon: LuHardDrive, color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'from-emerald-500/20 to-emerald-600/10' },
               { label: 'Uptime', value: stats?.uptime ?? '—', icon: LuClock, color: 'text-amber-400', border: 'border-amber-500/20', bg: 'from-amber-500/20 to-amber-600/10' },
-              { label: 'Heap Kullanımı', value: stats?.nodeMemory ?? '—', icon: LuActivity, color: 'text-violet-400', border: 'border-violet-500/20', bg: 'from-violet-500/20 to-violet-600/10' },
-              { label: 'Heap Toplam', value: stats?.heapTotal ?? '—', icon: LuCpu, color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'from-cyan-500/20 to-cyan-600/10' },
+              { label: t('developer.cache.heap_used'), value: stats?.nodeMemory ?? '—', icon: LuActivity, color: 'text-violet-400', border: 'border-violet-500/20', bg: 'from-violet-500/20 to-violet-600/10' },
+              { label: t('developer.cache.heap_total'), value: stats?.heapTotal ?? '—', icon: LuCpu, color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'from-cyan-500/20 to-cyan-600/10' },
               { label: 'RSS Bellek', value: stats?.rss ?? '—', icon: LuActivity, color: 'text-pink-400', border: 'border-pink-500/20', bg: 'from-pink-500/20 to-pink-600/10' },
             ].map((card) => {
               const Icon = card.icon;
@@ -153,13 +156,13 @@ export default function CachePage() {
           {/* Cache Entries */}
           <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl overflow-hidden">
             <button type="button" onClick={toggleEntries} className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-white/[0.02] transition-colors">
-              <span className="text-sm font-semibold text-white">Cache Kayıtları</span>
-              <span className="text-xs text-white/40">{showEntries ? 'Gizle' : 'Göster'}</span>
+              <span className="text-sm font-semibold text-white">{t('developer.cache.entries')}</span>
+              <span className="text-xs text-white/40">{showEntries ? t('developer.common.hide') : t('developer.common.show')}</span>
             </button>
             {showEntries && (
               <div className="border-t border-white/5">
                 {entries.length === 0 ? (
-                  <p className="px-6 py-8 text-sm text-white/30 text-center">Cache boş.</p>
+                  <p className="px-6 py-8 text-sm text-white/30 text-center">{t('developer.cache.empty')}</p>
                 ) : (
                   <div className="divide-y divide-white/5">
                     {entries.map((entry, i) => (

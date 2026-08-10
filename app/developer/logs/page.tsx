@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { LuScrollText } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
+import { getLocaleTag } from '@/lib/i18n/languages';
 
 type DeveloperLog = {
   id: string;
@@ -12,6 +14,7 @@ type DeveloperLog = {
 };
 
 export default function LogsPage() {
+  const { t, language } = useTranslation();
   const [logs, setLogs] = useState<DeveloperLog[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,14 +58,13 @@ export default function LogsPage() {
           <LuScrollText className="h-5 w-5 text-purple-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Sistem Logları</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Platformdaki sistem olaylarını ve hatalarını izleyin.</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.logs.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.logs.subtitle')}</p>
         </div>
       </div>
 
       <div className="grid h-[calc(100vh-140px)] min-h-[600px] gap-6 lg:grid-cols-[380px_1fr]">
         <div className="flex flex-col rounded-3xl border border-white/10 bg-[#0b0d12]/80 backdrop-blur-md p-5 overflow-hidden">
-          {/* Filters */}
           <div className="flex flex-wrap gap-2 mb-6 border-b border-white/5 pb-4">
             {['all','auth_login','auth_logout','ban_added','ban_removed','new_user','new_server','bug','suggestion','error_log','client_error', 'api_error'].map((type) => (
               <button key={type} onClick={() => setFilter(type)}
@@ -74,20 +76,20 @@ export default function LogsPage() {
 
           <div className="flex-1 overflow-y-auto pr-2 space-y-2.5 custom-scrollbar">
             {loading ? (
-              <p className="text-sm text-white/40 text-center py-4">Yükleniyor...</p>
+              <p className="text-sm text-white/40 text-center py-4">{t('developer.common.loading')}</p>
             ) : filteredLogs.length > 0 ? (
               filteredLogs.map((log) => (
                 <button key={log.id} onClick={() => setSelectedLog(log)}
                   className={`w-full text-left rounded-2xl border px-4 py-3.5 transition-all ${selectedLog?.id === log.id ? 'border-[#5865F2]/50 bg-[#5865F2]/10 shadow-[0_0_15px_rgba(88,101,242,0.15)]' : 'border-white/[0.05] bg-white/[0.02] hover:bg-white/[0.06]'}`}>
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-bold text-white truncate">{log.title}</p>
-                    <span className="shrink-0 text-[10px] text-white/30">{new Date(log.created_at).toLocaleString('tr-TR')}</span>
+                    <span className="shrink-0 text-[10px] text-white/30">{new Date(log.created_at).toLocaleString(getLocaleTag(language))}</span>
                   </div>
                   <p className="mt-1.5 text-[10px] font-bold text-white/50 uppercase">{log.type}</p>
                 </button>
               ))
             ) : (
-              <p className="text-sm text-white/40 text-center py-8">Log bulunamadı.</p>
+              <p className="text-sm text-white/40 text-center py-8">{t('developer.logs.empty')}</p>
             )}
           </div>
         </div>
@@ -98,7 +100,7 @@ export default function LogsPage() {
               <div className="border-b border-white/5 pb-4 mb-4">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase text-white/70">{selectedLog.type}</span>
-                  <p className="text-sm font-medium text-white/40">{new Date(selectedLog.created_at).toLocaleString('tr-TR')}</p>
+                  <p className="text-sm font-medium text-white/40">{new Date(selectedLog.created_at).toLocaleString(getLocaleTag(language))}</p>
                 </div>
                 <h2 className="text-xl font-black text-white">{selectedLog.title}</h2>
               </div>
@@ -114,7 +116,7 @@ export default function LogsPage() {
               <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center">
                 <LuScrollText className="h-10 w-10 text-white/20" />
               </div>
-              <p className="text-sm font-medium">Detayları görmek için listeden bir log seçin.</p>
+              <p className="text-sm font-medium">{t('developer.logs.pick')}</p>
             </div>
           )}
         </div>

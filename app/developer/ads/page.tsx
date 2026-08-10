@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { LuEye, LuEyeOff, LuMegaphone, LuTrash2 } from 'react-icons/lu';
@@ -28,6 +30,7 @@ type AdPreview = {
 };
 
 export default function AdsPage() {
+  const { t } = useTranslation();
   const [ads, setAds] = useState<Ad[]>([]);
   const [adLoading, setAdLoading] = useState(false);
   const [adFetching, setAdFetching] = useState(false);
@@ -63,14 +66,14 @@ export default function AdsPage() {
     setAdError(null);
     try {
       const res = await fetch(`https://discord.com/api/v10/invites/${code}?with_counts=true`);
-      if (!res.ok) throw new Error('Geçersiz veya süresi dolmuş davet linki.');
+      if (!res.ok) throw new Error(t('developer.ads.invalid_invite'));
       const data = (await res.json()) as {
         guild?: { name?: string; description?: string | null; icon?: string | null; id?: string };
         approximate_member_count?: number;
         approximate_presence_count?: number;
       };
       const guild = data.guild;
-      if (!guild?.id) throw new Error('Sunucu bilgisi alınamadı.');
+      if (!guild?.id) throw new Error(t('developer.ads.guild_failed'));
       setPreview({
         invite_url: url,
         server_name: guild.name ?? '',
@@ -84,7 +87,7 @@ export default function AdsPage() {
         target_guild_id: guild.id,
       });
     } catch (e) {
-      setAdError(e instanceof Error ? e.message : 'Davet bilgisi alınırken hata oluştu.');
+      setAdError(e instanceof Error ? e.message : t('developer.ads.invite_error'));
       setPreview(null);
     } finally {
       setAdFetching(false);
@@ -130,12 +133,12 @@ export default function AdsPage() {
         setAds((prev) => prev.map((item) => (item.id === ad.id ? data.ad! : item)));
       }
     } catch (e) {
-      setAdError(e instanceof Error ? e.message : 'Durum güncellenemedi.');
+      setAdError(e instanceof Error ? e.message : t('developer.ads.status_failed'));
     }
   };
 
   const deleteAd = async (id: string) => {
-    if (!window.confirm('Bu reklamı silmek istediğinize emin misiniz?')) return;
+    if (!window.confirm(t('developer.ads.confirm_delete'))) return;
     try {
       await fetch(`/api/admin/ads?id=${id}`, { method: 'DELETE', credentials: 'include' });
       setAds((prev) => prev.filter((a) => a.id !== id));
@@ -151,11 +154,11 @@ export default function AdsPage() {
           <LuMegaphone className="h-5 w-5 text-pink-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Topluluk Reklamları</h1>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.ads.title')}</h1>
           <p className="text-sm text-[#99AAB5] mt-1">
-            Activity-web Topluluk sekmesinde birden fazla sunucu vitrine çıkarabilirsiniz.
+            {t('developer.ads.subtitle')}
             {activeCount > 0 && (
-              <span className="ml-2 text-emerald-400">{activeCount} aktif reklam</span>
+              <span className="ml-2 text-emerald-400">{activeCount} {t('developer.ads.live')}</span>
             )}
           </p>
         </div>
@@ -163,8 +166,8 @@ export default function AdsPage() {
 
       <div className="flex flex-col gap-4">
         <div className="rounded-2xl border border-white/10 bg-[#0b0d12] p-5">
-          <p className="text-sm font-semibold text-white mb-1">Sunucu Ekle</p>
-          <p className="text-xs text-white/45 mb-3">Discord davet linkini yapıştırın. Sunucu activity-web Topluluk bölümünde listelenir.</p>
+          <p className="text-sm font-semibold text-white mb-1">{t('developer.ads.add_server')}</p>
+          <p className="text-xs text-white/45 mb-3">{t('developer.ads.invite_hint')}</p>
           <div className="flex gap-2">
             <input
               type="text"
@@ -187,7 +190,7 @@ export default function AdsPage() {
               disabled={adFetching || !inviteUrl}
               className="shrink-0 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-3 py-2.5 text-xs text-white/60 transition hover:text-white disabled:opacity-40"
             >
-              {adFetching ? '...' : 'Sorgula'}
+              {adFetching ? '...' : t('developer.ads.lookup')}
             </button>
           </div>
 
@@ -201,8 +204,8 @@ export default function AdsPage() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white truncate">{preview.server_name}</p>
                 <div className="flex flex-wrap gap-3 text-[10px] text-white/50 mt-1">
-                  <span>{preview.member_count?.toLocaleString('tr-TR') ?? '—'} üye</span>
-                  <span>{preview.online_count?.toLocaleString('tr-TR') ?? '—'} çevrimiçi</span>
+                  <span>{t('developer.ads.members_count', { count: preview.member_count?.toLocaleString() ?? '—' })}</span>
+                  <span>{t('developer.ads.online_count', { count: preview.online_count?.toLocaleString() ?? '—' })}</span>
                   {preview.target_guild_id && <span className="text-white/35">ID: {preview.target_guild_id}</span>}
                 </div>
               </div>
@@ -212,13 +215,13 @@ export default function AdsPage() {
                 disabled={adLoading}
                 className="shrink-0 rounded-xl bg-[#5865F2] hover:bg-[#5865F2]/90 px-4 py-2 text-xs font-bold text-white transition disabled:opacity-50"
               >
-                {adLoading ? 'Ekleniyor...' : 'Toplulukta Yayınla'}
+                {adLoading ? t('developer.ads.publishing') : t('developer.ads.publish')}
               </button>
             </div>
           )}
 
           {adError && <p className="mt-3 text-xs text-red-400">{adError}</p>}
-          {adSuccess && <p className="mt-3 text-xs text-emerald-400">Sunucu reklamı eklendi ve Topluluk sekmesinde görünür.</p>}
+          {adSuccess && <p className="mt-3 text-xs text-emerald-400">{t('developer.ads.success')}</p>}
         </div>
 
         <div className="flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-1">
@@ -242,12 +245,12 @@ export default function AdsPage() {
                       ad.active ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-white/40'
                     }`}
                   >
-                    {ad.active ? 'Yayında' : 'Gizli'}
+                    {ad.active ? t('developer.ads.live') : t('developer.ads.hidden')}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-3 text-[10px] text-white/50 mt-1">
-                  <span>{ad.member_count?.toLocaleString('tr-TR') ?? '—'} üye</span>
-                  <span>{ad.online_count?.toLocaleString('tr-TR') ?? '—'} çevrimiçi</span>
+                  <span>{t('developer.ads.members_count', { count: ad.member_count?.toLocaleString() ?? '—' })}</span>
+                  <span>{t('developer.ads.online_count', { count: ad.online_count?.toLocaleString() ?? '—' })}</span>
                   {ad.target_guild_id && <span className="text-white/35">Guild: {ad.target_guild_id}</span>}
                   <a href={ad.invite_url} target="_blank" rel="noreferrer" className="text-[#5865F2] hover:underline">
                     Davet linki
@@ -259,7 +262,7 @@ export default function AdsPage() {
                   type="button"
                   onClick={() => void toggleActive(ad)}
                   className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition"
-                  title={ad.active ? 'Yayından kaldır' : 'Yayına al'}
+                  title={ad.active ? t('developer.ads.unpublish') : t('developer.ads.publish_one')}
                 >
                   {ad.active ? <LuEyeOff className="w-4 h-4" /> : <LuEye className="w-4 h-4" />}
                 </button>
@@ -267,7 +270,7 @@ export default function AdsPage() {
                   type="button"
                   onClick={() => void deleteAd(ad.id)}
                   className="p-2 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-500/10 transition"
-                  title="Sil"
+                  title=t('developer.common.delete')
                 >
                   <LuTrash2 className="w-4 h-4" />
                 </button>
@@ -277,7 +280,7 @@ export default function AdsPage() {
           {ads.length === 0 && (
             <div className="flex flex-col items-center gap-2 py-12 text-white/25">
               <LuMegaphone className="w-8 h-8" />
-              <p className="text-xs">Henüz topluluk reklamı yok.</p>
+              <p className="text-xs">{t('developer.ads.empty')}</p>
             </div>
           )}
         </div>

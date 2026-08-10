@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -17,6 +19,7 @@ type Notification = {
 };
 
 export default function AdminNotificationHistoryPage() {
+  const { t } = useTranslation();
   const [list, setList] = useState<Notification[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -51,14 +54,14 @@ export default function AdminNotificationHistoryPage() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Admin</p>
-        <h1 className="mt-2 text-2xl font-semibold">Bildirim Geçmişi</h1>
-        <p className="mt-1 text-sm text-white/60">Gönderilen duyuru ve mailleri görüntüleyin.</p>
+        <h1 className="mt-2 text-2xl font-semibold">{t('developer.notifications_history.title')}</h1>
+        <p className="mt-1 text-sm text-white/60">{t('developer.notifications_history.subtitle')}</p>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="mt-1 space-y-3 text-sm">
           {list.map((item) => {
-            const typeLabel = item.type === 'announcement' ? 'Duyuru' : 'Mail';
+            const typeLabel = item.type === 'announcement' ? t('developer.announcements.mode_post') : t('developer.home.stat_mail');
             const typeClass = item.type === 'announcement'
               ? 'border-indigo-400/30 bg-indigo-500/10 text-indigo-200'
               : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200';
@@ -92,7 +95,7 @@ export default function AdminNotificationHistoryPage() {
                       disabled={deleting === item.id}
                       className="rounded-full border border-white/10 px-3 py-1 text-[11px] text-white/50 transition hover:border-white/30 hover:text-white disabled:opacity-60"
                     >
-                      {deleting === item.id ? 'Siliniyor...' : 'Sil'}
+                      {deleting === item.id ? t('developer.common.deleting') : t('developer.common.delete')}
                     </button>
                   </div>
                 </div>
@@ -116,7 +119,7 @@ export default function AdminNotificationHistoryPage() {
                     rel="noreferrer"
                     className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-[11px] text-white/60 transition hover:border-white/30 hover:text-white"
                   >
-                    Detay bağlantısı
+                    {t('developer.notifications_history.detail_link')}
                   </a>
                 )}
               </div>

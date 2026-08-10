@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect } from 'react';
 import { LuCheck, LuX, LuClipboardList } from 'react-icons/lu';
 
@@ -34,6 +36,7 @@ type EconomyApp = {
 };
 
 export default function EconomyAppsPage() {
+  const { t } = useTranslation();
   const [economyApps, setEconomyApps] = useState<EconomyApp[]>([]);
   const [autoApprove, setAutoApprove] = useState(false);
   const [thresholds, setThresholds] = useState({ voteThreshold: 120, directMemberThreshold: 500, autoApproveDays: 7 });
@@ -123,8 +126,8 @@ export default function EconomyAppsPage() {
           <LuClipboardList className="h-5 w-5 text-amber-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Ekonomi Başvuruları</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Sunucuların ekonomi sistemi onay durumlarını yönetin.</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.economy_apps.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.economy_apps.subtitle')}</p>
         </div>
       </div>
 
@@ -139,7 +142,7 @@ export default function EconomyAppsPage() {
         <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
           <div>
             <p className="text-lg font-bold text-white">Otomatik Onay Sistemi</p>
-            <p className="text-sm text-white/40 mt-1">Kriterleri sağlayan başvuruları otomatik onayla</p>
+            <p className="text-sm text-white/40 mt-1">{t('developer.economy_apps.auto_approve_desc')}</p>
           </div>
           <button onClick={() => setAutoApproveFlag(!autoApprove)}
             className={`relative h-8 w-14 rounded-full transition-colors duration-200 ${autoApprove ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-white/20'}`}>
@@ -148,9 +151,9 @@ export default function EconomyAppsPage() {
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
           {([
-            { key: 'economy_vote_threshold',          label: 'Gerekli Oy',               stateKey: 'voteThreshold' },
-            { key: 'economy_direct_member_threshold', label: 'Direkt Onay Üye Sayısı',   stateKey: 'directMemberThreshold' },
-            { key: 'economy_auto_approve_days',       label: 'Otomatik Onay Süresi',     stateKey: 'autoApproveDays' },
+            { key: 'economy_vote_threshold',          label: t('developer.economy_apps.required_votes'),               stateKey: 'voteThreshold' },
+            { key: 'economy_direct_member_threshold', label: t('developer.economy_apps.direct_members'),   stateKey: 'directMemberThreshold' },
+            { key: 'economy_auto_approve_days',       label: t('developer.economy_apps.auto_days'),     stateKey: 'autoApproveDays' },
           ] as const).map(({ key, label, stateKey }) => (
             <div key={key} className="flex flex-col gap-3 rounded-2xl bg-black/40 border border-white/5 p-4">
               <span className="text-sm font-medium text-white/50">{label}</span>
@@ -160,7 +163,7 @@ export default function EconomyAppsPage() {
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white focus:border-[#5865F2]/50 focus:outline-none focus:bg-black/50 transition-colors" />
                 <button onClick={() => saveThreshold(key, thresholdInputs[stateKey])} disabled={thresholdSaving === key}
                   className="rounded-xl border border-[#5865F2]/30 bg-[#5865F2]/15 hover:bg-[#5865F2]/25 px-4 py-2.5 text-sm font-bold text-[#7289da] transition disabled:opacity-50">
-                  {thresholdSaving === key ? '...' : 'Kaydet'}
+                  {thresholdSaving === key ? '...' : t('developer.common.save')}
                 </button>
               </div>
             </div>
@@ -169,10 +172,10 @@ export default function EconomyAppsPage() {
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-[#0b0d12]/80 backdrop-blur-md p-6">
-        <p className="text-lg font-bold text-white mb-4 border-b border-white/5 pb-3">Başvurular</p>
+        <p className="text-lg font-bold text-white mb-4 border-b border-white/5 pb-3">{t('developer.economy_apps.applications')}</p>
         <div className="flex flex-col gap-3">
           {loading && economyApps.length === 0 ? (
-            <p className="text-sm font-medium text-white/30 py-8 text-center">Yükleniyor...</p>
+            <p className="text-sm font-medium text-white/30 py-8 text-center">{t('developer.common.loading')}</p>
           ) : economyApps.length > 0 ? (
             economyApps.map((app) => (
               <div key={app.id} className="rounded-2xl border border-white/[0.07] bg-white/[0.02] hover:bg-white/[0.04] transition-colors p-4">
@@ -186,10 +189,10 @@ export default function EconomyAppsPage() {
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-4 text-xs font-medium text-white/50 mb-4 bg-black/30 rounded-xl p-3 border border-white/5">
-                  <span>Üye: <strong className="text-white text-sm">{app.criteria?.memberCount ?? 0}</strong></span>
+                  <span>{t('developer.economy_apps.member_label')} <strong className="text-white text-sm">{app.criteria?.memberCount ?? 0}</strong></span>
                   <span>Oy: <strong className="text-white text-sm">{app.criteria?.voteCount ?? 0}</strong>/{app.criteria?.voteThreshold ?? 120}</span>
-                  <span>Kurulum: <strong className={app.criteria?.isSetup ? 'text-emerald-400' : 'text-red-400'}>{app.criteria?.isSetup ? 'Var' : 'Yok'}</strong></span>
-                  <span>Uygunluk: <strong className={app.criteria?.eligible ? 'text-emerald-400' : 'text-red-400'}>{app.criteria?.eligible ? 'Evet' : 'Hayır'}</strong></span>
+                  <span>Kurulum: <strong className={app.criteria?.isSetup ? 'text-emerald-400' : 'text-red-400'}>{app.criteria?.isSetup ? t('developer.economy_apps.has') : t('developer.common.none')}</strong></span>
+                  <span>Uygunluk: <strong className={app.criteria?.eligible ? 'text-emerald-400' : 'text-red-400'}>{app.criteria?.eligible ? t('developer.common.yes') : t('developer.common.no')}</strong></span>
                 </div>
                 {app.status === 'pending' && (
                   <div className="flex gap-2">
@@ -206,7 +209,7 @@ export default function EconomyAppsPage() {
               </div>
             ))
           ) : (
-            <p className="text-sm font-medium text-white/30 py-8 text-center">Başvuru bulunmuyor</p>
+            <p className="text-sm font-medium text-white/30 py-8 text-center">{t('developer.economy_apps.empty')}</p>
           )}
         </div>
       </div>

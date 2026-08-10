@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useRef } from 'react';
 import {
   LuPlay,
@@ -79,6 +81,7 @@ const ENDPOINT_GROUPS: { label: string; endpoints: { method: string; path: strin
 ];
 
 export default function ApiTestPage() {
+  const { t } = useTranslation();
   const [method, setMethod] = useState<string>('GET');
   const [url, setUrl] = useState('');
   const [headers, setHeaders] = useState<HeaderRow[]>([]);
@@ -131,7 +134,7 @@ export default function ApiTestPage() {
       ]);
     } catch (err: unknown) {
       const duration = Math.round(performance.now() - start);
-      setResponseError(err instanceof Error ? err.message : 'Bağlantı hatası');
+      setResponseError(err instanceof Error ? err.message : t('developer.api_test.connection_error'));
       setResponse({ status: 0, data: null, duration });
     } finally {
       setLoading(false);
@@ -160,8 +163,8 @@ export default function ApiTestPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">API Test</h1>
-        <p className="text-sm text-[#99AAB5] mt-1">API endpointlerini test edin ve yanıtları görüntüleyin.</p>
+        <h1 className="text-2xl font-bold text-white">{t('developer.api_test.title')}</h1>
+        <p className="text-sm text-[#99AAB5] mt-1">{t('developer.api_test.subtitle')}</p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_280px] gap-6">
@@ -170,7 +173,7 @@ export default function ApiTestPage() {
           <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <LuFlaskConical className="w-4 h-4 text-pink-400" />
-              <h2 className="text-sm font-semibold text-white">İstek Oluştur</h2>
+              <h2 className="text-sm font-semibold text-white">{t('developer.api_test.build_request')}</h2>
             </div>
 
             {/* Method + URL */}
@@ -216,14 +219,14 @@ export default function ApiTestPage() {
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] disabled:bg-white/10 disabled:text-white/30 text-white font-semibold text-sm transition-all"
               >
                 {loading ? <LuLoader className="w-4 h-4 animate-spin" /> : <LuPlay className="w-4 h-4" />}
-                Gönder
+                {t('developer.api_test.send')}
               </button>
             </div>
 
             {/* Headers */}
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-medium text-white/50">Başlıklar (Headers)</p>
+                <p className="text-xs font-medium text-white/50">{t('developer.api_test.headers')}</p>
                 <button
                   type="button"
                   onClick={() => setHeaders([...headers, { key: '', value: '' }])}
@@ -233,7 +236,7 @@ export default function ApiTestPage() {
                 </button>
               </div>
               {headers.length === 0 && (
-                <p className="text-[11px] text-white/20 italic">Ek başlık yok (Content-Type: application/json otomatik eklenir)</p>
+                <p className="text-[11px] text-white/20 italic">{t('developer.api_test.headers_empty')}</p>
               )}
               {headers.map((h, i) => (
                 <div key={i} className="flex gap-2 mb-1.5">
@@ -273,7 +276,7 @@ export default function ApiTestPage() {
             {/* Body */}
             {method !== 'GET' && (
               <div className="mt-4">
-                <p className="text-xs font-medium text-white/50 mb-2">Gövde (Body - JSON)</p>
+                <p className="text-xs font-medium text-white/50 mb-2">{t('developer.api_test.body')}</p>
                 <textarea
                   ref={bodyRef}
                   value={body}
@@ -291,7 +294,7 @@ export default function ApiTestPage() {
             <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-sm font-semibold text-white">Yanıt</h2>
+                  <h2 className="text-sm font-semibold text-white">{t('developer.api_test.response')}</h2>
                   {response && (
                     <>
                       <span className={`text-xs font-bold ${statusColor(response.status)}`}>
@@ -310,7 +313,7 @@ export default function ApiTestPage() {
                     className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/50 transition"
                   >
                     {copied ? <LuCheck className="w-3 h-3 text-emerald-400" /> : <LuCopy className="w-3 h-3" />}
-                    {copied ? 'Kopyalandı' : 'Kopyala'}
+                    {copied ? t('developer.common.copied') : t('developer.common.copy')}
                   </button>
                 )}
               </div>
@@ -334,7 +337,7 @@ export default function ApiTestPage() {
         <div className="space-y-6">
           {/* Quick Endpoints */}
           <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-5">
-            <h3 className="text-xs font-semibold text-white/60 mb-3">Hızlı Endpointler</h3>
+            <h3 className="text-xs font-semibold text-white/60 mb-3">{t('developer.api_test.quick')}</h3>
             <div className="space-y-1.5">
               {ENDPOINT_GROUPS.map(group => (
                 <div key={group.label}>
@@ -371,7 +374,7 @@ export default function ApiTestPage() {
           {/* History */}
           <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-white/60">Geçmiş</h3>
+              <h3 className="text-xs font-semibold text-white/60">{t('developer.api_test.history')}</h3>
               {history.length > 0 && (
                 <button
                   type="button"
@@ -383,7 +386,7 @@ export default function ApiTestPage() {
               )}
             </div>
             {history.length === 0 ? (
-              <p className="text-[11px] text-white/20 italic">Henüz istek yok</p>
+              <p className="text-[11px] text-white/20 italic">{t('developer.api_test.history_empty')}</p>
             ) : (
               <div className="space-y-1 max-h-[400px] overflow-y-auto">
                 {history.map(item => (

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { LuUsers, LuSearch, LuArrowUpDown } from 'react-icons/lu';
+import { useTranslation } from '@/lib/i18nContext';
+import { getLocaleTag } from '@/lib/i18n/languages';
 
 type UserItem = {
   id: string;
@@ -13,6 +15,7 @@ type UserItem = {
 };
 
 export default function DeveloperUsersPage() {
+  const { t, language } = useTranslation();
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,17 +28,28 @@ export default function DeveloperUsersPage() {
       try {
         setLoading(true);
         const res = await fetch('/api/developer/users', { credentials: 'include', cache: 'no-store' });
-        if (!res.ok) { setError('Veriler yüklenemedi.'); return; }
+        if (!res.ok) {
+          setError(t('developer.common.load_failed'));
+          return;
+        }
         const data = await res.json();
         setUsers(data.items ?? []);
-      } catch { setError('Veriler yüklenemedi.'); }
-      finally { setLoading(false); }
+      } catch {
+        setError(t('developer.common.load_failed'));
+      } finally {
+        setLoading(false);
+      }
     };
     load();
-  }, []);
+  }, [t]);
 
   const filtered = users
-    .filter(u => !search || u.username?.toLowerCase().includes(search.toLowerCase()) || u.discord_id?.includes(search))
+    .filter(
+      (u) =>
+        !search ||
+        u.username?.toLowerCase().includes(search.toLowerCase()) ||
+        u.discord_id?.includes(search),
+    )
     .sort((a, b) => {
       const mul = sortAsc ? 1 : -1;
       if (sortKey === 'username') return mul * (a.username ?? '').localeCompare(b.username ?? '');
@@ -46,21 +60,33 @@ export default function DeveloperUsersPage() {
 
   const toggleSort = (key: typeof sortKey) => {
     if (sortKey === key) setSortAsc(!sortAsc);
-    else { setSortKey(key); setSortAsc(false); }
+    else {
+      setSortKey(key);
+      setSortAsc(false);
+    }
   };
+
+  const columns = [
+    { key: 'username' as const, label: t('developer.users.col_user') },
+    { key: 'points' as const, label: t('developer.users.col_points') },
+    { key: 'role_level' as const, label: t('developer.users.col_role') },
+    { key: 'created_at' as const, label: t('developer.users.col_created') },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Kullanıcılar</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Sistemdeki tüm kayıtlı kullanıcılar ({users.length})</p>
+          <h1 className="text-2xl font-bold text-white">{t('developer.users.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">
+            {t('developer.users.subtitle', { count: users.length })}
+          </p>
         </div>
         <div className="relative">
           <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
           <input
             type="text"
-            placeholder="İsim veya Discord ID ara..."
+            placeholder={t('developer.users.search_placeholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:border-[#5865F2]/50 focus:outline-none w-full md:w-72 transition-all"
@@ -82,12 +108,7 @@ export default function DeveloperUsersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/8">
-                  {[
-                    { key: 'username' as const, label: 'Kullanıcı' },
-                    { key: 'points' as const, label: 'Puan' },
-                    { key: 'role_level' as const, label: 'Rol Seviyesi' },
-                    { key: 'created_at' as const, label: 'Kayıt Tarihi' },
-                  ].map(col => (
+                  {columns.map((col) => (
                     <th key={col.key} className="text-left px-5 py-4">
                       <button
                         type="button"
@@ -102,42 +123,33 @@ export default function DeveloperUsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((u) => (
-                  <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[#5865F2]/20 flex items-center justify-center">
-                          <LuUsers className="w-4 h-4 text-[#5865F2]" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-white">{u.username || '—'}</p>
-                          <p className="text-[11px] text-white/30 font-mono">{u.discord_id}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className="text-sm font-semibold text-amber-300">{u.points.toLocaleString('tr-TR')}</span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ${
-                        u.role_level >= 999 ? 'bg-rose-500/15 text-rose-300 border border-rose-500/20' :
-                        u.role_level >= 100 ? 'bg-amber-500/15 text-amber-300 border border-amber-500/20' :
-                        'bg-white/5 text-white/50 border border-white/10'
-                      }`}>
-                        {u.role_level}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-xs text-white/40">
-                      {new Date(u.created_at).toLocaleDateString('tr-TR')}
-                    </td>
-                  </tr>
-                ))}
-                {filtered.length === 0 && (
+                {filtered.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-5 py-12 text-center text-sm text-white/30">
-                      Sonuç bulunamadı.
+                      {t('developer.common.not_found')}
                     </td>
                   </tr>
+                ) : (
+                  filtered.map((u) => (
+                    <tr key={u.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-[#5865F2]/15 flex items-center justify-center">
+                            <LuUsers className="w-4 h-4 text-[#5865F2]" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-white">{u.username}</p>
+                            <p className="text-[11px] text-white/30 font-mono">{u.discord_id}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5 text-sm text-white/70">{u.points}</td>
+                      <td className="px-5 py-3.5 text-sm text-white/70">{u.role_level}</td>
+                      <td className="px-5 py-3.5 text-sm text-white/40">
+                        {new Date(u.created_at).toLocaleString(getLocaleTag(language))}
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect } from 'react';
 import { LuRefreshCw, LuServer, LuUsers, LuMessageSquare, LuMic, LuTrendingUp, LuTriangleAlert } from 'react-icons/lu';
 import {
@@ -28,6 +30,7 @@ type AnalyticsData = {
 };
 
 export default function BotAnalyticsPage() {
+  const { t } = useTranslation();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,7 @@ export default function BotAnalyticsPage() {
     try {
       const res = await fetch('/api/developer/bot/analytics');
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Veriler alınamadı');
+      if (!res.ok) throw new Error(json.error || t('developer.bot_analytics.fetch_failed'));
       setData(json);
     } catch (err: any) {
       setError(err.message);
@@ -71,7 +74,7 @@ export default function BotAnalyticsPage() {
           <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50 tracking-tight">
             Sistem Analizi
           </h1>
-          <p className="text-white/40 text-sm mt-1">Botun aktif büyüme ve kullanım istatistikleri.</p>
+          <p className="text-white/40 text-sm mt-1">{t('developer.bot_analytics.subtitle')}</p>
         </div>
         <button
           onClick={fetchAnalytics}
@@ -100,7 +103,7 @@ export default function BotAnalyticsPage() {
             <div className="p-2 bg-[#5865F2]/20 text-[#5865F2] rounded-lg">
               <LuServer className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-medium text-white/50">Toplam Sunucu</h3>
+            <h3 className="text-sm font-medium text-white/50">{t('developer.bot_analytics.total_servers')}</h3>
           </div>
           <p className="text-3xl font-bold text-white">{data?.totalServers.toLocaleString('tr-TR')}</p>
         </div>
@@ -113,7 +116,7 @@ export default function BotAnalyticsPage() {
             <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
               <LuUsers className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-medium text-white/50">Kayıtlı Kullanıcı</h3>
+            <h3 className="text-sm font-medium text-white/50">{t('developer.bot_analytics.registered_users')}</h3>
           </div>
           <p className="text-3xl font-bold text-white">{data?.totalUsers.toLocaleString('tr-TR')}</p>
         </div>
@@ -126,7 +129,7 @@ export default function BotAnalyticsPage() {
             <div className="p-2 bg-sky-500/20 text-sky-400 rounded-lg">
               <LuMessageSquare className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-medium text-white/50">Bugünkü Mesajlar</h3>
+            <h3 className="text-sm font-medium text-white/50">{t('developer.bot_analytics.today_messages')}</h3>
           </div>
           <p className="text-3xl font-bold text-white">{data?.todayMessages.toLocaleString('tr-TR')}</p>
         </div>
@@ -139,7 +142,7 @@ export default function BotAnalyticsPage() {
             <div className="p-2 bg-purple-500/20 text-purple-400 rounded-lg">
               <LuMic className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-medium text-white/50">Bugünkü Ses (Dk)</h3>
+            <h3 className="text-sm font-medium text-white/50">{t('developer.bot_analytics.today_voice')}</h3>
           </div>
           <p className="text-3xl font-bold text-white">{data?.todayVoice.toLocaleString('tr-TR')}</p>
         </div>
@@ -152,7 +155,7 @@ export default function BotAnalyticsPage() {
           <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-6">
               <LuTrendingUp className="w-5 h-5 text-sky-400" />
-              <h3 className="text-lg font-bold text-white">Mesaj Aktivitesi (Son 7 Gün)</h3>
+              <h3 className="text-lg font-bold text-white">{t('developer.bot_analytics.msg_activity')}</h3>
             </div>
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -171,7 +174,7 @@ export default function BotAnalyticsPage() {
                     labelFormatter={(label) => formatDate(label as string)}
                     itemStyle={{ color: '#e2e8f0' }}
                   />
-                  <Area type="monotone" dataKey="messages" name="Mesajlar" stroke="#38bdf8" strokeWidth={3} fillOpacity={1} fill="url(#colorMessages)" />
+                  <Area type="monotone" dataKey="messages" name=t('developer.bot_analytics.messages') stroke="#38bdf8" strokeWidth={3} fillOpacity={1} fill="url(#colorMessages)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -181,7 +184,7 @@ export default function BotAnalyticsPage() {
           <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-6">
               <LuMic className="w-5 h-5 text-purple-400" />
-              <h3 className="text-lg font-bold text-white">Ses Aktivitesi (Son 7 Gün)</h3>
+              <h3 className="text-lg font-bold text-white">{t('developer.bot_analytics.voice_activity')}</h3>
             </div>
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">

@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useCallback, useEffect, useState } from 'react';
 import { LuTrophy, LuPlus, LuRefreshCw, LuX, LuCalendar, LuChartBar } from 'react-icons/lu';
 import { apiErrorMessage } from '@/lib/apiError';
@@ -58,6 +60,7 @@ const LANG_LABELS: Record<string, string> = {
 };
 
 export default function QuizEventsPage() {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<QuizEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +73,7 @@ export default function QuizEventsPage() {
   const [form, setForm] = useState({
     scope: 'global' as 'global' | 'guild',
     guild_id: '',
-    title: 'Haftalık Quiz Etkinliği',
+    title: t('developer.quiz_events.default_title'),
     description: '',
     lang: 'tr',
     start_at: '',
@@ -136,7 +139,7 @@ export default function QuizEventsPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(apiErrorMessage(data, `HTTP ${res.status}`));
-      setInfo('Etkinlik oluşturuldu');
+      setInfo(t('developer.quiz_events.created'));
       setShowCreate(false);
       await load();
     } catch (e) {
@@ -170,7 +173,7 @@ export default function QuizEventsPage() {
   };
 
   const cancelEvent = async (id: string) => {
-    if (!confirm('Etkinliği iptal etmek istediğine emin misin?')) return;
+    if (!confirm(t('developer.quiz_events.confirm_cancel'))) return;
     try {
       const res = await fetch('/api/developer/quiz/events', {
         method: 'PATCH',
@@ -218,8 +221,8 @@ export default function QuizEventsPage() {
               <th className="px-3 py-2">Durum</th>
               <th className="px-3 py-2">Kapsam</th>
               <th className="px-3 py-2">Dil</th>
-              <th className="px-3 py-2">Başlık</th>
-              <th className="px-3 py-2">Başlangıç</th>
+              <th className="px-3 py-2">{t('developer.common.title')}</th>
+              <th className="px-3 py-2">{t('developer.quiz_events.col_start')}</th>
               <th className="px-3 py-2">Soru</th>
               <th className="px-3 py-2">Havuz</th>
               <th className="px-3 py-2">Checkpoint</th>
@@ -229,7 +232,7 @@ export default function QuizEventsPage() {
           <tbody className="divide-y divide-white/5">
             {loading && (
               <tr>
-                <td colSpan={9} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td>
+                <td colSpan={9} className="px-3 py-6 text-center text-white/40">{t('developer.common.loading')}</td>
               </tr>
             )}
             {!loading && events.length === 0 && (
@@ -269,7 +272,7 @@ export default function QuizEventsPage() {
                           onClick={() => loadResults(e.id)}
                           className="flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-200 hover:bg-amber-500/20"
                         >
-                          <LuChartBar className="h-3.5 w-3.5" /> Sonuçlar
+                          <LuChartBar className="h-3.5 w-3.5" /> {t('developer.quiz_events.results')}
                         </button>
                       )}
                       {e.status === 'scheduled' && (
@@ -278,7 +281,7 @@ export default function QuizEventsPage() {
                           onClick={() => cancelEvent(e.id)}
                           className="rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10"
                         >
-                          İptal
+                          {t('developer.quiz_events.cancel')}
                         </button>
                       )}
                     </div>
@@ -295,13 +298,17 @@ export default function QuizEventsPage() {
             <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
               <div>
                 <h2 className="text-lg font-semibold text-white">
-                  {results?.event.title ?? 'Etkinlik Sonuçları'}
+                  {results?.event.title ?? t('developer.quiz_events.results_title')}
                 </h2>
                 {results && (
                   <p className="mt-1 text-xs text-white/50">
-                    {results.summary.participant_count} katılımcı ·{' '}
-                    {results.summary.total_papel_distributed.toLocaleString('tr-TR')} papel dağıtıldı
-                    {results.summary.rewards_paid ? ' · ödeme tamamlandı' : ' · ödeme bekleniyor'}
+                    {t('developer.quiz_events.participants_papel', {
+                      count: results.summary.participant_count,
+                      papel: results.summary.total_papel_distributed.toLocaleString(),
+                    })}
+                    {results.summary.rewards_paid
+                      ? ` · ${t('developer.quiz_events.paid')}`
+                      : ` · ${t('developer.quiz_events.pending_pay')}`}
                   </p>
                 )}
               </div>
@@ -316,18 +323,18 @@ export default function QuizEventsPage() {
 
             <div className="min-h-0 flex-1 overflow-auto p-6">
               {resultsLoading && (
-                <p className="py-12 text-center text-sm text-white/40">Sonuçlar yükleniyor...</p>
+                <p className="py-12 text-center text-sm text-white/40">{t('developer.quiz_events.results_loading')}</p>
               )}
               {!resultsLoading && results && (
                 <>
                   {results.event.status === 'finished' && !results.summary.rewards_paid && (
                     <div className="mb-4 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-200/90">
-                      Papel tutarları ödeme cron&apos;u çalıştıktan sonra güncellenir. Doğru/yanlış sayıları şimdiden görülebilir.
+                      {t('developer.quiz_events.results_note')}
                     </div>
                   )}
                   <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {[
-                      { label: 'Katılımcı', value: results.summary.participant_count },
+                      { label: t('developer.quiz_events.stat_participant'), value: results.summary.participant_count },
                       { label: 'Perfect', value: results.summary.perfect_count },
                       { label: 'Elenen', value: results.summary.eliminated_count },
                       {
@@ -343,15 +350,15 @@ export default function QuizEventsPage() {
                   </div>
 
                   {results.participants.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-white/40">Henüz katılımcı yok.</p>
+                    <p className="py-8 text-center text-sm text-white/40">{t('developer.quiz_events.no_participants')}</p>
                   ) : (
                     <table className="w-full text-left text-sm">
                       <thead className="sticky top-0 bg-[#0f1116] text-xs uppercase text-white/50">
                         <tr>
                           <th className="px-2 py-2">#</th>
-                          <th className="px-2 py-2">Kullanıcı</th>
-                          <th className="px-2 py-2 text-right">Doğru</th>
-                          <th className="px-2 py-2 text-right">Yanlış</th>
+                          <th className="px-2 py-2">{t('developer.users.col_user')}</th>
+                          <th className="px-2 py-2 text-right">{t('developer.quiz_events.col_correct')}</th>
+                          <th className="px-2 py-2 text-right">{t('developer.quiz_events.col_wrong')}</th>
                           <th className="px-2 py-2 text-right">Son poz.</th>
                           <th className="px-2 py-2 text-right">Papel</th>
                           <th className="px-2 py-2">Durum</th>
@@ -402,7 +409,7 @@ export default function QuizEventsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f1116] p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">Yeni Quiz Etkinliği</h2>
+              <h2 className="text-lg font-semibold text-white">{t('developer.quiz_events.new_event')}</h2>
               <button onClick={() => setShowCreate(false)} className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white">
                 <LuX className="h-5 w-5" />
               </button>
@@ -416,7 +423,7 @@ export default function QuizEventsPage() {
                   onChange={(e) => setForm({ ...form, scope: e.target.value as 'global' | 'guild' })}
                   className="mt-1 w-full rounded-md border border-white/10 bg-white/[0.03] p-2 text-sm text-white"
                 >
-                  <option value="global">Global (tüm DiscoWeb)</option>
+                  <option value="global">{t('developer.quiz_events.scope_global')}</option>
                   <option value="guild">Sunucu (per-guild)</option>
                 </select>
               </label>
@@ -431,7 +438,7 @@ export default function QuizEventsPage() {
                 </label>
               )}
               <label className="block text-sm text-white/70 sm:col-span-2">
-                Başlık
+                {t('developer.quiz_events.field_title')}
                 <input
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -439,7 +446,7 @@ export default function QuizEventsPage() {
                 />
               </label>
               <label className="block text-sm text-white/70 sm:col-span-2">
-                Açıklama
+                {t('developer.quiz_events.field_desc')}
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -459,11 +466,11 @@ export default function QuizEventsPage() {
                   ))}
                 </select>
                 <span className="mt-1 block text-xs text-white/40">
-                  Soru bankasında bu dilde <strong>{form.total_questions}</strong> hazır soru olmalı, yoksa lock fail eder.
+                  {t('developer.quiz_events.bank_hint', { count: form.total_questions })}
                 </span>
               </label>
               <label className="block text-sm text-white/70">
-                Başlangıç (yerel saat)
+                {t('developer.quiz_events.start_local')}
                 <input
                   type="datetime-local"
                   value={form.start_at}
@@ -483,7 +490,7 @@ export default function QuizEventsPage() {
                 />
               </label>
               <label className="block text-sm text-white/70">
-                Soru Başı Süre (sn)
+                {t('developer.quiz_events.per_question')}
                 <input
                   type="number"
                   min={5}
@@ -494,7 +501,7 @@ export default function QuizEventsPage() {
                 />
               </label>
               <label className="block text-sm text-white/70">
-                Yanlış Hakkı
+                {t('developer.quiz_events.wrong_lives')}
                 <input
                   type="number"
                   min={0}
@@ -518,7 +525,7 @@ export default function QuizEventsPage() {
             </div>
 
             <div className="mt-4 rounded-lg border border-white/5 bg-white/[0.02] p-3">
-              <div className="mb-2 text-xs font-semibold uppercase text-white/50">Checkpoint Ödülleri</div>
+              <div className="mb-2 text-xs font-semibold uppercase text-white/50">{t('developer.quiz_events.checkpoints')}</div>
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { label: 'CP 1', pos: 'cp1_pos', rew: 'cp1_reward' },
@@ -555,13 +562,13 @@ export default function QuizEventsPage() {
                 onClick={() => setShowCreate(false)}
                 className="rounded-md border border-white/10 px-4 py-2 text-sm text-white/70 hover:bg-white/5"
               >
-                İptal
+                {t('developer.quiz_events.cancel')}
               </button>
               <button
                 onClick={createEvent}
                 className="rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-black hover:bg-amber-400"
               >
-                Oluştur
+                {t('developer.quiz_events.create')}
               </button>
             </div>
           </div>
@@ -572,6 +579,7 @@ export default function QuizEventsPage() {
 }
 
 function StatusBadge({ status, paidOut }: { status: string; paidOut?: boolean }) {
+  const { t } = useTranslation();
   const palette: Record<string, string> = {
     scheduled: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
     live: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
@@ -579,10 +587,10 @@ function StatusBadge({ status, paidOut }: { status: string; paidOut?: boolean })
     cancelled: 'bg-red-500/15 text-red-300 border-red-500/30',
   };
   const labels: Record<string, string> = {
-    scheduled: 'Planlandı',
-    live: 'Canlı',
-    finished: 'Tamamlandı',
-    cancelled: 'İptal',
+    scheduled: t('developer.quiz_events.status_scheduled'),
+    live: t('developer.quiz_events.status_live'),
+    finished: t('developer.quiz_events.status_finished'),
+    cancelled: t('developer.quiz_events.status_cancelled'),
   };
   return (
     <span className="inline-flex flex-col items-start gap-0.5">
@@ -590,10 +598,10 @@ function StatusBadge({ status, paidOut }: { status: string; paidOut?: boolean })
         {labels[status] ?? status}
       </span>
       {status === 'finished' && paidOut && (
-        <span className="text-[10px] text-emerald-400/80">Ödendi</span>
+        <span className="text-[10px] text-emerald-400/80">{t('developer.quiz_events.reward_paid')}</span>
       )}
       {status === 'finished' && !paidOut && (
-        <span className="text-[10px] text-amber-400/70">Ödeme bekliyor</span>
+        <span className="text-[10px] text-amber-400/70">{t('developer.quiz_events.reward_pending')}</span>
       )}
     </span>
   );

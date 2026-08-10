@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect, useRef } from 'react';
 import { LuSave, LuRefreshCw, LuUpload, LuUser, LuInfo, LuTriangleAlert, LuImage, LuMonitorPlay, LuActivity } from 'react-icons/lu';
 
@@ -18,6 +20,7 @@ type BotStatus = {
 };
 
 export default function BotIdentityPage() {
+  const { t } = useTranslation();
   const [botInfo, setBotInfo] = useState<BotInfo | null>(null);
   const [botStatus, setBotStatus] = useState<BotStatus>({
     presence_status: 'online',
@@ -85,7 +88,7 @@ export default function BotIdentityPage() {
 
     const maxSize = type === 'avatar' ? 2 : 5; // 2MB for avatar, 5MB for banner
     if (file.size > 1024 * 1024 * maxSize) {
-      alert(`Dosya boyutu ${maxSize}MB'dan küçük olmalıdır.`);
+      alert(t('developer.bot_identity.file_too_large', { max: maxSize }));
       return;
     }
 
@@ -116,7 +119,7 @@ export default function BotIdentityPage() {
 
   const handleSaveIdentity = async () => {
     if (!username.trim()) {
-      alert('Kullanıcı adı boş olamaz.');
+      alert(t('developer.bot_identity.username_empty'));
       return;
     }
 
@@ -131,7 +134,7 @@ export default function BotIdentityPage() {
 
       if (Object.keys(payload).length === 0) {
         setSavingIdentity(false);
-        showMessage('Herhangi bir değişiklik yapılmadı.');
+        showMessage(t('developer.bot_identity.no_changes'));
         return;
       }
 
@@ -142,7 +145,7 @@ export default function BotIdentityPage() {
       });
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || 'Kimlik güncellenemedi');
+      if (!res.ok) throw new Error(data.error || t('developer.bot_identity.identity_failed'));
 
       setBotInfo(data);
       setUsername(data.username);
@@ -151,7 +154,7 @@ export default function BotIdentityPage() {
       
       setAvatarDataUri(null);
       setBannerDataUri(null);
-      showMessage('Bot kimliği başarıyla güncellendi!');
+      showMessage(t('developer.bot_identity.identity_ok'));
     } catch (err: any) {
       showMessage(err.message, true);
     } finally {
@@ -171,9 +174,9 @@ export default function BotIdentityPage() {
       });
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || 'Durum güncellenemedi');
+      if (!res.ok) throw new Error(data.error || t('developer.bot_identity.status_failed'));
 
-      showMessage('Bot durumu başarıyla güncellendi!');
+      showMessage(t('developer.bot_identity.status_ok'));
     } catch (err: any) {
       showMessage(err.message, true);
     } finally {
@@ -195,7 +198,7 @@ export default function BotIdentityPage() {
         <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50 tracking-tight">
           Bot Kontrol Merkezi
         </h1>
-        <p className="text-white/40 text-sm mt-1">Botun görünümünü ve aktivite durumunu anlık olarak yönetin.</p>
+        <p className="text-white/40 text-sm mt-1">{t('developer.bot_identity.subtitle')}</p>
       </div>
 
       {error && (
@@ -212,7 +215,7 @@ export default function BotIdentityPage() {
         </div>
       )}
 
-      {/* Kimlik Yönetimi Kartı */}
+      {/* Identity card */}
       <div className="relative group rounded-3xl overflow-hidden bg-[#0d0f14]/80 border border-white/[0.05] shadow-2xl backdrop-blur-xl">
         {/* Glow Effect */}
         <div className="absolute -inset-px bg-gradient-to-b from-[#5865F2]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
@@ -230,8 +233,8 @@ export default function BotIdentityPage() {
           
           <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover/banner:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-sm">
             <LuImage className="w-8 h-8 text-white mb-2" />
-            <span className="text-white font-medium text-sm">Banner Değiştir</span>
-            <span className="text-white/50 text-xs mt-1">Önerilen: 960x540 (Maks 5MB)</span>
+            <span className="text-white font-medium text-sm">{t('developer.bot_identity.change_banner')}</span>
+            <span className="text-white/50 text-xs mt-1">{t('developer.bot_identity.banner_hint')}</span>
           </div>
           <input type="file" ref={bannerInputRef} onChange={(e) => handleFileChange(e, 'banner')} accept="image/*" className="hidden" />
         </div>
@@ -268,12 +271,12 @@ export default function BotIdentityPage() {
             <div className="flex-1 space-y-6 pt-2">
               <div className="flex items-center gap-3">
                 <LuUser className="w-5 h-5 text-[#5865F2]" />
-                <h2 className="text-xl font-bold text-white">Genel Görünüm</h2>
+                <h2 className="text-xl font-bold text-white">{t('developer.bot_identity.appearance')}</h2>
               </div>
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold tracking-wider text-white/40 uppercase">Kullanıcı Adı</label>
+                  <label className="text-xs font-bold tracking-wider text-white/40 uppercase">{t('developer.bot_identity.username')}</label>
                   <input
                     type="text"
                     value={username}
@@ -285,8 +288,7 @@ export default function BotIdentityPage() {
                 <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-start gap-3">
                   <LuInfo className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
                   <div className="text-yellow-200/80 text-xs leading-relaxed">
-                    Discord kuralları gereği bot ismi saatte maksimum 2 kez değiştirilebilir. 
-                    "Hakkımda" kısmını Discord Portal'dan değiştirmelisiniz.
+                    {t('developer.bot_identity.username_rules')}
                   </div>
                 </div>
               </div>
@@ -298,7 +300,7 @@ export default function BotIdentityPage() {
                   className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#5865F2] to-[#4752C4] hover:from-[#4752C4] hover:to-[#5865F2] disabled:opacity-50 text-white text-sm font-semibold rounded-xl shadow-[0_0_20px_rgba(88,101,242,0.4)] transition-all"
                 >
                   {savingIdentity ? <LuRefreshCw className="w-4 h-4 animate-spin" /> : <LuSave className="w-4 h-4" />}
-                  Değişiklikleri Kaydet
+                  {t('developer.bot_identity.save_changes')}
                 </button>
               </div>
             </div>
@@ -306,7 +308,7 @@ export default function BotIdentityPage() {
         </div>
       </div>
 
-      {/* Durum Yönetimi Kartı */}
+      {/* Status card */}
       <div className="relative group rounded-3xl overflow-hidden bg-[#0d0f14]/80 border border-white/[0.05] shadow-2xl backdrop-blur-xl p-6 md:p-8">
         <div className="absolute -inset-px bg-gradient-to-b from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
         
@@ -317,9 +319,9 @@ export default function BotIdentityPage() {
               <h2 className="text-xl font-bold text-white">Bot Durumu (Presence)</h2>
             </div>
             <p className="text-white/40 text-sm leading-relaxed">
-              Botun Discord üzerindeki görünür statüsünü (Oynuyor, İzliyor) ayarlar. 
+              {t('developer.bot_identity.status_card_desc')} 
               <br/><br/>
-              *Not: Bu ayarlar veritabanına kaydedilir, ana bot yazılımı burayı okuyarak statüsünü günceller.*
+              {t('developer.bot_identity.status_note')}
             </p>
           </div>
 
@@ -332,10 +334,10 @@ export default function BotIdentityPage() {
                   onChange={(e) => setBotStatus({ ...botStatus, presence_status: e.target.value })}
                   className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all appearance-none"
                 >
-                  <option value="online">🟢 Çevrimiçi</option>
-                  <option value="idle">🌙 Boşta</option>
-                  <option value="dnd">🔴 Rahatsız Etmeyin</option>
-                  <option value="invisible">⚪ Görünmez</option>
+                  <option value="online">{t('developer.bot_identity.presence_online')}</option>
+                  <option value="idle">{t('developer.bot_identity.presence_idle')}</option>
+                  <option value="dnd">{t('developer.bot_identity.presence_dnd')}</option>
+                  <option value="invisible">{t('developer.bot_identity.presence_invisible')}</option>
                 </select>
               </div>
 
@@ -348,8 +350,8 @@ export default function BotIdentityPage() {
                 >
                   <option value="PLAYING">🎮 Oynuyor</option>
                   <option value="LISTENING">🎧 Dinliyor</option>
-                  <option value="WATCHING">📺 İzliyor</option>
-                  <option value="COMPETING">🏆 Yarışıyor</option>
+                  <option value="WATCHING">{t('developer.bot_identity.activity_watching')}</option>
+                  <option value="COMPETING">{t('developer.bot_identity.activity_competing')}</option>
                 </select>
               </div>
             </div>
@@ -364,7 +366,7 @@ export default function BotIdentityPage() {
                   type="text"
                   value={botStatus.presence_text}
                   onChange={(e) => setBotStatus({ ...botStatus, presence_text: e.target.value })}
-                  placeholder="Örn: !yardım | DiscoWeb ile yönetiliyor"
+                  placeholder={t('developer.bot_identity.activity_placeholder')}
                   className="w-full bg-white/[0.03] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all"
                 />
               </div>
@@ -377,7 +379,7 @@ export default function BotIdentityPage() {
                 className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 disabled:opacity-50 text-white text-sm font-semibold rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all"
               >
                 {savingStatus ? <LuRefreshCw className="w-4 h-4 animate-spin" /> : <LuSave className="w-4 h-4" />}
-                Durumu Güncelle
+                {t('developer.bot_identity.update_status')}
               </button>
             </div>
           </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect } from 'react';
 import { LuMessageSquare, LuTrash2, LuPencil, LuPlus } from 'react-icons/lu';
 import fetchWithCreds from '@/lib/fetchWithCreds';
@@ -81,6 +83,7 @@ function parseBody(body: string) {
 }
 
 export default function AnnouncementsPage() {
+  const { t } = useTranslation();
   const [announcements, setAnnouncements] = useState<AnnouncementAdminItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -144,7 +147,7 @@ export default function AnnouncementsPage() {
     const content = buildBody(form, postMode);
 
     if (!form.title.trim() && postMode !== 'media_only') {
-      setError('Başlık zorunludur.');
+      setError(t('developer.announcements.err_title'));
       return;
     }
     if (postMode === 'poll_only') {
@@ -153,20 +156,20 @@ export default function AnnouncementsPage() {
         return;
       }
       if (pollOptions.length < 2) {
-        setError('Anket için en az 2 seçenek girin.');
+        setError(t('developer.announcements.err_poll_options'));
         return;
       }
     } else if (postMode === 'media_only') {
       if (!form.mediaUrl.trim() && !form.linkUrl.trim()) {
-        setError('Medya URL veya yönlendirme linki girin.');
+        setError(t('developer.announcements.err_media_or_link'));
         return;
       }
     } else if (!content.trim() && !hasPoll) {
-      setError('En az içerik, medya URL, link veya anket girmelisiniz.');
+      setError(t('developer.announcements.err_content'));
       return;
     }
     if (form.pollQuestion.trim() && pollOptions.length < 2) {
-      setError('Anket için en az 2 seçenek girin.');
+      setError(t('developer.announcements.err_poll_options'));
       return;
     }
 
@@ -197,7 +200,7 @@ export default function AnnouncementsPage() {
       if (!res.ok) throw new Error(data.error ?? String(res.status));
 
       await fetchAnnouncements();
-      setSuccess(editingId ? 'Duyuru güncellendi.' : 'Duyuru oluşturuldu.');
+      setSuccess(editingId ? t('developer.announcements.success_updated') : t('developer.announcements.success_created'));
       setView('list');
       setForm(emptyForm);
       setPostMode('announcement');
@@ -220,10 +223,10 @@ export default function AnnouncementsPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? String(res.status));
-      setSuccess('Duyuru silindi.');
+      setSuccess(t('developer.announcements.deleted'));
       await fetchAnnouncements();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Duyuru silinemedi.');
+      setError(e instanceof Error ? e.message : t('developer.announcements.delete_failed'));
     }
   };
 
@@ -235,8 +238,8 @@ export default function AnnouncementsPage() {
             <LuMessageSquare className="h-5 w-5 text-cyan-300" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Duyurular</h1>
-            <p className="text-sm text-[#99AAB5] mt-1">Platformdaki genel duyuruları yönetin.</p>
+            <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.announcements.title')}</h1>
+            <p className="text-sm text-[#99AAB5] mt-1">{t('developer.announcements.subtitle')}</p>
           </div>
         </div>
         {view === 'list' && (
@@ -269,9 +272,9 @@ export default function AnnouncementsPage() {
       {view === 'editor' ? (
         <div className="rounded-3xl border border-white/10 bg-[#0b0d12]/80 backdrop-blur-md p-6">
           <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
-            <h2 className="text-lg font-bold text-white">{editingId ? 'Duyuru Düzenle' : 'Yeni Duyuru'}</h2>
+            <h2 className="text-lg font-bold text-white">{editingId ? t('developer.announcements.edit_title') : t('developer.announcements.new_title')}</h2>
             <button type="button" onClick={() => setView('list')} className="text-xs text-white/50 hover:text-white transition">
-              İptal Et
+              {t('developer.announcements.cancel_edit')}
             </button>
           </div>
           <div className="mb-5 flex flex-wrap gap-2">
@@ -286,7 +289,7 @@ export default function AnnouncementsPage() {
                     : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
                 }`}
               >
-                {mode === 'poll_only' ? 'Sadece Anket' : mode === 'media_only' ? 'Sadece Medya' : 'Duyuru'}
+                {mode === 'poll_only' ? t('developer.announcements.mode_poll') : mode === 'media_only' ? t('developer.announcements.mode_media') : t('developer.announcements.mode_post')}
               </button>
             ))}
           </div>
@@ -295,22 +298,22 @@ export default function AnnouncementsPage() {
               <div>
                 <label className="block text-xs font-medium text-white/50 mb-1">
                   {postMode === 'poll_only'
-                    ? 'Anket Başlığı'
+                    ? t('developer.announcements.poll_title')
                     : postMode === 'media_only'
-                      ? 'Başlık (opsiyonel)'
-                      : 'Başlık'}
+                      ? t('developer.announcements.title_optional')
+                      : t('developer.common.title')}
                 </label>
                 <input
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                  placeholder={postMode === 'media_only' ? 'Boş bırakılabilir' : undefined}
+                  placeholder={postMode === 'media_only' ? t('developer.announcements.title_placeholder') : undefined}
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/50"
                 />
               </div>
               {postMode === 'announcement' && (
                 <div>
-                  <label className="block text-xs font-medium text-white/50 mb-1">İçerik</label>
+                  <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.common.content')}</label>
                   <textarea
                     value={form.body}
                     onChange={(e) => setForm((p) => ({ ...p, body: e.target.value }))}
@@ -324,7 +327,7 @@ export default function AnnouncementsPage() {
                       className="rounded border-amber-400/40 bg-black/40 text-amber-400 focus:ring-amber-400/30"
                     />
                     <span className="text-sm text-white/80">
-                      Everyone bildirimi gönder <span className="text-white/45">(duyurular menüsünde kırmızı sayaç)</span>
+                      {t('developer.announcements.notify_everyone')} <span className="text-white/45">{t('developer.announcements.notify_everyone_hint')}</span>
                     </span>
                   </label>
                 </div>
@@ -333,7 +336,7 @@ export default function AnnouncementsPage() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs font-medium text-white/50 mb-1">
-                      Medya URL (Resim/Video/YouTube)
+                      {t('developer.announcements.media_url')} (Resim/Video/YouTube)
                       {postMode === 'media_only' ? ' *' : ''}
                     </label>
                   <input
@@ -343,11 +346,11 @@ export default function AnnouncementsPage() {
                     onChange={(e) => setForm((p) => ({ ...p, mediaUrl: e.target.value }))}
                     className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/50"
                   />
-                  <p className="mt-1 text-[10px] text-white/30">Doğrudan .jpg/.png/.mp4 veya YouTube linki</p>
+                  <p className="mt-1 text-[10px] text-white/30">{t('developer.announcements.media_hint')}</p>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-white/50 mb-1">
-                    Yönlendirme Linki
+                    {t('developer.announcements.redirect_link')}
                     {postMode === 'media_only' ? ' (alternatif)' : ''}
                   </label>
                   <input
@@ -357,7 +360,7 @@ export default function AnnouncementsPage() {
                     onChange={(e) => setForm((p) => ({ ...p, linkUrl: e.target.value }))}
                     className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/50"
                   />
-                  <p className="mt-1 text-[10px] text-white/30">Tıklanabilir link önizlemesi olarak gösterilir</p>
+                  <p className="mt-1 text-[10px] text-white/30">{t('developer.announcements.redirect_hint')}</p>
                 </div>
               </div>
               )}
@@ -365,7 +368,7 @@ export default function AnnouncementsPage() {
             {postMode !== 'media_only' && (
             <div className="rounded-2xl border border-white/5 bg-black/20 p-4">
               <p className="text-sm font-semibold text-white mb-3">
-                {postMode === 'poll_only' ? 'Anket' : 'Anket (Opsiyonel)'}
+                {postMode === 'poll_only' ? t('developer.announcements.poll') : 'Anket (Opsiyonel)'}
               </p>
               <div className="space-y-3">
                 <div>
@@ -378,7 +381,7 @@ export default function AnnouncementsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-white/50 mb-1">Seçenekler (Her satıra bir seçenek, en az 2)</label>
+                  <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.announcements.options')}</label>
                   <textarea
                     value={form.pollOptions}
                     onChange={(e) => setForm((p) => ({ ...p, pollOptions: e.target.value }))}
@@ -396,14 +399,14 @@ export default function AnnouncementsPage() {
               disabled={saving}
               className="rounded-xl bg-[#5865F2] hover:bg-[#5865F2]/90 px-6 py-2.5 text-sm font-bold text-white transition disabled:opacity-50"
             >
-              {saving ? 'Kaydediliyor...' : 'Kaydet'}
+              {saving ? 'Kaydediliyor...' : t('developer.common.save')}
             </button>
           </div>
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {loading ? (
-            <p className="text-white/40 text-sm">Yükleniyor...</p>
+            <p className="text-white/40 text-sm">{t('developer.common.loading')}</p>
           ) : announcements.length > 0 ? (
             announcements.map((a) => {
               const preview = parseBody(a.content);
@@ -412,7 +415,7 @@ export default function AnnouncementsPage() {
               <div key={a.id} className="rounded-2xl border border-white/10 bg-[#0b0d12] p-5 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2 gap-2">
-                    <h3 className="font-bold text-white">{a.title || (isMediaOnly ? 'Medya' : 'Başlıksız')}</h3>
+                    <h3 className="font-bold text-white">{a.title || (isMediaOnly ? t('developer.announcements.media_only_label') : t('developer.announcements.untitled'))}</h3>
                     <div className="flex items-center gap-2 shrink-0">
                       {isMediaOnly && (
                         <span className="rounded-full bg-cyan-500/15 px-2 py-0.5 text-[10px] font-semibold text-cyan-300">
@@ -421,7 +424,7 @@ export default function AnnouncementsPage() {
                       )}
                       {a.poll && (
                         <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-semibold text-violet-300">
-                          {a.content === '·' ? 'Sadece Anket' : 'Anket'}
+                          {a.content === '·' ? t('developer.announcements.mode_poll') : t('developer.announcements.poll')}
                         </span>
                       )}
                       {a.mentions_everyone && (
@@ -448,7 +451,7 @@ export default function AnnouncementsPage() {
                     onClick={() => startEdit(a)}
                     className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 px-3 py-2 text-xs font-semibold text-white/70 transition"
                   >
-                    <LuPencil className="w-3.5 h-3.5" /> Düzenle
+                    <LuPencil className="w-3.5 h-3.5" /> {t('developer.common.edit')}
                   </button>
                   <button
                     type="button"
@@ -462,7 +465,7 @@ export default function AnnouncementsPage() {
               );
             })
           ) : (
-            <p className="text-white/40 text-sm">Duyuru bulunmuyor.</p>
+            <p className="text-white/40 text-sm">{t('developer.announcements.empty')}</p>
           )}
         </div>
       )}

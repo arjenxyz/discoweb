@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LuBrain, LuCheck, LuRefreshCw, LuSearch, LuTrash2, LuUpload, LuPencil, LuX, LuDatabase, LuLanguages, LuPlus } from 'react-icons/lu';
 
@@ -45,6 +47,7 @@ function langLabel(code: string): string {
 }
 
 export default function QuizQuestionsPage() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<Question[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -98,11 +101,11 @@ export default function QuizQuestionsPage() {
       const text = await file.text();
       const parsed = JSON.parse(text);
       const arr = Array.isArray(parsed) ? parsed : null;
-      if (!arr || arr.length === 0) throw new Error('bank.json bir array olmalı');
+      if (!arr || arr.length === 0) throw new Error(t('developer.quiz_questions.bank_not_array'));
       // bank.json formatını doğrula: ilk kayıt id + correct_index + category içermeli
       const first = arr[0] as Record<string, unknown>;
       if (typeof first.correct_index !== 'number' || (first as { question?: unknown }).question !== undefined) {
-        throw new Error('Bu bir bank.json değil. Çeviri yüklemek için "Çeviri Yükle" butonunu kullan.');
+        throw new Error(t('developer.quiz_questions.not_bank_file'));
       }
       const payload = {
         action: 'import_bank' as const,
@@ -121,7 +124,7 @@ export default function QuizQuestionsPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-      setInfo(`Ana banka: ${data.imported} kayıt eklendi/güncellendi.`);
+      setInfo(t('developer.quiz_questions.bank_imported', { count: data.imported }));
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -139,10 +142,10 @@ export default function QuizQuestionsPage() {
       const text = await file.text();
       const parsed = JSON.parse(text) as { lang?: string; questions?: unknown[] };
       if (!parsed.lang || !Array.isArray(parsed.questions)) {
-        throw new Error('lang-XX.json formatı bekleniyor: { lang: "tr", questions: [...] }');
+        throw new Error(t('developer.quiz_questions.lang_format'));
       }
       const fileLang = parsed.lang.toLowerCase();
-      const confirmMsg = `"${file.name}" dosyası '${fileLang}' dili olarak ${parsed.questions.length} çeviri içeriyor.\n\nUyarı: aynı dilde mevcut çeviriler ÜZERİNE YAZILACAK.\n\nDevam edilsin mi?`;
+      const confirmMsg = t('developer.quiz_questions.lang_confirm', { file: file.name, lang: fileLang, count: parsed.questions.length });
       if (!confirm(confirmMsg)) {
         setImporting(false);
         if (transFileRef.current) transFileRef.current.value = '';
@@ -163,8 +166,8 @@ export default function QuizQuestionsPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-      const skippedMsg = data.skipped > 0 ? ` (${data.skipped} kayıt bank'ta yok, atlandı — önce bank.json yükle)` : '';
-      setInfo(`Çeviri (${fileLang}): ${data.imported} kayıt eklendi/güncellendi${skippedMsg}.`);
+      const skippedMsg = data.skipped > 0 ? t('developer.quiz_questions.lang_skipped', { skipped: data.skipped }) : '';
+      setInfo(t('developer.quiz_questions.lang_imported', { lang: fileLang, count: data.imported, skipped: skippedMsg }));
       setLang(fileLang);
       await load();
     } catch (e) {
@@ -176,10 +179,10 @@ export default function QuizQuestionsPage() {
   };
 
   const addLanguage = () => {
-    const code = prompt('Yeni dil kodu (ör: pt-br, es, de, fr)')?.trim().toLowerCase();
+    const code = prompt(t('developer.quiz_questions.new_lang_prompt'))?.trim().toLowerCase();
     if (!code) return;
     if (!/^[a-z]{2}(-[a-z0-9]{2,8})?$/i.test(code)) {
-      alert('Geçersiz dil kodu. Örnek: tr, en, pt-br, es, de');
+      alert(t('developer.quiz_questions.invalid_lang'));
       return;
     }
     setLang(code);
@@ -202,7 +205,7 @@ export default function QuizQuestionsPage() {
 
   const saveEditor = async (q: Question, draft: { question: string; options: string[]; is_ready: boolean }) => {
     if (!draft.question.trim() || draft.options.some((o) => !o.trim())) {
-      setError(`${langLabel(lang)} sorusu ve 4 şık dolu olmalı`);
+      setError(t('developer.quiz_questions.need_choices', { lang: langLabel(lang) }));
       return;
     }
     try {
@@ -229,7 +232,7 @@ export default function QuizQuestionsPage() {
   };
 
   const deleteOne = async (id: string) => {
-    if (!confirm('Bu soruyu (tüm dillerdeki çevirileriyle birlikte) silmek istediğine emin misin?')) return;
+    if (!confirm(t('developer.quiz_questions.confirm_delete'))) return;
     try {
       const res = await fetch('/api/developer/quiz/questions', {
         method: 'POST',
@@ -248,7 +251,7 @@ export default function QuizQuestionsPage() {
     <div className="p-6 text-white">
       <div className="mb-6 flex items-center gap-3">
         <LuBrain className="h-6 w-6 text-indigo-400" />
-        <h1 className="text-2xl font-bold">Quiz Soru Bankası</h1>
+        <h1 className="text-2xl font-bold">{t('developer.quiz_questions.title')}</h1>
         <span className="ml-auto text-sm text-white/60">Toplam: {total}</span>
       </div>
 
@@ -278,7 +281,7 @@ export default function QuizQuestionsPage() {
         <button
           onClick={addLanguage}
           className="ml-1 rounded-lg p-1.5 text-white/50 hover:bg-white/[0.05] hover:text-white"
-          title="Yeni dil ekle"
+          title="{t('developer.quiz_questions.add_lang')}"
         >
           <LuPlus className="h-4 w-4" />
         </button>
@@ -308,7 +311,7 @@ export default function QuizQuestionsPage() {
                   : 'text-white/60 hover:bg-white/[0.05]'
               }`}
             >
-              {f === 'all' ? 'Tümü' : f === 'ready' ? `${langLabel(lang)} hazır` : `${langLabel(lang)} eksik`}
+              {f === 'all' ? t('developer.common.all') : f === 'ready' ? t('developer.quiz_questions.filter_ready', { lang: langLabel(lang) }) : t('developer.quiz_questions.filter_missing', { lang: langLabel(lang) })}
             </button>
           ))}
         </div>
@@ -331,9 +334,9 @@ export default function QuizQuestionsPage() {
           onClick={() => bankFileRef.current?.click()}
           disabled={importing}
           className="flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-2 text-sm text-amber-200 transition hover:bg-amber-500/25 disabled:opacity-50"
-          title="bank.json: dil-bağımsız canonical soru kayıtları"
+          title={t('developer.quiz_questions.import_bank_title')}
         >
-          <LuDatabase className="h-4 w-4" /> {importing ? 'Yükleniyor...' : 'Ana Banka Yükle (bank.json)'}
+          <LuDatabase className="h-4 w-4" /> {importing ? t('developer.quiz_questions.importing') : t('developer.quiz_questions.import_bank')}
         </button>
 
         <input
@@ -349,7 +352,7 @@ export default function QuizQuestionsPage() {
           className="flex items-center gap-2 rounded-lg border border-indigo-500/40 bg-indigo-500/15 px-3 py-2 text-sm text-indigo-200 transition hover:bg-indigo-500/25 disabled:opacity-50"
           title="lang-tr.json / lang-en.json / lang-pt-br.json gibi"
         >
-          <LuLanguages className="h-4 w-4" /> {importing ? 'Yükleniyor...' : 'Çeviri Yükle (lang-XX.json)'}
+          <LuLanguages className="h-4 w-4" /> {importing ? t('developer.quiz_questions.importing') : t('developer.quiz_questions.import_lang')}
         </button>
       </div>
 
@@ -357,22 +360,22 @@ export default function QuizQuestionsPage() {
         <table className="w-full text-left text-sm">
           <thead className="bg-white/[0.04] text-xs uppercase text-white/50">
             <tr>
-              <th className="px-3 py-2">Hazır ({lang})</th>
+              <th className="px-3 py-2">{t('developer.quiz_questions.col_ready', { lang })}</th>
               <th className="px-3 py-2">Kategori</th>
               <th className="px-3 py-2">Zorluk</th>
               <th className="px-3 py-2">{langLabel(lang)} Soru</th>
               <th className="px-3 py-2">EN Soru</th>
-              <th className="px-3 py-2">Doğru</th>
+              <th className="px-3 py-2">{t('developer.quiz_questions.col_correct')}</th>
               <th className="px-3 py-2"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
             {loading && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center text-white/40">Yükleniyor...</td></tr>
+              <tr><td colSpan={7} className="px-3 py-6 text-center text-white/40">{t('developer.common.loading')}</td></tr>
             )}
             {!loading && filtered.length === 0 && (
               <tr><td colSpan={7} className="px-3 py-6 text-center text-white/40">
-                Soru bulunamadı. Önce <strong>Ana Banka</strong>, sonra <strong>Çeviri</strong> yükle.
+                {t('developer.quiz_questions.empty')}
               </td></tr>
             )}
             {!loading && filtered.map((q) => {
@@ -383,19 +386,19 @@ export default function QuizQuestionsPage() {
                   <td className="px-3 py-2">
                     {tr?.is_ready ? (
                       <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-300">
-                        <LuCheck className="h-3 w-3" /> Hazır
+                        <LuCheck className="h-3 w-3" /> {t('developer.quiz_questions.ready')}
                       </span>
                     ) : tr ? (
                       <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/15 px-2 py-0.5 text-xs text-amber-300">Taslak</span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-rose-500/15 px-2 py-0.5 text-xs text-rose-300">Çeviri yok</span>
+                      <span className="inline-flex items-center gap-1 rounded-md bg-rose-500/15 px-2 py-0.5 text-xs text-rose-300">{t('developer.quiz_questions.no_translation')}</span>
                     )}
                   </td>
                   <td className="px-3 py-2 text-white/60">{q.category ?? '—'}</td>
                   <td className="px-3 py-2 text-white/60">{q.difficulty ?? '—'}</td>
                   <td className="max-w-[260px] px-3 py-2 text-white/80">
                     <div className="line-clamp-2">
-                      {tr?.question || <span className="text-white/30">— bu dile çevrilmemiş —</span>}
+                      {tr?.question || <span className="text-white/30">{t('developer.quiz_questions.not_translated')}</span>}
                     </div>
                   </td>
                   <td className="max-w-[260px] px-3 py-2 text-white/50">
@@ -407,14 +410,14 @@ export default function QuizQuestionsPage() {
                       <button
                         onClick={() => setEditing(q)}
                         className="rounded-md p-1.5 text-white/60 hover:bg-white/10 hover:text-white"
-                        title={`${langLabel(lang)} çevirisini düzenle`}
+                        title={t('developer.quiz_questions.edit_translation', { lang: langLabel(lang) })}
                       >
                         <LuPencil className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => deleteOne(q.id)}
                         className="rounded-md p-1.5 text-red-300 hover:bg-red-500/10"
-                        title="Soruyu sil (tüm dillerdeki çevirileriyle)"
+                        title={t('developer.quiz_questions.delete_question')}
                       >
                         <LuTrash2 className="h-4 w-4" />
                       </button>
@@ -433,7 +436,7 @@ export default function QuizQuestionsPage() {
           onClick={() => setOffset(Math.max(0, offset - limit))}
           className="rounded-md border border-white/10 px-3 py-1 text-sm text-white/70 disabled:opacity-30"
         >
-          ← Önceki
+          {t('developer.quiz_questions.prev')}
         </button>
         <span className="text-xs text-white/50">
           {offset + 1} - {Math.min(offset + limit, total)} / {total}
@@ -470,8 +473,9 @@ function Editor({
   onClose: () => void;
   onSave: (q: Question, draft: { question: string; options: string[]; is_ready: boolean }) => void;
 }) {
-  const existing = question.translations.find((t) => t.lang === lang);
-  const enT = question.translations.find((t) => t.lang === 'en');
+  const { t } = useTranslation();
+  const existing = question.translations.find((tr) => tr.lang === lang);
+  const enT = question.translations.find((tr) => tr.lang === 'en');
   const [text, setText] = useState<string>(existing?.question ?? '');
   const [options, setOptions] = useState<string[]>(existing?.options ?? ['', '', '', '']);
   const [isReady, setIsReady] = useState<boolean>(existing?.is_ready ?? false);
@@ -481,9 +485,14 @@ function Editor({
       <div className="w-full max-w-3xl rounded-2xl border border-white/10 bg-[#0f1116] p-6 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-white">Çeviri düzenle</h2>
+            <h2 className="text-lg font-semibold text-white">{t('developer.quiz_questions.edit_title')}</h2>
             <p className="text-xs text-white/50">
-              Dil: <span className="font-mono text-indigo-300">{langLabel(lang)} ({lang})</span> · Kategori: {question.category ?? '—'} · Doğru cevap: <span className="font-mono text-emerald-300">{'ABCD'[question.correct_index]}</span>
+              {t('developer.quiz_questions.meta', {
+                lang: langLabel(lang),
+                code: lang,
+                category: question.category ?? '—',
+                answer: 'ABCD'[question.correct_index],
+              })}
             </p>
           </div>
           <button onClick={onClose} className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white">
@@ -498,7 +507,7 @@ function Editor({
               <ul className="mt-2 space-y-0.5">
                 {enT.options.map((o, i) => (
                   <li key={i} className={i === question.correct_index ? 'text-emerald-300' : ''}>
-                    {'ABCD'[i]}: {o} {i === question.correct_index && '(doğru)'}
+                    {'ABCD'[i]}: {o} {i === question.correct_index && '{t('developer.quiz_questions.correct_mark')}'}
                   </li>
                 ))}
               </ul>
@@ -519,7 +528,7 @@ function Editor({
             <label key={i} className="block text-sm text-white/70">
               <div className="mb-1 flex items-center gap-2">
                 <span className={`font-semibold ${i === question.correct_index ? 'text-emerald-300' : 'text-white/80'}`}>
-                  {'ABCD'[i]} {i === question.correct_index && '(doğru cevap)'}
+                  {'ABCD'[i]} {i === question.correct_index && '{t('developer.quiz_questions.correct_answer')}'}
                 </span>
               </div>
               <input
@@ -541,7 +550,7 @@ function Editor({
               onChange={(e) => setIsReady(e.target.checked)}
               className="accent-emerald-500"
             />
-            Çeviri tamam, bu dilde quiz'lerde kullanılabilir (is_ready)
+            {t('developer.quiz_questions.ready_hint')}
           </label>
         </div>
 
@@ -550,13 +559,13 @@ function Editor({
             onClick={onClose}
             className="rounded-md border border-white/10 px-4 py-2 text-sm text-white/70 hover:bg-white/5"
           >
-            İptal
+            {t('developer.common.cancel')}
           </button>
           <button
             onClick={() => onSave(question, { question: text, options, is_ready: isReady })}
             className="rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
           >
-            Kaydet
+            {t('developer.common.save')}
           </button>
         </div>
       </div>

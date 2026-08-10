@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect } from 'react';
 import { LuListChecks } from 'react-icons/lu';
 
@@ -22,6 +24,7 @@ type WeeklyTaskAdmin = {
 };
 
 export default function WeeklyTasksPage() {
+  const { t } = useTranslation();
   const [weeklyTasks, setWeeklyTasks] = useState<WeeklyTaskAdmin[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +91,7 @@ export default function WeeklyTasksPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? String(res.status));
       
-      setSuccess('Haftalık görev başarıyla oluşturuldu.');
+      setSuccess(t('developer.weekly_tasks.create_success'));
       setForm({
         guildId: '', title: '', description: '', requirementType: 'message_count',
         requirementValue: '10', requirementRoleId: '', requirementTargetGuildId: '',
@@ -109,45 +112,45 @@ export default function WeeklyTasksPage() {
           <LuListChecks className="h-5 w-5 text-emerald-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Haftalık Görevler</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Sunucu bazlı global haftalık görevleri yönetin.</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.weekly_tasks.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.weekly_tasks.subtitle')}</p>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
         <div className="rounded-2xl border border-white/10 bg-[#0b0d12] p-5 h-fit">
-          <h2 className="text-lg font-bold text-white mb-4">Yeni Görev Oluştur</h2>
+          <h2 className="text-lg font-bold text-white mb-4">{t('developer.weekly_tasks.create_title')}</h2>
           <form onSubmit={createTask} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-white/50 mb-1">Sunucu ID (Zorunlu)</label>
+              <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.bans.guild_id_required')}</label>
               <input required type="text" value={form.guildId} onChange={e => setForm(p => ({ ...p, guildId: e.target.value }))}
                 className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-white/50 mb-1">Görev Başlığı</label>
+              <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.weekly_tasks.task_title')}</label>
               <input required type="text" value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
                 className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-white/50 mb-1">Açıklama</label>
+              <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.common.description')}</label>
               <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                 className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none min-h-[60px]" />
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-white/50 mb-1">Görev Tipi</label>
+                <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.weekly_tasks.task_type')}</label>
                 <select value={form.requirementType} onChange={e => setForm(p => ({ ...p, requirementType: e.target.value as WeeklyTaskType }))}
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none">
-                  <option value="message_count">Mesaj Sayısı</option>
-                  <option value="voice_minutes">Ses Dakikası</option>
-                  <option value="join_guild">Sunucuya Katılma</option>
+                  <option value="message_count">{t('developer.weekly_tasks.type_messages')}</option>
+                  <option value="voice_minutes">{t('developer.weekly_tasks.type_voice')}</option>
+                  <option value="join_guild">{t('developer.weekly_tasks.type_join')}</option>
                   <option value="role">Rol Alma</option>
-                  <option value="event_participation">Etkinliğe Katılım</option>
+                  <option value="event_participation">{t('developer.weekly_tasks.type_event')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-white/50 mb-1">Gereksinim Değeri</label>
+                <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.weekly_tasks.requirement')}</label>
                 <input type="number" value={form.requirementValue} onChange={e => setForm(p => ({ ...p, requirementValue: e.target.value }))}
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none" />
               </div>
@@ -160,7 +163,7 @@ export default function WeeklyTasksPage() {
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-white/50 mb-1">Hedef Sunucu ID</label>
+                <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.weekly_tasks.target_guild')}</label>
                 <input type="text" value={form.requirementTargetGuildId} onChange={e => setForm(p => ({ ...p, requirementTargetGuildId: e.target.value }))}
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none" />
               </div>
@@ -168,12 +171,12 @@ export default function WeeklyTasksPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-white/50 mb-1">Ödül (Mari)</label>
+                <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.weekly_tasks.reward')}</label>
                 <input type="number" value={form.rewardMari} onChange={e => setForm(p => ({ ...p, rewardMari: e.target.value }))}
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-white/50 mb-1">Sıra</label>
+                <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.weekly_tasks.sort_order')}</label>
                 <input type="number" value={form.sortOrder} onChange={e => setForm(p => ({ ...p, sortOrder: e.target.value }))}
                   className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white focus:border-[#5865F2]/50 outline-none" />
               </div>
@@ -181,43 +184,43 @@ export default function WeeklyTasksPage() {
 
             <label className="flex items-center gap-2 mt-2">
               <input type="checkbox" checked={form.active} onChange={e => setForm(p => ({ ...p, active: e.target.checked }))} className="rounded border-white/10 bg-black/30" />
-              <span className="text-sm text-white">Aktif</span>
+              <span className="text-sm text-white">{t('developer.common.active')}</span>
             </label>
 
             {error && <p className="text-xs text-red-400">{error}</p>}
             {success && <p className="text-xs text-emerald-400">{success}</p>}
 
             <button type="submit" disabled={creating} className="w-full rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2 text-sm font-bold text-white transition disabled:opacity-50">
-              {creating ? 'Oluşturuluyor...' : 'Görev Oluştur'}
+              {creating ? t('developer.weekly_tasks.creating') : t('developer.weekly_tasks.create_btn')}
             </button>
           </form>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-[#0b0d12] p-5">
-          <h2 className="text-lg font-bold text-white mb-4">Mevcut Görevler</h2>
+          <h2 className="text-lg font-bold text-white mb-4">{t('developer.weekly_tasks.existing')}</h2>
           <div className="flex flex-col gap-3 overflow-y-auto max-h-[700px] pr-2">
             {loading ? (
-              <p className="text-sm text-white/40 text-center py-4">Yükleniyor...</p>
+              <p className="text-sm text-white/40 text-center py-4">{t('developer.common.loading')}</p>
             ) : weeklyTasks.length > 0 ? (
               weeklyTasks.map((task) => (
                 <div key={task.id} className={`rounded-xl border p-4 ${task.active ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-white/10 bg-white/5'}`}>
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <p className="font-bold text-white">{task.title}</p>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${task.active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/40'}`}>
-                      {task.active ? 'Aktif' : 'Pasif'}
+                      {task.active ? t('developer.common.active') : t('developer.common.inactive')}
                     </span>
                   </div>
                   {task.description && <p className="text-xs text-white/50 mb-3">{task.description}</p>}
                   <div className="flex flex-wrap gap-2 text-[10px] text-white/60">
                     <span className="bg-black/40 px-2 py-1 rounded-lg">Sunucu: {task.guild_name ?? task.guild_id}</span>
                     <span className="bg-black/40 px-2 py-1 rounded-lg">Tip: {task.requirement_type}</span>
-                    <span className="bg-black/40 px-2 py-1 rounded-lg">Gereksinim: {task.requirement_value ?? 'Yok'}</span>
-                    <span className="bg-black/40 px-2 py-1 rounded-lg text-amber-300">Ödül: {task.reward_mari} Mari</span>
+                    <span className="bg-black/40 px-2 py-1 rounded-lg">Gereksinim: {task.requirement_value ?? t('developer.common.none')}</span>
+                    <span className="bg-black/40 px-2 py-1 rounded-lg text-amber-300">{t('developer.weekly_tasks.reward_label', { amount: task.reward_mari })}</span>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-white/40 text-center py-4">Henüz görev bulunmuyor.</p>
+              <p className="text-sm text-white/40 text-center py-4">{t('developer.weekly_tasks.empty')}</p>
             )}
           </div>
         </div>

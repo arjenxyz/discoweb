@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect } from 'react';
 import { LuSettings, LuDatabase, LuServer, LuKey, LuGlobe, LuShield, LuRefreshCw, LuEye, LuEyeOff, LuSearch } from 'react-icons/lu';
 
@@ -20,6 +22,7 @@ const CATEGORY_META: Record<string, { icon: typeof LuGlobe; color: string }> = {
 };
 
 export default function ConfigViewPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [configs, setConfigs] = useState<ConfigItem[]>([]);
@@ -33,12 +36,12 @@ export default function ConfigViewPage() {
     try {
       setLoading(true);
       const res = await fetch('/api/developer/config-view', { credentials: 'include', cache: 'no-store' });
-      if (!res.ok) throw new Error('Yüklenemedi');
+      if (!res.ok) throw new Error(t('developer.cache.load_failed'));
       const data = await res.json();
       setConfigs(data.configs || []);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bilinmeyen hata');
+      setError(err instanceof Error ? err.message : t('developer.cache.unknown_error'));
     } finally {
       setLoading(false);
     }
@@ -66,8 +69,8 @@ export default function ConfigViewPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Sistem Ayarları</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Ortam değişkenleri ve yapılandırma durumları.</p>
+          <h1 className="text-2xl font-bold text-white">{t('developer.config_view.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.config_view.subtitle')}</p>
         </div>
         <button type="button" onClick={loadConfigs} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-all">
           <LuRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Yenile
@@ -80,7 +83,7 @@ export default function ConfigViewPage() {
           <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
           <input
             type="text"
-            placeholder="Ayar adı veya açıklama ara..."
+            placeholder={t('developer.config_view.search_placeholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:border-[#5865F2]/50 focus:outline-none transition-all"
@@ -92,7 +95,7 @@ export default function ConfigViewPage() {
             onClick={() => setSelectedCategory(null)}
             className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border ${!selectedCategory ? 'bg-[#5865F2]/15 text-[#5865F2] border-[#5865F2]/20' : 'bg-white/5 text-white/50 border-white/10 hover:text-white'}`}
           >
-            Tümü
+            {t('developer.config_view.all')}
           </button>
           {categories.map(cat => (
             <button
@@ -139,7 +142,7 @@ export default function ConfigViewPage() {
                           <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${
                             item.value ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' : 'bg-rose-500/15 text-rose-300 border border-rose-500/20'
                           }`}>
-                            {item.value ? 'Aktif' : 'Pasif'}
+                            {item.value ? t('developer.common.active') : t('developer.common.inactive')}
                           </span>
                         ) : item.type === 'secret' ? (
                           <div className="flex items-center gap-2">

@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState, useEffect, useCallback } from 'react';
 import { LuTriangleAlert, LuSearch, LuShield } from 'react-icons/lu';
 
@@ -17,6 +19,7 @@ type SuspiciousFlagAdmin = {
 };
 
 export default function SuspiciousFlagsPage() {
+  const { t } = useTranslation();
   const [flags, setFlags] = useState<SuspiciousFlagAdmin[]>([]);
   const [filter, setFilter] = useState('open');
   const [loading, setLoading] = useState(false);
@@ -90,8 +93,8 @@ export default function SuspiciousFlagsPage() {
           <LuTriangleAlert className="h-5 w-5 text-orange-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Şüpheli Aktiviteler</h1>
-          <p className="text-sm text-[#99AAB5] mt-1">Platformdaki anormal durumları ve bot aktivitelerini inceleyin.</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{t('developer.suspicious.title')}</h1>
+          <p className="text-sm text-[#99AAB5] mt-1">{t('developer.suspicious.subtitle')}</p>
         </div>
       </div>
 
@@ -108,7 +111,7 @@ export default function SuspiciousFlagsPage() {
           <button onClick={runScan} disabled={scanLoading}
             className="flex items-center gap-2 rounded-xl border border-emerald-400/25 bg-emerald-500/10 hover:bg-emerald-500/20 px-4 py-2 text-sm font-bold text-emerald-300 transition disabled:opacity-50">
             <LuSearch className="w-4 h-4" />
-            {scanLoading ? 'Taranıyor...' : 'Şimdi Tara'}
+            {scanLoading ? t('developer.suspicious.scanning') : t('developer.suspicious.scan_now')}
           </button>
         </div>
 
@@ -116,7 +119,7 @@ export default function SuspiciousFlagsPage() {
 
         <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
           {loading ? (
-            <p className="text-sm text-white/40 text-center py-4">Yükleniyor...</p>
+            <p className="text-sm text-white/40 text-center py-4">{t('developer.common.loading')}</p>
           ) : flags.length > 0 ? (
             flags.map((flag) => (
               <div key={flag.id} className={`rounded-2xl border p-4 ${SEVERITY_STYLE[flag.severity] ?? 'border-white/10 bg-white/5 text-white'}`}>
@@ -131,16 +134,16 @@ export default function SuspiciousFlagsPage() {
                     {flag.description && <p className="mt-1 text-xs text-white/60">{flag.description}</p>}
                     <div className="mt-3 flex flex-wrap gap-4 text-xs font-medium text-white/50 bg-black/30 border border-white/5 p-2 rounded-xl w-fit">
                       {flag.guild_id && <span>Sunucu: <strong className="text-white">{flag.guild_id}</strong></span>}
-                      {flag.user_id && <span>Kullanıcı: <strong className="text-white">{flag.user_id}</strong></span>}
+                      {flag.user_id && <span>{t('developer.suspicious.user_label')} <strong className="text-white">{flag.user_id}</strong></span>}
                       <span>Tarih: <strong className="text-white">{new Date(flag.created_at).toLocaleString('tr-TR')}</strong></span>
                     </div>
                   </div>
                   {flag.status === 'open' && (
                     <div className="flex flex-col gap-2 shrink-0 w-[140px]">
                       {[
-                        { status: 'reviewed',  label: 'İncelendi', cls: 'border-sky-400/25 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20' },
-                        { status: 'actioned',  label: 'İşlem Yapıldı', cls: 'border-emerald-400/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20' },
-                        { status: 'dismissed', label: 'Yok Say', cls: 'border-white/10 bg-white/5 text-white/40 hover:bg-white/10' },
+                        { status: 'reviewed',  label: t('developer.suspicious.reviewed'), cls: 'border-sky-400/25 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20' },
+                        { status: 'actioned',  label: t('developer.suspicious.actioned'), cls: 'border-emerald-400/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20' },
+                        { status: 'dismissed', label: t('developer.suspicious.dismiss'), cls: 'border-white/10 bg-white/5 text-white/40 hover:bg-white/10' },
                       ].map((btn) => (
                         <button key={btn.status} onClick={() => updateFlagStatus(flag.id, btn.status)}
                           className={`rounded-xl border px-3 py-2 text-xs font-bold transition w-full ${btn.cls}`}>
@@ -155,7 +158,7 @@ export default function SuspiciousFlagsPage() {
           ) : (
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-white/30">
               <LuShield className="w-12 h-12 text-white/10" />
-              <p className="text-sm font-medium">Bu kategoride şüpheli aktivite bulunamadı.</p>
+              <p className="text-sm font-medium">{t('developer.suspicious.empty')}</p>
             </div>
           )}
         </div>

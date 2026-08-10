@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18nContext';
+
 import { useState } from 'react';
 import { LuSearch, LuUsers, LuGlobe, LuMail, LuShield } from 'react-icons/lu';
 
@@ -29,6 +31,7 @@ type GuildInfo = {
 };
 
 export default function DeveloperUserLookupPage() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +42,7 @@ export default function DeveloperUserLookupPage() {
 
   const handleSearch = async () => {
     const q = query.trim();
-    if (!q) { setError('Lütfen arama terimi girin.'); return; }
+    if (!q) { setError(t('developer.user_lookup.empty_query')); return; }
     if (!/^\d{10,}$/.test(q) && q.length < 3) { setError('En az 3 karakter girin.'); return; }
 
     setLoading(true);
@@ -53,7 +56,7 @@ export default function DeveloperUserLookupPage() {
       const res = await fetch(`/api/developer/user-lookup?query=${encodeURIComponent(q)}`, { credentials: 'include', cache: 'no-store' });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error === 'not_found' ? 'Kullanıcı bulunamadı.' : data.error || 'Arama başarısız.');
+        setError(data.error === 'not_found' ? t('developer.user_lookup.not_found') : data.error || t('developer.user_lookup.search_failed'));
         return;
       }
       const data = await res.json();
@@ -61,7 +64,7 @@ export default function DeveloperUserLookupPage() {
       setServers(data.servers ?? []);
       setTargetGuilds(data.targetGuilds ?? data.target_guilds ?? []);
     } catch {
-      setError('Arama sırasında hata oluştu.');
+      setError(t('developer.user_lookup.search_error'));
     } finally {
       setLoading(false);
     }
@@ -70,8 +73,8 @@ export default function DeveloperUserLookupPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Kullanıcı Sorgula</h1>
-        <p className="text-sm text-[#99AAB5] mt-1">Discord ID veya kullanıcı adı ile arama yapın.</p>
+        <h1 className="text-2xl font-bold text-white">{t('developer.user_lookup.title')}</h1>
+        <p className="text-sm text-[#99AAB5] mt-1">{t('developer.user_lookup.subtitle')}</p>
       </div>
 
       {/* Search Bar */}
@@ -81,7 +84,7 @@ export default function DeveloperUserLookupPage() {
             <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/25" />
             <input
               type="text"
-              placeholder="Discord ID veya kullanıcı adı..."
+              placeholder={t('developer.user_lookup.placeholder')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -94,7 +97,7 @@ export default function DeveloperUserLookupPage() {
             disabled={loading}
             className="px-6 py-3.5 rounded-xl bg-[#5865F2] text-white font-semibold text-sm hover:bg-[#4752C4] disabled:opacity-50 transition-all shadow-lg shadow-[#5865F2]/20"
           >
-            {loading ? 'Aranıyor...' : 'Ara'}
+            {loading ? t('developer.common.searching') : t('developer.common.search')}
           </button>
         </div>
       </div>
@@ -113,7 +116,7 @@ export default function DeveloperUserLookupPage() {
             <div className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
               <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
                 <LuUsers className="w-4 h-4 text-[#5865F2]" />
-                Kullanıcı Bilgileri
+                {t('developer.users.col_user')} Bilgileri
               </h2>
               <div className="space-y-3">
                 {users.map((u) => (
@@ -155,7 +158,7 @@ export default function DeveloperUserLookupPage() {
             <div className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
               <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
                 <LuGlobe className="w-4 h-4 text-cyan-400" />
-                Uygulama Sunucuları ({servers.length})
+                {t('developer.user_lookup.app_servers', { count: servers.length })}
               </h2>
               <div className="grid sm:grid-cols-2 gap-3">
                 {servers.map((s, i) => (
@@ -176,7 +179,7 @@ export default function DeveloperUserLookupPage() {
             <div className="rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6">
               <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
                 <LuShield className="w-4 h-4 text-violet-400" />
-                Discord Sunucuları ({targetGuilds.length})
+                {t('developer.user_lookup.discord_servers', { count: targetGuilds.length })}
               </h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {targetGuilds.map((g) => (
@@ -199,7 +202,7 @@ export default function DeveloperUserLookupPage() {
           )}
 
           {users.length === 0 && servers.length === 0 && targetGuilds.length === 0 && (
-            <div className="py-12 text-center text-sm text-white/30">Sonuç bulunamadı.</div>
+            <div className="py-12 text-center text-sm text-white/30">{t('developer.common.not_found')}</div>
           )}
         </div>
       )}
