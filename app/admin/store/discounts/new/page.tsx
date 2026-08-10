@@ -219,6 +219,7 @@ export default function AdminStoreDiscountCreatePage() {
                   placeholder="0"
                   className={fieldClass}
                 />
+                <p className="mt-1 text-[11px] text-white/35">İndirimin geçerli olması için gereken minimum sepet tutarı.</p>
               </div>
               <div>
                 <label className={labelClass}>Kişi başı limit</label>
