@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     if (!server?.verify_role_id) {
-      return NextResponse.json({ hasRole: true });
+      return NextResponse.json({ hasRole: false });
     }
 
     // Discord API'den kullanıcının rollerini al

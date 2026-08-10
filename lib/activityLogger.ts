@@ -96,7 +96,7 @@ export type SetupSuccessPayload = {
   ownerId: string;
   registeredBy: string;
   adminRoleId: string;
-  verifyRoleId: string | null;
+  verifyRoleId: string;
   economyTier?: string | null;
   isUpdate: boolean;
   targetGuildId?: string | null;
@@ -442,11 +442,7 @@ export async function logSetupSuccess(data: SetupSuccessPayload): Promise<void> 
         inline: true,
       },
       { name: '🎭 Admin Rolü', value: `<@&${data.adminRoleId}>\n\`${data.adminRoleId}\``, inline: true },
-      {
-        name: '✅ Verify Rolü',
-        value: data.verifyRoleId ? `<@&${data.verifyRoleId}>\n\`${data.verifyRoleId}\`` : '— *(yok)*',
-        inline: true,
-      },
+      { name: '✅ Verify Rolü', value: `<@&${data.verifyRoleId}>\n\`${data.verifyRoleId}\``, inline: true },
       { name: '💰 Ekonomi Tier', value: `\`${data.economyTier ?? 'basic'}\``, inline: true },
       ...(data.targetGuildId && data.targetGuildId !== data.guildId
         ? [{ name: '📡 Log Sunucusu', value: `\`${data.targetGuildId}\` *(farklı sunucu)*`, inline: false }]

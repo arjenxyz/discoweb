@@ -33,9 +33,8 @@ const isVerifiedUser = async (supabase: any, userId: string | null) => {
     .maybeSingle();
 
   const verifyRoleId = (server as { verify_role_id: string | null } | null)?.verify_role_id ?? null;
-  // No verify role configured → treat as verified (no "read rules" gate)
   if (!verifyRoleId) {
-    return true;
+    return false;
   }
 
   const memberResponse = await fetch(`https://discord.com/api/guilds/${selectedGuildId}/members/${userId}`, {
