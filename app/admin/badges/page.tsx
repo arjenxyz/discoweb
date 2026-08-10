@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
+import { LuPencil, LuTrash2 } from 'react-icons/lu';
+import { StoreListPanel } from '../store/StoreListRow';
 
 type BadgeTier = {
   id: string;
@@ -236,19 +238,20 @@ export default function AdminBadgesPage() {
     (e) => !emojiSearch || e.name.toLowerCase().includes(emojiSearch.toLowerCase()),
   );
 
-  const inputCls = 'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-indigo-500 transition';
-  const labelCls = 'mb-1 block text-xs text-white/50';
+  const labelCls = 'text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35';
+  const inputCls =
+    'mt-1.5 w-full rounded-xl border border-white/10 bg-black/25 px-3.5 py-2.5 text-sm text-white/85 placeholder:text-white/25 focus:border-[#5865F2]/50 focus:outline-none';
+  const sectionCls = 'text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35';
+  const pickerInputCls =
+    'w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-xs text-white/85 placeholder:text-white/25 outline-none focus:border-[#5865F2]/50';
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto min-w-0 max-w-6xl space-y-4 sm:space-y-5">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Topluluk</p>
-          <h1 className="mt-2 text-2xl font-semibold">Tag Ayarları</h1>
-          <p className="mt-1 text-sm text-white/50">
-            Sunucu tag'ini isminde taşıyan üyeler için gün bazlı otomatik rol ve ayrıcalık tanımlamalarını buradan yönetebilirsiniz.
-          </p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/35">Topluluk</p>
+          <h1 className="mt-1 truncate text-xl font-semibold text-white sm:text-2xl">Tag Ayarları</h1>
         </div>
         <button
           onClick={() => {
@@ -256,7 +259,11 @@ export default function AdminBadgesPage() {
             setShowForm(true); setEditingId(null); setForm(emptyForm()); setError(null);
             void loadRoles(); void loadGuildEmojis();
           }}
-          className="rounded-full border border-white/10 px-4 py-2 text-xs text-white/60 transition hover:border-white/30 hover:text-white"
+          className={
+            showForm && !editingId
+              ? 'shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white'
+              : 'shrink-0 rounded-xl bg-[#5865F2] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#4752c4]'
+          }
         >
           {showForm && !editingId ? 'İptal' : '+ Yeni Kademe'}
         </button>
@@ -264,14 +271,17 @@ export default function AdminBadgesPage() {
 
       {/* Form */}
       {showForm && (
-        <form onSubmit={(e) => void handleSubmit(e)} className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-6">
-          <h2 className="text-base font-semibold">{editingId ? 'Kademeyi Düzenle' : 'Yeni Kademe Oluştur'}</h2>
-          {error && <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>}
+        <form onSubmit={(e) => void handleSubmit(e)} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+          <h2 className="text-sm font-semibold text-white">{editingId ? 'Kademeyi Düzenle' : 'Yeni Kademe Oluştur'}</h2>
+          {error && (
+            <p className="mt-3 rounded-2xl border border-rose-500/20 bg-rose-500/[0.08] px-3.5 py-2.5 text-sm text-rose-200">{error}</p>
+          )}
 
+          <div className="mt-4 space-y-4">
           {/* ── Temel Bilgiler ── */}
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/30">Temel Bilgiler</p>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <p className={sectionCls}>Temel Bilgiler</p>
+            <div className="mt-2.5 grid gap-3.5 sm:grid-cols-2">
               <div>
                 <label className={labelCls}>İsim *</label>
                 <input className={inputCls} maxLength={32} value={form.name}
@@ -282,11 +292,11 @@ export default function AdminBadgesPage() {
               <div ref={emojiPickerRef} className="relative">
                 <label className={labelCls}>
                   Emoji{' '}
-                  <span className="text-white/30">(unicode veya sunucu emojisi)</span>
+                  <span className="normal-case tracking-normal text-white/25">(unicode veya sunucu emojisi)</span>
                 </label>
-                <div className="flex gap-2">
+                <div className="mt-1.5 flex gap-2">
                   <input
-                    className={`${inputCls} flex-1`}
+                    className={`${inputCls} mt-0 flex-1`}
                     value={form.emoji}
                     onChange={(e) => setForm({ ...form, emoji: e.target.value })}
                     placeholder="🥉 veya tıkla →"
@@ -294,7 +304,7 @@ export default function AdminBadgesPage() {
                   <button
                     type="button"
                     onClick={() => { setShowEmojiPicker(!showEmojiPicker); }}
-                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/50 hover:border-white/20 hover:text-white transition"
+                    className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white"
                   >
                     {emojisLoading ? '...' : '😀 Sunucu'}
                   </button>
@@ -303,7 +313,7 @@ export default function AdminBadgesPage() {
                   <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-xl border border-white/10 bg-[#161925] shadow-2xl">
                     <div className="p-2">
                       <input
-                        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs outline-none focus:border-indigo-500"
+                        className={pickerInputCls}
                         placeholder="Emoji ara..."
                         value={emojiSearch}
                         onChange={(e) => setEmojiSearch(e.target.value)}
@@ -339,10 +349,10 @@ export default function AdminBadgesPage() {
 
               <div>
                 <label className={labelCls}>Renk</label>
-                <div className="flex gap-2">
-                  <input type="color" className="h-9 w-12 cursor-pointer rounded-lg border border-white/10 bg-white/5 p-1"
+                <div className="mt-1.5 flex gap-2">
+                  <input type="color" className="h-[42px] w-12 cursor-pointer rounded-xl border border-white/10 bg-black/25 p-1"
                     value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />
-                  <input className={`${inputCls} flex-1`} value={form.color}
+                  <input className={`${inputCls} mt-0 flex-1`} value={form.color}
                     onChange={(e) => setForm({ ...form, color: e.target.value })} placeholder="#CD7F32" />
                 </div>
               </div>
@@ -355,7 +365,7 @@ export default function AdminBadgesPage() {
 
               <div className="sm:col-span-2">
                 <label className={labelCls}>Açıklama</label>
-                <textarea className={inputCls} maxLength={200} rows={2} value={form.description}
+                <textarea className={`${inputCls} resize-y`} maxLength={200} rows={2} value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="Üyeler tag'i 7 gün taşıyarak bu rozeti kazanır." />
               </div>
@@ -363,9 +373,9 @@ export default function AdminBadgesPage() {
           </div>
 
           {/* ── Ödüller ── */}
-          <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/30">Ödüller</p>
-            <div className="grid gap-4 sm:grid-cols-2">
+          <div className="border-t border-white/[0.06] pt-4">
+            <p className={sectionCls}>Ödüller</p>
+            <div className="mt-2.5 grid gap-3.5 sm:grid-cols-2">
               <div>
                 <label className={labelCls}>Papel Ödülü (tek seferlik)</label>
                 <input type="number" min={0} step={1} className={inputCls} value={form.reward_papel}
@@ -386,19 +396,19 @@ export default function AdminBadgesPage() {
           </div>
 
           {/* ── Otomatik Rol ── */}
-          <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/30">Otomatik Rol Ataması</p>
-            <div ref={rolePickerRef} className="relative">
+          <div className="border-t border-white/[0.06] pt-4">
+            <p className={sectionCls}>Otomatik Rol Ataması</p>
+            <div ref={rolePickerRef} className="relative mt-2.5">
               <label className={labelCls}>
                 Rol{' '}
-                <span className="text-white/30">(kademeye ulaşıldığında otomatik atanır)</span>
+                <span className="normal-case tracking-normal text-white/25">(kademeye ulaşıldığında otomatik atanır)</span>
               </label>
 
               {/* Selected role display */}
               <button
                 type="button"
                 onClick={() => { setShowRolePicker(!showRolePicker); }}
-                className="flex w-full items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-sm transition hover:border-white/20"
+                className="mt-1.5 flex w-full items-center gap-2 rounded-xl border border-white/10 bg-black/25 px-3.5 py-2.5 text-left text-sm text-white/85 transition hover:border-white/20"
               >
                 {selectedRole ? (
                   <>
@@ -436,7 +446,7 @@ export default function AdminBadgesPage() {
                 <div className="absolute left-0 top-full z-50 mt-1 w-full rounded-xl border border-white/10 bg-[#161925] shadow-2xl">
                   <div className="p-2">
                     <input
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs outline-none focus:border-indigo-500"
+                      className={pickerInputCls}
                       placeholder="Rol adı veya ID ara..."
                       value={roleSearch}
                       onChange={(e) => { setRoleSearch(e.target.value); if (!roles.length) void loadRoles(); }}
@@ -483,9 +493,9 @@ export default function AdminBadgesPage() {
                     })}
                     {/* Manual ID input */}
                     <div className="border-t border-white/5 p-2">
-                      <p className="mb-1.5 text-[10px] text-white/30">Veya ID ile gir:</p>
+                      <p className="mb-1.5 text-[11px] text-white/35">Veya ID ile gir:</p>
                       <input
-                        className="w-full rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-xs outline-none focus:border-indigo-500"
+                        className={pickerInputCls}
                         placeholder="Role ID..."
                         value={form.role_id}
                         onChange={(e) => setForm({ ...form, role_id: e.target.value })}
@@ -498,9 +508,9 @@ export default function AdminBadgesPage() {
           </div>
 
           {/* ── Arkaplan Görseli ── */}
-          <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/30">Tag Yolu Arkaplanı</p>
-            <div>
+          <div className="border-t border-white/[0.06] pt-4">
+            <p className={sectionCls}>Tag Yolu Arkaplanı</p>
+            <div className="mt-2.5">
               <label className={labelCls}>Arkaplan Görseli URL</label>
               <input
                 className={inputCls}
@@ -509,7 +519,7 @@ export default function AdminBadgesPage() {
                 placeholder="https://example.com/background.jpg"
               />
               {form.background_image && (
-                <div className="mt-2 relative h-24 w-full overflow-hidden rounded-xl border border-white/10">
+                <div className="mt-2 relative h-20 w-full overflow-hidden rounded-xl border border-white/10 sm:h-24">
                   <Image
                     src={form.background_image}
                     alt="Arkaplan önizleme"
@@ -525,104 +535,117 @@ export default function AdminBadgesPage() {
             </div>
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-wrap gap-2 border-t border-white/[0.06] pt-4">
             <button
               type="submit"
               disabled={saving}
-              className="rounded-full bg-white px-5 py-2 text-xs font-semibold text-black transition hover:bg-white/90 disabled:opacity-50 focus:ring-2 focus:ring-white/50 focus:outline-none"
+              className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {saving ? 'Kaydediliyor...' : editingId ? 'Güncelle' : 'Oluştur'}
             </button>
             <button type="button" onClick={resetForm}
-              className="rounded-full border border-white/10 px-5 py-2 text-xs text-white/60 transition hover:text-white">
+              className="rounded-xl border border-white/10 bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:text-white">
               İptal
             </button>
+          </div>
           </div>
         </form>
       )}
 
       {/* Tier List */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <p className="mb-1 text-xs text-white/30">Üyeler tag&apos;i belirlediğiniz süre boyunca taşırlarsa ilgili kademeye erişirler.</p>
-        {loading ? (
-          <div className="mt-4 space-y-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-14 animate-pulse rounded-xl bg-white/5" />
-            ))}
-          </div>
-        ) : tiers.length === 0 ? (
-          <p className="mt-4 text-sm text-white/30">Henüz rozet kademesi oluşturulmadı.</p>
-        ) : (
-          <div className="mt-4 space-y-2">
-            {tiers.map((tier) => (
-              <div
-                key={tier.id}
-                className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 hover:bg-white/[0.04] transition"
-              >
-                {/* Bg preview */}
+      <div>
+        <p className="mb-2 text-[11px] text-white/35">Üyeler tag&apos;i belirlediğiniz süre boyunca taşırlarsa ilgili kademeye erişirler.</p>
+        <StoreListPanel loading={loading} isEmpty={tiers.length === 0} emptyMessage="Henüz rozet kademesi oluşturulmadı.">
+          {tiers.map((tier) => (
+            <div key={tier.id} className="group px-4 py-3.5 transition hover:bg-white/[0.03] sm:px-5">
+              <div className="flex items-center gap-3">
                 {tier.background_image ? (
-                  <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-white/10">
                     <Image src={tier.background_image} alt="bg" fill className="object-cover" unoptimized />
                     <div className="absolute inset-0 flex items-center justify-center text-lg">{tier.emoji ?? '🏅'}</div>
                   </div>
                 ) : (
                   <div
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-lg"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg"
                     style={{ background: (tier.color ?? '#5865F2') + '22', border: `1px solid ${tier.color ?? '#5865F2'}44` }}
                   >
                     {tier.emoji ?? '🏅'}
                   </div>
                 )}
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm text-white/80">{tier.name}</span>
-                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-white/40">{tier.days_required}g</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-semibold text-white">{tier.name}</span>
+                    <span className="rounded-md bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-white/45">{tier.days_required}g</span>
                     {tier.role_id && (
-                      <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[10px] text-indigo-300">
+                      <span className="rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-white/45">
                         Rol ✓
                       </span>
                     )}
                   </div>
-                  <div className="mt-0.5 flex flex-wrap gap-2 text-[11px] text-white/30">
-                    {(tier.reward_papel ?? 0) > 0 && <span>+{tier.reward_papel} papel</span>}
-                    {(tier.reward_earn_multiplier ?? 1) > 1 && <span>×{tier.reward_earn_multiplier} çarpan</span>}
+                  <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                    {(tier.reward_papel ?? 0) > 0 && (
+                      <p className="text-[11px] text-white/40">
+                        <span className="text-white/25">Papel</span>
+                        <span className="mx-1 text-white/15">·</span>
+                        <span className="text-white/55">+{tier.reward_papel}</span>
+                      </p>
+                    )}
+                    {(tier.reward_earn_multiplier ?? 1) > 1 && (
+                      <p className="text-[11px] text-white/40">
+                        <span className="text-white/25">Çarpan</span>
+                        <span className="mx-1 text-white/15">·</span>
+                        <span className="text-white/55">×{tier.reward_earn_multiplier}</span>
+                      </p>
+                    )}
                     {tier.color && (
-                      <span className="flex items-center gap-1">
+                      <p className="flex items-center gap-1 text-[11px] text-white/55">
                         <span className="h-2 w-2 rounded-full" style={{ backgroundColor: tier.color }} />
                         {tier.color}
-                      </span>
+                      </p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex-shrink-0 flex gap-2">
-                  <button onClick={() => startEdit(tier)} className="text-xs text-indigo-400 hover:text-indigo-300 transition">
-                    Düzenle
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => startEdit(tier)}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-white/45 transition hover:border-white/20 hover:bg-white/[0.04] hover:text-white"
+                    aria-label="Düzenle"
+                    title="Düzenle"
+                  >
+                    <LuPencil className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => setConfirmDelete(tier.id)} className="text-xs text-red-400/70 hover:text-red-400 transition">
-                    Sil
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(tier.id)}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-500/20 text-rose-300/70 transition hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-200"
+                    aria-label="Sil"
+                    title="Sil"
+                  >
+                    <LuTrash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </StoreListPanel>
       </div>
 
       {/* Delete confirm */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="rounded-2xl border border-white/10 bg-[#0f111a] p-6 shadow-xl w-80">
-            <h3 className="text-base font-semibold">Ayarı Sil</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-xs rounded-2xl border border-white/10 bg-[#0f111a] p-4 shadow-xl sm:p-5">
+            <h3 className="text-sm font-semibold text-white">Ayarı Sil</h3>
             <p className="mt-2 text-sm text-white/50">Bu tag kademesini silmek istediğinizden emin misiniz?</p>
             <div className="mt-4 flex gap-2">
               <button onClick={() => void handleDelete(confirmDelete)}
-                className="flex-1 rounded-full bg-red-600 py-2 text-xs font-semibold text-white hover:bg-red-500 transition">
+                className="flex-1 rounded-xl bg-red-600 py-2.5 text-xs font-semibold text-white transition hover:bg-red-500">
                 Sil
               </button>
               <button onClick={() => setConfirmDelete(null)}
-                className="flex-1 rounded-full border border-white/10 py-2 text-xs text-white/60 hover:text-white transition">
+                className="flex-1 rounded-xl border border-white/10 bg-white/[0.03] py-2.5 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white">
                 İptal
               </button>
             </div>
