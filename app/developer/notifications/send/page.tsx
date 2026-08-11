@@ -22,7 +22,9 @@ type Template = {
   detailsUrl?: string;
 };
 
-const ANNOUNCEMENT_TEMPLATES: Template[] = [
+type TFn = (key: string, params?: Record<string, string | number>) => string;
+
+const getAnnouncementTemplates = (t: TFn): Template[] => [
   {
     value: 'maintenance',
     label: t('developer.notifications_send.tpl_maint_label'),
@@ -53,7 +55,7 @@ const ANNOUNCEMENT_TEMPLATES: Template[] = [
   },
 ];
 
-const MAIL_TEMPLATES: Template[] = [
+const getMailTemplates = (t: TFn): Template[] => [
   {
     value: 'account',
     label: t('developer.notifications_send.tpl_account_label'),
@@ -178,7 +180,7 @@ export default function AdminNotificationSendPage() {
     setSaving(false);
   };
 
-  const templateOptions = type === 'announcement' ? ANNOUNCEMENT_TEMPLATES : MAIL_TEMPLATES;
+  const templateOptions = type === 'announcement' ? getAnnouncementTemplates(t) : getMailTemplates(t);
 
   return (
     <div className="space-y-6">

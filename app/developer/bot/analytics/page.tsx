@@ -174,7 +174,7 @@ export default function BotAnalyticsPage() {
                     labelFormatter={(label) => formatDate(label as string)}
                     itemStyle={{ color: '#e2e8f0' }}
                   />
-                  <Area type="monotone" dataKey="messages" name=t('developer.bot_analytics.messages') stroke="#38bdf8" strokeWidth={3} fillOpacity={1} fill="url(#colorMessages)" />
+                  <Area type="monotone" dataKey="messages" name={t('developer.bot_analytics.messages')} stroke="#38bdf8" strokeWidth={3} fillOpacity={1} fill="url(#colorMessages)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

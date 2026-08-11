@@ -281,7 +281,7 @@ export default function QuizQuestionsPage() {
         <button
           onClick={addLanguage}
           className="ml-1 rounded-lg p-1.5 text-white/50 hover:bg-white/[0.05] hover:text-white"
-          title="{t('developer.quiz_questions.add_lang')}"
+          title={t('developer.quiz_questions.add_lang')}
         >
           <LuPlus className="h-4 w-4" />
         </button>
@@ -507,7 +507,8 @@ function Editor({
               <ul className="mt-2 space-y-0.5">
                 {enT.options.map((o, i) => (
                   <li key={i} className={i === question.correct_index ? 'text-emerald-300' : ''}>
-                    {'ABCD'[i]}: {o} {i === question.correct_index && '{t('developer.quiz_questions.correct_mark')}'}
+                    {'ABCD'[i]}: {o}{' '}
+                    {i === question.correct_index && t('developer.quiz_questions.correct_mark')}
                   </li>
                 ))}
               </ul>
@@ -528,7 +529,8 @@ function Editor({
             <label key={i} className="block text-sm text-white/70">
               <div className="mb-1 flex items-center gap-2">
                 <span className={`font-semibold ${i === question.correct_index ? 'text-emerald-300' : 'text-white/80'}`}>
-                  {'ABCD'[i]} {i === question.correct_index && '{t('developer.quiz_questions.correct_answer')}'}
+                  {'ABCD'[i]}{' '}
+                  {i === question.correct_index && t('developer.quiz_questions.correct_answer')}
                 </span>
               </div>
               <input

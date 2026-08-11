@@ -17,7 +17,7 @@ type ReportAdminItem = {
   created_at: string;
 };
 
-const REPORT_STATUS_OPTIONS = [
+const getReportStatusOptions = (t: (key: string) => string) => [
   { value: 'reviewing',     label: t('developer.reports.status_reviewing'),     cls: 'border-amber-400/25 bg-amber-500/10 text-amber-300' },
   { value: 'need_info',     label: t('developer.reports.status_need_info'),cls: 'border-blue-400/25 bg-blue-500/10 text-blue-300' },
   { value: 'critical',      label: t('developer.reports.status_critical'),     cls: 'border-red-400/25 bg-red-500/10 text-red-300' },
@@ -181,7 +181,7 @@ export default function ReportsPage() {
                 {/* Actions */}
                 <div className="border-t border-white/5 bg-black/40 px-5 py-4 flex flex-col gap-3 mt-auto">
                   <div className="flex flex-wrap gap-2">
-                    {REPORT_STATUS_OPTIONS.map((opt) => (
+                    {getReportStatusOptions(t).map((opt) => (
                       <button key={opt.value}
                         disabled={r.status === opt.value || updatingId === r.id}
                         onClick={() => updateReport(r.id, opt.value)}

@@ -270,7 +270,7 @@ export default function AdsPage() {
                   type="button"
                   onClick={() => void deleteAd(ad.id)}
                   className="p-2 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-500/10 transition"
-                  title=t('developer.common.delete')
+                  title={t('developer.common.delete')}
                 >
                   <LuTrash2 className="w-4 h-4" />
                 </button>

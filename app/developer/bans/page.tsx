@@ -306,7 +306,7 @@ export default function BansPage() {
                         <span className="bg-black/30 px-2 py-1 rounded-md">{t('developer.bans.created_by', { id: ban.created_by })}</span>
                         <span className="bg-black/30 px-2 py-1 rounded-md">Tarih: {new Date(ban.created_at).toLocaleString('tr-TR')}</span>
                         {ban.expires_at && <span className="bg-amber-500/10 text-amber-300 px-2 py-1 rounded-md">{t('developer.bans.expires_at', { date: new Date(ban.expires_at).toLocaleString() })}</span>}
-                        {ban.lifted_at && <span className="bg-emerald-500/10 text-emerald-300 px-2 py-1 rounded-md">{t('developer.bans.lifted_at', { date: new Date(ban.lifted_at).toLocaleString(), by: ban.lifted_by })}</span>}
+                        {ban.lifted_at && <span className="bg-emerald-500/10 text-emerald-300 px-2 py-1 rounded-md">{t('developer.bans.lifted_at', { date: new Date(ban.lifted_at).toLocaleString(), by: ban.lifted_by ?? '' })}</span>}
                       </div>
                     </div>
                   );
