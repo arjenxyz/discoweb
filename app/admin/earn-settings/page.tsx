@@ -53,8 +53,13 @@ type EarnSettings = {
   spam_min_message_length: number;
   spam_flood_count: number;
   spam_flood_window_ms: number;
+  spam_block_sticker_only: boolean;
+  spam_block_attachment_only: boolean;
+  spam_block_emoji_only: boolean;
   spam_voice_block_alone: boolean;
   spam_voice_block_mute_deaf: boolean;
+  daily_message_earn_cap: number;
+  daily_voice_earn_cap: number;
   _boosterBonusEnabled?: boolean;
   _guildPreview?: {
     name: string;
@@ -522,8 +527,52 @@ export default function EarnSettingsPage() {
                   />
                   <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.unit_seconds')}</p>
                 </div>
+                <div className="col-span-2">
+                  <label className={labelClass}>{t('admin.earn.daily_message_cap')}</label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-amber-400">
+                      P
+                    </span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={settings.daily_message_earn_cap ?? 0}
+                      onChange={(e) => updateNumber('daily_message_earn_cap', Number(e.target.value))}
+                      className={`${fieldClass} pl-8`}
+                    />
+                  </div>
+                  <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.daily_cap_hint')}</p>
+                </div>
               </div>
-              <p className="mt-3 text-[11px] leading-relaxed text-white/35">{t('admin.earn.spam_message_hint')}</p>
+
+              <div className="mt-3 space-y-2">
+                {(
+                  [
+                    ['spam_block_sticker_only', 'spam_block_sticker', 'spam_block_sticker_desc'],
+                    ['spam_block_attachment_only', 'spam_block_attachment', 'spam_block_attachment_desc'],
+                    ['spam_block_emoji_only', 'spam_block_emoji', 'spam_block_emoji_desc'],
+                  ] as const
+                ).map(([key, titleKey, descKey]) => (
+                  <div
+                    key={key}
+                    className="flex items-start justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm text-white/85">{t(`admin.earn.${titleKey}`)}</p>
+                      <p className="mt-0.5 text-[11px] leading-relaxed text-white/35">{t(`admin.earn.${descKey}`)}</p>
+                    </div>
+                    <button
+                      type="button"
+                      aria-pressed={settings[key] !== false}
+                      onClick={() => setSettings({ ...settings, [key]: !(settings[key] !== false) })}
+                      className={`relative h-5 w-9 shrink-0 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] ${
+                        settings[key] !== false ? 'bg-[#5865F2] after:translate-x-4' : 'bg-white/10'
+                      }`}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="rounded-xl border border-white/8 bg-black/20 p-3.5">
@@ -531,45 +580,50 @@ export default function EarnSettingsPage() {
                 <LuMic size={14} className="text-cyan-300" />
                 <span>{t('admin.earn.spam_voice_section')}</span>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-start justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5">
-                  <div className="min-w-0">
-                    <p className="text-sm text-white/85">{t('admin.earn.spam_voice_alone')}</p>
-                    <p className="mt-0.5 text-[11px] leading-relaxed text-white/35">{t('admin.earn.spam_voice_alone_desc')}</p>
-                  </div>
-                  <button
-                    type="button"
-                    aria-pressed={settings.spam_voice_block_alone !== false}
-                    onClick={() =>
-                      setSettings({
-                        ...settings,
-                        spam_voice_block_alone: !(settings.spam_voice_block_alone !== false),
-                      })
-                    }
-                    className={`relative h-5 w-9 shrink-0 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] ${
-                      settings.spam_voice_block_alone !== false ? 'bg-cyan-500 after:translate-x-4' : 'bg-white/10'
-                    }`}
+
+              <div className="mb-3">
+                <label className={labelClass}>{t('admin.earn.daily_voice_cap')}</label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-emerald-400">
+                    P
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={settings.daily_voice_earn_cap ?? 0}
+                    onChange={(e) => updateNumber('daily_voice_earn_cap', Number(e.target.value))}
+                    className={`${fieldClass} pl-8`}
                   />
                 </div>
-                <div className="flex items-start justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5">
-                  <div className="min-w-0">
-                    <p className="text-sm text-white/85">{t('admin.earn.spam_voice_mute_deaf')}</p>
-                    <p className="mt-0.5 text-[11px] leading-relaxed text-white/35">{t('admin.earn.spam_voice_mute_deaf_desc')}</p>
+                <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.daily_cap_hint')}</p>
+              </div>
+
+              <div className="space-y-2">
+                {(
+                  [
+                    ['spam_voice_block_alone', 'spam_voice_alone', 'spam_voice_alone_desc'],
+                    ['spam_voice_block_mute_deaf', 'spam_voice_mute_deaf', 'spam_voice_mute_deaf_desc'],
+                  ] as const
+                ).map(([key, titleKey, descKey]) => (
+                  <div
+                    key={key}
+                    className="flex items-start justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm text-white/85">{t(`admin.earn.${titleKey}`)}</p>
+                      <p className="mt-0.5 text-[11px] leading-relaxed text-white/35">{t(`admin.earn.${descKey}`)}</p>
+                    </div>
+                    <button
+                      type="button"
+                      aria-pressed={settings[key] !== false}
+                      onClick={() => setSettings({ ...settings, [key]: !(settings[key] !== false) })}
+                      className={`relative h-5 w-9 shrink-0 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] ${
+                        settings[key] !== false ? 'bg-cyan-500 after:translate-x-4' : 'bg-white/10'
+                      }`}
+                    />
                   </div>
-                  <button
-                    type="button"
-                    aria-pressed={settings.spam_voice_block_mute_deaf !== false}
-                    onClick={() =>
-                      setSettings({
-                        ...settings,
-                        spam_voice_block_mute_deaf: !(settings.spam_voice_block_mute_deaf !== false),
-                      })
-                    }
-                    className={`relative h-5 w-9 shrink-0 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] ${
-                      settings.spam_voice_block_mute_deaf !== false ? 'bg-cyan-500 after:translate-x-4' : 'bg-white/10'
-                    }`}
-                  />
-                </div>
+                ))}
               </div>
             </div>
           </div>
