@@ -161,6 +161,7 @@ export async function POST(request: Request) {
         author_name: 'DiscoWeb',
         metadata: {
           kind: 'discount',
+          i18nKey: 'discount',
           code: codeNormalized,
           percent: payload.percent,
           maxUses,
@@ -173,7 +174,7 @@ export async function POST(request: Request) {
           expires_at: payload.expiresAt ?? null,
           is_welcome: payload.is_welcome ?? false,
           is_special: true,
-          note: 'Sepette görünmesi birkaç saniye alabilir; görünmüyorsa sayfayı yenileyin.',
+          noteKey: 'mail_discount_note_cart_delay',
         },
         created_at: new Date().toISOString(),
       });
