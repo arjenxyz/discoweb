@@ -66,6 +66,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     categoryKey: 'developer.nav.cat_general',
     items: [
+      { href: '/developer/incident', labelKey: 'developer.nav.incident', icon: LuOctagonAlert },
       { href: '/developer', labelKey: 'developer.nav.dashboard', icon: LuLayoutDashboard },
       { href: '/developer/user-lookup', labelKey: 'developer.nav.user_lookup', icon: LuSearch },
       { href: '/developer/users', labelKey: 'developer.nav.users', icon: LuUsers },
@@ -97,7 +98,6 @@ const NAV_GROUPS: NavGroup[] = [
   {
     categoryKey: 'developer.nav.cat_system',
     items: [
-      { href: '/developer/incident', labelKey: 'developer.nav.incident', icon: LuOctagonAlert },
       { href: '/developer/maintenance', labelKey: 'developer.nav.maintenance', icon: LuWrench },
       { href: '/developer/broadcast', labelKey: 'developer.nav.broadcast', icon: LuMegaphone },
       { href: '/developer/api-test', labelKey: 'developer.nav.api_test', icon: LuFlaskConical },

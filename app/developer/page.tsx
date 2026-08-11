@@ -112,6 +112,23 @@ export default function DeveloperPage() {
           </button>
         </div>
 
+        <button
+          type="button"
+          onClick={() => router.push('/developer/incident')}
+          className="mb-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-rose-500/40 bg-rose-500/15 px-5 py-4 text-left transition hover:bg-rose-500/25"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-500/20 text-rose-300 ring-1 ring-rose-400/30">
+              <LuOctagonAlert className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-rose-100">Acil Durdurma (Incident)</p>
+              <p className="text-xs text-rose-200/60 truncate">Tek tıkla global STOP — kazanç, mağaza, transfer</p>
+            </div>
+          </div>
+          <LuArrowRight className="h-5 w-5 shrink-0 text-rose-300" />
+        </button>
+
         {/* Main Grid: Left stats + Right AI */}
         <div className="grid lg:grid-cols-[1fr_420px] gap-6 items-start">
 
