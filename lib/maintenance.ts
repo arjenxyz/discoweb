@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
+import { getActiveIncident, DEFAULT_INCIDENT_MESSAGE } from '@/lib/incident';
 
 
 export const MAINTENANCE_KEYS = [
@@ -131,6 +132,15 @@ export const checkMaintenance = async (keys: MaintenanceKey[], guildId?: string)
     if (developer) {
       return { blocked: false as const, key: null, reason: null };
     }
+  }
+
+  const incident = await getActiveIncident();
+  if (incident) {
+    return {
+      blocked: true as const,
+      key: 'site' as MaintenanceKey,
+      reason: incident.public_message || DEFAULT_INCIDENT_MESSAGE,
+    };
   }
 
   const data = await getMaintenanceFlags(guildId);

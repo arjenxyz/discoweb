@@ -1324,6 +1324,7 @@
       "bans": "Yasaklamalar",
       "logs": "Sistem Logları",
       "broadcast": "Toplu Yayın (Broadcast)",
+      "incident": "Incident Control",
       "api_test": "API Test",
       "clear_data": "Veri Temizleme",
       "bot_analytics": "Sistem Analizi",

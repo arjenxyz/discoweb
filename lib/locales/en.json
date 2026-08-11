@@ -1324,6 +1324,7 @@
       "bans": "Bans",
       "logs": "System Logs",
       "broadcast": "Broadcast",
+      "incident": "Incident Control",
       "api_test": "API Test",
       "clear_data": "Clear Data",
       "bot_analytics": "System Analytics",

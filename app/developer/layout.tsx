@@ -37,6 +37,7 @@ import {
   LuTrophy,
   LuBrain,
   LuMonitorPlay,
+  LuOctagonAlert,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -96,6 +97,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     categoryKey: 'developer.nav.cat_system',
     items: [
+      { href: '/developer/incident', labelKey: 'developer.nav.incident', icon: LuOctagonAlert },
       { href: '/developer/broadcast', labelKey: 'developer.nav.broadcast', icon: LuMegaphone },
       { href: '/developer/api-test', labelKey: 'developer.nav.api_test', icon: LuFlaskConical },
       { href: '/developer/clear-data', labelKey: 'developer.nav.clear_data', icon: LuTrash2 },

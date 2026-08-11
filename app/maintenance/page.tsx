@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { MAINTENANCE_KEYS, getMaintenanceFlags } from '@/lib/maintenance';
+import { getActiveIncident, DEFAULT_INCIDENT_MESSAGE } from '@/lib/incident';
 import { getServerTranslation } from '@/lib/i18n.server';
 import MaintenanceWatcher from './maintenance-watcher';
 
@@ -13,6 +14,7 @@ export default async function MaintenancePage() {
   const { t } = await getServerTranslation();
   const data = await getMaintenanceFlags();
   const flags = data?.flags ?? null;
+  const incident = await getActiveIncident();
 
   const LABELS: Record<string, string> = {
     store: t('maintenance.labels.store'),
@@ -72,10 +74,13 @@ export default async function MaintenancePage() {
   const updaterProfiles = Object.fromEntries(
     profiles.filter(([, profile]) => profile).map(([id, profile]) => [id, profile]),
   ) as Record<string, { id: string; name: string; avatarUrl: string }>;
-  const isSiteMaintenance = Boolean(flags?.site?.is_active);
+  const isSiteMaintenance = Boolean(flags?.site?.is_active) || Boolean(incident);
   const siteTemplateMessage = t('maintenance.site_message');
   const siteUpdaterId = flags?.site?.updated_by;
   const siteUpdater = siteUpdaterId ? updaterProfiles[siteUpdaterId] : undefined;
+  const headline = incident
+    ? incident.public_message || DEFAULT_INCIDENT_MESSAGE
+    : flags?.site?.reason || siteTemplateMessage;
 
   if (!isSiteMaintenance && active.length === 0) {
     redirect('/dashboard');
@@ -85,16 +90,28 @@ export default async function MaintenancePage() {
     <div className="min-h-screen bg-[#0b0d12] text-white">
       <MaintenanceWatcher signature={flagsSignature} />
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
-        <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-8 shadow-[0_30px_80px_rgba(10,12,18,0.55)]">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-200">{t('maintenance.eyebrow')}</p>
+        <div
+          className={`rounded-3xl border p-8 shadow-[0_30px_80px_rgba(10,12,18,0.55)] ${
+            incident ? 'border-rose-500/40 bg-rose-500/10' : 'border-amber-500/30 bg-amber-500/10'
+          }`}
+        >
+          <p
+            className={`text-xs font-semibold uppercase tracking-[0.3em] ${
+              incident ? 'text-rose-200' : 'text-amber-200'
+            }`}
+          >
+            {incident ? 'INCIDENT' : t('maintenance.eyebrow')}
+          </p>
 
-          <div className="mt-4 rounded-2xl border border-amber-500/20 bg-[#0b0d12]/60 px-4 py-3 text-sm text-amber-100/80">
-            <p>
-              {isSiteMaintenance
-                ? siteTemplateMessage
-                : t('maintenance.module_message')}
-            </p>
-            {siteUpdater && (
+          <div
+            className={`mt-4 rounded-2xl border px-4 py-3 text-sm ${
+              incident
+                ? 'border-rose-500/20 bg-[#0b0d12]/60 text-rose-50'
+                : 'border-amber-500/20 bg-[#0b0d12]/60 text-amber-100/80'
+            }`}
+          >
+            <p className="text-base font-semibold leading-relaxed">{headline}</p>
+            {siteUpdater && !incident && (
               <div className="mt-2 flex items-center gap-2 text-xs text-amber-100/70">
                 <Image
                   src={siteUpdater.avatarUrl}
@@ -109,7 +126,7 @@ export default async function MaintenancePage() {
             )}
           </div>
 
-          {active.length > 0 && (
+          {!incident && active.length > 0 && (
             <div className="mt-6 space-y-3">
               {active.map((key) => (
                 <div
@@ -130,15 +147,13 @@ export default async function MaintenancePage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/"
-              className="rounded-full border border-amber-300/40 px-4 py-2 text-xs text-amber-100 transition hover:border-amber-200"
+              className={`rounded-full border px-4 py-2 text-xs transition ${
+                incident
+                  ? 'border-rose-300/40 text-rose-100 hover:border-rose-200'
+                  : 'border-amber-300/40 text-amber-100 hover:border-amber-200'
+              }`}
             >
               {t('maintenance.back_home')}
-            </Link>
-            <Link
-              href="/dashboard"
-              className="rounded-full border border-amber-300/40 px-4 py-2 text-xs text-amber-100 transition hover:border-amber-200"
-            >
-              {t('maintenance.member_panel')}
             </Link>
           </div>
         </div>
