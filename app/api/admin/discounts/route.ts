@@ -132,51 +132,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'save_failed', details: error.message }, { status: 500 });
   }
 
-  // If this is a special (public) discount, create a system mail to inform members
+  // Special (public) discount → same receipt-style mail as transfer/promo
   try {
     if (payload.is_special) {
-      const mailTitle = `Yeni Özel Promosyon Kodu: ${codeNormalized}`;
-      const mailBody = `
-<div style="font-family: Inter, Roboto, sans-serif; background: #0f1113; color: #e6eef8; padding: 20px;">
-  <div style="max-width: 640px; margin: 0 auto; background: #0b0c0d; padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-      <div>
-        <div style="font-size: 13px; color: rgba(148, 163, 184, 0.9); margin-bottom: 4px;">Yeni Özel Promosyon</div>
-        <div style="font-size: 20px; font-weight: 800; color: #f8fafc;">${mailTitle}</div>
-      </div>
-    </div>
-
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 18px;">
-      <div style="padding: 14px; border-radius: 12px; background: rgba(148, 163, 184, 0.08); border: 1px solid rgba(148, 163, 184, 0.12);">
-        <div style="font-size: 12px; color: rgba(148, 163, 184, 0.9);">İndirim Oranı</div>
-        <div style="font-size: 20px; font-weight: 800; color: #fff;">%${payload.percent}</div>
-      </div>
-      <div style="padding: 14px; border-radius: 12px; background: rgba(148, 163, 184, 0.08); border: 1px solid rgba(148, 163, 184, 0.12);">
-        <div style="font-size: 12px; color: rgba(148, 163, 184, 0.9);">Kullanım</div>
-        <div style="font-size: 16px; font-weight: 700; color: #fff;">${maxUses === null ? 'Sınırsız' : String(maxUses)}</div>
-        <div style="font-size: 12px; color: rgba(148, 163, 184, 0.8); margin-top: 6px;">Kullanıcı başına limit: <strong style="color: #f8fafc">${perUserLimit}</strong></div>
-      </div>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-      <div style="font-size: 13px; color: rgba(148, 163, 184, 0.9);">Minimum Sepet: <strong style="color: #f8fafc">${minSpendValue} Papel</strong></div>
-      <div style="font-size: 13px; color: rgba(148, 163, 184, 0.9);">Son Kullanma: <strong style="color: #f8fafc">${payload.expiresAt ? new Date(payload.expiresAt).toLocaleString('tr-TR') : '—'}</strong></div>
-    </div>
-
-    <div style="margin-top: 16px; padding: 14px; border-radius: 12px; background: rgba(148, 163, 184, 0.05); border: 1px solid rgba(148, 163, 184, 0.12);">
-      <div style="font-size: 13px; color: rgba(148, 163, 184, 0.9);">Not:</div>
-      <div style="font-size: 13px; color: rgba(148, 163, 184, 0.8); margin-top: 6px;">Sepette görünmesi birkaç saniye alabilir; hesabınızda görünmüyorsa sayfayı yenileyin.</div>
-    </div>
-  </div>
-</div>
-`;
+      const mailTitle = 'Yeni indirim kodu';
+      const expiresLabel = payload.expiresAt
+        ? new Date(payload.expiresAt).toLocaleString('tr-TR')
+        : 'Yok';
+      const mailBody = [
+        `${codeNormalized} indirim kodu yayında.`,
+        `İndirim: %${payload.percent}`,
+        `Minimum sepet: ${minSpendValue} Papel`,
+        `Kullanım limiti: ${maxUses === null ? 'Sınırsız' : String(maxUses)}`,
+        `Kullanıcı başına: ${perUserLimit}`,
+        `Son kullanma: ${expiresLabel}`,
+        '',
+        'Not: Sepette görünmesi birkaç saniye alabilir; görünmüyorsa sayfayı yenileyin.',
+      ].join('\n');
 
       await supabase.from('system_mails').insert({
         guild_id: selectedGuildId,
         user_id: null,
         title: mailTitle,
         body: mailBody,
+        category: 'system',
+        status: 'published',
+        author_name: 'DiscoWeb',
         metadata: {
+          kind: 'discount',
           code: codeNormalized,
           percent: payload.percent,
           maxUses,
@@ -184,9 +167,9 @@ export async function POST(request: Request) {
           minSpend: minSpendValue,
           expiresAt: payload.expiresAt ?? null,
           is_welcome: payload.is_welcome ?? false,
+          is_special: true,
+          note: 'Sepette görünmesi birkaç saniye alabilir; görünmüyorsa sayfayı yenileyin.',
         },
-        category: 'lottery',
-        status: 'published',
         created_at: new Date().toISOString(),
       });
     }
