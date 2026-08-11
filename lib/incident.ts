@@ -44,7 +44,8 @@ export type AffectedUserRow = {
   meta?: Record<string, unknown>;
 };
 
-const MAINTENANCE_STOP_KEYS = [
+/** Keys previously flipped by STOP — only used to restore legacy incidents. */
+const LEGACY_MAINTENANCE_STOP_KEYS = [
   'site',
   'store',
   'transactions',
@@ -206,8 +207,14 @@ type ServerSnapshot = {
 
 type IncidentPreState = {
   servers?: ServerSnapshot[];
-  /** Global maintenance snapshot (preferred). */
+  /**
+   * Snapshot of global flags at STOP time.
+   * New incidents do not mutate flags (`maintenanceFlagsTouched: false`).
+   * Legacy STOP flipped every key; RESUME restores from this snapshot.
+   */
   globalMaintenance?: Record<string, { is_active: boolean; reason: string | null }>;
+  /** When false, RESUME must not rewrite panel maintenance toggles. */
+  maintenanceFlagsTouched?: boolean;
   /** @deprecated legacy per-server maintenance inside servers[].maintenance */
 };
 
@@ -255,28 +262,9 @@ export async function startIncident(params: {
       .eq('id', server.id);
   }
 
-  const { data: globalRows } = await supabase
-    .from('global_maintenance_flags')
-    .select('key,is_active,reason');
-
-  const globalMaintenance: Record<string, { is_active: boolean; reason: string | null }> = {};
-  for (const f of globalRows ?? []) {
-    globalMaintenance[f.key] = { is_active: Boolean(f.is_active), reason: f.reason ?? null };
-  }
-
-  for (const key of MAINTENANCE_STOP_KEYS) {
-    await supabase.from('global_maintenance_flags').upsert(
-      {
-        key,
-        is_active: true,
-        reason: publicMessage,
-        updated_by: params.actorId,
-        updated_at: now,
-      },
-      { onConflict: 'key' },
-    );
-  }
-
+  // Incident freeze is enforced via system_incident (+ earn disable / bot sync).
+  // Do NOT flip maintenance panel flags — that caused "I turned it off in the panel
+  // but it's still showing" when RESUME restored the STOP snapshot (bot/tracking etc.).
   const { data: incidentRow, error: insErr } = await supabase
     .from('system_incident')
     .insert({
@@ -286,7 +274,10 @@ export async function startIncident(params: {
       scopes,
       window_start: windowStart,
       window_end: now,
-      pre_state: { servers: snapshots, globalMaintenance },
+      pre_state: {
+        servers: snapshots,
+        maintenanceFlagsTouched: false,
+      } satisfies IncidentPreState,
       started_by: params.actorId,
       started_at: now,
       updated_at: now,
@@ -342,19 +333,26 @@ export async function resumeIncident(params: {
       .eq('id', snap.server_id);
   }
 
-  const globalPrev = pre.globalMaintenance ?? {};
-  for (const key of MAINTENANCE_STOP_KEYS) {
-    const prev = globalPrev[key];
-    await supabase.from('global_maintenance_flags').upsert(
-      {
-        key,
-        is_active: Boolean(prev?.is_active),
-        reason: prev?.is_active ? prev.reason : null,
-        updated_by: params.actorId,
-        updated_at: now,
-      },
-      { onConflict: 'key' },
-    );
+  // Restore panel flags only for legacy incidents that STOP had rewritten.
+  const shouldRestoreFlags =
+    pre.maintenanceFlagsTouched === true ||
+    (pre.maintenanceFlagsTouched === undefined && Boolean(pre.globalMaintenance));
+
+  if (shouldRestoreFlags) {
+    const globalPrev = pre.globalMaintenance ?? {};
+    for (const key of LEGACY_MAINTENANCE_STOP_KEYS) {
+      const prev = globalPrev[key];
+      await supabase.from('global_maintenance_flags').upsert(
+        {
+          key,
+          is_active: Boolean(prev?.is_active),
+          reason: prev?.is_active ? prev.reason : null,
+          updated_by: params.actorId,
+          updated_at: now,
+        },
+        { onConflict: 'key' },
+      );
+    }
   }
 
   const { data: updated, error } = await supabase

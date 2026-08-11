@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getActiveIncident } from '@/lib/incident';
 import { getMaintenanceFlags } from '@/lib/maintenance';
 import {
   buildDayKeys,
@@ -158,12 +159,19 @@ export async function GET() {
   const errors = (historyErrors ?? []) as ErrorLogRow[];
   const dayKeys = buildDayKeys(HISTORY_DAYS);
 
-  const siteMaint = Boolean(flags?.site?.is_active);
+  const activeSystemIncident = await getActiveIncident();
+  const incidentFreeze = Boolean(activeSystemIncident);
+
+  // Incident blocks economy/site without flipping maintenance panel toggles.
+  // Bot itself stays up unless the bot flag is on; earn is paused via server config + bot sync.
+  const siteMaint = Boolean(flags?.site?.is_active) || incidentFreeze;
   const botMaint = Boolean(flags?.bot?.is_active);
-  const storeMaint = Boolean(flags?.store?.is_active);
-  const transfersMaint = Boolean(flags?.transfers?.is_active);
-  const promosMaint = Boolean(flags?.promotions?.is_active || flags?.discounts?.is_active);
-  const activityMaint = Boolean(flags?.activity?.is_active);
+  const storeMaint = Boolean(flags?.store?.is_active) || incidentFreeze;
+  const transfersMaint = Boolean(flags?.transfers?.is_active) || incidentFreeze;
+  const promosMaint =
+    Boolean(flags?.promotions?.is_active || flags?.discounts?.is_active) || incidentFreeze;
+  const activityMaint =
+    Boolean(flags?.activity?.is_active || flags?.tracking?.is_active) || incidentFreeze;
 
   const componentDefs = [
     {
@@ -266,27 +274,56 @@ export async function GET() {
     },
   ];
 
-  const activeIncidents: StatusIncident[] = errors
-    .filter((e) => {
-      const age = Date.now() - new Date(e.created_at).getTime();
-      return age <= 24 * 60 * 60 * 1000;
-    })
-    .slice(0, 8)
-    .map((row) => {
-      const phase = mapIncidentPhase(row.severity);
-      return {
-        id: row.id,
-        title: incidentTitle(row.category),
-        status: phase,
-        severity: mapIncidentSeverity(row.severity),
-        startedAt: row.created_at,
-        updatedAt: row.created_at,
-        affectedComponents: [mapCategoryToComponent(row.category)],
-        updates: [
-          { phase, body: incidentBody(row.category, row.severity), at: row.created_at },
-        ],
-      };
+  const activeIncidents: StatusIncident[] = [];
+
+  if (activeSystemIncident) {
+    activeIncidents.push({
+      id: activeSystemIncident.id,
+      title: activeSystemIncident.title || 'Emergency stop',
+      status: 'investigating',
+      severity: 'critical',
+      startedAt: activeSystemIncident.started_at,
+      updatedAt: activeSystemIncident.ended_at || activeSystemIncident.started_at,
+      affectedComponents: [
+        COMPONENT_IDS.WEB_API,
+        COMPONENT_IDS.STORE,
+        COMPONENT_IDS.WALLET,
+        COMPONENT_IDS.PROMOTIONS,
+        COMPONENT_IDS.ACTIVITY,
+      ],
+      updates: [
+        {
+          phase: 'investigating',
+          body: activeSystemIncident.public_message,
+          at: activeSystemIncident.started_at,
+        },
+      ],
     });
+  }
+
+  activeIncidents.push(
+    ...errors
+      .filter((e) => {
+        const age = Date.now() - new Date(e.created_at).getTime();
+        return age <= 24 * 60 * 60 * 1000;
+      })
+      .slice(0, 8)
+      .map((row) => {
+        const phase = mapIncidentPhase(row.severity);
+        return {
+          id: row.id,
+          title: incidentTitle(row.category),
+          status: phase,
+          severity: mapIncidentSeverity(row.severity),
+          startedAt: row.created_at,
+          updatedAt: row.created_at,
+          affectedComponents: [mapCategoryToComponent(row.category)],
+          updates: [
+            { phase, body: incidentBody(row.category, row.severity), at: row.created_at },
+          ],
+        };
+      }),
+  );
 
   const payload: StatusPayload = {
     generatedAt: nowIso,

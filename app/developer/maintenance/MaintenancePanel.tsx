@@ -50,6 +50,7 @@ export default function MaintenancePanel() {
   const [error, setError] = useState<string | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [updaterProfiles, setUpdaterProfiles] = useState<Record<string, UpdaterProfile>>({});
+  const [incidentActive, setIncidentActive] = useState(false);
   const dateFormatter = useMemo(
     () => new Intl.DateTimeFormat(getLocaleTag(language), { dateStyle: 'short', timeStyle: 'short' }),
     [language],
@@ -75,7 +76,14 @@ export default function MaintenancePanel() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('/api/admin/maintenance');
+        const [response, incidentRes] = await Promise.all([
+          fetch('/api/admin/maintenance'),
+          fetch('/api/developer/incident', { cache: 'no-store' }),
+        ]);
+        if (incidentRes.ok) {
+          const incidentData = (await incidentRes.json().catch(() => ({}))) as { active?: boolean };
+          setIncidentActive(Boolean(incidentData.active));
+        }
         if (!response.ok) {
           const payload = (await response.json().catch(() => ({}))) as { error?: string; detail?: string };
           if (response.status === 403) {
@@ -162,6 +170,17 @@ export default function MaintenancePanel() {
       {error && (
         <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-200">
           {error}
+        </div>
+      )}
+
+      {incidentActive && (
+        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-100">
+          Global incident aktif. Site/ekonomi engeli bu paneldeki toggle’lardan bağımsızdır — kapatmak
+          için{' '}
+          <a href="/developer/incident" className="font-semibold text-white underline underline-offset-2">
+            Incident → RESUME
+          </a>
+          .
         </div>
       )}
 

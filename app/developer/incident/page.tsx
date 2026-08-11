@@ -85,11 +85,13 @@ export default function DeveloperIncidentPage() {
   const runStopResume = async (action: 'stop' | 'resume') => {
     if (action === 'stop') {
       const ok = window.confirm(
-        'GLOBAL STOP: Tüm sunucularda kazanç, mağaza, transfer ve site kapanacak. Devam?',
+        'GLOBAL STOP: Kazanç, mağaza, transfer ve site kapanacak (incident). Maintenance panel flag’leri değişmez. Devam?',
       );
       if (!ok) return;
     } else {
-      const ok = window.confirm('RESUME: Incident öncesi ayarlar geri yüklenecek. Devam?');
+      const ok = window.confirm(
+        'RESUME: Incident kapanır; sunucu kazanç ayarları geri yüklenir. Panel maintenance toggle’larına dokunulmaz. Devam?',
+      );
       if (!ok) return;
     }
     setBusy(true);
@@ -107,7 +109,11 @@ export default function DeveloperIncidentPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'failed');
-      setNote(action === 'stop' ? 'Incident aktif — kullanıcılar full-screen görüyor.' : 'Sistem yeniden açıldı.');
+      setNote(
+        action === 'stop'
+          ? 'Incident aktif — kullanıcılar full-screen görüyor. Panel flag’leri değişmedi.'
+          : 'Incident kapandı. Maintenance toggle’lar olduğu gibi bırakıldı.',
+      );
       await refresh();
     } catch (e) {
       const raw = e instanceof Error ? e.message : String(e);
@@ -238,6 +244,13 @@ export default function DeveloperIncidentPage() {
                   : 'şimdi'}
               </p>
             )}
+            <p className="text-xs text-white/35 mt-2 max-w-xl">
+              STOP, maintenance panel’deki bot/tracking vb. toggle’ları açmaz. Modül bakımı için{' '}
+              <a href="/developer/maintenance" className="text-[#a5b4ff] hover:underline">
+                Maintenance
+              </a>{' '}
+              panelini kullanın.
+            </p>
           </div>
           <div className="flex gap-2">
             {!incident ? (
