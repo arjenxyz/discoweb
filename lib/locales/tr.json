@@ -300,7 +300,22 @@
       "summary_blacklist": "Şu kanallar hariç kazanç aktif:",
       "suffix_message": "(mesaj)",
       "suffix_voice": "(ses)",
-      "no_channels_selected": "Henüz kanal seçilmedi."
+      "no_channels_selected": "Henüz kanal seçilmedi.",
+      "spam_title": "Kötüye Kullanım Koruması",
+      "spam_desc": "Mesaj ve ses kazancı kötüye kullanım kurallarını yönetin. Kaydettikten sonra bot anında uygular.",
+      "spam_message_section": "Mesaj kuralları",
+      "spam_voice_section": "Ses kuralları",
+      "spam_cooldown": "Kazançlar arası bekleme",
+      "spam_min_length": "Minimum karakter",
+      "spam_flood_count": "Flood mesaj sayısı",
+      "spam_flood_window": "Flood penceresi",
+      "spam_message_hint": "Sadece sticker, ek veya emoji içeren mesajlar asla kazandırmaz. Flood, flood penceresi boyunca kazancı engeller.",
+      "spam_voice_alone": "Yalnızken engelle",
+      "spam_voice_alone_desc": "Kanalda tek insan varken kazanç verilmez.",
+      "spam_voice_mute_deaf": "Sustur + sağır engeli",
+      "spam_voice_mute_deaf_desc": "Hem susturulmuş hem sağır edilmişken (AFK) kazanç verilmez.",
+      "unit_seconds": "saniye",
+      "unit_chars": "karakter (boşluk sayılmaz)"
     },
     "menu": {
       "group_general": "Genel",

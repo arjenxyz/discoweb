@@ -300,7 +300,22 @@
       "summary_blacklist": "Earning active except in:",
       "suffix_message": "(message)",
       "suffix_voice": "(voice)",
-      "no_channels_selected": "No channels selected yet."
+      "no_channels_selected": "No channels selected yet.",
+      "spam_title": "Anti-Abuse Protection",
+      "spam_desc": "Control message and voice earning abuse rules. Changes apply on the bot immediately after save.",
+      "spam_message_section": "Message rules",
+      "spam_voice_section": "Voice rules",
+      "spam_cooldown": "Cooldown between earnings",
+      "spam_min_length": "Minimum characters",
+      "spam_flood_count": "Flood message count",
+      "spam_flood_window": "Flood window",
+      "spam_message_hint": "Sticker-only, attachment-only, and emoji-only messages never earn. Flood blocks earning for the flood window duration.",
+      "spam_voice_alone": "Block alone in voice",
+      "spam_voice_alone_desc": "No earnings when the member is the only human in the channel.",
+      "spam_voice_mute_deaf": "Block mute + deafen",
+      "spam_voice_mute_deaf_desc": "No earnings while self-muted and self-deafened (AFK).",
+      "unit_seconds": "seconds",
+      "unit_chars": "characters (whitespace ignored)"
     },
     "menu": {
       "group_general": "General",

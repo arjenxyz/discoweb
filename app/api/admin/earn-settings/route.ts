@@ -5,8 +5,6 @@ import { getSessionUserId } from '@/lib/auth';
 import { renderEarnNotification, type ChangeItem } from '@/lib/templates/EarnNotification.server';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
 
-// render moved to React component (src/lib/templates/EarnNotification.tsx)
-
 // --- YARDIMCI FONKSİYONLAR ---
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -16,6 +14,34 @@ const getSupabase = () => {
 };
 
 const isAdminUser = isAdminOrDeveloper;
+
+const SPAM_DEFAULTS = {
+  spam_message_cooldown_ms: 5000,
+  spam_min_message_length: 3,
+  spam_flood_count: 5,
+  spam_flood_window_ms: 15000,
+  spam_voice_block_alone: true,
+  spam_voice_block_mute_deaf: true,
+};
+
+async function invalidateBotConfig(guildId: string) {
+  const botApiUrl = process.env.BOT_API_URL;
+  if (!botApiUrl) return;
+  try {
+    await fetch(`${botApiUrl.replace(/\/$/, '')}/api/invalidate-config`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(process.env.BOT_API_KEY
+          ? { Authorization: `Bearer ${process.env.BOT_API_KEY}` }
+          : {}),
+      },
+      body: JSON.stringify({ guildId }),
+    });
+  } catch (err) {
+    console.warn('earn-settings: invalidate-config failed', err);
+  }
+}
 
 // --- API HANDLERS ---
 export async function GET() {
@@ -56,7 +82,14 @@ export async function GET() {
   } catch {}
 
   return NextResponse.json({
+    ...SPAM_DEFAULTS,
     ...data,
+    spam_message_cooldown_ms: data?.spam_message_cooldown_ms ?? SPAM_DEFAULTS.spam_message_cooldown_ms,
+    spam_min_message_length: data?.spam_min_message_length ?? SPAM_DEFAULTS.spam_min_message_length,
+    spam_flood_count: data?.spam_flood_count ?? SPAM_DEFAULTS.spam_flood_count,
+    spam_flood_window_ms: data?.spam_flood_window_ms ?? SPAM_DEFAULTS.spam_flood_window_ms,
+    spam_voice_block_alone: data?.spam_voice_block_alone ?? SPAM_DEFAULTS.spam_voice_block_alone,
+    spam_voice_block_mute_deaf: data?.spam_voice_block_mute_deaf ?? SPAM_DEFAULTS.spam_voice_block_mute_deaf,
     tag_configured: Boolean(data?.tag_id ?? false),
     _guildPreview: guildPreview,
     _channels: channels,
@@ -76,8 +109,6 @@ export async function PUT(request: Request) {
 
   const payload = await request.json();
 
-  // tag_id is automatically set to guildId when tag_required is true (see updateObj below)
-
   // 1. Sadece DB sütunlarını filtrele (500 hatasını önleyen kritik kısım)
   type ServerUpdate = {
     earn_per_message: number;
@@ -92,6 +123,18 @@ export async function PUT(request: Request) {
     booster_bonus_message: number;
     booster_bonus_voice: number;
     earn_channels: any;
+    spam_message_cooldown_ms: number;
+    spam_min_message_length: number;
+    spam_flood_count: number;
+    spam_flood_window_ms: number;
+    spam_voice_block_alone: boolean;
+    spam_voice_block_mute_deaf: boolean;
+  };
+
+  const clampInt = (value: unknown, fallback: number, min: number, max: number) => {
+    const n = Math.round(Number(value ?? fallback));
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(max, Math.max(min, n));
   };
 
   const updateObj: ServerUpdate = {
@@ -107,23 +150,41 @@ export async function PUT(request: Request) {
     booster_bonus_message: Number(payload.booster_bonus_message ?? 0),
     booster_bonus_voice: Number(payload.booster_bonus_voice ?? 0),
     earn_channels: payload.earn_channels ?? null,
+    spam_message_cooldown_ms: clampInt(payload.spam_message_cooldown_ms, SPAM_DEFAULTS.spam_message_cooldown_ms, 0, 300000),
+    spam_min_message_length: clampInt(payload.spam_min_message_length, SPAM_DEFAULTS.spam_min_message_length, 0, 500),
+    spam_flood_count: clampInt(payload.spam_flood_count, SPAM_DEFAULTS.spam_flood_count, 2, 50),
+    spam_flood_window_ms: clampInt(payload.spam_flood_window_ms, SPAM_DEFAULTS.spam_flood_window_ms, 1000, 300000),
+    spam_voice_block_alone: payload.spam_voice_block_alone !== false && payload.spam_voice_block_alone !== 0,
+    spam_voice_block_mute_deaf: payload.spam_voice_block_mute_deaf !== false && payload.spam_voice_block_mute_deaf !== 0,
   };
 
   const { data: oldData } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
 
-  // Try full update first; if earn_channels column doesn't exist yet, retry without it
-  let saveError = null;
-  const { error: err1 } = await supabase.from('servers').update(updateObj).eq('discord_id', guildId);
-  if (err1) {
-    // Possibly earn_channels column missing — retry without it
-    const { earn_channels: _ec, ...updateWithout } = updateObj;
-    const { error: err2 } = await supabase.from('servers').update(updateWithout).eq('discord_id', guildId);
-    saveError = err2;
-    if (!err2) {
-      console.warn('earn-settings: earn_channels column missing, saved without it. Run: ALTER TABLE servers ADD COLUMN earn_channels jsonb DEFAULT NULL;');
+  // Try full update; peel optional columns if schema is behind
+  let remaining: Record<string, unknown> = { ...updateObj };
+  let lastError: { message?: string } | null = null;
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const { error } = await supabase.from('servers').update(remaining).eq('discord_id', guildId);
+    if (!error) {
+      lastError = null;
+      break;
     }
+    lastError = error;
+    const msg = String(error.message || '');
+    const missingCol = msg.match(/Could not find the '([^']+)' column/i)?.[1]
+      || msg.match(/column ["']?([a-z_]+)["']? of relation/i)?.[1];
+    if (missingCol && missingCol in remaining) {
+      console.warn(`earn-settings: column missing (${missingCol}), retrying without it`);
+      const { [missingCol]: _dropped, ...rest } = remaining;
+      remaining = rest;
+      continue;
+    }
+    break;
   }
-  if (saveError) return NextResponse.json({ error: 'save_failed' }, { status: 500 });
+  if (lastError) {
+    console.error('earn-settings save failed:', lastError);
+    return NextResponse.json({ error: 'save_failed' }, { status: 500 });
+  }
 
   // --- BİLDİRİM MANTIĞI ---
   const changeGroups: Record<string, ChangeItem[]> = { general: [], tag: [], boost: [] };
@@ -174,6 +235,8 @@ export async function PUT(request: Request) {
       author_avatar_url: null,
     });
   }
+
+  await invalidateBotConfig(guildId);
 
   return NextResponse.json({ status: 'ok' });
   } catch (e) {

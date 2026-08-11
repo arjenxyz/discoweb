@@ -18,6 +18,7 @@ import {
   LuVolume2,
   LuFolder,
   LuX,
+  LuShield,
 } from 'react-icons/lu';
 
 type DiscordChannel = {
@@ -48,6 +49,12 @@ type EarnSettings = {
   booster_bonus_message: number;
   booster_bonus_voice: number;
   earn_channels?: EarnChannels | null;
+  spam_message_cooldown_ms: number;
+  spam_min_message_length: number;
+  spam_flood_count: number;
+  spam_flood_window_ms: number;
+  spam_voice_block_alone: boolean;
+  spam_voice_block_mute_deaf: boolean;
   _boosterBonusEnabled?: boolean;
   _guildPreview?: {
     name: string;
@@ -426,6 +433,148 @@ export default function EarnSettingsPage() {
           </div>
         </div>
 
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:col-span-2">
+          <div className="mb-4 flex items-start gap-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300">
+              <LuShield size={16} />
+            </span>
+            <div className="min-w-0">
+              <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.spam_title')}</h2>
+              <p className="mt-0.5 text-xs leading-relaxed text-white/40">{t('admin.earn.spam_desc')}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="rounded-xl border border-white/8 bg-black/20 p-3.5">
+              <div className="mb-3 flex items-center gap-2 text-sm font-medium text-white/80">
+                <LuMessageSquare size={14} className="text-[#a5b4ff]" />
+                <span>{t('admin.earn.spam_message_section')}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className={labelClass}>{t('admin.earn.spam_cooldown')}</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={300}
+                    step={1}
+                    value={Math.round((settings.spam_message_cooldown_ms ?? 5000) / 1000)}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        spam_message_cooldown_ms: Math.max(0, Math.round(Number(e.target.value) || 0) * 1000),
+                      })
+                    }
+                    className={fieldClass}
+                  />
+                  <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.unit_seconds')}</p>
+                </div>
+                <div>
+                  <label className={labelClass}>{t('admin.earn.spam_min_length')}</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={500}
+                    step={1}
+                    value={settings.spam_min_message_length ?? 3}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        spam_min_message_length: Math.max(0, Math.round(Number(e.target.value) || 0)),
+                      })
+                    }
+                    className={fieldClass}
+                  />
+                  <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.unit_chars')}</p>
+                </div>
+                <div>
+                  <label className={labelClass}>{t('admin.earn.spam_flood_count')}</label>
+                  <input
+                    type="number"
+                    min={2}
+                    max={50}
+                    step={1}
+                    value={settings.spam_flood_count ?? 5}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        spam_flood_count: Math.max(2, Math.round(Number(e.target.value) || 2)),
+                      })
+                    }
+                    className={fieldClass}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>{t('admin.earn.spam_flood_window')}</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={300}
+                    step={1}
+                    value={Math.round((settings.spam_flood_window_ms ?? 15000) / 1000)}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        spam_flood_window_ms: Math.max(1, Math.round(Number(e.target.value) || 1) * 1000),
+                      })
+                    }
+                    className={fieldClass}
+                  />
+                  <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.unit_seconds')}</p>
+                </div>
+              </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-white/35">{t('admin.earn.spam_message_hint')}</p>
+            </div>
+
+            <div className="rounded-xl border border-white/8 bg-black/20 p-3.5">
+              <div className="mb-3 flex items-center gap-2 text-sm font-medium text-white/80">
+                <LuMic size={14} className="text-cyan-300" />
+                <span>{t('admin.earn.spam_voice_section')}</span>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-start justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5">
+                  <div className="min-w-0">
+                    <p className="text-sm text-white/85">{t('admin.earn.spam_voice_alone')}</p>
+                    <p className="mt-0.5 text-[11px] leading-relaxed text-white/35">{t('admin.earn.spam_voice_alone_desc')}</p>
+                  </div>
+                  <button
+                    type="button"
+                    aria-pressed={settings.spam_voice_block_alone !== false}
+                    onClick={() =>
+                      setSettings({
+                        ...settings,
+                        spam_voice_block_alone: !(settings.spam_voice_block_alone !== false),
+                      })
+                    }
+                    className={`relative h-5 w-9 shrink-0 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] ${
+                      settings.spam_voice_block_alone !== false ? 'bg-cyan-500 after:translate-x-4' : 'bg-white/10'
+                    }`}
+                  />
+                </div>
+                <div className="flex items-start justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5">
+                  <div className="min-w-0">
+                    <p className="text-sm text-white/85">{t('admin.earn.spam_voice_mute_deaf')}</p>
+                    <p className="mt-0.5 text-[11px] leading-relaxed text-white/35">{t('admin.earn.spam_voice_mute_deaf_desc')}</p>
+                  </div>
+                  <button
+                    type="button"
+                    aria-pressed={settings.spam_voice_block_mute_deaf !== false}
+                    onClick={() =>
+                      setSettings({
+                        ...settings,
+                        spam_voice_block_mute_deaf: !(settings.spam_voice_block_mute_deaf !== false),
+                      })
+                    }
+                    className={`relative h-5 w-9 shrink-0 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] ${
+                      settings.spam_voice_block_mute_deaf !== false ? 'bg-cyan-500 after:translate-x-4' : 'bg-white/10'
+                    }`}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <ChannelEarnConfig
           settings={settings}
           onUpdate={(earnChannels) => setSettings({ ...settings, earn_channels: earnChannels })}
@@ -471,14 +620,14 @@ function ChannelEarnConfig({
 
   if (channels.length === 0) {
     return (
-      <div className="lg:col-span-2 rounded-2xl bg-[#0f1116] border border-white/5 p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <LuHash size={20} />
-          </div>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:col-span-2">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
+            <LuHash size={16} />
+          </span>
           <div>
-            <h2 className="text-lg font-bold text-white">{t('admin.earn.channels_title')}</h2>
-            <p className="text-xs text-zinc-500">{t('admin.earn.channels_load_error')}</p>
+            <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.channels_title')}</h2>
+            <p className="text-xs text-white/40">{t('admin.earn.channels_load_error')}</p>
           </div>
         </div>
       </div>
@@ -486,21 +635,19 @@ function ChannelEarnConfig({
   }
 
   return (
-    <div className="lg:col-span-2 rounded-2xl bg-[#0f1116] border border-white/5 p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <LuHash size={20} />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-white">{t('admin.earn.channels_title')}</h2>
-            <p className="text-xs text-zinc-500">{t('admin.earn.channels_desc')}</p>
-          </div>
+    <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:col-span-2">
+      <div className="flex items-center gap-2.5">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
+          <LuHash size={16} />
+        </span>
+        <div>
+          <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.channels_title')}</h2>
+          <p className="text-xs text-white/40">{t('admin.earn.channels_desc')}</p>
         </div>
       </div>
 
       {/* Mode Selection */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2">
         {([
           { value: 'all', label: t('admin.earn.mode_all_label'), desc: t('admin.earn.mode_all_desc') },
           { value: 'whitelist', label: t('admin.earn.mode_whitelist_label'), desc: t('admin.earn.mode_whitelist_desc') },
@@ -510,16 +657,16 @@ function ChannelEarnConfig({
             key={opt.value}
             type="button"
             onClick={() => update({ mode: opt.value })}
-            className={`flex-1 min-w-[140px] rounded-xl border p-4 text-left transition ${
+            className={`min-w-[120px] flex-1 rounded-xl border p-3 text-left transition ${
               earnChannels.mode === opt.value
-                ? 'border-cyan-500/40 bg-cyan-500/10'
-                : 'border-white/5 bg-zinc-900/50 hover:border-white/10'
+                ? 'border-[#5865F2]/40 bg-[#5865F2]/10'
+                : 'border-white/10 bg-black/20 hover:border-white/20'
             }`}
           >
-            <p className={`text-sm font-semibold ${earnChannels.mode === opt.value ? 'text-cyan-300' : 'text-white/70'}`}>
+            <p className={`text-sm font-semibold ${earnChannels.mode === opt.value ? 'text-[#a5b4ff]' : 'text-white/70'}`}>
               {opt.label}
             </p>
-            <p className="text-xs text-zinc-500 mt-1">{opt.desc}</p>
+            <p className="mt-0.5 text-[11px] text-white/40">{opt.desc}</p>
           </button>
         ))}
       </div>
