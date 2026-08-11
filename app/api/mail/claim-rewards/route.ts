@@ -52,14 +52,39 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'no_ids' }, { status: 400 });
   }
 
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  let createdAtCutoff = ninetyDaysAgo;
+  const [{ data: profileRow }, { data: userRow }] = await Promise.all([
+    supabase
+      .from('member_profiles')
+      .select('created_at')
+      .eq('guild_id', selectedGuildId)
+      .eq('user_id', userId)
+      .maybeSingle(),
+    supabase
+      .from('users')
+      .select('created_at')
+      .eq('discord_id', userId)
+      .maybeSingle(),
+  ]);
+  for (const raw of [profileRow?.created_at, userRow?.created_at]) {
+    if (!raw) continue;
+    const d = new Date(raw as string);
+    if (!Number.isNaN(d.getTime()) && d > createdAtCutoff) {
+      createdAtCutoff = d;
+    }
+  }
+
   // Reward maillerini getir (metadata dahil)
   const { data: mails, error: mailError } = await supabase
     .from('system_mails')
-    .select('id,title,metadata,category,user_id,guild_id')
+    .select('id,title,metadata,category,user_id,guild_id,created_at')
     .in('id', ids)
     .eq('guild_id', selectedGuildId)
     .eq('category', 'reward')
-    .eq('status', 'published');
+    .eq('status', 'published')
+    .gte('created_at', createdAtCutoff.toISOString());
 
   if (mailError || !mails || mails.length === 0) {
     return NextResponse.json({ error: 'no_reward_mails' }, { status: 400 });

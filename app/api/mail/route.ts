@@ -114,20 +114,29 @@ export async function GET() {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
-  // If a user has just been created, don't show them system mails that were sent before they existed.
-  // This prevents "global" mails (user_id=null) from showing up for new accounts retroactively.
+  // Fresh start: only show mails at/after guild profile creation (and never older than 90d).
+  // users.created_at alone is wrong — existing Discord accounts joining a guild still saw old broadcasts.
   let sinceDate = ninetyDaysAgo;
   if (userId) {
-    const { data: userRecord } = await supabase
-      .from('users')
-      .select('created_at')
-      .eq('discord_id', userId)
-      .maybeSingle();
+    const [{ data: profileRow }, { data: userRecord }] = await Promise.all([
+      supabase
+        .from('member_profiles')
+        .select('created_at')
+        .eq('guild_id', selectedGuildId)
+        .eq('user_id', userId)
+        .maybeSingle(),
+      supabase
+        .from('users')
+        .select('created_at')
+        .eq('discord_id', userId)
+        .maybeSingle(),
+    ]);
 
-    if (userRecord?.created_at) {
-      const userCreatedAt = new Date(userRecord.created_at);
-      if (userCreatedAt > sinceDate) {
-        sinceDate = userCreatedAt;
+    for (const raw of [profileRow?.created_at, userRecord?.created_at]) {
+      if (!raw) continue;
+      const d = new Date(raw);
+      if (!Number.isNaN(d.getTime()) && d > sinceDate) {
+        sinceDate = d;
       }
     }
   }
