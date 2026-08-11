@@ -1567,7 +1567,7 @@
       "ends_at": "Bitiş tarihi",
       "banner_url": "Banner görseli URL",
       "video_url": "Video URL (MP4)",
-      "video_hint": "Activity içinde güvenilir oynatma için kendi host ettiğiniz MP4 kullanın. YouTube/TikTok embed önerilmez.",
+      "video_hint": "Activity içinde full Supabase linki açılmaz. /cdn/Storage/Test1.mp4 yazın veya full link yapıştırın (otomatik /cdn'e çevrilir).",
       "multiplier": "Rozet metni (opsiyonel)",
       "creating": "Oluşturuluyor...",
       "create_btn": "Görev Oluştur",

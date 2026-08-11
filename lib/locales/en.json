@@ -1567,7 +1567,7 @@
       "ends_at": "End date",
       "banner_url": "Banner image URL",
       "video_url": "Video URL (MP4)",
-      "video_hint": "Prefer a self-hosted MP4 for reliable playback inside Activity. YouTube/TikTok embeds are not recommended.",
+      "video_hint": "Full Supabase URLs are blocked inside Activity. Use /cdn/Storage/Test1.mp4 or paste the full link (auto-converted to /cdn).",
       "multiplier": "Badge text (optional)",
       "creating": "Creating...",
       "create_btn": "Create Task",

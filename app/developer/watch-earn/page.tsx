@@ -224,7 +224,7 @@ export default function WatchEarnAdminPage() {
               required
               value={form.video_url}
               onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))}
-              placeholder="https://.../video.mp4"
+              placeholder="/cdn/Storage/Test1.mp4"
               className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-[#5865F2]/40"
             />
             <p className="mt-1 text-[11px] text-white/35">{t('developer.watch_earn.video_hint')}</p>

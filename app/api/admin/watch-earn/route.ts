@@ -27,6 +27,16 @@ type WatchEarnBody = {
   sort_order?: number;
 };
 
+const SUPABASE_PUBLIC_STORAGE_RE =
+  /^https?:\/\/(?:[a-z0-9-]+\.)?supabase\.co\/storage\/v1\/object\/public\/(.+)$/i;
+
+const toCdnMediaUrl = (url: string) => {
+  const raw = url.trim();
+  const match = raw.match(SUPABASE_PUBLIC_STORAGE_RE);
+  if (match?.[1]) return `/cdn/${match[1].replace(/^\/+/, '')}`;
+  return raw;
+};
+
 const parseDate = (value: string | undefined, label: string) => {
   if (!value) return { error: `${label} zorunlu` as const };
   const d = new Date(value);
@@ -61,8 +71,8 @@ export async function POST(request: NextRequest) {
   const title = body.title?.trim();
   const logoText = body.logo_text?.trim();
   const sponsor = body.sponsor?.trim();
-  const bannerUrl = body.banner_url?.trim();
-  const videoUrl = body.video_url?.trim();
+  const bannerUrl = body.banner_url ? toCdnMediaUrl(body.banner_url) : '';
+  const videoUrl = body.video_url ? toCdnMediaUrl(body.video_url) : '';
   const reward = Number(body.reward_papel);
 
   if (!title || !logoText || !sponsor || !bannerUrl || !videoUrl) {
@@ -130,8 +140,8 @@ export async function PATCH(request: NextRequest) {
   if (typeof body.title === 'string') patch.title = body.title.trim();
   if (typeof body.logo_text === 'string') patch.logo_text = body.logo_text.trim();
   if (typeof body.sponsor === 'string') patch.sponsor = body.sponsor.trim();
-  if (typeof body.banner_url === 'string') patch.banner_url = body.banner_url.trim();
-  if (typeof body.video_url === 'string') patch.video_url = body.video_url.trim();
+  if (typeof body.banner_url === 'string') patch.banner_url = toCdnMediaUrl(body.banner_url);
+  if (typeof body.video_url === 'string') patch.video_url = toCdnMediaUrl(body.video_url);
   if (typeof body.multiplier_label === 'string') patch.multiplier_label = body.multiplier_label.trim() || null;
   if (body.multiplier_label === null) patch.multiplier_label = null;
   if (typeof body.active === 'boolean') patch.active = body.active;
