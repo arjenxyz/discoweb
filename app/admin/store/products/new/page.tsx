@@ -229,9 +229,8 @@ function AdminStoreProductCreatePageContent() {
         </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
-          <div className="grid gap-3.5">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+        <div className="grid gap-3.5">
             <div>
               <label className={labelClass}>{t('admin.store_product_new.product_name')}</label>
               <input
@@ -441,17 +440,6 @@ function AdminStoreProductCreatePageContent() {
               )}
             </div>
           </div>
-        </div>
-
-        <div className="hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:block">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
-            {t('admin.store_product_new.tips')}
-          </p>
-          <ul className="mt-3 space-y-2 text-xs text-white/45">
-            <li>{t('admin.store_product_new.tip_auto_role')}</li>
-            <li>{t('admin.store_product_new.tip_permanent')}</li>
-            <li>{t('admin.store_product_new.tip_inactive')}</li>
-          </ul>
         </div>
       </div>
     </div>
