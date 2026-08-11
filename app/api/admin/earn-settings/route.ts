@@ -90,6 +90,7 @@ export async function GET() {
     } catch {}
 
     let channels: Array<{ id: string; name: string; type: number; parent_id: string | null }> = [];
+    let roles: Array<{ id: string; name: string; color: number }> = [];
     try {
       const chRes = await fetch(`https://discord.com/api/guilds/${guildId}/channels`, {
         headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
@@ -103,24 +104,43 @@ export async function GET() {
       }
     } catch {}
 
+    try {
+      const roleRes = await fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
+        headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
+      });
+      if (roleRes.ok) {
+        const allRoles = await roleRes.json();
+        roles = allRoles
+          .filter((r: { managed?: boolean; name: string }) => !r.managed && r.name !== '@everyone')
+          .sort((a: { position: number }, b: { position: number }) => b.position - a.position)
+          .map((r: { id: string; name: string; color: number }) => ({
+            id: r.id,
+            name: r.name,
+            color: r.color,
+          }));
+      }
+    } catch {}
+
     return NextResponse.json({
-      ...SPAM_DEFAULTS,
-      ...data,
-      spam_message_cooldown_ms: data?.spam_message_cooldown_ms ?? SPAM_DEFAULTS.spam_message_cooldown_ms,
-      spam_min_message_length: data?.spam_min_message_length ?? SPAM_DEFAULTS.spam_min_message_length,
-      spam_flood_count: data?.spam_flood_count ?? SPAM_DEFAULTS.spam_flood_count,
-      spam_flood_window_ms: data?.spam_flood_window_ms ?? SPAM_DEFAULTS.spam_flood_window_ms,
-      spam_block_sticker_only: asBool(data?.spam_block_sticker_only, SPAM_DEFAULTS.spam_block_sticker_only),
-      spam_block_attachment_only: asBool(data?.spam_block_attachment_only, SPAM_DEFAULTS.spam_block_attachment_only),
-      spam_block_emoji_only: asBool(data?.spam_block_emoji_only, SPAM_DEFAULTS.spam_block_emoji_only),
-      spam_voice_block_alone: asBool(data?.spam_voice_block_alone, SPAM_DEFAULTS.spam_voice_block_alone),
-      spam_voice_block_mute_deaf: asBool(data?.spam_voice_block_mute_deaf, SPAM_DEFAULTS.spam_voice_block_mute_deaf),
-      daily_message_earn_cap: Number(data?.daily_message_earn_cap ?? SPAM_DEFAULTS.daily_message_earn_cap) || 0,
-      daily_voice_earn_cap: Number(data?.daily_voice_earn_cap ?? SPAM_DEFAULTS.daily_voice_earn_cap) || 0,
-      tag_configured: Boolean(data?.tag_id ?? false),
-      _guildPreview: guildPreview,
-      _channels: channels,
-    });
+    ...SPAM_DEFAULTS,
+    ...data,
+    spam_message_cooldown_ms: data?.spam_message_cooldown_ms ?? SPAM_DEFAULTS.spam_message_cooldown_ms,
+    spam_min_message_length: data?.spam_min_message_length ?? SPAM_DEFAULTS.spam_min_message_length,
+    spam_flood_count: data?.spam_flood_count ?? SPAM_DEFAULTS.spam_flood_count,
+    spam_flood_window_ms: data?.spam_flood_window_ms ?? SPAM_DEFAULTS.spam_flood_window_ms,
+    spam_block_sticker_only: asBool(data?.spam_block_sticker_only, SPAM_DEFAULTS.spam_block_sticker_only),
+    spam_block_attachment_only: asBool(data?.spam_block_attachment_only, SPAM_DEFAULTS.spam_block_attachment_only),
+    spam_block_emoji_only: asBool(data?.spam_block_emoji_only, SPAM_DEFAULTS.spam_block_emoji_only),
+    spam_voice_block_alone: asBool(data?.spam_voice_block_alone, SPAM_DEFAULTS.spam_voice_block_alone),
+    spam_voice_block_mute_deaf: asBool(data?.spam_voice_block_mute_deaf, SPAM_DEFAULTS.spam_voice_block_mute_deaf),
+    daily_message_earn_cap: Number(data?.daily_message_earn_cap ?? SPAM_DEFAULTS.daily_message_earn_cap) || 0,
+    daily_voice_earn_cap: Number(data?.daily_voice_earn_cap ?? SPAM_DEFAULTS.daily_voice_earn_cap) || 0,
+    verify_role_id: data?.verify_role_id ?? null,
+    tag_configured: Boolean(data?.tag_id ?? false),
+    _guildPreview: guildPreview,
+    _channels: channels,
+    _roles: roles,
+  });
   } catch (e) {
     console.error('earn-settings GET unexpected error:', e);
     return NextResponse.json({ error: 'internal_error' }, { status: 500 });
@@ -162,12 +182,22 @@ export async function PUT(request: Request) {
       daily_voice_earn_cap: number;
     };
 
+    const { data: oldData } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
+
+    // Kurulumda seçilen üye rolünü koru: boş kayıt verify_role_id'yi silmesin
+    const incomingVerifyRole =
+      typeof payload.verify_role_id === 'string' ? payload.verify_role_id.trim() : payload.verify_role_id;
+    const resolvedVerifyRoleId =
+      (incomingVerifyRole && String(incomingVerifyRole)) ||
+      oldData?.verify_role_id ||
+      null;
+
     const updateObj: ServerUpdate = {
       earn_per_message: Number(payload.earn_per_message ?? 0),
       message_earn_enabled: Boolean(payload.message_earn_enabled),
       earn_per_voice_minute: Number(payload.earn_per_voice_minute ?? 0),
       voice_earn_enabled: Boolean(payload.voice_earn_enabled),
-      verify_role_id: payload.verify_role_id || null,
+      verify_role_id: resolvedVerifyRoleId,
       tag_required: Boolean(payload.tag_required),
       tag_id: payload.tag_required ? guildId : null,
       tag_bonus_message: Number(payload.tag_bonus_message ?? 0),
@@ -187,8 +217,6 @@ export async function PUT(request: Request) {
       daily_message_earn_cap: clampCap(payload.daily_message_earn_cap),
       daily_voice_earn_cap: clampCap(payload.daily_voice_earn_cap),
     };
-
-    const { data: oldData } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
 
     const remaining: Record<string, unknown> = { ...updateObj };
     let saved = false;

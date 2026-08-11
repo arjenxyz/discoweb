@@ -380,6 +380,25 @@ export async function POST(request: Request) {
     // Double-check roles stored in DB for debugging
     console.log('Storing roles (payload):', { adminRoleId, verifyRoleId });
 
+    // Bot cache'ini temizle — verify_role_id / earn rates hemen kullanılsın
+    try {
+      const botApiUrl = process.env.BOT_API_URL;
+      if (botApiUrl) {
+        await fetch(`${botApiUrl.replace(/\/$/, '')}/api/invalidate-config`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(process.env.BOT_API_KEY
+              ? { Authorization: `Bearer ${process.env.BOT_API_KEY}` }
+              : {}),
+          },
+          body: JSON.stringify({ guildId }),
+        });
+      }
+    } catch (err) {
+      console.warn('setup: invalidate-config failed', err);
+    }
+
     // Fetch and log the saved server row to ensure values are persisted
     try {
       const { data: saved, error: savedErr } = await supabase

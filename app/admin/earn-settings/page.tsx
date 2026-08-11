@@ -66,6 +66,7 @@ type EarnSettings = {
     icon: string | null;
   };
   _channels?: DiscordChannel[];
+  _roles?: Array<{ id: string; name: string; color: number }>;
 };
 
 export default function EarnSettingsPage() {
@@ -98,23 +99,32 @@ export default function EarnSettingsPage() {
     load();
   }, []);
 
-  // Rol Adı Simülasyonu (Bunu ileride gerçek API ile değiştirebilirsin)
-  useEffect(() => {
-    if (settings?.verify_role_id && settings.verify_role_id.length > 15) {
-      setRoleName(t('admin.earn.verified_role_mock')); 
-    } else {
-      setRoleName(null);
-    }
-  }, [settings?.verify_role_id]);
-
   // Değişiklik Kontrolü
   useEffect(() => {
     if (!settings || !initialSettings) return setHasChanges(false);
     // _guildPreview gibi UI alanlarını kıyaslamadan çıkarıyoruz
-    const cleanSettings = { ...settings, _guildPreview: undefined, _boosterBonusEnabled: undefined, _channels: undefined };
-    const cleanInitial = { ...initialSettings, _guildPreview: undefined, _boosterBonusEnabled: undefined, _channels: undefined };
+    const cleanSettings = {
+      ...settings,
+      _guildPreview: undefined,
+      _boosterBonusEnabled: undefined,
+      _channels: undefined,
+      _roles: undefined,
+    };
+    const cleanInitial = {
+      ...initialSettings,
+      _guildPreview: undefined,
+      _boosterBonusEnabled: undefined,
+      _channels: undefined,
+      _roles: undefined,
+    };
     setHasChanges(JSON.stringify(cleanSettings) !== JSON.stringify(cleanInitial));
   }, [settings, initialSettings]);
+
+  useEffect(() => {
+    const roles = settings?._roles ?? [];
+    const match = roles.find((r) => r.id === settings?.verify_role_id);
+    setRoleName(match?.name ?? null);
+  }, [settings?.verify_role_id, settings?._roles]);
 
   const handleSave = async () => {
     if (!settings) return;
@@ -419,20 +429,28 @@ export default function EarnSettingsPage() {
               <div>
                 <label className={labelClass}>{t('admin.earn.verify_role_label')}</label>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <input
-                    type="text"
+                  <select
                     value={settings.verify_role_id ?? ''}
                     onChange={(e) => setSettings({ ...settings, verify_role_id: e.target.value || null })}
-                    placeholder={t('admin.earn.verify_role_placeholder')}
                     className={`${fieldClass} flex-1`}
-                  />
-                  {roleName && (
-                    <div className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-300">
+                  >
+                    <option value="">{t('admin.earn.verify_role_placeholder')}</option>
+                    {(settings._roles ?? []).map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.name}
+                      </option>
+                    ))}
+                  </select>
+                  {roleName && settings.verify_role_id && (
+                    <div className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-300">
                       <LuCheck size={14} />
                       <span>{roleName}</span>
                     </div>
                   )}
                 </div>
+                {!settings.verify_role_id && (
+                  <p className="mt-2 text-xs text-amber-200/70">{t('admin.earn.verify_role_missing')}</p>
+                )}
               </div>
             </div>
           </div>
