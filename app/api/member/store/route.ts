@@ -100,7 +100,33 @@ export async function GET() {
     ownedRoleIds = (ownedOrders ?? []).map((o: { role_id: string | null }) => o.role_id).filter((id): id is string => !!id);
   }
 
-  return NextResponse.json({ promotions: promotions ?? [], items: items ?? [], ownedRoleIds });
+  const storeItems = items ?? [];
+  const roleIds = [...new Set(storeItems.map((it) => it.role_id).filter((id): id is string => !!id))];
+  const roleNameById = new Map<string, string>();
+  const botToken = process.env.DISCORD_BOT_TOKEN;
+  if (botToken && selectedGuildId && roleIds.length > 0) {
+    try {
+      const rolesRes = await discordFetch(`https://discord.com/api/guilds/${selectedGuildId}/roles`, {
+        headers: { Authorization: `Bot ${botToken}` },
+        cache: 'no-store',
+      });
+      if (rolesRes.ok) {
+        const roles = (await rolesRes.json()) as Array<{ id: string; name?: string }>;
+        for (const role of roles) {
+          if (role.id && role.name) roleNameById.set(role.id, role.name);
+        }
+      }
+    } catch (err) {
+      console.warn('[store] failed to fetch guild roles for names', err);
+    }
+  }
+
+  const itemsWithRoles = storeItems.map((item) => ({
+    ...item,
+    role_name: item.role_id ? (roleNameById.get(item.role_id) ?? null) : null,
+  }));
+
+  return NextResponse.json({ promotions: promotions ?? [], items: itemsWithRoles, ownedRoleIds });
 }
 
 export async function POST(request: Request) {
