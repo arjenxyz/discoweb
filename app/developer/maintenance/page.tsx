@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from '@/lib/i18nContext';
-import AdminMaintenancePage from '../../admin/maintenance/page';
+import MaintenancePanel from './MaintenancePanel';
 
 export default function DeveloperMaintenancePage() {
   const { t } = useTranslation();
@@ -12,7 +12,7 @@ export default function DeveloperMaintenancePage() {
         <p className="text-sm text-[#99AAB5] mt-1">{t('developer.maintenance.subtitle')}</p>
       </div>
       <div className="rounded-3xl border border-white/8 bg-white/[0.03] backdrop-blur-xl p-6 overflow-hidden">
-        <AdminMaintenancePage />
+        <MaintenancePanel />
       </div>
     </div>
   );

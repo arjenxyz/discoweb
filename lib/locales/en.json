@@ -1325,6 +1325,7 @@
       "logs": "System Logs",
       "broadcast": "Broadcast",
       "incident": "Incident Control",
+      "maintenance": "Maintenance Modes",
       "api_test": "API Test",
       "clear_data": "Clear Data",
       "bot_analytics": "System Analytics",

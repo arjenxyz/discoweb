@@ -1325,6 +1325,7 @@
       "logs": "Sistem Logları",
       "broadcast": "Toplu Yayın (Broadcast)",
       "incident": "Incident Control",
+      "maintenance": "Bakım Modları",
       "api_test": "API Test",
       "clear_data": "Veri Temizleme",
       "bot_analytics": "Sistem Analizi",

@@ -98,6 +98,7 @@ const NAV_GROUPS: NavGroup[] = [
     categoryKey: 'developer.nav.cat_system',
     items: [
       { href: '/developer/incident', labelKey: 'developer.nav.incident', icon: LuOctagonAlert },
+      { href: '/developer/maintenance', labelKey: 'developer.nav.maintenance', icon: LuWrench },
       { href: '/developer/broadcast', labelKey: 'developer.nav.broadcast', icon: LuMegaphone },
       { href: '/developer/api-test', labelKey: 'developer.nav.api_test', icon: LuFlaskConical },
       { href: '/developer/clear-data', labelKey: 'developer.nav.clear_data', icon: LuTrash2 },
