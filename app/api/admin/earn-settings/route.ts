@@ -1,8 +1,12 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { renderEarnNotification, type ChangeItem } from '@/lib/templates/EarnNotification.server';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
+import {
+  insertEarnSettingsMail,
+  type EarnSettingsChange,
+  type EarnSettingsGroups,
+} from '@/lib/earnSettingsMail';
 
 const getSupabase = () => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -300,48 +304,58 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'save_failed' }, { status: 500 });
     }
 
-    const changeGroups: Record<string, ChangeItem[]> = { general: [], tag: [], boost: [] };
+    const changeGroups: EarnSettingsGroups = { general: [], tag: [], boost: [] };
 
-    const checkToggle = (key: keyof ServerUpdate, label: string, group: 'general' | 'tag' | 'boost') => {
+    const checkToggle = (
+      key: keyof ServerUpdate,
+      settingKey: string,
+      group: 'general' | 'tag' | 'boost',
+    ) => {
       const oldV = Boolean(oldData?.[key as string]);
       const newV = Boolean(updateObj[key]);
       if (oldV !== newV) {
-        changeGroups[group].push({ type: 'toggle', text: label, enabled: newV });
+        const list = changeGroups[group] ?? (changeGroups[group] = []);
+        list.push({ type: 'toggle', key: settingKey, enabled: newV });
       }
     };
 
-    const checkValue = (key: keyof ServerUpdate, label: string, group: 'general' | 'tag' | 'boost') => {
+    const checkValue = (
+      key: keyof ServerUpdate,
+      settingKey: string,
+      group: 'general' | 'tag' | 'boost',
+    ) => {
       const oldV = Number(oldData?.[key as string] ?? 0);
       const newV = Number(updateObj[key] as number ?? 0);
       if (oldV !== newV) {
-        const dir: 'up' | 'down' = newV > oldV ? 'up' : 'down';
-        changeGroups[group].push({ type: 'narrative', text: label, dir });
-        changeGroups[group].push({ type: 'tech', text: `${label}: ${oldV.toFixed(2)} -> ${newV.toFixed(2)} Papel`, dir });
+        const list = changeGroups[group] ?? (changeGroups[group] = []);
+        const change: EarnSettingsChange = {
+          type: 'value',
+          key: settingKey,
+          from: Number(oldV.toFixed(2)),
+          to: Number(newV.toFixed(2)),
+          dir: newV > oldV ? 'up' : 'down',
+        };
+        list.push(change);
       }
     };
 
-    checkToggle('message_earn_enabled', 'Mesaj Kazancı', 'general');
-    checkToggle('voice_earn_enabled', 'Ses Kazancı', 'general');
-    checkToggle('tag_required', 'Tag Bonusu Sistemi', 'tag');
+    checkToggle('message_earn_enabled', 'message_earn', 'general');
+    checkToggle('voice_earn_enabled', 'voice_earn', 'general');
+    checkToggle('tag_required', 'tag_system', 'tag');
 
-    checkValue('earn_per_message', 'Mesaj Kazancı', 'general');
-    checkValue('earn_per_voice_minute', 'Ses Kazancı', 'general');
-    checkValue('tag_bonus_message', 'Tag Bonusu (Mesaj)', 'tag');
-    checkValue('tag_bonus_voice', 'Tag Bonusu (Ses)', 'tag');
-    checkValue('booster_bonus_message', 'Boost Bonusu (Mesaj)', 'boost');
-    checkValue('booster_bonus_voice', 'Boost Bonusu (Ses)', 'boost');
+    checkValue('earn_per_message', 'per_message', 'general');
+    checkValue('earn_per_voice_minute', 'per_voice', 'general');
+    checkValue('tag_bonus_message', 'tag_bonus_message', 'tag');
+    checkValue('tag_bonus_voice', 'tag_bonus_voice', 'tag');
+    checkValue('booster_bonus_message', 'boost_bonus_message', 'boost');
+    checkValue('booster_bonus_voice', 'boost_bonus_voice', 'boost');
 
-    if (Object.values(changeGroups).some((g) => g.length > 0)) {
-      const bodyHtml = renderEarnNotification(changeGroups, 'Bu güncelleme yönetici tarafından uygulandı.');
-
-      await supabase.from('system_mails').insert({
-        guild_id: guildId,
-        title: 'Ekonomi Güncellemesi',
-        body: bodyHtml,
+    if (Object.values(changeGroups).some((g) => (g?.length ?? 0) > 0)) {
+      await insertEarnSettingsMail(supabase, {
+        guildId,
+        groups: changeGroups,
         category: 'update',
-        status: 'published',
-        author_name: 'Sistem Yönetimi',
-        author_avatar_url: null,
+        authorName: 'DiscoWeb',
       });
     }
 
