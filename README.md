@@ -28,6 +28,7 @@ DiscoWeb'in web arayüzü bileşeni — **Next.js 16**, **TypeScript**, **Tailwi
 - 🔔 **Bildirim Merkezi** — Anlık push bildirimleri (PWA destekli)
 - 🛡️ **Admin Paneli** — Gelişmiş sunucu ve üye yönetimi
 - 🧑‍💻 **Developer Araçları** — Önbellek yönetimi, sistem istatistikleri, log görüntüleme
+- 🛑 **Acil Durdurma (Incident)** — Developer paneli üzerinden global STOP / RESUME ve adil geri alma (`/developer/incident`)
 - 🎯 **Quiz Etkinlikleri** — Canlı quiz, checkpoint ödülleri, otomatik payout ve mail bildirimleri
 - 🔧 **Bakım Modu** — Tek tıkla bakım modu açma/kapama
 
