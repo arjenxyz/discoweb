@@ -34,7 +34,6 @@ type Affected = {
 };
 
 export default function DeveloperIncidentPage() {
-  // Deploy: ensure /developer/incident is included in production build
   const [incident, setIncident] = useState<Incident | null>(null);
   const [defaultMessage, setDefaultMessage] = useState('');
   const [publicMessage, setPublicMessage] = useState('');

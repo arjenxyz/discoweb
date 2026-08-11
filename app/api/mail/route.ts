@@ -74,6 +74,24 @@ type Database = {
         };
         Relationships: [];
       };
+      member_profiles: {
+        Row: {
+          guild_id: string;
+          user_id: string;
+          created_at: string;
+        };
+        Insert: {
+          guild_id: string;
+          user_id: string;
+          created_at?: string;
+        };
+        Update: {
+          guild_id?: string;
+          user_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
