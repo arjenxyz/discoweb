@@ -162,17 +162,17 @@ export async function PUT(request: Request) {
 
   // Try full update; peel optional columns if schema is behind
   let remaining: Record<string, unknown> = { ...updateObj };
-  let lastError: { message?: string } | null = null;
+  let lastErrorMessage: string | null = null;
   for (let attempt = 0; attempt < 6; attempt++) {
-    const { error } = await supabase.from('servers').update(remaining).eq('discord_id', guildId);
-    if (!error) {
-      lastError = null;
+    const updateResult = await supabase.from('servers').update(remaining).eq('discord_id', guildId);
+    const updateError = updateResult.error;
+    if (!updateError) {
+      lastErrorMessage = null;
       break;
     }
-    lastError = error;
-    const msg = String(error.message || '');
-    const missingCol = msg.match(/Could not find the '([^']+)' column/i)?.[1]
-      || msg.match(/column ["']?([a-z_]+)["']? of relation/i)?.[1];
+    lastErrorMessage = String(updateError.message || 'unknown_error');
+    const missingCol = lastErrorMessage.match(/Could not find the '([^']+)' column/i)?.[1]
+      || lastErrorMessage.match(/column ["']?([a-z_]+)["']? of relation/i)?.[1];
     if (missingCol && missingCol in remaining) {
       console.warn(`earn-settings: column missing (${missingCol}), retrying without it`);
       const { [missingCol]: _dropped, ...rest } = remaining;
@@ -181,8 +181,8 @@ export async function PUT(request: Request) {
     }
     break;
   }
-  if (lastError) {
-    console.error('earn-settings save failed:', lastError);
+  if (lastErrorMessage) {
+    console.error('earn-settings save failed:', lastErrorMessage);
     return NextResponse.json({ error: 'save_failed' }, { status: 500 });
   }
 
