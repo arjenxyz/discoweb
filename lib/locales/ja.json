@@ -380,7 +380,8 @@
       "switch_server_hint": "管理できるサーバーから選んでください。",
       "switch_server_current": "このサーバーにいます",
       "mobile_welcome": "管理パネルからサーバー、ストア、経済を管理します。",
-      "logout": "ログアウト"
+      "logout": "ログアウト",
+      "welcome": "ようこそ"
     },
     "settings": {
       "eyebrow": "管理",

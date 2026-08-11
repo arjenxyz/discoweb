@@ -380,7 +380,8 @@
       "switch_server_hint": "Wähle aus den Servern, die du verwalten kannst.",
       "switch_server_current": "Du bist auf diesem Server",
       "mobile_welcome": "Verwalte Server, Shop und Wirtschaft über das Admin-Panel.",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "welcome": "Willkommen"
     },
     "settings": {
       "eyebrow": "Verwaltung",

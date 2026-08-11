@@ -380,7 +380,8 @@
       "switch_server_hint": "Válassz a kezelhető szervereid közül.",
       "switch_server_current": "Ezen a szerveren vagy",
       "mobile_welcome": "Kezeld a szervert, az áruházat és a gazdaságot az admin panelről.",
-      "logout": "Kijelentkezés"
+      "logout": "Kijelentkezés",
+      "welcome": "Üdvözöljük"
     },
     "settings": {
       "eyebrow": "Kezelés",

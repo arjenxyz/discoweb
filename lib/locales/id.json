@@ -380,7 +380,8 @@
       "switch_server_hint": "Pilih dari server yang dapat Anda kelola.",
       "switch_server_current": "Anda berada di server ini",
       "mobile_welcome": "Kelola server, toko, dan ekonomi dari panel admin.",
-      "logout": "Keluar"
+      "logout": "Keluar",
+      "welcome": "Selamat datang"
     },
     "settings": {
       "eyebrow": "Manajemen",

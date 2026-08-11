@@ -380,7 +380,8 @@
       "switch_server_hint": "관리할 수 있는 서버 중에서 선택하세요.",
       "switch_server_current": "이 서버에 있습니다",
       "mobile_welcome": "관리자 패널에서 서버, 스토어, 경제를 관리하세요.",
-      "logout": "로그아웃"
+      "logout": "로그아웃",
+      "welcome": "환영합니다"
     },
     "settings": {
       "eyebrow": "관리",

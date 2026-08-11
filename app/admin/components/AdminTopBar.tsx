@@ -143,25 +143,9 @@ export default function AdminTopBar({
                       <p className="truncate text-base font-bold text-white">
                         {profile?.username ?? t('admin.shell.admin_fallback')}
                       </p>
-                      <div className="mt-1 flex min-w-0 items-center gap-2">
-                        {profile?.guildIcon ? (
-                          <Image
-                            src={profile.guildIcon}
-                            alt=""
-                            width={16}
-                            height={16}
-                            unoptimized
-                            className="h-4 w-4 shrink-0 rounded-md object-cover"
-                          />
-                        ) : (
-                          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-md bg-[#5865F2]/25 text-[9px] font-bold text-[#a5b4ff]">
-                            {(profile?.guildName ?? 'S').charAt(0)}
-                          </span>
-                        )}
-                        <p className="truncate text-[11px] text-white/50">
-                          {profile?.guildName ?? t('admin.shell.default_server')}
-                        </p>
-                      </div>
+                      <p className="mt-1 text-[11px] text-white/50">
+                        {t('admin.shell.welcome')}
+                      </p>
                     </div>
                   </div>
                 </div>

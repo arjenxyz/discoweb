@@ -380,7 +380,8 @@
       "switch_server_hint": "Elige entre los servidores que puedes gestionar.",
       "switch_server_current": "Estás en este servidor",
       "mobile_welcome": "Gestiona el servidor, la tienda y la economía desde el panel admin.",
-      "logout": "Cerrar sesión"
+      "logout": "Cerrar sesión",
+      "welcome": "Bienvenido"
     },
     "settings": {
       "eyebrow": "Gestión",

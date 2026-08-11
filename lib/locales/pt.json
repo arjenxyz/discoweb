@@ -380,7 +380,8 @@
       "switch_server_hint": "Escolha entre os servidores que você pode gerenciar.",
       "switch_server_current": "Você está neste servidor",
       "mobile_welcome": "Gerencie servidor, loja e economia pelo painel admin.",
-      "logout": "Sair"
+      "logout": "Sair",
+      "welcome": "Bem-vindo"
     },
     "settings": {
       "eyebrow": "Gestão",

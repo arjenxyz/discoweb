@@ -338,7 +338,8 @@
       "switch_server_hint": "Yönetebildiğin sunucular arasından seç.",
       "switch_server_current": "Şu an bu sunucudasın",
       "mobile_welcome": "Yönetim panelinde sunucunu yönet, mağazayı ve ekonomiyi ayarla.",
-      "logout": "Çıkış Yap"
+      "logout": "Çıkış Yap",
+      "welcome": "Hoş geldin"
     },
     "settings": {
       "eyebrow": "Yönetim",
