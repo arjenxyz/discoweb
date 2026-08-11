@@ -161,27 +161,59 @@ export async function PUT(request: Request) {
   const { data: oldData } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
 
   // Try full update; peel optional columns if schema is behind
-  let remaining: Record<string, unknown> = { ...updateObj };
+  const updateAttempts: Array<Record<string, unknown>> = [
+    { ...updateObj },
+    (() => {
+      const { spam_voice_block_alone: _a, spam_voice_block_mute_deaf: _b, ...rest } = updateObj;
+      return rest;
+    })(),
+    (() => {
+      const {
+        spam_voice_block_alone: _a,
+        spam_voice_block_mute_deaf: _b,
+        spam_message_cooldown_ms: _c,
+        spam_min_message_length: _d,
+        spam_flood_count: _e,
+        spam_flood_window_ms: _f,
+        ...rest
+      } = updateObj;
+      return rest;
+    })(),
+    (() => {
+      const {
+        spam_voice_block_alone: _a,
+        spam_voice_block_mute_deaf: _b,
+        spam_message_cooldown_ms: _c,
+        spam_min_message_length: _d,
+        spam_flood_count: _e,
+        spam_flood_window_ms: _f,
+        earn_channels: _g,
+        ...rest
+      } = updateObj;
+      return rest;
+    })(),
+  ];
+
+  let saved = false;
   let lastErrorMessage: string | null = null;
-  for (let attempt = 0; attempt < 6; attempt++) {
-    const updateResult = await supabase.from('servers').update(remaining).eq('discord_id', guildId);
-    const updateError = updateResult.error;
+  for (const payload of updateAttempts) {
+    // Cast keeps Supabase generic inference from looping on Record<string, unknown>
+    const { error: updateError } = await supabase
+      .from('servers')
+      .update(payload as ServerUpdate)
+      .eq('discord_id', guildId);
+
     if (!updateError) {
+      saved = true;
       lastErrorMessage = null;
       break;
     }
+
     lastErrorMessage = String(updateError.message || 'unknown_error');
-    const missingCol = lastErrorMessage.match(/Could not find the '([^']+)' column/i)?.[1]
-      || lastErrorMessage.match(/column ["']?([a-z_]+)["']? of relation/i)?.[1];
-    if (missingCol && missingCol in remaining) {
-      console.warn(`earn-settings: column missing (${missingCol}), retrying without it`);
-      const { [missingCol]: _dropped, ...rest } = remaining;
-      remaining = rest;
-      continue;
-    }
-    break;
+    console.warn('earn-settings: update attempt failed, retrying with fewer columns:', lastErrorMessage);
   }
-  if (lastErrorMessage) {
+
+  if (!saved) {
     console.error('earn-settings save failed:', lastErrorMessage);
     return NextResponse.json({ error: 'save_failed' }, { status: 500 });
   }
