@@ -110,7 +110,12 @@ export default function DeveloperIncidentPage() {
       setNote(action === 'stop' ? 'Incident aktif — kullanıcılar full-screen görüyor.' : 'Sistem yeniden açıldı.');
       await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const raw = e instanceof Error ? e.message : String(e);
+      setError(
+        /missing_system_incident_table|schema cache|could not find the table/i.test(raw)
+          ? 'system_incident tablosu yok. Supabase SQL Editor’da supabase/migrations/20260811180001_system_incident.sql dosyasını çalıştırın, sonra Schema Cache yenileyin.'
+          : raw,
+      );
     } finally {
       setBusy(false);
     }

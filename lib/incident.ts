@@ -112,7 +112,16 @@ export async function getActiveIncident(opts?: {
     .maybeSingle();
 
   if (error) {
-    console.error('[incident] getActiveIncident', error.message);
+    const msg = error.message || '';
+    const missingTable =
+      /schema cache/i.test(msg) ||
+      /could not find the table/i.test(msg) ||
+      /relation .* does not exist/i.test(msg);
+    if (!missingTable) {
+      console.error('[incident] getActiveIncident', msg);
+    } else if (process.env.NODE_ENV !== 'production') {
+      console.warn('[incident] system_incident table missing — run supabase migration 20260811180001_system_incident.sql');
+    }
     cachedActive = { at: Date.now(), value: null };
     return null;
   }
@@ -298,7 +307,15 @@ export async function startIncident(params: {
     .select('*')
     .single();
 
-  if (insErr || !incidentRow) throw new Error(insErr?.message || 'insert_failed');
+  if (insErr || !incidentRow) {
+    const msg = insErr?.message || 'insert_failed';
+    if (/schema cache|could not find the table|does not exist/i.test(msg)) {
+      throw new Error(
+        'missing_system_incident_table: Supabase SQL Editor’da supabase/migrations/20260811180001_system_incident.sql dosyasını çalıştırın.',
+      );
+    }
+    throw new Error(msg);
+  }
 
   const incident = mapIncident(incidentRow);
   await logAction(supabase, incident.id, 'stop', params.actorId, {
