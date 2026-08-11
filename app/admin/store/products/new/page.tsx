@@ -439,7 +439,6 @@ function AdminStoreProductCreatePageContent() {
                 </Link>
               )}
             </div>
-          </div>
         </div>
       </div>
     </div>
