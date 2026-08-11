@@ -51,7 +51,7 @@ export async function GET() {
 
   const { data: server } = await supabase
     .from('servers')
-    .select('id,transfer_daily_limit,transfer_tax_rate')
+    .select('id,transfer_daily_limit,transfer_tax_rate,transfer_count_limit,transfer_count_period')
     .eq('discord_id', selectedGuildId)
     .eq('is_setup', true)
     .maybeSingle();
@@ -81,6 +81,8 @@ export async function GET() {
     balance: wallet?.balance ?? 0,
     dailyLimit: server.transfer_daily_limit,
     taxRate: server.transfer_tax_rate,
+    transferCountLimit: server.transfer_count_limit ?? null,
+    transferCountPeriod: server.transfer_count_period ?? null,
     sentToday: totalSent,
   });
 }

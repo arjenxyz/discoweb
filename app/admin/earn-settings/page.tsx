@@ -19,6 +19,7 @@ import {
   LuFolder,
   LuX,
   LuShield,
+  LuArrowRightLeft,
 } from 'react-icons/lu';
 
 type DiscordChannel = {
@@ -60,6 +61,10 @@ type EarnSettings = {
   spam_voice_block_mute_deaf: boolean;
   daily_message_earn_cap: number;
   daily_voice_earn_cap: number;
+  transfer_tax_rate: number;
+  transfer_daily_limit: number;
+  transfer_count_limit: number | null;
+  transfer_count_period: 'day' | 'week' | 'month' | null;
   _boosterBonusEnabled?: boolean;
   _guildPreview?: {
     name: string;
@@ -68,6 +73,19 @@ type EarnSettings = {
   _channels?: DiscordChannel[];
   _roles?: Array<{ id: string; name: string; color: number }>;
 };
+
+type TransferCountPeriod = 'day' | 'week' | 'month';
+
+function deriveTransferCounts(count: number, period: TransferCountPeriod) {
+  const n = Math.max(0, Math.round(count));
+  if (period === 'day') {
+    return { daily: n, weekly: n * 7, monthly: n * 30 };
+  }
+  if (period === 'week') {
+    return { daily: Math.floor(n / 7), weekly: n, monthly: Math.round((n * 30) / 7) };
+  }
+  return { daily: Math.floor(n / 30), weekly: Math.round((n * 7) / 30), monthly: n };
+}
 
 export default function EarnSettingsPage() {
   const { t } = useTranslation();
@@ -78,6 +96,7 @@ export default function EarnSettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [initialSettings, setInitialSettings] = useState<EarnSettings | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [countPreviewOpen, setCountPreviewOpen] = useState(false);
   
   // Rol Adı State'i
   const [roleName, setRoleName] = useState<string | null>(null);
@@ -88,8 +107,23 @@ export default function EarnSettingsPage() {
         const res = await fetch('/api/admin/earn-settings', { cache: 'no-store' });
         if (!res.ok) throw new Error(t('admin.earn.data_error'));
         const data = await res.json();
-        setSettings(data);
-        setInitialSettings(data);
+        const normalized = {
+          ...data,
+          transfer_tax_rate: Number(data.transfer_tax_rate ?? 0) || 0,
+          transfer_daily_limit: Number(data.transfer_daily_limit ?? 200) || 0,
+          transfer_count_limit:
+            data.transfer_count_limit === null || data.transfer_count_limit === undefined
+              ? null
+              : Number(data.transfer_count_limit) || null,
+          transfer_count_period:
+            data.transfer_count_period === 'day' ||
+            data.transfer_count_period === 'week' ||
+            data.transfer_count_period === 'month'
+              ? data.transfer_count_period
+              : null,
+        } as EarnSettings;
+        setSettings(normalized);
+        setInitialSettings(normalized);
       } catch {
         setError(t('admin.earn.load_error'));
       } finally {
@@ -126,7 +160,7 @@ export default function EarnSettingsPage() {
     setRoleName(match?.name ?? null);
   }, [settings?.verify_role_id, settings?._roles]);
 
-  const handleSave = async () => {
+  const persistSettings = async () => {
     if (!settings) return;
     setSaving(true);
     setMessage(null);
@@ -143,17 +177,28 @@ export default function EarnSettingsPage() {
         }),
       });
       if (!res.ok) throw new Error(t('admin.earn.save_error'));
-      
+
       const next = { ...settings, message_earn_enabled: true, voice_earn_enabled: true };
       setMessage(t('admin.earn.save_success'));
       setSettings(next);
       setInitialSettings(next);
       setHasChanges(false);
+      setCountPreviewOpen(false);
     } catch {
       setError(t('admin.earn.save_error'));
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSave = async () => {
+    if (!settings) return;
+    const limit = Number(settings.transfer_count_limit ?? 0);
+    if (limit > 0) {
+      setCountPreviewOpen(true);
+      return;
+    }
+    await persistSettings();
   };
 
   const updateNumber = (key: keyof EarnSettings, value: number) => {
@@ -652,7 +697,143 @@ export default function EarnSettingsPage() {
           onUpdate={(earnChannels) => setSettings({ ...settings, earn_channels: earnChannels })}
           t={t}
         />
+
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:col-span-2">
+          <div className="mb-4 flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">
+              <LuArrowRightLeft size={16} />
+            </span>
+            <div>
+              <h2 className="text-[15px] font-semibold text-white">{t('admin.earn.transfer_title')}</h2>
+              <p className="text-xs text-white/40">{t('admin.earn.transfer_desc')}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div>
+              <label className={labelClass}>{t('admin.earn.transfer_tax_label')}</label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step="0.1"
+                  value={Number((((settings.transfer_tax_rate ?? 0) * 100)).toFixed(2))}
+                  onChange={(e) => {
+                    const pct = Number(e.target.value);
+                    if (Number.isNaN(pct) || pct < 0) return;
+                    setSettings({ ...settings, transfer_tax_rate: Math.min(100, pct) / 100 });
+                  }}
+                  className={`${fieldClass} pr-8`}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-white/40">
+                  %
+                </span>
+              </div>
+              <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.transfer_tax_hint')}</p>
+            </div>
+
+            <div>
+              <label className={labelClass}>{t('admin.earn.transfer_amount_limit_label')}</label>
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-amber-400">
+                  P
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step="1"
+                  value={settings.transfer_daily_limit ?? 0}
+                  onChange={(e) => updateNumber('transfer_daily_limit', Number(e.target.value))}
+                  className={`${fieldClass} pl-8`}
+                />
+              </div>
+              <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.transfer_amount_limit_hint')}</p>
+            </div>
+
+            <div>
+              <label className={labelClass}>{t('admin.earn.transfer_count_label')}</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  min={0}
+                  step="1"
+                  value={settings.transfer_count_limit ?? 0}
+                  onChange={(e) => {
+                    const n = Math.round(Number(e.target.value));
+                    if (Number.isNaN(n) || n < 0) return;
+                    setSettings({
+                      ...settings,
+                      transfer_count_limit: n <= 0 ? null : n,
+                      transfer_count_period:
+                        n <= 0 ? null : (settings.transfer_count_period ?? 'day'),
+                    });
+                  }}
+                  className={`${fieldClass} flex-1`}
+                />
+                <select
+                  value={settings.transfer_count_period ?? 'day'}
+                  disabled={!settings.transfer_count_limit}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      transfer_count_period: e.target.value as TransferCountPeriod,
+                    })
+                  }
+                  className={`${fieldClass} w-[7.5rem] disabled:opacity-40`}
+                >
+                  <option value="day">{t('admin.earn.transfer_period_day')}</option>
+                  <option value="week">{t('admin.earn.transfer_period_week')}</option>
+                  <option value="month">{t('admin.earn.transfer_period_month')}</option>
+                </select>
+              </div>
+              <p className="mt-1 text-[10px] text-white/30">{t('admin.earn.transfer_count_hint')}</p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {countPreviewOpen && settings && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#12141a] p-5 shadow-2xl">
+            <h3 className="text-lg font-semibold text-white">{t('admin.earn.transfer_preview_title')}</h3>
+            <p className="mt-1 text-xs text-white/45">{t('admin.earn.transfer_preview_subtitle')}</p>
+            {(() => {
+              const limit = Number(settings.transfer_count_limit ?? 0);
+              if (limit <= 0) {
+                return <p className="mt-4 text-sm text-white/60">{t('admin.earn.transfer_preview_off')}</p>;
+              }
+              const period = (settings.transfer_count_period ?? 'day') as TransferCountPeriod;
+              const derived = deriveTransferCounts(limit, period);
+              return (
+                <div className="mt-4 space-y-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/80">
+                  <p>{t('admin.earn.transfer_preview_daily', { count: derived.daily })}</p>
+                  <p>{t('admin.earn.transfer_preview_weekly', { count: derived.weekly })}</p>
+                  <p>{t('admin.earn.transfer_preview_monthly', { count: derived.monthly })}</p>
+                </div>
+              );
+            })()}
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setCountPreviewOpen(false)}
+                className="rounded-xl border border-white/10 px-3.5 py-2 text-xs text-white/70 transition hover:border-white/25 hover:text-white"
+              >
+                {t('admin.earn.transfer_preview_cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={() => void persistSettings()}
+                disabled={saving}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-50"
+              >
+                {saving ? <LuLoader className="h-3.5 w-3.5 animate-spin" /> : <LuCheck size={14} />}
+                {t('admin.earn.transfer_preview_confirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

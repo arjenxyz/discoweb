@@ -44,6 +44,28 @@ const clampCap = (value: unknown) => {
   return Math.min(1_000_000, Number(n.toFixed(2)));
 };
 
+const clampTaxRate = (value: unknown) => {
+  // Accept either fraction (0.05) or percent (5) from older clients
+  let n = Number(value ?? 0);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  if (n > 1) n = n / 100;
+  return Math.min(1, Number(n.toFixed(4)));
+};
+
+const clampCountLimit = (value: unknown) => {
+  if (value === null || value === undefined || value === '') return null;
+  const n = Math.round(Number(value));
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.min(10_000, n);
+};
+
+const normalizeCountPeriod = (value: unknown, limit: number | null): 'day' | 'week' | 'month' | null => {
+  if (!limit) return null;
+  const p = String(value ?? 'day');
+  if (p === 'day' || p === 'week' || p === 'month') return p;
+  return 'day';
+};
+
 async function invalidateBotConfig(guildId: string) {
   const botApiUrl = process.env.BOT_API_URL;
   if (!botApiUrl) return;
@@ -135,6 +157,18 @@ export async function GET() {
     spam_voice_block_mute_deaf: asBool(data?.spam_voice_block_mute_deaf, SPAM_DEFAULTS.spam_voice_block_mute_deaf),
     daily_message_earn_cap: Number(data?.daily_message_earn_cap ?? SPAM_DEFAULTS.daily_message_earn_cap) || 0,
     daily_voice_earn_cap: Number(data?.daily_voice_earn_cap ?? SPAM_DEFAULTS.daily_voice_earn_cap) || 0,
+    transfer_tax_rate: Number(data?.transfer_tax_rate ?? 0) || 0,
+    transfer_daily_limit: Number(data?.transfer_daily_limit ?? 200) || 0,
+    transfer_count_limit:
+      data?.transfer_count_limit === null || data?.transfer_count_limit === undefined
+        ? null
+        : Number(data.transfer_count_limit) || null,
+    transfer_count_period:
+      data?.transfer_count_period === 'day' ||
+      data?.transfer_count_period === 'week' ||
+      data?.transfer_count_period === 'month'
+        ? data.transfer_count_period
+        : null,
     verify_role_id: data?.verify_role_id ?? null,
     tag_configured: Boolean(data?.tag_id ?? false),
     _guildPreview: guildPreview,
@@ -180,6 +214,10 @@ export async function PUT(request: Request) {
       spam_voice_block_mute_deaf: boolean;
       daily_message_earn_cap: number;
       daily_voice_earn_cap: number;
+      transfer_tax_rate: number;
+      transfer_daily_limit: number;
+      transfer_count_limit: number | null;
+      transfer_count_period: 'day' | 'week' | 'month' | null;
     };
 
     const { data: oldData } = await supabase.from('servers').select('*').eq('discord_id', guildId).maybeSingle();
@@ -191,6 +229,9 @@ export async function PUT(request: Request) {
       (incomingVerifyRole && String(incomingVerifyRole)) ||
       oldData?.verify_role_id ||
       null;
+
+    const countLimit = clampCountLimit(payload.transfer_count_limit);
+    const countPeriod = normalizeCountPeriod(payload.transfer_count_period, countLimit);
 
     const updateObj: ServerUpdate = {
       earn_per_message: Number(payload.earn_per_message ?? 0),
@@ -216,6 +257,10 @@ export async function PUT(request: Request) {
       spam_voice_block_mute_deaf: asBool(payload.spam_voice_block_mute_deaf, true),
       daily_message_earn_cap: clampCap(payload.daily_message_earn_cap),
       daily_voice_earn_cap: clampCap(payload.daily_voice_earn_cap),
+      transfer_tax_rate: clampTaxRate(payload.transfer_tax_rate),
+      transfer_daily_limit: clampCap(payload.transfer_daily_limit ?? 200),
+      transfer_count_limit: countLimit,
+      transfer_count_period: countPeriod,
     };
 
     const remaining: Record<string, unknown> = { ...updateObj };
