@@ -36,6 +36,7 @@ import {
   LuCpu,
   LuTrophy,
   LuBrain,
+  LuMonitorPlay,
 } from 'react-icons/lu';
 import PanelSwitcher from '@/components/PanelSwitcher';
 import type { PanelType } from '@/components/PanelSwitcher';
@@ -76,6 +77,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: '/developer/economy-apps', labelKey: 'developer.nav.economy_apps', icon: LuClipboardList },
       { href: '/developer/ads', labelKey: 'developer.nav.ads', icon: LuMegaphone },
+      { href: '/developer/watch-earn', labelKey: 'developer.nav.watch_earn', icon: LuMonitorPlay },
       { href: '/developer/weekly-tasks', labelKey: 'developer.nav.weekly_tasks', icon: LuListChecks },
       { href: '/developer/announcements', labelKey: 'developer.nav.announcements', icon: LuMessageSquare },
       { href: '/developer/quiz/events', labelKey: 'developer.nav.quiz_events', icon: LuTrophy },
