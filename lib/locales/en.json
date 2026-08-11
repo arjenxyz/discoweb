@@ -1324,7 +1324,7 @@
       "bans": "Bans",
       "logs": "System Logs",
       "broadcast": "Broadcast",
-      "incident": "Incident Control",
+      "incident": "Emergency Stop",
       "maintenance": "Maintenance Modes",
       "api_test": "API Test",
       "clear_data": "Clear Data",

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   LuUsers, LuDatabase, LuSearch, LuWrench, LuShoppingBag, LuBell,
   LuTriangleAlert, LuMail, LuRefreshCw, LuArrowRight, LuActivity,
-  LuZap, LuShield, LuGlobe,
+  LuZap, LuShield, LuGlobe, LuOctagonAlert,
 } from 'react-icons/lu';
 
 const VIDEO_URL = process.env.NEXT_PUBLIC_WELCOME_VIDEO_URL ?? '';
@@ -69,6 +69,7 @@ export default function DeveloperPage() {
   ];
 
   const quickActions = [
+    { label: t('developer.nav.incident'), desc: 'Global STOP / RESUME ve adil geri alma', href: '/developer/incident', icon: LuOctagonAlert, color: 'bg-rose-500/15 text-rose-300 ring-rose-400/20' },
     { label: t('developer.user_lookup.title'), desc: t('developer.home.qa_lookup_desc'), href: '/developer/user-lookup', icon: LuSearch, color: 'bg-indigo-500/15 text-indigo-300 ring-indigo-400/20' },
     { label: t('developer.servers.title'), desc: t('developer.home.qa_servers_desc'), href: '/developer/all-servers', icon: LuGlobe, color: 'bg-sky-500/15 text-sky-300 ring-sky-400/20' },
     { label: t('developer.home.qa_maintenance'), desc: t('developer.home.qa_maintenance_desc'), href: '/developer/maintenance', icon: LuWrench, color: 'bg-amber-500/15 text-amber-300 ring-amber-400/20' },

@@ -298,6 +298,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
               const Icon = item.icon;
               const active = isActive(item.href);
               const label = t(item.labelKey);
+              const isIncident = item.href === '/developer/incident';
               return (
                 <Link
                   key={item.href}
@@ -306,14 +307,24 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
                   onClick={onNavClick}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group relative ${
                     active
-                      ? 'border-l-2 border-[#5865F2] bg-[#5865F2]/10 text-white pl-[10px]'
-                      : 'text-white/40 hover:text-white/80 hover:bg-white/5 border-l-2 border-transparent'
+                      ? isIncident
+                        ? 'border-l-2 border-rose-500 bg-rose-500/15 text-white pl-[10px]'
+                        : 'border-l-2 border-[#5865F2] bg-[#5865F2]/10 text-white pl-[10px]'
+                      : isIncident
+                        ? 'text-rose-300/80 hover:text-rose-200 hover:bg-rose-500/10 border-l-2 border-transparent'
+                        : 'text-white/40 hover:text-white/80 hover:bg-white/5 border-l-2 border-transparent'
                   } ${collapsed ? 'justify-center' : ''}`}
                 >
-                  <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${active ? 'text-[#5865F2]' : 'text-white/50 group-hover:text-white/70'}`} />
+                  <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${
+                    active
+                      ? isIncident ? 'text-rose-400' : 'text-[#5865F2]'
+                      : isIncident ? 'text-rose-400/80 group-hover:text-rose-300' : 'text-white/50 group-hover:text-white/70'
+                  }`} />
                   {!collapsed && <span className="truncate">{label}</span>}
                   {active && !collapsed && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#5865F2] shadow-[0_0_6px_rgba(88,101,242,0.8)]" />
+                    <span className={`ml-auto w-1.5 h-1.5 rounded-full ${
+                      isIncident ? 'bg-rose-400 shadow-[0_0_6px_rgba(244,63,94,0.8)]' : 'bg-[#5865F2] shadow-[0_0_6px_rgba(88,101,242,0.8)]'
+                    }`} />
                   )}
                 </Link>
               );
