@@ -837,7 +837,7 @@
     "maintenance_page": {
       "eyebrow": "Admin",
       "title": "Maintenance Management",
-      "subtitle": "This panel is only for people with admin + maintenance permission. You can put critical modules into maintenance.",
+      "subtitle": "This panel is only for people with admin + maintenance permission. Modules are toggled platform-wide (global), not per server.",
       "loading": "Loading maintenance settings...",
       "load_error": "Could not load maintenance settings.",
       "load_error_detail": "Could not load maintenance settings. {detail}",
@@ -870,15 +870,15 @@
       "label_transfers": "Send Papel",
       "label_bot": "Discord Bot",
       "label_activity": "Activity",
-      "desc_site": "Puts the entire panel into maintenance mode.",
-      "desc_store": "Store pages and purchase flows.",
-      "desc_transactions": "Transaction and history screens.",
-      "desc_tracking": "Store tracking and role durations.",
-      "desc_promotions": "Promo code usage.",
-      "desc_discounts": "Discount code usage.",
-      "desc_transfers": "Papel transfer operations.",
-      "desc_bot": "Changes the Discord bot status.",
-      "desc_activity": "Controls the Activity API and data update flow."
+      "desc_site": "Puts the entire web + Activity panel into global maintenance (all servers).",
+      "desc_store": "Store pages and purchase flows (global).",
+      "desc_transactions": "Order history / transaction screens (global).",
+      "desc_tracking": "Store tracking and role duration views (global).",
+      "desc_promotions": "Promo code usage (global).",
+      "desc_discounts": "Discount code validation and apply (global).",
+      "desc_transfers": "Papel transfer operations (global).",
+      "desc_bot": "Discord bot should poll /api/activity/maintenance or /api/maintenance; earn/commands pause when on.",
+      "desc_activity": "Discord Activity entry and Activity API (global)."
     },
     "remove_setup": {
       "button": "🗑️ Remove Setup",
@@ -1430,7 +1430,7 @@
     },
     "maintenance": {
       "title": "Maintenance Management",
-      "subtitle": "Manage maintenance status for system modules."
+      "subtitle": "Manage platform-wide (all servers) maintenance modules. Not per-guild."
     },
     "cache": {
       "title": "Cache Management",

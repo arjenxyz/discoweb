@@ -22,7 +22,7 @@ const getSelectedGuildId = async (): Promise<string> => {
 };
 
 export async function GET() {
-  const maintenance = await checkMaintenance(['site', 'transactions']);
+  const maintenance = await checkMaintenance(['site', 'transactions', 'tracking']);
   if (maintenance.blocked) {
     return NextResponse.json(
       { error: 'maintenance', key: maintenance.key, reason: maintenance.reason },

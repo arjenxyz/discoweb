@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
 import { resolveServer } from '@/lib/serverResolve';
+import { checkMaintenance } from '@/lib/maintenance';
 
 const getSupabase = (): SupabaseClient | null => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -11,6 +12,14 @@ const getSupabase = (): SupabaseClient | null => {
 };
 
 export async function GET() {
+  const maintenance = await checkMaintenance(['site', 'discounts', 'store']);
+  if (maintenance.blocked) {
+    return NextResponse.json(
+      { error: 'maintenance', key: maintenance.key, reason: maintenance.reason },
+      { status: 503 },
+    );
+  }
+
   const supabase = getSupabase();
   if (!supabase) return NextResponse.json({ error: 'missing_service_role' }, { status: 500 });
 

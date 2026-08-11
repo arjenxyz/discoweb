@@ -184,11 +184,12 @@ export default function MaintenancePanel() {
               </p>
               <p className="mt-2 text-2xl font-semibold text-white">{flags.length}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
-                {t('admin.maintenance_page.last_update')}
+            <div className="rounded-2xl border border-[#5865F2]/25 bg-[#5865F2]/10 p-4">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-[#a5b4ff]/80">
+                Scope
               </p>
-              <p className="mt-2 text-sm text-white/80">
+              <p className="mt-2 text-sm font-semibold text-white">Global (tüm sunucular)</p>
+              <p className="mt-1 text-[11px] text-white/45">
                 {lastUpdated
                   ? dateFormatter.format(new Date(lastUpdated))
                   : t('admin.maintenance_page.unknown')}

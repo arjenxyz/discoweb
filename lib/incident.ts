@@ -202,7 +202,13 @@ type ServerSnapshot = {
   server_id: string;
   message_earn_enabled: boolean | null;
   voice_earn_enabled: boolean | null;
-  maintenance: Record<string, { is_active: boolean; reason: string | null }>;
+};
+
+type IncidentPreState = {
+  servers?: ServerSnapshot[];
+  /** Global maintenance snapshot (preferred). */
+  globalMaintenance?: Record<string, { is_active: boolean; reason: string | null }>;
+  /** @deprecated legacy per-server maintenance inside servers[].maintenance */
 };
 
 export async function startIncident(params: {
@@ -232,22 +238,11 @@ export async function startIncident(params: {
 
   const snapshots: ServerSnapshot[] = [];
   for (const server of servers ?? []) {
-    const { data: flags } = await supabase
-      .from('maintenance_flags')
-      .select('key,is_active,reason')
-      .eq('server_id', server.id);
-
-    const maintenance: ServerSnapshot['maintenance'] = {};
-    for (const f of flags ?? []) {
-      maintenance[f.key] = { is_active: Boolean(f.is_active), reason: f.reason ?? null };
-    }
-
     snapshots.push({
       discord_id: server.discord_id,
       server_id: server.id,
       message_earn_enabled: server.message_earn_enabled ?? null,
       voice_earn_enabled: server.voice_earn_enabled ?? null,
-      maintenance,
     });
 
     await supabase
@@ -258,36 +253,28 @@ export async function startIncident(params: {
         updated_at: now,
       })
       .eq('id', server.id);
+  }
 
-    for (const key of MAINTENANCE_STOP_KEYS) {
-      const { data: existingFlag } = await supabase
-        .from('maintenance_flags')
-        .select('id')
-        .eq('server_id', server.id)
-        .eq('key', key)
-        .maybeSingle();
+  const { data: globalRows } = await supabase
+    .from('global_maintenance_flags')
+    .select('key,is_active,reason');
 
-      if (existingFlag?.id) {
-        await supabase
-          .from('maintenance_flags')
-          .update({
-            is_active: true,
-            reason: publicMessage,
-            updated_by: params.actorId,
-            updated_at: now,
-          })
-          .eq('id', existingFlag.id);
-      } else {
-        await supabase.from('maintenance_flags').insert({
-          server_id: server.id,
-          key,
-          is_active: true,
-          reason: publicMessage,
-          updated_by: params.actorId,
-          updated_at: now,
-        });
-      }
-    }
+  const globalMaintenance: Record<string, { is_active: boolean; reason: string | null }> = {};
+  for (const f of globalRows ?? []) {
+    globalMaintenance[f.key] = { is_active: Boolean(f.is_active), reason: f.reason ?? null };
+  }
+
+  for (const key of MAINTENANCE_STOP_KEYS) {
+    await supabase.from('global_maintenance_flags').upsert(
+      {
+        key,
+        is_active: true,
+        reason: publicMessage,
+        updated_by: params.actorId,
+        updated_at: now,
+      },
+      { onConflict: 'key' },
+    );
   }
 
   const { data: incidentRow, error: insErr } = await supabase
@@ -299,7 +286,7 @@ export async function startIncident(params: {
       scopes,
       window_start: windowStart,
       window_end: now,
-      pre_state: { servers: snapshots },
+      pre_state: { servers: snapshots, globalMaintenance },
       started_by: params.actorId,
       started_at: now,
       updated_at: now,
@@ -341,7 +328,7 @@ export async function resumeIncident(params: {
   if (!active) throw new Error('no_active_incident');
 
   const now = new Date().toISOString();
-  const pre = active.pre_state as { servers?: ServerSnapshot[] };
+  const pre = active.pre_state as IncidentPreState;
   const snapshots = Array.isArray(pre.servers) ? pre.servers : [];
 
   for (const snap of snapshots) {
@@ -353,28 +340,21 @@ export async function resumeIncident(params: {
         updated_at: now,
       })
       .eq('id', snap.server_id);
+  }
 
-    for (const key of MAINTENANCE_STOP_KEYS) {
-      const prev = snap.maintenance?.[key];
-      const { data: existingFlag } = await supabase
-        .from('maintenance_flags')
-        .select('id')
-        .eq('server_id', snap.server_id)
-        .eq('key', key)
-        .maybeSingle();
-
-      if (existingFlag?.id) {
-        await supabase
-          .from('maintenance_flags')
-          .update({
-            is_active: Boolean(prev?.is_active),
-            reason: prev?.is_active ? prev.reason : null,
-            updated_by: params.actorId,
-            updated_at: now,
-          })
-          .eq('id', existingFlag.id);
-      }
-    }
+  const globalPrev = pre.globalMaintenance ?? {};
+  for (const key of MAINTENANCE_STOP_KEYS) {
+    const prev = globalPrev[key];
+    await supabase.from('global_maintenance_flags').upsert(
+      {
+        key,
+        is_active: Boolean(prev?.is_active),
+        reason: prev?.is_active ? prev.reason : null,
+        updated_by: params.actorId,
+        updated_at: now,
+      },
+      { onConflict: 'key' },
+    );
   }
 
   const { data: updated, error } = await supabase

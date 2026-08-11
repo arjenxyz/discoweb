@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireSessionUser } from '@/lib/auth';
+import { checkMaintenance } from '@/lib/maintenance';
 
 const getSelectedGuildId = async (): Promise<string> => {
   const cookieStore = await cookies();
@@ -20,6 +21,14 @@ const getSupabase = () => {
 
 export async function POST(request: Request) {
   try {
+    const maintenance = await checkMaintenance(['site', 'discounts', 'store']);
+    if (maintenance.blocked) {
+      return NextResponse.json(
+        { error: 'maintenance', key: maintenance.key, reason: maintenance.reason },
+        { status: 503 },
+      );
+    }
+
     const session = await requireSessionUser(request);
     if (!session.ok) {
       return session.response;

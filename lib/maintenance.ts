@@ -2,7 +2,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/auth';
 import { getActiveIncident, DEFAULT_INCIDENT_MESSAGE } from '@/lib/incident';
 
-
+/** Global (platform-wide) maintenance modules — not per Discord server. */
 export const MAINTENANCE_KEYS = [
   'site',
   'store',
@@ -17,7 +17,7 @@ export const MAINTENANCE_KEYS = [
 
 export type MaintenanceKey = (typeof MAINTENANCE_KEYS)[number];
 
-type MaintenanceFlag = {
+export type MaintenanceFlag = {
   key: MaintenanceKey;
   is_active: boolean;
   reason: string | null;
@@ -25,7 +25,7 @@ type MaintenanceFlag = {
   updated_at: string | null;
 };
 
-type MaintenanceMap = Record<MaintenanceKey, MaintenanceFlag>;
+export type MaintenanceMap = Record<MaintenanceKey, MaintenanceFlag>;
 
 const getSupabase = (): SupabaseClient | null => {
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -55,7 +55,6 @@ const isDeveloper = async (userId: string) => {
   if (!botToken || !roleId || !guildId) {
     return false;
   }
-  // Use AbortController to avoid hanging requests and handle network errors gracefully
   const controller = new AbortController();
   const timeout = Number(process.env.DISCORD_API_TIMEOUT_MS ?? 10000);
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -65,49 +64,37 @@ const isDeveloper = async (userId: string) => {
       headers: { Authorization: `Bot ${botToken}` },
       signal: controller.signal,
     });
-
-    if (!response.ok) {
-      return false;
-    }
-
+    if (!response.ok) return false;
     const member = (await response.json()) as { roles?: string[] };
     return Boolean(member.roles?.includes(roleId));
-  } catch (err) {
-    // Network error, timeout, or fetch aborted — treat as non-developer to avoid crashing
+  } catch {
     return false;
   } finally {
     clearTimeout(timeoutId);
   }
 };
 
-const createDefaultFlags = (): MaintenanceMap =>
+export const createDefaultFlags = (): MaintenanceMap =>
   MAINTENANCE_KEYS.reduce((acc, key) => {
     acc[key] = { key, is_active: false, reason: null, updated_by: null, updated_at: null };
     return acc;
   }, {} as MaintenanceMap);
 
-export const getMaintenanceFlags = async (guildId?: string) => {
+/** Global flags for the whole platform. `guildId` is ignored (kept for call-site compat). */
+export const getMaintenanceFlags = async (_guildId?: string) => {
   const supabase = getSupabase();
   if (!supabase) {
     return null;
   }
 
-  const targetGuildId = guildId || process.env.DISCORD_GUILD_ID || '1465698764453838882';
+  const { data, error } = await supabase
+    .from('global_maintenance_flags')
+    .select('key,is_active,reason,updated_by,updated_at');
 
-  const { data: server } = await supabase
-    .from('servers')
-    .select('id')
-    .eq('discord_id', targetGuildId)
-    .maybeSingle();
-
-  if (!server) {
+  if (error) {
+    console.error('[maintenance] getMaintenanceFlags', error.message);
     return null;
   }
-
-  const { data } = await supabase
-    .from('maintenance_flags')
-    .select('key,is_active,reason,updated_by,updated_at')
-    .eq('server_id', server.id);
 
   const flags = createDefaultFlags();
   (data ?? []).forEach((row) => {
@@ -122,7 +109,29 @@ export const getMaintenanceFlags = async (guildId?: string) => {
     }
   });
 
-  return { flags, serverId: server.id };
+  return { flags, serverId: null as string | null };
+};
+
+export const upsertGlobalMaintenanceFlag = async (params: {
+  key: MaintenanceKey;
+  is_active: boolean;
+  reason?: string | null;
+  updated_by?: string | null;
+}) => {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('missing_service_role');
+
+  const { error } = await supabase.from('global_maintenance_flags').upsert(
+    {
+      key: params.key,
+      is_active: Boolean(params.is_active),
+      reason: params.reason ?? null,
+      updated_by: params.updated_by ?? null,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'key' },
+  );
+  if (error) throw new Error(error.message);
 };
 
 export const checkMaintenance = async (keys: MaintenanceKey[], guildId?: string) => {

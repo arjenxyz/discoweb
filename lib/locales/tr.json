@@ -837,7 +837,7 @@
     "maintenance_page": {
       "eyebrow": "Admin",
       "title": "Bakım Yönetimi",
-      "subtitle": "Bu panel yalnızca admin + bakım yetki rolü olan kişiler içindir. Kritik modülleri bakım moduna alabilirsiniz.",
+      "subtitle": "Bu panel yalnızca admin + bakım yetki rolü olan kişiler içindir. Modüller platform genelinde (global) bakım moduna alınır.",
       "loading": "Bakım ayarları yükleniyor...",
       "load_error": "Bakım ayarları yüklenemedi.",
       "load_error_detail": "Bakım ayarları yüklenemedi. {detail}",
@@ -870,15 +870,15 @@
       "label_transfers": "Papel Gönder",
       "label_bot": "Discord Bot",
       "label_activity": "Activity",
-      "desc_site": "Tüm paneli bakım moduna alır.",
-      "desc_store": "Mağaza sayfaları ve satın alma akışları.",
-      "desc_transactions": "İşlem ve geçmiş ekranları.",
-      "desc_tracking": "Mağaza takip ve rol süreleri.",
-      "desc_promotions": "Promosyon kodu kullanımı.",
-      "desc_discounts": "İndirim kodu kullanımı.",
-      "desc_transfers": "Papel gönderme işlemleri.",
-      "desc_bot": "Discord botunun durumunu değiştirir.",
-      "desc_activity": "Activity API ve veri güncelleme akışını kontrol eder."
+      "desc_site": "Tüm web + Activity panelini global bakım moduna alır (tüm sunucular).",
+      "desc_store": "Mağaza sayfaları ve satın alma akışları (global).",
+      "desc_transactions": "Sipariş geçmişi / işlem ekranları (global).",
+      "desc_tracking": "Mağaza takip ve rol süreleri görünümü (global).",
+      "desc_promotions": "Promosyon kodu kullanımı (global).",
+      "desc_discounts": "İndirim kodu doğrulama ve uygulama (global).",
+      "desc_transfers": "Papel gönderme işlemleri (global).",
+      "desc_bot": "Discord botu bu flag’i /api/activity/maintenance veya /api/maintenance üzerinden okumalı; earn/komutlar durur.",
+      "desc_activity": "Discord Activity girişi ve Activity API (global)."
     },
     "remove_setup": {
       "button": "🗑️ Kurulumu Kaldır",
@@ -1430,7 +1430,7 @@
     },
     "maintenance": {
       "title": "Bakım Yönetimi",
-      "subtitle": "Sistem modüllerinin bakım durumlarını yönetin."
+      "subtitle": "Platform genelinde (tüm sunucular) bakım modlarını yönetin. Sunucuya özel değil."
     },
     "cache": {
       "title": "Cache Yönetimi",
