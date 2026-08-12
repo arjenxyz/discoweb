@@ -3,7 +3,7 @@
 import { useTranslation } from '@/lib/i18nContext';
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { LuEye, LuEyeOff, LuMonitorPlay, LuTrash2 } from 'react-icons/lu';
+import { LuEye, LuEyeOff, LuMonitorPlay, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 type WatchEarnTask = {
   id: string;
@@ -40,11 +40,19 @@ const formatShort = (iso: string) => {
   return d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
-export default function WatchEarnAdminPage() {
+const toDatetimeLocal = (iso: string) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+export default function WatchEarnDeveloperPage() {
   const { t } = useTranslation();
   const [tasks, setTasks] = useState<WatchEarnTask[]>([]);
   const [loading, setLoading] = useState(false);
-  const [creating, setCreating] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
@@ -68,38 +76,68 @@ export default function WatchEarnAdminPage() {
     void fetchTasks();
   }, [fetchTasks]);
 
-  const createTask = async (e: React.FormEvent) => {
+  const startEdit = (task: WatchEarnTask) => {
+    setEditingId(task.id);
+    setForm({
+      title: task.title,
+      logo_text: task.logo_text,
+      sponsor: task.sponsor,
+      reward_papel: String(task.reward_papel),
+      multiplier_label: task.multiplier_label ?? '',
+      banner_url: task.banner_url,
+      video_url: task.video_url,
+      starts_at: toDatetimeLocal(task.starts_at),
+      ends_at: toDatetimeLocal(task.ends_at),
+      active: task.active,
+    });
+    setError(null);
+    setSuccess(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+    setError(null);
+    setSuccess(null);
+  };
+
+  const saveTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCreating(true);
+    setSubmitting(true);
     setSuccess(null);
     setError(null);
+    const payload = {
+      title: form.title.trim(),
+      logo_text: form.logo_text.trim(),
+      sponsor: form.sponsor.trim(),
+      reward_papel: Number(form.reward_papel),
+      multiplier_label: form.multiplier_label.trim() || null,
+      banner_url: form.banner_url.trim(),
+      video_url: form.video_url.trim(),
+      starts_at: new Date(form.starts_at).toISOString(),
+      ends_at: new Date(form.ends_at).toISOString(),
+      active: form.active,
+    };
     try {
       const res = await fetch('/api/admin/watch-earn', {
-        method: 'POST',
+        method: editingId ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          title: form.title.trim(),
-          logo_text: form.logo_text.trim(),
-          sponsor: form.sponsor.trim(),
-          reward_papel: Number(form.reward_papel),
-          multiplier_label: form.multiplier_label.trim() || null,
-          banner_url: form.banner_url.trim(),
-          video_url: form.video_url.trim(),
-          starts_at: new Date(form.starts_at).toISOString(),
-          ends_at: new Date(form.ends_at).toISOString(),
-          active: form.active,
-        }),
+        body: JSON.stringify(editingId ? { ...payload, id: editingId } : payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? String(res.status));
-      setSuccess(t('developer.watch_earn.create_success'));
+      setSuccess(
+        editingId ? t('developer.watch_earn.update_success') : t('developer.watch_earn.create_success'),
+      );
+      setEditingId(null);
       setForm(emptyForm);
       await fetchTasks();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
-      setCreating(false);
+      setSubmitting(false);
     }
   };
 
@@ -143,8 +181,26 @@ export default function WatchEarnAdminPage() {
         </div>
       </div>
 
-      <form onSubmit={createTask} className="rounded-2xl border border-white/10 bg-[#0b0d12] p-5 space-y-4">
-        <h2 className="text-lg font-bold text-white">{t('developer.watch_earn.create_title')}</h2>
+      <form
+        onSubmit={saveTask}
+        className={`rounded-2xl border p-5 space-y-4 ${
+          editingId ? 'border-cyan-500/30 bg-cyan-500/5' : 'border-white/10 bg-[#0b0d12]'
+        }`}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-bold text-white">
+            {editingId ? t('developer.watch_earn.edit_title') : t('developer.watch_earn.create_title')}
+          </h2>
+          {editingId && (
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="text-xs font-medium text-white/50 hover:text-white"
+            >
+              {t('developer.watch_earn.cancel_edit')}
+            </button>
+          )}
+        </div>
         <div className="grid gap-3 md:grid-cols-2">
           <div>
             <label className="block text-xs font-medium text-white/50 mb-1">{t('developer.watch_earn.logo_text')}</label>
@@ -253,10 +309,16 @@ export default function WatchEarnAdminPage() {
 
         <button
           type="submit"
-          disabled={creating}
+          disabled={submitting}
           className="rounded-xl bg-[#5865F2] hover:bg-[#4752C4] px-5 py-2.5 text-sm font-bold text-white disabled:opacity-50"
         >
-          {creating ? t('developer.watch_earn.creating') : t('developer.watch_earn.create_btn')}
+          {submitting
+            ? editingId
+              ? t('developer.watch_earn.updating')
+              : t('developer.watch_earn.creating')
+            : editingId
+              ? t('developer.watch_earn.update_btn')
+              : t('developer.watch_earn.create_btn')}
         </button>
 
         {success && <p className="text-xs text-emerald-400">{success}</p>}
@@ -304,6 +366,14 @@ export default function WatchEarnAdminPage() {
                   </div>
                 </div>
                 <div className="flex sm:flex-col gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => startEdit(task)}
+                    className="rounded-lg border border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20 p-2 text-cyan-400"
+                    title={t('developer.watch_earn.edit_btn')}
+                  >
+                    <LuPencil className="h-4 w-4" />
+                  </button>
                   <button
                     type="button"
                     onClick={() => void toggleActive(task)}
