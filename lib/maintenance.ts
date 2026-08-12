@@ -135,14 +135,6 @@ export const upsertGlobalMaintenanceFlag = async (params: {
 };
 
 export const checkMaintenance = async (keys: MaintenanceKey[], guildId?: string) => {
-  const userId = await getUserIdFromCookies();
-  if (userId) {
-    const developer = await isDeveloper(userId);
-    if (developer) {
-      return { blocked: false as const, key: null, reason: null };
-    }
-  }
-
   const incident = await getActiveIncident();
   if (incident) {
     return {
@@ -150,6 +142,14 @@ export const checkMaintenance = async (keys: MaintenanceKey[], guildId?: string)
       key: 'site' as MaintenanceKey,
       reason: incident.public_message || DEFAULT_INCIDENT_MESSAGE,
     };
+  }
+
+  const userId = await getUserIdFromCookies();
+  if (userId) {
+    const developer = await isDeveloper(userId);
+    if (developer) {
+      return { blocked: false as const, key: null, reason: null };
+    }
   }
 
   const data = await getMaintenanceFlags(guildId);
