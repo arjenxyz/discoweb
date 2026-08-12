@@ -28,6 +28,9 @@ type PromoRow = {
   used_count: number;
   per_user_limit: number | null;
   server_id: string;
+  created_by: string | null;
+  created_by_username: string | null;
+  created_by_avatar_url: string | null;
 };
 
 const fail = (error: string, message: string, status: number): RedeemPromoFailure => ({
@@ -64,7 +67,9 @@ export async function redeemPromoCode(params: {
 
   const { data: promo, error: promoError } = await supabase
     .from('promotions')
-    .select('id,code,value,status,expires_at,max_uses,used_count,per_user_limit,server_id')
+    .select(
+      'id,code,value,status,expires_at,max_uses,used_count,per_user_limit,server_id,created_by,created_by_username,created_by_avatar_url',
+    )
     .eq('server_id', server.id)
     .eq('code', normalizedCode)
     .is('deleted_at', null)
@@ -221,6 +226,11 @@ export async function redeemPromoCode(params: {
         promoId: promotion.id,
         code: promotion.code,
         amount: packageAmount,
+        i18nKey: 'promotion',
+        balanceAfter: newBalance,
+        createdBy: promotion.created_by,
+        createdByUsername: promotion.created_by_username,
+        createdByAvatarUrl: promotion.created_by_avatar_url,
       },
     }),
     supabase.from('notifications').insert({

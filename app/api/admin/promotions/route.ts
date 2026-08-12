@@ -20,6 +20,24 @@ const getAdminId = async () => {
   return getSessionUserId();
 };
 
+async function fetchDiscordUser(userId: string) {
+  try {
+    const botToken = process.env.DISCORD_BOT_TOKEN;
+    if (!botToken) return null;
+    const res = await fetch(`https://discord.com/api/users/${userId}`, {
+      headers: { Authorization: `Bot ${botToken}` },
+    });
+    if (!res.ok) return null;
+    const u = (await res.json()) as { id: string; username?: string; avatar?: string | null };
+    return {
+      username: u.username ?? null,
+      avatar: u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function GET() {
   if (!(await isAdminUser())) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
@@ -92,6 +110,8 @@ export async function POST(request: Request) {
       ? Math.floor(payload.perUserLimit)
       : 1;
 
+  const creator = adminId ? await fetchDiscordUser(adminId) : null;
+
   const { error } = await supabase.from('promotions').insert({
     server_id: resolved.serverId,
     code: payload.code.trim().toUpperCase(),
@@ -100,6 +120,9 @@ export async function POST(request: Request) {
     per_user_limit: perUserLimit,
     status: payload.status ?? 'active',
     expires_at: payload.expiresAt ?? null,
+    created_by: adminId ?? null,
+    created_by_username: creator?.username ?? null,
+    created_by_avatar_url: creator?.avatar ?? null,
   });
 
   if (error) {
@@ -118,6 +141,8 @@ export async function POST(request: Request) {
       perUserLimit,
       status: payload.status ?? 'active',
       expiresAt: payload.expiresAt ?? null,
+      createdBy: adminId ?? null,
+      createdByUsername: creator?.username ?? null,
     },
   });
 
