@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { logWebEvent } from '@/lib/serverLogger';
 import { getSessionUserId } from '@/lib/auth';
-import { MAINTENANCE_KEYS, type MaintenanceKey, createDefaultFlags } from '@/lib/maintenance';
+import { MAINTENANCE_KEYS, type MaintenanceKey, createDefaultFlags, syncBotMaintenanceToBot } from '@/lib/maintenance';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 const DEFAULT_DEVELOPER_GUILD_ID = '1465698764453838882';
@@ -192,6 +192,10 @@ export async function PUT(request: Request) {
       guildId: 'global',
       metadata: { key: body.key, reason: body.reason ?? null, scope: 'global' },
     });
+
+    if (body.key === 'bot') {
+      void syncBotMaintenanceToBot(Boolean(body.is_active), body.reason ?? null);
+    }
 
     const flags = await ensureFlags(supabase);
     const updaterIds = flags
