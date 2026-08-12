@@ -148,7 +148,7 @@ export async function POST(request: Request) {
         `Kişi başı limit: ${perUserLimit}`,
         `Bitiş tarihi: ${expiresLabel}`,
         '',
-        'Not: Sepette görünmesi birkaç saniye alabilir; görünmüyorsa sayfayı yenileyin.',
+        'Not: Birkaç saniye gecikebilir; görünmezse yenileyin.',
       ].join('\n');
 
       await supabase.from('system_mails').insert({
