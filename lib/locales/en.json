@@ -138,6 +138,7 @@
       "scope": "Scope",
       "mode_add": "Add Balance",
       "mode_remove": "Remove Balance",
+      "mode_wipe": "Wipe Entire Balance",
       "scope_user": "Single User",
       "scope_all": "All Users",
       "search_label": "Search user (nickname / username)",
@@ -148,7 +149,13 @@
       "user_id_placeholder": "1234567890",
       "clear_selection": "Clear selection",
       "amount_label": "Amount (papel)",
-      "amount_placeholder": "100",
+      "amount_placeholder": "e.g. 1250 or 1,250",
+      "amount_preview": "Will apply: {amount} Papel",
+      "amount_format_hint": "Use a thousands separator or a decimal. e.g. 1,250 or 12.5",
+      "wipe_hint_user": "This user's entire Papel balance will be set to 0. No amount is needed.",
+      "wipe_hint_all": "Every verified member's Papel balance will be set to 0. This cannot be undone.",
+      "wipe_confirm_user": "Wipe this user's entire Papel balance?",
+      "wipe_confirm_all": "ALL member Papel balances will be wiped. This cannot be undone. Continue?",
       "presets_label": "Preset messages",
       "presets_select": "Select",
       "amount_hint": "The {amount} placeholder is replaced with the actual amount.",
@@ -159,10 +166,14 @@
       "image_placeholder": "https://...",
       "submit_loading": "Processing...",
       "submit": "Apply",
+      "submit_wipe": "Wipe Entire Balance",
       "error_invalid_amount": "Enter a valid amount.",
       "error_user_required": "User ID is required.",
       "error_message_required": "Description is required when adding papel.",
       "error_failed": "Operation failed.",
+      "error_user_not_in_server": "User is not in this server.",
+      "error_not_verified": "User does not have the member role.",
+      "error_no_approved": "No verified members found.",
       "success_all": "Applied to all users. Total: {count}",
       "success_single": "Operation successful.",
       "presets": {
@@ -237,17 +248,29 @@
         "remove_all_fee": {
           "label": "General transaction fee",
           "text": "A deduction of {amount} papel has been applied to all members as a general transaction fee."
+        },
+        "wipe_reset": {
+          "label": "Balance reset",
+          "text": "Your entire Papel balance has been reset to zero."
+        },
+        "wipe_all_reset": {
+          "label": "Bulk balance reset",
+          "text": "All member Papel balances have been reset to zero."
         }
       },
       "mail": {
         "title_add": "Balance Added",
         "title_remove": "Balance Removed",
+        "title_wipe": "Balance Wiped",
         "title_add_all": "Bulk Balance Added",
         "title_remove_all": "Bulk Balance Removed",
+        "title_wipe_all": "Bulk Balance Wiped",
         "heading_add": "✅ Balance Added",
         "heading_remove": "❌ Balance Removed",
+        "heading_wipe": "❌ Balance Wiped",
         "heading_add_all": "✅ Bulk Balance Added",
         "heading_remove_all": "❌ Bulk Balance Removed",
+        "heading_wipe_all": "❌ Bulk Balance Wiped",
         "amount_label": "Transaction Amount:",
         "amount_value": "{sign}{amount} Papel",
         "description_label": "Transaction Description:",

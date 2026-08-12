@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useTranslation } from '@/lib/i18nContext';
+import { formatPapelAmount, parsePapelAmount, sanitizePapelAmountInput } from '@/lib/parsePapelAmount';
 
 type MemberResult = {
   id: string;
@@ -12,10 +13,14 @@ type MemberResult = {
   avatarUrl: string;
 };
 
+type WalletMode = 'add' | 'remove' | 'wipe';
+
 const USER_ADD_PRESET_KEYS = ['add_maintenance', 'add_event', 'add_gift', 'add_refund', 'add_milestone', 'add_support'] as const;
 const REMOVE_USER_PRESET_KEYS = ['remove_penalty', 'remove_chargeback', 'remove_fee', 'remove_refund'] as const;
 const ALL_ADD_PRESET_KEYS = ['all_maintenance', 'all_announcement', 'all_event', 'all_season', 'all_promo', 'all_loyalty'] as const;
 const ALL_REMOVE_PRESET_KEYS = ['remove_all_adjustment', 'remove_all_fee'] as const;
+const WIPE_USER_PRESET_KEYS = ['wipe_reset'] as const;
+const WIPE_ALL_PRESET_KEYS = ['wipe_all_reset'] as const;
 
 function buildPresets(t: (key: string) => string, keys: readonly string[]) {
   return keys.map((key) => ({
@@ -27,7 +32,7 @@ function buildPresets(t: (key: string) => string, keys: readonly string[]) {
 
 export default function AdminWalletPage() {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<'add' | 'remove'>('add');
+  const [mode, setMode] = useState<WalletMode>('add');
   const [scope, setScope] = useState<'user' | 'all'>('user');
   const [userId, setUserId] = useState('');
   const [amount, setAmount] = useState('');
@@ -44,7 +49,7 @@ export default function AdminWalletPage() {
 
   const sendWalletChangeMail = async (
     userId: string | null,
-    mode: 'add' | 'remove',
+    mailMode: WalletMode,
     amount: number,
     message: string,
     scope: 'user' | 'all',
@@ -52,21 +57,37 @@ export default function AdminWalletPage() {
     try {
       const mailTitle =
         scope === 'all'
-          ? t(mode === 'add' ? 'admin.wallet.mail.title_add_all' : 'admin.wallet.mail.title_remove_all')
-          : t(mode === 'add' ? 'admin.wallet.mail.title_add' : 'admin.wallet.mail.title_remove');
+          ? t(
+              mailMode === 'add'
+                ? 'admin.wallet.mail.title_add_all'
+                : mailMode === 'wipe'
+                  ? 'admin.wallet.mail.title_wipe_all'
+                  : 'admin.wallet.mail.title_remove_all',
+            )
+          : t(
+              mailMode === 'add'
+                ? 'admin.wallet.mail.title_add'
+                : mailMode === 'wipe'
+                  ? 'admin.wallet.mail.title_wipe'
+                  : 'admin.wallet.mail.title_remove',
+            );
       const filledMessage = (message || '').replace(/\{amount\}/g, String(amount));
 
-      const sign = mode === 'add' ? '+' : '-';
+      const sign = mailMode === 'add' ? '+' : '-';
       const headingKey =
         scope === 'all'
-          ? mode === 'add'
+          ? mailMode === 'add'
             ? 'admin.wallet.mail.heading_add_all'
-            : 'admin.wallet.mail.heading_remove_all'
-          : mode === 'add'
+            : mailMode === 'wipe'
+              ? 'admin.wallet.mail.heading_wipe_all'
+              : 'admin.wallet.mail.heading_remove_all'
+          : mailMode === 'add'
             ? 'admin.wallet.mail.heading_add'
-            : 'admin.wallet.mail.heading_remove';
+            : mailMode === 'wipe'
+              ? 'admin.wallet.mail.heading_wipe'
+              : 'admin.wallet.mail.heading_remove';
       const footerKey = scope === 'all' ? 'admin.wallet.mail.footer_all' : 'admin.wallet.mail.footer_single';
-      const headingColor = mode === 'add' ? '#10b981' : '#ef4444';
+      const headingColor = mailMode === 'add' ? '#10b981' : '#ef4444';
 
       const mailBody = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -118,15 +139,23 @@ export default function AdminWalletPage() {
   const removeUserPresets = useMemo(() => buildPresets(t, REMOVE_USER_PRESET_KEYS), [t]);
   const allPresets = useMemo(() => buildPresets(t, ALL_ADD_PRESET_KEYS), [t]);
   const removeAllPresets = useMemo(() => buildPresets(t, ALL_REMOVE_PRESET_KEYS), [t]);
+  const wipeUserPresets = useMemo(() => buildPresets(t, WIPE_USER_PRESET_KEYS), [t]);
+  const wipeAllPresets = useMemo(() => buildPresets(t, WIPE_ALL_PRESET_KEYS), [t]);
 
   const presets =
-    mode === 'remove'
+    mode === 'wipe'
       ? scope === 'all'
-        ? removeAllPresets
-        : removeUserPresets
-      : scope === 'all'
-        ? allPresets
-        : userPresets;
+        ? wipeAllPresets
+        : wipeUserPresets
+      : mode === 'remove'
+        ? scope === 'all'
+          ? removeAllPresets
+          : removeUserPresets
+        : scope === 'all'
+          ? allPresets
+          : userPresets;
+
+  const parsedAmount = useMemo(() => parsePapelAmount(amount), [amount]);
 
   useEffect(() => {
     if (!preset) {
@@ -142,8 +171,9 @@ export default function AdminWalletPage() {
     setError(null);
     setSuccess(null);
 
-    const value = Number(amount);
-    if (Number.isNaN(value) || value <= 0) {
+    const isWipe = mode === 'wipe';
+    const value = isWipe ? 0 : parsePapelAmount(amount);
+    if (!isWipe && value == null) {
       setError(t('admin.wallet.error_invalid_amount'));
       return;
     }
@@ -158,6 +188,13 @@ export default function AdminWalletPage() {
       return;
     }
 
+    if (isWipe) {
+      const confirmed = window.confirm(
+        t(scope === 'all' ? 'admin.wallet.wipe_confirm_all' : 'admin.wallet.wipe_confirm_user'),
+      );
+      if (!confirmed) return;
+    }
+
     setLoading(true);
     const response = await fetch('/api/admin/wallet', {
       method: 'POST',
@@ -165,21 +202,33 @@ export default function AdminWalletPage() {
       body: JSON.stringify({
         mode,
         scope,
-        amount: value,
+        amount: isWipe ? undefined : value,
         userId: scope === 'user' ? userId.trim() : undefined,
         message: message.trim(),
         imageUrl: imageUrl.trim() || undefined,
       }),
     });
 
-    const data = (await response.json().catch(() => ({}))) as { error?: string; updated?: number };
+    const data = (await response.json().catch(() => ({}))) as {
+      error?: string;
+      updated?: number;
+      deducted?: number;
+    };
 
     if (!response.ok) {
-      if (data.error === 'message_required') {
-        setError(t('admin.wallet.error_message_required'));
-      } else {
-        setError(t('admin.wallet.error_failed'));
-      }
+      const errorKey =
+        data.error === 'message_required'
+          ? 'admin.wallet.error_message_required'
+          : data.error === 'invalid_amount'
+            ? 'admin.wallet.error_invalid_amount'
+            : data.error === 'user_not_in_server'
+              ? 'admin.wallet.error_user_not_in_server'
+              : data.error === 'target_not_verified'
+                ? 'admin.wallet.error_not_verified'
+                : data.error === 'no_approved_users'
+                  ? 'admin.wallet.error_no_approved'
+                  : 'admin.wallet.error_failed';
+      setError(t(errorKey));
       setLoading(false);
       return;
     }
@@ -190,11 +239,12 @@ export default function AdminWalletPage() {
       setSuccess(t('admin.wallet.success_single'));
     }
 
-    if (mode === 'remove') {
+    if (mode === 'remove' || mode === 'wipe') {
+      const mailAmount = mode === 'wipe' && typeof data.deducted === 'number' ? data.deducted : (value ?? 0);
       if (scope === 'user') {
-        await sendWalletChangeMail(userId.trim(), mode, value, message.trim(), 'user');
+        await sendWalletChangeMail(userId.trim(), mode, mailAmount, message.trim(), 'user');
       } else if (scope === 'all') {
-        await sendWalletChangeMail(null, mode, value, message.trim(), 'all');
+        await sendWalletChangeMail(null, mode, mailAmount, message.trim(), 'all');
       }
     }
 
@@ -268,11 +318,17 @@ export default function AdminWalletPage() {
               <label className={labelClass}>{t('admin.wallet.operation')}</label>
               <select
                 value={mode}
-                onChange={(event) => setMode(event.target.value as 'add' | 'remove')}
+                onChange={(event) => {
+                  const next = event.target.value as WalletMode;
+                  setMode(next);
+                  setPreset('');
+                  if (next === 'wipe') setAmount('');
+                }}
                 className={fieldClass}
               >
                 <option value="add">{t('admin.wallet.mode_add')}</option>
                 <option value="remove">{t('admin.wallet.mode_remove')}</option>
+                <option value="wipe">{t('admin.wallet.mode_wipe')}</option>
               </select>
             </div>
 
@@ -405,16 +461,33 @@ export default function AdminWalletPage() {
             </>
           )}
 
-          <div>
-            <label className={labelClass}>{t('admin.wallet.amount_label')}</label>
-            <input
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-              placeholder={t('admin.wallet.amount_placeholder')}
-              type="number"
-              className={fieldClass}
-            />
-          </div>
+          {mode === 'wipe' ? (
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.08] px-3.5 py-3 text-sm text-amber-100">
+              {t(scope === 'all' ? 'admin.wallet.wipe_hint_all' : 'admin.wallet.wipe_hint_user')}
+            </div>
+          ) : (
+            <div>
+              <label className={labelClass}>{t('admin.wallet.amount_label')}</label>
+              <input
+                value={amount}
+                onChange={(event) => setAmount(sanitizePapelAmountInput(event.target.value))}
+                placeholder={t('admin.wallet.amount_placeholder')}
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                className={fieldClass}
+              />
+              {parsedAmount != null ? (
+                <p className="mt-1.5 text-xs text-emerald-300/80">
+                  {t('admin.wallet.amount_preview', { amount: formatPapelAmount(parsedAmount) })}
+                </p>
+              ) : amount.trim() ? (
+                <p className="mt-1.5 text-xs text-rose-300/80">{t('admin.wallet.error_invalid_amount')}</p>
+              ) : (
+                <p className="mt-1.5 text-[11px] text-white/35">{t('admin.wallet.amount_format_hint')}</p>
+              )}
+            </div>
+          )}
 
           <div>
             <label className={labelClass}>{t('admin.wallet.presets_label')}</label>
@@ -484,9 +557,17 @@ export default function AdminWalletPage() {
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="rounded-xl bg-[#5865F2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4752c4] disabled:cursor-not-allowed disabled:opacity-50"
+              className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                mode === 'wipe'
+                  ? 'bg-rose-600 hover:bg-rose-500'
+                  : 'bg-[#5865F2] hover:bg-[#4752c4]'
+              }`}
             >
-              {loading ? t('admin.wallet.submit_loading') : t('admin.wallet.submit')}
+              {loading
+                ? t('admin.wallet.submit_loading')
+                : mode === 'wipe'
+                  ? t('admin.wallet.submit_wipe')
+                  : t('admin.wallet.submit')}
             </button>
           </div>
         </div>

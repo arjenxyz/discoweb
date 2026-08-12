@@ -138,6 +138,7 @@
       "scope": "Kapsam",
       "mode_add": "Bakiye Ekle",
       "mode_remove": "Bakiye Sil",
+      "mode_wipe": "Tüm Bakiyeyi Sil",
       "scope_user": "Tek Kullanıcı",
       "scope_all": "Tüm Kullanıcılar",
       "search_label": "Kullanıcı ara (nickname / username)",
@@ -148,7 +149,13 @@
       "user_id_placeholder": "1234567890",
       "clear_selection": "Seçimi temizle",
       "amount_label": "Miktar (papel)",
-      "amount_placeholder": "100",
+      "amount_placeholder": "Örn: 1250 veya 1.250",
+      "amount_preview": "Uygulanacak: {amount} Papel",
+      "amount_format_hint": "Nokta binlik ayırıcı, virgül ondalık olabilir. Örn: 1.250 veya 12,5",
+      "wipe_hint_user": "Bu kullanıcının mevcut Papel bakiyesinin tamamı 0 yapılır. Miktar girmenize gerek yok.",
+      "wipe_hint_all": "Tüm onaylı üyelerin Papel bakiyesi 0 yapılır. Bu işlem geri alınamaz.",
+      "wipe_confirm_user": "Bu kullanıcının tüm Papel bakiyesini silmek istediğinize emin misiniz?",
+      "wipe_confirm_all": "TÜM üyelerin Papel bakiyesi silinecek. Bu işlem geri alınamaz. Devam edilsin mi?",
       "presets_label": "Hazır mesajlar",
       "presets_select": "Seçiniz",
       "amount_hint": "{amount} yer tutucusu otomatik tutar ile değişir.",
@@ -159,10 +166,14 @@
       "image_placeholder": "https://...",
       "submit_loading": "İşleniyor...",
       "submit": "Uygula",
+      "submit_wipe": "Tüm Bakiyeyi Sil",
       "error_invalid_amount": "Geçerli bir miktar girin.",
       "error_user_required": "Kullanıcı ID zorunlu.",
       "error_message_required": "Papel eklerken açıklama zorunludur.",
       "error_failed": "İşlem başarısız.",
+      "error_user_not_in_server": "Kullanıcı bu sunucuda değil.",
+      "error_not_verified": "Kullanıcının üye rolü yok.",
+      "error_no_approved": "Onaylı üye bulunamadı.",
       "success_all": "Tüm kullanıcılara işlem uygulandı. Toplam: {count}",
       "success_single": "İşlem başarılı.",
       "presets": {
@@ -237,17 +248,29 @@
         "remove_all_fee": {
           "label": "Genel işlem ücreti",
           "text": "Genel işlem ücreti nedeniyle tüm üyelere {amount} papel kesinti uygulanmıştır."
+        },
+        "wipe_reset": {
+          "label": "Bakiye sıfırlama",
+          "text": "Hesabınızdaki Papel bakiyesinin tamamı sıfırlanmıştır."
+        },
+        "wipe_all_reset": {
+          "label": "Toplu bakiye sıfırlama",
+          "text": "Tüm üye Papel bakiyeleri sıfırlanmıştır."
         }
       },
       "mail": {
         "title_add": "Bakiye Eklendi",
         "title_remove": "Bakiye Çıkarıldı",
+        "title_wipe": "Bakiye Sıfırlandı",
         "title_add_all": "Toplu Bakiye Eklendi",
         "title_remove_all": "Toplu Bakiye Çıkarıldı",
+        "title_wipe_all": "Toplu Bakiye Sıfırlandı",
         "heading_add": "✅ Bakiye Eklendi",
         "heading_remove": "❌ Bakiye Çıkarıldı",
+        "heading_wipe": "❌ Bakiye Sıfırlandı",
         "heading_add_all": "✅ Toplu Bakiye Eklendi",
         "heading_remove_all": "❌ Toplu Bakiye Çıkarıldı",
+        "heading_wipe_all": "❌ Toplu Bakiye Sıfırlandı",
         "amount_label": "İşlem Tutarı:",
         "amount_value": "{sign}{amount} Papel",
         "description_label": "İşlem Açıklaması:",

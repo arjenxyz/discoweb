@@ -5,6 +5,7 @@ import { logWebEvent } from '@/lib/serverLogger';
 import { getSessionUserId } from '@/lib/auth';
 import { isAdminOrDeveloper } from '@/lib/adminAuth';
 import { isLocalDevBypass } from '@/lib/localDevBypass';
+import { parsePapelAmount } from '@/lib/parsePapelAmount';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID ?? '1465698764453838882';
 
@@ -203,43 +204,47 @@ export async function POST(request: Request) {
   const adminId = await getAdminId();
 
   const payload = (await request.json()) as {
-    mode?: 'add' | 'remove';
+    mode?: 'add' | 'remove' | 'wipe';
     scope?: 'user' | 'all';
-    amount?: number;
+    amount?: number | string;
     userId?: string;
     message?: string;
     imageUrl?: string;
   };
 
-  console.log('wallet POST payload:', payload);
-
-  console.log('wallet POST payload:', payload);
-
-  const parsedAmount = typeof payload.amount === 'string' ? parseFloat((payload.amount as string).replace(',', '.')) : payload.amount;
-  if (!payload.mode || !payload.scope || typeof parsedAmount !== 'number' || isNaN(parsedAmount) || parsedAmount <= 0) {
-    console.log('wallet POST invalid payload:', { mode: payload.mode, scope: payload.scope, amount: payload.amount, parsedAmount, amountType: typeof payload.amount });
+  const mode = payload.mode;
+  const scope = payload.scope;
+  if (!mode || !scope || !['add', 'remove', 'wipe'].includes(mode) || !['user', 'all'].includes(scope)) {
     return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
   }
 
-  const amount = Number(parsedAmount.toFixed(2));
+  const isWipe = mode === 'wipe';
+  const parsedAmount = isWipe ? 0 : parsePapelAmount(payload.amount);
+  if (!isWipe && parsedAmount == null) {
+    return NextResponse.json({ error: 'invalid_amount' }, { status: 400 });
+  }
+
+  const amount = parsedAmount ?? 0;
   const message = payload.message?.trim() ?? '';
   const imageUrl = payload.imageUrl?.trim() || null;
   const userId = payload.userId?.trim();
 
-  if (payload.scope === 'user' && !userId) {
-    console.log('wallet POST missing userId for user scope after trim');
+  if (scope === 'user' && !userId) {
     return NextResponse.json({ error: 'invalid_payload' }, { status: 400 });
   }
 
-  if (payload.mode === 'add' && !message) {
+  if (mode === 'add' && !message) {
     return NextResponse.json({ error: 'message_required' }, { status: 400 });
   }
 
   const adminProfile = adminId ? await getAdminProfile(adminId) : { name: 'Yetkili', avatarUrl: null };
-  const formatMessage = (text: string) =>
-    text.includes('{amount}') ? text.replaceAll('{amount}', amount.toFixed(2)) : `${text} (${amount.toFixed(2)} papel)`;
+  const formatMessage = (text: string, appliedAmount: number) => {
+    const display = appliedAmount.toFixed(2);
+    if (!text) return `${display} papel`;
+    return text.includes('{amount}') ? text.replaceAll('{amount}', display) : `${text} (${display} papel)`;
+  };
 
-  if (payload.scope === 'user') {
+  if (scope === 'user') {
     const targetUserId = userId as string;
 
     // Check if recipient is a member of the selected server
@@ -281,7 +286,14 @@ export async function POST(request: Request) {
       .maybeSingle()) as unknown as { data: { balance?: number } | null };
 
     const current = Number(data?.balance ?? 0);
-    const next = payload.mode === 'add' ? current + amount : current - amount;
+    const next =
+      mode === 'add'
+        ? Number((current + amount).toFixed(2))
+        : mode === 'wipe'
+          ? 0
+          : Math.max(0, Number((current - amount).toFixed(2)));
+    const deducted = Number(Math.max(0, current - next).toFixed(2));
+    const appliedAmount = mode === 'add' ? amount : deducted;
 
     // Get server ID for consistent data
     const { data: server } = await supabase
@@ -294,11 +306,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
     }
 
-    if (payload.mode === 'add') {
+    if (mode === 'add') {
       // Papel ekleme: direkt hesaba yatırma, reward mail gönder
       // Kullanıcı "Hepsini Al" tıklayınca bakiye yatırılacak
       const mailTitle = `${amount.toFixed(2)} Papel Ödülü`;
-      const mailBody = formatMessage(message);
+      const mailBody = formatMessage(message, amount);
 
       await supabase.from('system_mails').insert({
         guild_id: selectedGuildId,
@@ -313,13 +325,13 @@ export async function POST(request: Request) {
         details_url: null,
         metadata: { reward_amount: amount },
       });
-    } else {
-      // Papel düşme: direkt hesaptan düş (geri çekme anında olmalı)
-      await upsertWallet(supabase, targetUserId, Number(next.toFixed(2)), selectedGuildId);
-      await insertLedger(supabase, targetUserId, -amount, Number(next.toFixed(2)), selectedGuildId, {
-        mode: payload.mode,
-        scope: payload.scope,
+    } else if (deducted > 0) {
+      await upsertWallet(supabase, targetUserId, next, selectedGuildId);
+      await insertLedger(supabase, targetUserId, -deducted, next, selectedGuildId, {
+        mode,
+        scope,
         adminId,
+        wipe: mode === 'wipe',
       });
     }
 
@@ -331,21 +343,19 @@ export async function POST(request: Request) {
       metadata: {
         scope: 'user',
         targetUserId: userId,
-        mode: payload.mode,
-        amount,
+        mode,
+        amount: appliedAmount,
         message: message || null,
         actorName: adminProfile.name,
         actorAvatarUrl: adminProfile.avatarUrl,
       },
     });
 
-    return NextResponse.json({ status: 'ok', mode: payload.mode });
+    return NextResponse.json({ status: 'ok', mode, deducted, balanceAfter: next });
   }
 
   const approvedIds = await getApprovedMemberIds();
-  console.log('wallet POST approvedIds:', approvedIds.length, approvedIds.slice(0, 5));
   if (!approvedIds.length) {
-    console.log('wallet POST no approved users');
     return NextResponse.json({ error: 'no_approved_users' }, { status: 400 });
   }
 
@@ -360,8 +370,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'server_not_found' }, { status: 404 });
   }
 
-  const serverId = server.id;
-
   const { data: wallets } = (await supabase
     .from('member_wallets')
     .select('user_id,balance')
@@ -370,10 +378,10 @@ export async function POST(request: Request) {
 
   const targets = wallets ?? [];
 
-  if (payload.mode === 'add') {
+  if (mode === 'add') {
     // Toplu papel ekleme: herkese reward mail gönder
     const mailTitle = `${amount.toFixed(2)} Papel Ödülü`;
-    const mailBody = formatMessage(message);
+    const mailBody = formatMessage(message, amount);
 
     // Broadcast reward mail (user_id = null, herkese)
     await supabase.from('system_mails').insert({
@@ -390,17 +398,19 @@ export async function POST(request: Request) {
       metadata: { reward_amount: amount },
     });
   } else {
-    // Toplu papel düşme: direkt hesaplardan düş
-    for (const userId of approvedIds) {
-      const wallet = targets.find((entry) => entry.user_id === userId);
+    for (const memberId of approvedIds) {
+      const wallet = targets.find((entry) => entry.user_id === memberId);
       const current = Number(wallet?.balance ?? 0);
-      const next = current - amount;
+      const next = mode === 'wipe' ? 0 : Math.max(0, Number((current - amount).toFixed(2)));
+      const deducted = Number(Math.max(0, current - next).toFixed(2));
+      if (deducted <= 0) continue;
 
-      await upsertWallet(supabase, userId, Number(next.toFixed(2)), selectedGuildId);
-      await insertLedger(supabase, userId, -amount, Number(next.toFixed(2)), selectedGuildId, {
-        mode: payload.mode,
-        scope: payload.scope,
+      await upsertWallet(supabase, memberId, next, selectedGuildId);
+      await insertLedger(supabase, memberId, -deducted, next, selectedGuildId, {
+        mode,
+        scope,
         adminId,
+        wipe: mode === 'wipe',
       });
     }
   }
@@ -412,8 +422,8 @@ export async function POST(request: Request) {
     guildId: selectedGuildId,
     metadata: {
       scope: 'all',
-      mode: payload.mode,
-      amount,
+      mode,
+      amount: isWipe ? null : amount,
       updatedCount: approvedIds.length,
       message: message || null,
       actorName: adminProfile.name,
@@ -421,5 +431,5 @@ export async function POST(request: Request) {
     },
   });
 
-  return NextResponse.json({ status: 'ok', updated: approvedIds.length });
+  return NextResponse.json({ status: 'ok', updated: approvedIds.length, mode });
 }
