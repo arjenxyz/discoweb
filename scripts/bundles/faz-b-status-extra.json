@@ -1,0 +1,90 @@
+{
+  "tr": {
+    "status": {
+      "no_incidents": "Olay bildirilmedi.",
+      "uptime_intro": "Son 90 günün çalışma süresi.",
+      "updated": "Güncellendi: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "en": {
+    "status": {
+      "no_incidents": "No incidents reported.",
+      "uptime_intro": "Uptime over the last 90 days.",
+      "updated": "Updated: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "pt": {
+    "status": {
+      "no_incidents": "Nenhum incidente relatado.",
+      "uptime_intro": "Tempo de atividade dos últimos 90 dias.",
+      "updated": "Atualizado: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "id": {
+    "status": {
+      "no_incidents": "Tidak ada insiden dilaporkan.",
+      "uptime_intro": "Uptime 90 hari terakhir.",
+      "updated": "Diperbarui: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "es": {
+    "status": {
+      "no_incidents": "No se reportaron incidentes.",
+      "uptime_intro": "Tiempo de actividad de los últimos 90 días.",
+      "updated": "Actualizado: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "de": {
+    "status": {
+      "no_incidents": "Keine Vorfälle gemeldet.",
+      "uptime_intro": "Betriebszeit der letzten 90 Tage.",
+      "updated": "Aktualisiert: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "fr": {
+    "status": {
+      "no_incidents": "Aucun incident signalé.",
+      "uptime_intro": "Disponibilité des 90 derniers jours.",
+      "updated": "Mis à jour : {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "hu": {
+    "status": {
+      "no_incidents": "Nem jelentettek eseményt.",
+      "uptime_intro": "Az elmúlt 90 nap üzemideje.",
+      "updated": "Frissítve: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "ja": {
+    "status": {
+      "no_incidents": "インシデントの報告はありません。",
+      "uptime_intro": "過去90日間の稼働率。",
+      "updated": "更新: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "ko": {
+    "status": {
+      "no_incidents": "보고된 장애가 없습니다.",
+      "uptime_intro": "최근 90일 가동 시간.",
+      "updated": "업데이트: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  },
+  "ru": {
+    "status": {
+      "no_incidents": "Инциденты не сообщались.",
+      "uptime_intro": "Аптайм за последние 90 дней.",
+      "updated": "Обновлено: {time}",
+      "uptime_pct": "{value} % uptime"
+    }
+  }
+}

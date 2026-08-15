@@ -238,5 +238,5 @@ export const LOCAL_DEV_MOCK_WALLETS = {
     },
   ],
   totalCirculation: 192000,
-  count: 4,
+  totalCount: 4,
 };

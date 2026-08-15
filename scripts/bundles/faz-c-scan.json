@@ -1,0 +1,394 @@
+{
+  "scanned_at": "2026-08-10T18:50:55.554Z",
+  "note": "User-visible Turkish hardcoded strings (Turkish chars or obvious TR UI copy). API routes excluded. Counts are approximate unique string literals + JSX text nodes. None of the scanned files import useTranslation.",
+  "files_importing_useTranslation": [],
+  "files_without_useTranslation": [
+    "app/admin/settings/page.tsx",
+    "app/admin/store/page.tsx",
+    "app/admin/store/StoreListRow.tsx",
+    "app/admin/store/products/page.tsx",
+    "app/admin/store/products/new/page.tsx",
+    "app/admin/store/promos/page.tsx",
+    "app/admin/store/promos/new/page.tsx",
+    "app/admin/store/discounts/page.tsx",
+    "app/admin/store/discounts/new/page.tsx",
+    "app/admin/badges/page.tsx",
+    "app/admin/boosters/page.tsx",
+    "app/admin/custom-roles/page.tsx",
+    "app/admin/quiz/page.tsx",
+    "app/admin/log-channels/page.tsx",
+    "app/admin/logs/page.tsx",
+    "app/admin/maintenance/page.tsx",
+    "app/admin/RemoveSetupButton.tsx",
+    "app/admin/components/DiscordRolePreview.tsx",
+    "app/admin/components/DiscordProfileRolePreview.tsx",
+    "app/admin/components/DiscordRolePill.tsx",
+    "app/admin/AdminShell.tsx"
+  ],
+  "files": [
+    {
+      "path": "app/admin/settings/page.tsx",
+      "approx_string_count": 20,
+      "sample_strings": [
+        "Rol seçin...",
+        "Ayarlar yüklenemedi.",
+        "Ayarlar başarıyla kaydedildi.",
+        "Ayarlar yüklenirken hata oluştu.",
+        "Rol yapılandırması ve sunucu tercihleri.",
+        "Ayarlar kaydedilemedi. Lütfen tekrar deneyin.",
+        "Admin Rolü",
+        "Rol bulunamadı",
+        "Setup Ayarları",
+        "Tehlikeli Bölge",
+        "Kaydetme başarısız",
+        "Bu işlemler geri alınamaz. Dikkatli kullanın.",
+        "Bu role sahip üyeler admin paneline erişebilir.",
+        "Bu role sahip üyeler kazanç alır ve mağazayı kullanabilir.",
+        "Kaydet"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/page.tsx",
+      "approx_string_count": 15,
+      "sample_strings": [
+        "Ürün başlığı, rol ID ve fiyat bilgisini tanımlayın.",
+        "Ürün Listesi",
+        "İndirim Listesi",
+        "Mağaza Yönetimi",
+        "İndirim Kodu Oluştur",
+        "Promosyon Kodu Oluştur",
+        "Her özelliğe ayrı sayfadan erişin.",
+        "Mevcut ürünleri düzenleyin ve silin.",
+        "Tüm indirim kodlarının durumunu görün.",
+        "Aktif/pasif promosyon kodlarını yönetin.",
+        "Yüzde indirim ve kampanya süresi ayarlayın.",
+        "Papel paketlerini ve kullanım limitlerini yönetin.",
+        "Yeni Ürün Oluştur",
+        "Promosyon Listesi"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/StoreListRow.tsx",
+      "approx_string_count": 3,
+      "sample_strings": [
+        "Yükleniyor…",
+        "Düzenle",
+        "Sil"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/products/page.tsx",
+      "approx_string_count": 7,
+      "sample_strings": [
+        "Mağaza",
+        "Ürün Listesi",
+        "Henüz ürün yok.",
+        "Süresiz",
+        "Yeni Ürün Ekle",
+        "Süre",
+        "… papel"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/products/new/page.tsx",
+      "approx_string_count": 26,
+      "sample_strings": [
+        "Yükleniyor…",
+        "Rol adı ara…",
+        "Roller alınamadı.",
+        "Ürün kaydedilemedi.",
+        "Ürün güncellenemedi.",
+        "Ürün bilgisi alınamadı.",
+        "Düzenlenecek ürün bulunamadı.",
+        "Rol seçilince satın alma otomatik rol verir.",
+        "Mağaza",
+        "Güncelle",
+        "Ürün adı",
+        "Ürün Düzenle",
+        "Seçili: …",
+        "Aranıyor…",
+        "Örn. VIP Rol"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/promos/page.tsx",
+      "approx_string_count": 10,
+      "sample_strings": [
+        "Mağaza",
+        "… (sınırsız)",
+        "Henüz promosyon yok.",
+        "Kullanım",
+        "Kişi başı",
+        "Geçerlilik",
+        "Bitiş tarihi yok",
+        "Promosyon Listesi",
+        "… papel",
+        "Yeni Promosyon Ekle"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/promos/new/page.tsx",
+      "approx_string_count": 16,
+      "sample_strings": [
+        "Mağaza",
+        "Örn. WELCOME100",
+        "Promosyon kaydedilemedi.",
+        "Promosyon kaydedilemedi: …",
+        "Kodun toplam kaç kez kullanılabileceği.",
+        "Bir kullanıcının bu kodu kaç kez kullanabileceği.",
+        "Kaydet",
+        "Sınırsız",
+        "Kullanım limiti",
+        "Kişi başı limit",
+        "Bitiş",
+        "Kaydediliyor…",
+        "Papel paketi 0 olamaz.",
+        "Kod ve papel paketi zorunlu.",
+        "Papel paketi"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/discounts/page.tsx",
+      "approx_string_count": 8,
+      "sample_strings": [
+        "Mağaza",
+        "İndirim Listesi",
+        "… (sınırsız)",
+        "Henüz indirim yok.",
+        "Kullanım",
+        "Geçerlilik",
+        "Bitiş tarihi yok",
+        "Yeni İndirim Ekle"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/store/discounts/new/page.tsx",
+      "approx_string_count": 25,
+      "sample_strings": [
+        "İndirim kodu oluşturuldu.",
+        "Üyeler kuponu yazmadan sepette görür ve seçebilir.",
+        "İndirimin geçerli olması için gereken minimum sepet tutarı.",
+        "Hoş geldin indirim kodları, her kullanıcı tarafından o sunucuda yalnızca 1 kez kullanılabilir.",
+        "Mağaza",
+        "Oluştur",
+        "Hoş Geldin",
+        "İndirim kodu",
+        "Hoş Geldin İndirimi",
+        "Bir hata oluştu.",
+        "Kod ve indirim oranı zorunlu.",
+        "Kodun toplam kaç kez kullanılabileceği.",
+        "Bir kullanıcının bu kodu kaç kez kullanabileceği.",
+        "Kaydet",
+        "Sınırsız"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/badges/page.tsx",
+      "approx_string_count": 43,
+      "sample_strings": [
+        "Yükleniyor...",
+        "Roller yükleniyor...",
+        "Rol adı veya ID ara...",
+        "Rol seç veya ID girin...",
+        "Üyeler tag'i 7 gün taşıyarak bu rozeti kazanır.",
+        "Üyeler tag'i belirlediğiniz süre boyunca taşırlarsa ilgili kademeye erişirler.",
+        "Oluştur",
+        "Düzenle",
+        "Güncelle",
+        "Ayarı Sil",
+        "Tag Ayarları",
+        "Tag Yolu Arkaplanı",
+        "İptal",
+        "İsim zorunludur.",
+        "Bir hata oluştu."
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/boosters/page.tsx",
+      "approx_string_count": 37,
+      "sample_strings": [
+        "Yükleniyor...",
+        "Roller yükleniyor...",
+        "Rol seç veya ID girin...",
+        "Üyeler sunucuyu 3 ay kesintisiz boostlayarak bu rozeti kazanır.",
+        "Üyeler aralıksız boost bastıkları ay süresine göre kademe atlarlar.",
+        "Düzenle",
+        "Booster Ayarları",
+        "İptal",
+        "İsim zorunludur.",
+        "Bir hata oluştu.",
+        "Kazanç Çarpanı (örn: 1.5)",
+        "Ay gereksinimi en az 1 olmalı.",
+        "Bu booster kademesini silmek istediğinizden emin misiniz?",
+        "Bu kademedeki bir Booster'a her ay verilecek papel miktarı.",
+        "Örn: 3 yazarsanız, üye ardışık olarak 3 aydır boost basıyorsa bu kademeye ulaşır."
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/custom-roles/page.tsx",
+      "approx_string_count": 31,
+      "sample_strings": [
+        "Yükleniyor…",
+        "Oluşturuluyor…",
+        "Rolü Oluştur — …",
+        "Rol oluşturulamadı. Tekrar deneyin.",
+        "Rol oluşturuldu ve kayıt güncellendi.",
+        "Rol hiyerarşisi uyarısını onaylamanız gerekir.",
+        "Rol oluşturuldu. Rolü botun üstüne taşımayı unutmayın.",
+        "Rolü Oluştur",
+        "Özel Rol Talepleri",
+        "Rol oluşturulduktan sonra kazanan üyeye otomatik ver",
+        "Bitiş: …",
+        "Aranıyor…",
+        "Bağlantı hatası.",
+        "İşlem başarısız.",
+        "Talepler yüklenemedi."
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/quiz/page.tsx",
+      "approx_string_count": 38,
+      "sample_strings": [
+        "Yükleniyor...",
+        "İptal edilsin mi?",
+        "Oluştur",
+        "Özel Sorular",
+        "İptal",
+        "Silinsin mi?",
+        "Doğru: … · …",
+        "hazır soru olmalı.",
+        "Türkçe",
+        "Başlık",
+        "Kaydet",
+        "Açıklama",
+        "Planlandı",
+        "Başlangıç",
+        "Panele dön"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/log-channels/page.tsx",
+      "approx_string_count": 24,
+      "sample_strings": [
+        "Log ayarları yükleniyor...",
+        "Kaydetme başarısız oldu. Lütfen tekrar deneyin.…",
+        "Üye • Genel",
+        "Üye Logları",
+        "Üye • Kimlik",
+        "Üye • Roller",
+        "Üye • Mağaza",
+        "Üye • Değişim",
+        "Admin Logları",
+        "Admin • Cüzdan",
+        "Admin • Mağaza",
+        "Log Kanal Ayarları",
+        "Test mesajı gönderilemedi.",
+        "Bu link zaten var. Çakışan kanallar: …",
+        "Webhooklar kaydedilince anında aktif olur."
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/logs/page.tsx",
+      "approx_string_count": 4,
+      "sample_strings": [
+        "Loglar yükleniyor...",
+        "Son 50 web olayını görüntüleyin.",
+        "Kullanıcı: …",
+        "Durum: …"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/maintenance/page.tsx",
+      "approx_string_count": 37,
+      "sample_strings": [
+        "Güncelleyen: …",
+        "Güncelleniyor...",
+        "İndirim kodu kullanımı.",
+        "Promosyon kodu kullanımı.",
+        "Güncelleme başarısız oldu.",
+        "Bakım ayarları yüklenemedi.",
+        "Güncelleme başarısız oldu. …",
+        "Bakım ayarları yükleniyor...",
+        "Mağaza takip ve rol süreleri.",
+        "Bakım ayarları yüklenemedi. …",
+        "Bakım nedeni veya planlanan süre...",
+        "Discord botunun durumunu değiştirir.",
+        "Mağaza sayfaları ve satın alma akışları.",
+        "Mağaza",
+        "Bakımı Aç"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/RemoveSetupButton.tsx",
+      "approx_string_count": 24,
+      "sample_strings": [
+        "Kurulumu Kaldır",
+        "Discord Kanalları",
+        "Discord Webhook'ları",
+        "Kurulum Başarıyla Kaldırıldı",
+        "İptal",
+        "Önizleme alınamadı.",
+        "Önizleme alınıyor...",
+        "Bilinmeyen hata oluştu.",
+        "Lütfen onay için \"DELETE\" yazın.",
+        "Tüm veriler, kanallar ve webhook'lar temizlendi. Sunucu seçimine yönlendiriliyorsunuz...",
+        "Kaldır",
+        "yazın:",
+        "Onay için",
+        "Kritik İşlem",
+        "Bağlantı hatası:"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/components/DiscordRolePreview.tsx",
+      "approx_string_count": 6,
+      "sample_strings": [
+        "Önemli:",
+        "Üye listesi",
+        "Discord önizleme",
+        "Çekilişi kazandım!",
+        "Bugün 14:32",
+        "Yeni roller genelde listenin en altında oluşur. Rol ikonu görünmüyorsa, Discord sunucu ayarlarından rolü bot rolünün üstüne taşıyın."
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/components/DiscordProfileRolePreview.tsx",
+      "approx_string_count": 2,
+      "sample_strings": [
+        "Roller",
+        "kullanici"
+      ],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/components/DiscordRolePill.tsx",
+      "approx_string_count": 0,
+      "sample_strings": [],
+      "imports_useTranslation": false
+    },
+    {
+      "path": "app/admin/AdminShell.tsx",
+      "approx_string_count": 0,
+      "sample_strings": [],
+      "imports_useTranslation": false
+    }
+  ]
+}

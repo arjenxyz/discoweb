@@ -1,0 +1,1147 @@
+{
+  "hu": {
+    "sidebar": {
+      "dashboard": "Irányítópult",
+      "bot_settings": "Bot beállítások",
+      "channels_logs": "Csatornák és naplók",
+      "earn_settings": "Kereseti beállítások",
+      "wallet": "Pénztárca kezelés",
+      "store": "Áruház (Piac)",
+      "user_management": "Felhasználókezelés",
+      "global_announcements": "Globális közlemények",
+      "back_to_select": "Vissza a szerverválasztáshoz",
+      "quiz_events": "Quiz események"
+    },
+    "promo": {
+      "title": "Promóciós kód",
+      "subtitle": "Add meg a kódot, hogy Papelt adj a egyenlegedhez.",
+      "placeholder": "Add meg a kódot",
+      "redeem": "Beváltás",
+      "success": "{amount} Papel hozzáadva az egyenlegedhez!",
+      "error": {
+        "empty": "Add meg a kódot.",
+        "generic": "A promóciós kód nem váltható be.",
+        "invalid": "Érvénytelen promóciós kód.",
+        "unauthorized": "Be kell jelentkezned.",
+        "server": "A szerver nem található.",
+        "wrong_server": "Ez a kód másik szerverhez tartozik.",
+        "expired": "Ez a kód lejárt.",
+        "limit": "Ez a kód elérte a használati korlátot.",
+        "already_used": "Ezt a kódot már felhasználtad.",
+        "maintenance": "A promórendszer karbantartás alatt áll."
+      }
+    },
+    "admin": {
+      "dashboard": {
+        "title": "Kezelőpanel",
+        "active": "Aktív",
+        "unconfigured": "Nincs beállítva",
+        "default_server_name": "Kezelőközpont",
+        "subtitle": "Kövesd innen a szerver általános állapotát és statisztikáit.",
+        "refresh": "Frissítés",
+        "earn_settings": "Kereseti beállítások",
+        "maintenance_mode": "Karbantartási mód",
+        "server_activity": "Szerver aktivitás",
+        "messages_24h": "Üzenetek (elmúlt 24 óra)",
+        "total": "Összesen",
+        "voice_24h": "Hangpercek (elmúlt 24 óra)",
+        "total_min": "Összesen: {0} perc",
+        "registered_members": "Regisztrált tagok",
+        "wallets_created": "{0} pénztárca létrehozva",
+        "tag_owner": "Tag tulajdonos",
+        "booster": "Booster",
+        "economy": "Gazdaság és áruház",
+        "circulation": "Forgalomban lévő Papel",
+        "avg_balance": "Átlagos egyenleg: {0}",
+        "highest_balance": "Legmagasabb egyenleg",
+        "active_products": "Aktív termékek",
+        "orders_summary": "{0} függőben · {1} fizetve",
+        "pending_orders": "Függő rendelések",
+        "paid_orders": "Fizetve: {0}",
+        "stats_error": "Nem sikerült betölteni a statisztikákat. Frissítsd az oldalt.",
+        "quick_actions": "Gyors műveletek",
+        "action_new_product": "Új termék létrehozása",
+        "action_wallet": "Pénztárca kezelés",
+        "action_notify": "Értesítés küldése",
+        "action_promo": "Promóciós kód létrehozása",
+        "action_discount": "Kedvezménykód létrehozása",
+        "action_log_channels": "Naplócsatornák",
+        "access_denied_title": "Hozzáférés megtagadva",
+        "access_denied_body": "Nincs admin jogosultságod ezen a szerveren.",
+        "back_home": "Vissza a főoldalra",
+        "load_failed": "Nem sikerült betölteni az admin adatokat. Ellenőrizd a szerverbeállításokat és a jogosultságokat."
+      },
+      "wallet": {
+        "eyebrow": "Admin",
+        "title": "Pénztárca kezelés",
+        "subtitle": "Papel hozzáadása vagy elvétele felhasználóknak vagy minden tagnak.",
+        "operation": "Művelet",
+        "scope": "Hatókör",
+        "mode_add": "Egyenleg hozzáadása",
+        "mode_remove": "Egyenleg elvétele",
+        "scope_user": "Egy felhasználó",
+        "scope_all": "Minden felhasználó",
+        "search_label": "Felhasználó keresése (becenév / felhasználónév)",
+        "search_placeholder": "pl. night, newli",
+        "searching": "Keresés...",
+        "no_results": "Nincs találat.",
+        "user_id_label": "Felhasználó Discord ID",
+        "user_id_placeholder": "1234567890",
+        "clear_selection": "Kijelölés törlése",
+        "amount_label": "Összeg (papel)",
+        "amount_placeholder": "100",
+        "presets_label": "Előre megírt üzenetek",
+        "presets_select": "Válassz",
+        "amount_hint": "A {amount} helyőrzőt a tényleges összeg váltja fel.",
+        "description_required": "Leírás (kötelező)",
+        "description_optional": "Leírás (opcionális)",
+        "description_placeholder": "pl. karbantartási kárpótlás, eseményjutalom stb.",
+        "image_label": "Kép URL (opcionális)",
+        "image_placeholder": "https://...",
+        "submit_loading": "Feldolgozás...",
+        "submit": "Alkalmaz",
+        "error_invalid_amount": "Adj meg érvényes összeget.",
+        "error_user_required": "A felhasználói ID kötelező.",
+        "error_message_required": "Papel hozzáadásakor a leírás kötelező.",
+        "error_failed": "A művelet sikertelen.",
+        "success_all": "Alkalmazva minden felhasználóra. Összesen: {count}",
+        "success_single": "Sikeres művelet.",
+        "presets": {
+          "add_maintenance": {
+            "label": "Karbantartási kárpótlás",
+            "text": "Szia, {amount} papel került a fiókodba rövid karbantartás miatti kárpótlásként. Köszönjük a megértést."
+          },
+          "add_event": {
+            "label": "Esemény-/teljesítményjutalom",
+            "text": "Gratulálunk! {amount} papel került jóváírásra az eseményben való hozzájárulásodért. Élvezd!"
+          },
+          "add_gift": {
+            "label": "Közösségi köszönőajándék",
+            "text": "Köszönjük, hogy támogatod a közösségünket. {amount} papelt ajándékozunk neked."
+          },
+          "add_refund": {
+            "label": "Hibakárpótlás/visszatérítés",
+            "text": "Elnézést a kellemetlenségért. {amount} papel került az egyenlegedre kárpótlásként."
+          },
+          "add_milestone": {
+            "label": "Szint-/hozzájárulási jutalom",
+            "text": "Köszönjük a közösségi hozzájárulásodat! {amount} papel került jóváírásra."
+          },
+          "add_support": {
+            "label": "Támogatási köszönet",
+            "text": "Jószándékú ajándékként a támogatási kérésed után {amount} papel került a fiókodba."
+          },
+          "remove_penalty": {
+            "label": "Szabálysértés/büntetés",
+            "text": "{amount} papel levonásra került a fiókodból szabálysértés miatt."
+          },
+          "remove_chargeback": {
+            "label": "Hibás tranzakció javítása",
+            "text": "{amount} papel levonásra került az egyenlegedről hibás tranzakció javításaként."
+          },
+          "remove_fee": {
+            "label": "Tranzakciós díj",
+            "text": "{amount} papel levonásra került az egyenlegedről tranzakciós díjként."
+          },
+          "remove_refund": {
+            "label": "Visszatérítés visszavonása",
+            "text": "{amount} papel levonásra került az egyenlegedről visszatérítés visszavonása miatt."
+          },
+          "all_maintenance": {
+            "label": "Karbantartási kárpótlás (mindenki)",
+            "text": "A tervezett karbantartás kárpótlásaként {amount} papel került minden tag egyenlegére. Köszönjük."
+          },
+          "all_announcement": {
+            "label": "Közösségi ösztönző (általános)",
+            "text": "A közösség motiválására {amount} papel került kiosztásra minden tagnak. Élvezzétek!"
+          },
+          "all_event": {
+            "label": "Eseményjutalom (általános)",
+            "text": "Az eseményen való részvételért {amount} papel került szétosztásra minden tagnak."
+          },
+          "all_season": {
+            "label": "Szezonzáró bónusz",
+            "text": "Szezonzáró bónuszként {amount} papel került minden taghoz."
+          },
+          "all_promo": {
+            "label": "Promóciós ösztönző",
+            "text": "Az új időszak ösztönzőjeként {amount} papel került minden tag egyenlegére."
+          },
+          "all_loyalty": {
+            "label": "Hűségköszönet",
+            "text": "Köszönjük a hozzájárulásaitokat — {amount} papel került ajándékozásra minden tagnak."
+          },
+          "remove_all_adjustment": {
+            "label": "Általános egyenlegkorrekció",
+            "text": "{amount} papel levonás került alkalmazásra minden tagnál általános egyenlegkorrekcióként."
+          },
+          "remove_all_fee": {
+            "label": "Általános tranzakciós díj",
+            "text": "{amount} papel levonás került alkalmazásra minden tagnál általános tranzakciós díjként."
+          }
+        },
+        "mail": {
+          "title_add": "Egyenleg hozzáadva",
+          "title_remove": "Egyenleg elvéve",
+          "title_add_all": "Tömeges egyenleg hozzáadva",
+          "title_remove_all": "Tömeges egyenleg elvéve",
+          "heading_add": "✅ Egyenleg hozzáadva",
+          "heading_remove": "❌ Egyenleg elvéve",
+          "heading_add_all": "✅ Tömeges egyenleg hozzáadva",
+          "heading_remove_all": "❌ Tömeges egyenleg elvéve",
+          "amount_label": "Tranzakció összege:",
+          "amount_value": "{sign}{amount} Papel",
+          "description_label": "Tranzakció leírása:",
+          "footer_single": "Ezt a tranzakciót a rendszer hajtotta végre.",
+          "footer_all": "Ezt a tömeges tranzakciót a rendszer hajtotta végre."
+        }
+      },
+      "earn": {
+        "title": "Kereseti beállítások",
+        "subtitle": "Innen kezeld a szerver gazdaságát.",
+        "undo": "Visszavonás",
+        "saving": "Mentés...",
+        "save": "Változások mentése",
+        "load_error": "Hiba történt a beállítások betöltésekor.",
+        "save_error": "Nem sikerült menteni a beállításokat.",
+        "save_success": "Beállítások sikeresen elmentve.",
+        "data_error": "Nem sikerült betölteni az adatokat.",
+        "verified_role_mock": "@Ellenőrzött tag",
+        "message_activity": "Üzenetaktivitás",
+        "earn_per_message": "Kereset üzenetenként",
+        "voice_chat": "Hangcsevegés",
+        "earn_per_voice": "Kereset percenként",
+        "tag_bonus": "Tag bónusz",
+        "tag_bonus_desc": "Jutalmazd a szerver Tagjét használó tagokat.",
+        "tag_check_label": "A Tag-ellenőrzés erre a szerverre vonatkozik:",
+        "message_bonus": "Üzenetbónusz",
+        "voice_bonus": "Hangbónusz",
+        "tag_not_configured": "Nincs Tag beállítva ezen a szerveren. Állíts be megfelelő Taget a Discordon, vagy fejezd be a bot Setupját, mielőtt Tag-követelményt kapcsolnál be.",
+        "booster_bonus": "Booster bónusz",
+        "booster_bonus_desc": "Extra jutalom a szerver boostereinek.",
+        "security_title": "Biztonság és ellenőrzés",
+        "security_desc": "Ez a rész határozza meg, ki kap jutalmat. Ha üresen marad, minden tag kap jutalmat.",
+        "verify_role_label": "Ellenőrző szerep ID",
+        "verify_role_placeholder": "Add meg a szerep ID-ját",
+        "channels_title": "Kereseti csatornák",
+        "channels_load_error": "Nem sikerült betölteni a csatornaadatokat.",
+        "channels_desc": "Válaszd ki, hol kereshetnek a tagok papelt.",
+        "mode_all_label": "Minden csatorna",
+        "mode_all_desc": "Kereset minden csatornán aktív",
+        "mode_whitelist_label": "Fehérlista",
+        "mode_whitelist_desc": "Kereset csak a kiválasztott csatornákon",
+        "mode_blacklist_label": "Feketelista",
+        "mode_blacklist_desc": "Kereset mindenhol, kivéve a kiválasztottakat",
+        "message_channels": "Üzenetcsatornák",
+        "voice_channels": "Hangcsatornák",
+        "categories": "Kategóriák",
+        "text_channels": "Szöveges csatornák",
+        "voice_channel_list": "Hangcsatornák",
+        "summary_whitelist": "Kereset csak itt aktív:",
+        "summary_blacklist": "Kereset aktív, kivéve:",
+        "suffix_message": "(üzenet)",
+        "suffix_voice": "(hang)",
+        "no_channels_selected": "Még nincs kiválasztott csatorna."
+      },
+      "menu": {
+        "group_general": "Általános",
+        "group_store": "Áruház",
+        "group_community": "Közösség",
+        "group_management": "Kezelés",
+        "section_create": "Létrehozás",
+        "section_lists": "Listák",
+        "section_badges": "Tag jelvény",
+        "new_product": "Új termék",
+        "new_promo": "Promóciós kód",
+        "new_discount": "Kedvezménykód",
+        "product_list": "Terméklista",
+        "promo_list": "Promólista",
+        "discount_list": "Kedvezménylista",
+        "tag_booster": "Tag és Booster",
+        "tag_settings": "Tag beállítások",
+        "booster_settings": "Booster beállítások",
+        "custom_roles": "Egyedi szerepkérések"
+      },
+      "shell": {
+        "default_server": "Adatközpont",
+        "panel_label": "Admin panel",
+        "collapse": "Oldalsáv összecsukása",
+        "expand": "Oldalsáv kibontása",
+        "developer": "Fejlesztői panel",
+        "open_menu": "Menü megnyitása",
+        "close_menu": "Menü bezárása",
+        "menu_title": "Menü",
+        "admin_fallback": "Admin",
+        "role": "Admin",
+        "settings": "Setup beállítások",
+        "language_settings": "Nyelvi beállítások",
+        "change_server": "Szerver váltása",
+        "switch_server_hint": "Válassz a kezelhető szervereid közül.",
+        "switch_server_current": "Ezen a szerveren vagy",
+        "mobile_welcome": "Kezeld a szervert, az áruházat és a gazdaságot az admin panelről.",
+        "logout": "Kijelentkezés"
+      }
+    },
+    "select_server": {
+      "role_admin": "Adminisztrátor"
+    }
+  },
+  "ja": {
+    "sidebar": {
+      "dashboard": "ダッシュボード",
+      "bot_settings": "Bot設定",
+      "channels_logs": "チャンネルとログ",
+      "earn_settings": "獲得設定",
+      "wallet": "ウォレット管理",
+      "store": "ストア（マーケット）",
+      "user_management": "ユーザー管理",
+      "global_announcements": "グローバルお知らせ",
+      "back_to_select": "サーバー選択に戻る",
+      "quiz_events": "Quizイベント"
+    },
+    "promo": {
+      "title": "プロモコード",
+      "subtitle": "コードを入力して残高にPapelを追加します。",
+      "placeholder": "コードを入力",
+      "redeem": "利用する",
+      "success": "{amount} Papelが残高に追加されました！",
+      "error": {
+        "empty": "コードを入力してください。",
+        "generic": "プロモコードを利用できませんでした。",
+        "invalid": "無効なプロモコードです。",
+        "unauthorized": "ログインが必要です。",
+        "server": "サーバーが見つかりません。",
+        "wrong_server": "このコードは別のサーバー用です。",
+        "expired": "このコードは期限切れです。",
+        "limit": "このコードは利用上限に達しました。",
+        "already_used": "このコードは既に使用済みです。",
+        "maintenance": "プロモシステムはメンテナンス中です。"
+      }
+    },
+    "admin": {
+      "dashboard": {
+        "title": "管理パネル",
+        "active": "有効",
+        "unconfigured": "未設定",
+        "default_server_name": "管理センター",
+        "subtitle": "サーバーの全体状況と統計をここから確認できます。",
+        "refresh": "更新",
+        "earn_settings": "獲得設定",
+        "maintenance_mode": "メンテナンスモード",
+        "server_activity": "サーバーアクティビティ",
+        "messages_24h": "メッセージ（直近24時間）",
+        "total": "合計",
+        "voice_24h": "ボイス分数（直近24時間）",
+        "total_min": "合計: {0}分",
+        "registered_members": "登録メンバー",
+        "wallets_created": "{0}件のウォレット作成済み",
+        "tag_owner": "Tag所有者",
+        "booster": "Booster",
+        "economy": "経済とストア",
+        "circulation": "流通中のPapel",
+        "avg_balance": "平均残高: {0}",
+        "highest_balance": "最高残高",
+        "active_products": "有効な商品",
+        "orders_summary": "保留 {0} · 支払済 {1}",
+        "pending_orders": "保留中の注文",
+        "paid_orders": "支払済: {0}",
+        "stats_error": "統計の読み込みに失敗しました。ページを更新してください。",
+        "quick_actions": "クイック操作",
+        "action_new_product": "新しい商品を作成",
+        "action_wallet": "ウォレット管理",
+        "action_notify": "通知を送信",
+        "action_promo": "プロモコードを作成",
+        "action_discount": "割引コードを作成",
+        "action_log_channels": "ログチャンネル",
+        "access_denied_title": "アクセス拒否",
+        "access_denied_body": "このサーバーでの管理者権限がありません。",
+        "back_home": "ホームに戻る",
+        "load_failed": "管理データの読み込みに失敗しました。サーバー設定と権限を確認してください。"
+      },
+      "wallet": {
+        "eyebrow": "Admin",
+        "title": "ウォレット管理",
+        "subtitle": "ユーザーまたは全メンバーのpapelを追加／削除します。",
+        "operation": "操作",
+        "scope": "範囲",
+        "mode_add": "残高を追加",
+        "mode_remove": "残高を削除",
+        "scope_user": "単一ユーザー",
+        "scope_all": "全ユーザー",
+        "search_label": "ユーザー検索（ニックネーム／ユーザー名）",
+        "search_placeholder": "例: night, newli",
+        "searching": "検索中...",
+        "no_results": "結果なし。",
+        "user_id_label": "ユーザーのDiscord ID",
+        "user_id_placeholder": "1234567890",
+        "clear_selection": "選択をクリア",
+        "amount_label": "数量（papel）",
+        "amount_placeholder": "100",
+        "presets_label": "定型メッセージ",
+        "presets_select": "選択",
+        "amount_hint": "{amount} プレースホルダーは実際の金額に置き換えられます。",
+        "description_required": "説明（必須）",
+        "description_optional": "説明（任意）",
+        "description_placeholder": "例: メンテナンス補償、イベント報酬など",
+        "image_label": "画像URL（任意）",
+        "image_placeholder": "https://...",
+        "submit_loading": "処理中...",
+        "submit": "適用",
+        "error_invalid_amount": "有効な金額を入力してください。",
+        "error_user_required": "ユーザーIDは必須です。",
+        "error_message_required": "papel追加時は説明が必須です。",
+        "error_failed": "操作に失敗しました。",
+        "success_all": "全ユーザーに適用しました。合計: {count}",
+        "success_single": "操作が完了しました。",
+        "presets": {
+          "add_maintenance": {
+            "label": "メンテナンス補償",
+            "text": "こんにちは。短いメンテナンスの補償として {amount} papel がアカウントに追加されました。ご理解ありがとうございます。"
+          },
+          "add_event": {
+            "label": "イベント／実績報酬",
+            "text": "おめでとうございます！イベント貢献により {amount} papel がクレジットされました。お楽しみください！"
+          },
+          "add_gift": {
+            "label": "コミュニティ感謝ギフト",
+            "text": "コミュニティへのご支援ありがとうございます。{amount} papel をプレゼントします。"
+          },
+          "add_refund": {
+            "label": "エラー補償／返金",
+            "text": "ご不便をおかけして申し訳ありません。補償として {amount} papel を残高に追加しました。"
+          },
+          "add_milestone": {
+            "label": "レベル／貢献報酬",
+            "text": "コミュニティへの貢献ありがとうございます！{amount} papel がクレジットされました。"
+          },
+          "add_support": {
+            "label": "サポートへのお礼",
+            "text": "サポート依頼後の善意のギフトとして {amount} papel が追加されました。"
+          },
+          "remove_penalty": {
+            "label": "ルール違反／罰則",
+            "text": "ルール違反のため {amount} papel がアカウントから差し引かれました。"
+          },
+          "remove_chargeback": {
+            "label": "誤取引の訂正",
+            "text": "誤った取引の訂正として {amount} papel が残高から差し引かれました。"
+          },
+          "remove_fee": {
+            "label": "取引手数料",
+            "text": "取引手数料として {amount} papel が残高から差し引かれました。"
+          },
+          "remove_refund": {
+            "label": "返金取り消し",
+            "text": "返金取り消しのため {amount} papel が残高から差し引かれました。"
+          },
+          "all_maintenance": {
+            "label": "メンテナンス補償（全員）",
+            "text": "予定メンテナンスの補償として、全メンバーの残高に {amount} papel を追加しました。ありがとうございます。"
+          },
+          "all_announcement": {
+            "label": "コミュニティ激励（全体）",
+            "text": "コミュニティのモチベーション向上のため、全メンバーに {amount} papel を付与しました。お楽しみください！"
+          },
+          "all_event": {
+            "label": "イベント報酬（全体）",
+            "text": "イベント参加への感謝として、全メンバーに {amount} papel を配布しました。"
+          },
+          "all_season": {
+            "label": "シーズン終了ボーナス",
+            "text": "シーズン終了ボーナスとして、全メンバーに {amount} papel を追加しました。"
+          },
+          "all_promo": {
+            "label": "プロモ激励",
+            "text": "新期間の激励として、全メンバーの残高に {amount} papel をチャージしました。"
+          },
+          "all_loyalty": {
+            "label": "ロイヤリティへの感謝",
+            "text": "ご貢献に感謝します — 全メンバーに {amount} papel をギフトしました。"
+          },
+          "remove_all_adjustment": {
+            "label": "全体残高調整",
+            "text": "全体残高調整として、全メンバーから {amount} papel を差し引きました。"
+          },
+          "remove_all_fee": {
+            "label": "全体取引手数料",
+            "text": "全体取引手数料として、全メンバーから {amount} papel を差し引きました。"
+          }
+        },
+        "mail": {
+          "title_add": "残高追加",
+          "title_remove": "残高削除",
+          "title_add_all": "一括残高追加",
+          "title_remove_all": "一括残高削除",
+          "heading_add": "✅ 残高追加",
+          "heading_remove": "❌ 残高削除",
+          "heading_add_all": "✅ 一括残高追加",
+          "heading_remove_all": "❌ 一括残高削除",
+          "amount_label": "取引金額:",
+          "amount_value": "{sign}{amount} Papel",
+          "description_label": "取引の説明:",
+          "footer_single": "この取引はシステムによって実行されました。",
+          "footer_all": "この一括取引はシステムによって実行されました。"
+        }
+      },
+      "earn": {
+        "title": "獲得設定",
+        "subtitle": "ここからサーバー経済を管理します。",
+        "undo": "元に戻す",
+        "saving": "保存中...",
+        "save": "変更を保存",
+        "load_error": "設定の読み込み中にエラーが発生しました。",
+        "save_error": "設定の保存に失敗しました。",
+        "save_success": "設定を保存しました。",
+        "data_error": "データの読み込みに失敗しました。",
+        "verified_role_mock": "@認証済みメンバー",
+        "message_activity": "メッセージ活動",
+        "earn_per_message": "メッセージごとの獲得",
+        "voice_chat": "ボイスチャット",
+        "earn_per_voice": "分ごとの獲得",
+        "tag_bonus": "Tagボーナス",
+        "tag_bonus_desc": "サーバーTagを使うメンバーに報酬を与えます。",
+        "tag_check_label": "Tagチェックはこのサーバーに適用されます:",
+        "message_bonus": "メッセージボーナス",
+        "voice_bonus": "ボイスボーナス",
+        "tag_not_configured": "このサーバーにTagが設定されていません。Tag要件を有効にする前に、Discordで適切なTagを設定するかBotのSetupを完了してください。",
+        "booster_bonus": "Boosterボーナス",
+        "booster_bonus_desc": "サーバーBooster向けの追加報酬。",
+        "security_title": "セキュリティと認証",
+        "security_desc": "この欄で報酬を受け取る人を決めます。空の場合は全メンバーが報酬を受け取ります。",
+        "verify_role_label": "認証ロールID",
+        "verify_role_placeholder": "ロールIDを入力",
+        "channels_title": "獲得チャンネル",
+        "channels_load_error": "チャンネル情報の読み込みに失敗しました。",
+        "channels_desc": "メンバーがpapelを獲得できる場所を選びます。",
+        "mode_all_label": "すべてのチャンネル",
+        "mode_all_desc": "すべてのチャンネルで獲得が有効",
+        "mode_whitelist_label": "ホワイトリスト",
+        "mode_whitelist_desc": "選択したチャンネルのみで獲得",
+        "mode_blacklist_label": "ブラックリスト",
+        "mode_blacklist_desc": "選択したチャンネル以外で獲得",
+        "message_channels": "メッセージチャンネル",
+        "voice_channels": "ボイスチャンネル",
+        "categories": "カテゴリ",
+        "text_channels": "テキストチャンネル",
+        "voice_channel_list": "ボイスチャンネル",
+        "summary_whitelist": "獲得が有効なのは:",
+        "summary_blacklist": "次を除いて獲得が有効:",
+        "suffix_message": "（メッセージ）",
+        "suffix_voice": "（ボイス）",
+        "no_channels_selected": "まだチャンネルが選択されていません。"
+      },
+      "menu": {
+        "group_general": "一般",
+        "group_store": "ストア",
+        "group_community": "コミュニティ",
+        "group_management": "管理",
+        "section_create": "作成",
+        "section_lists": "一覧",
+        "section_badges": "Tagバッジ",
+        "new_product": "新しい商品",
+        "new_promo": "プロモコード",
+        "new_discount": "割引コード",
+        "product_list": "商品一覧",
+        "promo_list": "プロモ一覧",
+        "discount_list": "割引一覧",
+        "tag_booster": "TagとBooster",
+        "tag_settings": "Tag設定",
+        "booster_settings": "Booster設定",
+        "custom_roles": "カスタムロール申請"
+      },
+      "shell": {
+        "default_server": "データセンター",
+        "panel_label": "管理パネル",
+        "collapse": "サイドバーを折りたたむ",
+        "expand": "サイドバーを展開",
+        "developer": "開発者パネル",
+        "open_menu": "メニューを開く",
+        "close_menu": "メニューを閉じる",
+        "menu_title": "メニュー",
+        "admin_fallback": "Admin",
+        "role": "Admin",
+        "settings": "Setup設定",
+        "language_settings": "言語設定",
+        "change_server": "サーバーを変更",
+        "switch_server_hint": "管理できるサーバーから選んでください。",
+        "switch_server_current": "このサーバーにいます",
+        "mobile_welcome": "管理パネルからサーバー、ストア、経済を管理します。",
+        "logout": "ログアウト"
+      }
+    },
+    "home": {
+      "copyright": "DiscoWeb | 2026 © 全著作権所有"
+    }
+  },
+  "ko": {
+    "sidebar": {
+      "dashboard": "대시보드",
+      "bot_settings": "봇 설정",
+      "channels_logs": "채널 및 로그",
+      "earn_settings": "적립 설정",
+      "wallet": "지갑 관리",
+      "store": "스토어(마켓)",
+      "user_management": "사용자 관리",
+      "global_announcements": "전역 공지",
+      "back_to_select": "서버 선택으로 돌아가기",
+      "quiz_events": "Quiz 이벤트"
+    },
+    "promo": {
+      "title": "프로모 코드",
+      "subtitle": "코드를 입력해 잔액에 Papel을 추가하세요.",
+      "placeholder": "코드 입력",
+      "redeem": "사용하기",
+      "success": "{amount} Papel이 잔액에 추가되었습니다!",
+      "error": {
+        "empty": "코드를 입력하세요.",
+        "generic": "프로모 코드를 사용할 수 없습니다.",
+        "invalid": "잘못된 프로모 코드입니다.",
+        "unauthorized": "로그인이 필요합니다.",
+        "server": "서버를 찾을 수 없습니다.",
+        "wrong_server": "이 코드는 다른 서버용입니다.",
+        "expired": "이 코드는 만료되었습니다.",
+        "limit": "이 코드는 사용 한도에 도달했습니다.",
+        "already_used": "이미 이 코드를 사용했습니다.",
+        "maintenance": "프로모 시스템이 점검 중입니다."
+      }
+    },
+    "admin": {
+      "dashboard": {
+        "title": "관리 패널",
+        "active": "활성",
+        "unconfigured": "미구성",
+        "default_server_name": "관리 센터",
+        "subtitle": "서버의 전체 상태와 통계를 여기서 확인하세요.",
+        "refresh": "새로고침",
+        "earn_settings": "적립 설정",
+        "maintenance_mode": "점검 모드",
+        "server_activity": "서버 활동",
+        "messages_24h": "메시지(최근 24시간)",
+        "total": "합계",
+        "voice_24h": "음성 분(최근 24시간)",
+        "total_min": "합계: {0}분",
+        "registered_members": "등록된 멤버",
+        "wallets_created": "지갑 {0}개 생성됨",
+        "tag_owner": "Tag 소유자",
+        "booster": "Booster",
+        "economy": "경제 및 스토어",
+        "circulation": "유통 중인 Papel",
+        "avg_balance": "평균 잔액: {0}",
+        "highest_balance": "최고 잔액",
+        "active_products": "활성 상품",
+        "orders_summary": "대기 {0} · 결제 {1}",
+        "pending_orders": "대기 주문",
+        "paid_orders": "결제됨: {0}",
+        "stats_error": "통계를 불러오지 못했습니다. 페이지를 새로고침하세요.",
+        "quick_actions": "빠른 작업",
+        "action_new_product": "새 상품 만들기",
+        "action_wallet": "지갑 관리",
+        "action_notify": "알림 보내기",
+        "action_promo": "프로모 코드 만들기",
+        "action_discount": "할인 코드 만들기",
+        "action_log_channels": "로그 채널",
+        "access_denied_title": "접근 거부",
+        "access_denied_body": "이 서버에서 관리자 권한이 없습니다.",
+        "back_home": "홈으로 돌아가기",
+        "load_failed": "관리자 데이터를 불러오지 못했습니다. 서버 설정과 권한을 확인하세요."
+      },
+      "wallet": {
+        "eyebrow": "Admin",
+        "title": "지갑 관리",
+        "subtitle": "사용자 또는 전체 멤버의 papel을 추가하거나 제거합니다.",
+        "operation": "작업",
+        "scope": "범위",
+        "mode_add": "잔액 추가",
+        "mode_remove": "잔액 제거",
+        "scope_user": "단일 사용자",
+        "scope_all": "모든 사용자",
+        "search_label": "사용자 검색(닉네임 / 사용자명)",
+        "search_placeholder": "예: night, newli",
+        "searching": "검색 중...",
+        "no_results": "결과 없음.",
+        "user_id_label": "사용자 Discord ID",
+        "user_id_placeholder": "1234567890",
+        "clear_selection": "선택 지우기",
+        "amount_label": "수량(papel)",
+        "amount_placeholder": "100",
+        "presets_label": "미리 작성된 메시지",
+        "presets_select": "선택",
+        "amount_hint": "{amount} 자리 표시자는 실제 금액으로 바뀝니다.",
+        "description_required": "설명(필수)",
+        "description_optional": "설명(선택)",
+        "description_placeholder": "예: 점검 보상, 이벤트 보상 등",
+        "image_label": "이미지 URL(선택)",
+        "image_placeholder": "https://...",
+        "submit_loading": "처리 중...",
+        "submit": "적용",
+        "error_invalid_amount": "유효한 금액을 입력하세요.",
+        "error_user_required": "사용자 ID가 필요합니다.",
+        "error_message_required": "papel 추가 시 설명이 필요합니다.",
+        "error_failed": "작업에 실패했습니다.",
+        "success_all": "모든 사용자에게 적용됨. 합계: {count}",
+        "success_single": "작업이 완료되었습니다.",
+        "presets": {
+          "add_maintenance": {
+            "label": "점검 보상",
+            "text": "안녕하세요. 짧은 점검을 보상하기 위해 {amount} papel이 계정에 추가되었습니다. 양해해 주셔서 감사합니다."
+          },
+          "add_event": {
+            "label": "이벤트/업적 보상",
+            "text": "축하합니다! 이벤트 기여로 {amount} papel이 계정에 적립되었습니다. 즐기세요!"
+          },
+          "add_gift": {
+            "label": "커뮤니티 감사 선물",
+            "text": "커뮤니티를 지원해 주셔서 감사합니다. {amount} papel을 선물합니다."
+          },
+          "add_refund": {
+            "label": "오류 보상/환불",
+            "text": "불편을 드려 죄송합니다. 보상으로 {amount} papel이 잔액에 추가되었습니다."
+          },
+          "add_milestone": {
+            "label": "레벨/기여 보상",
+            "text": "커뮤니티 기여에 감사드립니다! {amount} papel이 계정에 적립되었습니다."
+          },
+          "add_support": {
+            "label": "지원 감사",
+            "text": "지원 요청 후 선의의 선물로 {amount} papel이 계정에 추가되었습니다."
+          },
+          "remove_penalty": {
+            "label": "규칙 위반/페널티",
+            "text": "규칙 위반으로 {amount} papel이 계정에서 차감되었습니다."
+          },
+          "remove_chargeback": {
+            "label": "잘못된 거래 정정",
+            "text": "잘못된 거래 정정으로 {amount} papel이 잔액에서 차감되었습니다."
+          },
+          "remove_fee": {
+            "label": "거래 수수료",
+            "text": "거래 수수료로 {amount} papel이 잔액에서 차감되었습니다."
+          },
+          "remove_refund": {
+            "label": "환불 취소",
+            "text": "환불 취소로 {amount} papel이 잔액에서 차감되었습니다."
+          },
+          "all_maintenance": {
+            "label": "점검 보상(전체)",
+            "text": "예정된 점검 보상으로 모든 멤버 잔액에 {amount} papel이 추가되었습니다. 감사합니다."
+          },
+          "all_announcement": {
+            "label": "커뮤니티 인센티브(일반)",
+            "text": "커뮤니티 동기 부여를 위해 모든 멤버에게 {amount} papel이 지급되었습니다. 즐기세요!"
+          },
+          "all_event": {
+            "label": "이벤트 보상(일반)",
+            "text": "이벤트 참여에 대한 감사로 모든 멤버에게 {amount} papel이 배포되었습니다."
+          },
+          "all_season": {
+            "label": "시즌 종료 보너스",
+            "text": "시즌 종료 보너스로 모든 멤버에게 {amount} papel이 추가되었습니다."
+          },
+          "all_promo": {
+            "label": "프로모션 인센티브",
+            "text": "새 기간 인센티브로 모든 멤버 잔액에 {amount} papel이 충전되었습니다."
+          },
+          "all_loyalty": {
+            "label": "충성도 감사",
+            "text": "기여에 감사드립니다 — 모든 멤버에게 {amount} papel을 선물했습니다."
+          },
+          "remove_all_adjustment": {
+            "label": "일반 잔액 조정",
+            "text": "일반 잔액 조정으로 모든 멤버에게 {amount} papel 차감이 적용되었습니다."
+          },
+          "remove_all_fee": {
+            "label": "일반 거래 수수료",
+            "text": "일반 거래 수수료로 모든 멤버에게 {amount} papel 차감이 적용되었습니다."
+          }
+        },
+        "mail": {
+          "title_add": "잔액 추가됨",
+          "title_remove": "잔액 제거됨",
+          "title_add_all": "일괄 잔액 추가됨",
+          "title_remove_all": "일괄 잔액 제거됨",
+          "heading_add": "✅ 잔액 추가됨",
+          "heading_remove": "❌ 잔액 제거됨",
+          "heading_add_all": "✅ 일괄 잔액 추가됨",
+          "heading_remove_all": "❌ 일괄 잔액 제거됨",
+          "amount_label": "거래 금액:",
+          "amount_value": "{sign}{amount} Papel",
+          "description_label": "거래 설명:",
+          "footer_single": "이 거래는 시스템에 의해 수행되었습니다.",
+          "footer_all": "이 일괄 거래는 시스템에 의해 수행되었습니다."
+        }
+      },
+      "earn": {
+        "title": "적립 설정",
+        "subtitle": "여기서 서버 경제를 관리하세요.",
+        "undo": "실행 취소",
+        "saving": "저장 중...",
+        "save": "변경 사항 저장",
+        "load_error": "설정을 불러오는 중 오류가 발생했습니다.",
+        "save_error": "설정을 저장하지 못했습니다.",
+        "save_success": "설정이 저장되었습니다.",
+        "data_error": "데이터를 불러오지 못했습니다.",
+        "verified_role_mock": "@인증된 멤버",
+        "message_activity": "메시지 활동",
+        "earn_per_message": "메시지당 적립",
+        "voice_chat": "음성 채팅",
+        "earn_per_voice": "분당 적립",
+        "tag_bonus": "Tag 보너스",
+        "tag_bonus_desc": "서버 Tag를 사용하는 멤버에게 보상합니다.",
+        "tag_check_label": "Tag 확인이 이 서버에 적용됩니다:",
+        "message_bonus": "메시지 보너스",
+        "voice_bonus": "음성 보너스",
+        "tag_not_configured": "이 서버에 Tag가 구성되어 있지 않습니다. Tag 요구 사항을 켜기 전에 Discord에서 적절한 Tag를 설정하거나 봇 Setup을 완료하세요.",
+        "booster_bonus": "Booster 보너스",
+        "booster_bonus_desc": "서버 Booster를 위한 추가 보상.",
+        "security_title": "보안 및 인증",
+        "security_desc": "이 섹션은 보상을 받을 사람을 정합니다. 비워 두면 모든 멤버가 보상을 받습니다.",
+        "verify_role_label": "인증 역할 ID",
+        "verify_role_placeholder": "역할 ID 입력",
+        "channels_title": "적립 채널",
+        "channels_load_error": "채널 정보를 불러오지 못했습니다.",
+        "channels_desc": "멤버가 papel을 적립할 수 있는 곳을 선택하세요.",
+        "mode_all_label": "모든 채널",
+        "mode_all_desc": "모든 채널에서 적립 활성",
+        "mode_whitelist_label": "허용 목록",
+        "mode_whitelist_desc": "선택한 채널에서만 적립",
+        "mode_blacklist_label": "차단 목록",
+        "mode_blacklist_desc": "선택한 채널을 제외한 모든 곳에서 적립",
+        "message_channels": "메시지 채널",
+        "voice_channels": "음성 채널",
+        "categories": "카테고리",
+        "text_channels": "텍스트 채널",
+        "voice_channel_list": "음성 채널",
+        "summary_whitelist": "적립이 활성인 곳:",
+        "summary_blacklist": "다음을 제외하고 적립 활성:",
+        "suffix_message": "(메시지)",
+        "suffix_voice": "(음성)",
+        "no_channels_selected": "아직 선택된 채널이 없습니다."
+      },
+      "menu": {
+        "group_general": "일반",
+        "group_store": "스토어",
+        "group_community": "커뮤니티",
+        "group_management": "관리",
+        "section_create": "만들기",
+        "section_lists": "목록",
+        "section_badges": "Tag 배지",
+        "new_product": "새 상품",
+        "new_promo": "프로모 코드",
+        "new_discount": "할인 코드",
+        "product_list": "상품 목록",
+        "promo_list": "프로모 목록",
+        "discount_list": "할인 목록",
+        "tag_booster": "Tag 및 Booster",
+        "tag_settings": "Tag 설정",
+        "booster_settings": "Booster 설정",
+        "custom_roles": "커스텀 역할 요청"
+      },
+      "shell": {
+        "default_server": "데이터 센터",
+        "panel_label": "관리자 패널",
+        "collapse": "사이드바 접기",
+        "expand": "사이드바 펼치기",
+        "developer": "개발자 패널",
+        "open_menu": "메뉴 열기",
+        "close_menu": "메뉴 닫기",
+        "menu_title": "메뉴",
+        "admin_fallback": "Admin",
+        "role": "Admin",
+        "settings": "Setup 설정",
+        "language_settings": "언어 설정",
+        "change_server": "서버 변경",
+        "switch_server_hint": "관리할 수 있는 서버 중에서 선택하세요.",
+        "switch_server_current": "이 서버에 있습니다",
+        "mobile_welcome": "관리자 패널에서 서버, 스토어, 경제를 관리하세요.",
+        "logout": "로그아웃"
+      }
+    },
+    "home": {
+      "copyright": "DiscoWeb | 2026 © 모든 권리 보유"
+    }
+  },
+  "ru": {
+    "sidebar": {
+      "dashboard": "Панель",
+      "bot_settings": "Настройки бота",
+      "channels_logs": "Каналы и логи",
+      "earn_settings": "Настройки заработка",
+      "wallet": "Управление кошельком",
+      "store": "Магазин (Маркет)",
+      "user_management": "Управление пользователями",
+      "global_announcements": "Глобальные объявления",
+      "back_to_select": "Назад к выбору сервера",
+      "quiz_events": "События Quiz"
+    },
+    "promo": {
+      "title": "Промокод",
+      "subtitle": "Введите код, чтобы добавить Papel на баланс.",
+      "placeholder": "Введите код",
+      "redeem": "Активировать",
+      "success": "{amount} Papel добавлено на ваш баланс!",
+      "error": {
+        "empty": "Введите код.",
+        "generic": "Не удалось активировать промокод.",
+        "invalid": "Недействительный промокод.",
+        "unauthorized": "Нужно войти в аккаунт.",
+        "server": "Сервер не найден.",
+        "wrong_server": "Этот код принадлежит другому серверу.",
+        "expired": "Срок действия этого кода истёк.",
+        "limit": "Этот код достиг лимита использований.",
+        "already_used": "Вы уже использовали этот код.",
+        "maintenance": "Система промокодов на обслуживании."
+      }
+    },
+    "admin": {
+      "dashboard": {
+        "title": "Панель управления",
+        "active": "Активен",
+        "unconfigured": "Не настроено",
+        "default_server_name": "Центр управления",
+        "subtitle": "Отслеживайте общий статус и статистику сервера здесь.",
+        "refresh": "Обновить",
+        "earn_settings": "Настройки заработка",
+        "maintenance_mode": "Режим обслуживания",
+        "server_activity": "Активность сервера",
+        "messages_24h": "Сообщения (за 24 ч)",
+        "total": "Всего",
+        "voice_24h": "Минуты голоса (за 24 ч)",
+        "total_min": "Всего: {0} мин",
+        "registered_members": "Зарегистрированные участники",
+        "wallets_created": "Создано кошельков: {0}",
+        "tag_owner": "Владелец Tag",
+        "booster": "Booster",
+        "economy": "Экономика и магазин",
+        "circulation": "Papel в обороте",
+        "avg_balance": "Средний баланс: {0}",
+        "highest_balance": "Наибольший баланс",
+        "active_products": "Активные товары",
+        "orders_summary": "{0} ожидают · {1} оплачены",
+        "pending_orders": "Ожидающие заказы",
+        "paid_orders": "Оплачено: {0}",
+        "stats_error": "Не удалось загрузить статистику. Обновите страницу.",
+        "quick_actions": "Быстрые действия",
+        "action_new_product": "Создать товар",
+        "action_wallet": "Управление кошельком",
+        "action_notify": "Отправить уведомление",
+        "action_promo": "Создать промокод",
+        "action_discount": "Создать код скидки",
+        "action_log_channels": "Каналы логов",
+        "access_denied_title": "Доступ запрещён",
+        "access_denied_body": "У вас нет прав администратора на этом сервере.",
+        "back_home": "На главную",
+        "load_failed": "Не удалось загрузить данные админа. Проверьте настройки сервера и права."
+      },
+      "wallet": {
+        "eyebrow": "Admin",
+        "title": "Управление кошельком",
+        "subtitle": "Добавляйте или снимайте papel у пользователей или у всех участников.",
+        "operation": "Операция",
+        "scope": "Область",
+        "mode_add": "Добавить баланс",
+        "mode_remove": "Снять баланс",
+        "scope_user": "Один пользователь",
+        "scope_all": "Все пользователи",
+        "search_label": "Поиск пользователя (ник / имя)",
+        "search_placeholder": "напр. night, newli",
+        "searching": "Поиск...",
+        "no_results": "Ничего не найдено.",
+        "user_id_label": "Discord ID пользователя",
+        "user_id_placeholder": "1234567890",
+        "clear_selection": "Очистить выбор",
+        "amount_label": "Сумма (papel)",
+        "amount_placeholder": "100",
+        "presets_label": "Готовые сообщения",
+        "presets_select": "Выбрать",
+        "amount_hint": "Плейсхолдер {amount} заменяется фактической суммой.",
+        "description_required": "Описание (обязательно)",
+        "description_optional": "Описание (необязательно)",
+        "description_placeholder": "напр. компенсация за обслуживание, награда за событие и т. д.",
+        "image_label": "URL изображения (необязательно)",
+        "image_placeholder": "https://...",
+        "submit_loading": "Обработка...",
+        "submit": "Применить",
+        "error_invalid_amount": "Введите корректную сумму.",
+        "error_user_required": "Требуется ID пользователя.",
+        "error_message_required": "При добавлении papel описание обязательно.",
+        "error_failed": "Операция не удалась.",
+        "success_all": "Применено ко всем пользователям. Всего: {count}",
+        "success_single": "Операция выполнена.",
+        "presets": {
+          "add_maintenance": {
+            "label": "Компенсация за обслуживание",
+            "text": "Здравствуйте, на ваш счёт добавлено {amount} papel в качестве компенсации за краткое обслуживание. Спасибо за понимание."
+          },
+          "add_event": {
+            "label": "Награда за событие/достижение",
+            "text": "Поздравляем! На ваш счёт зачислено {amount} papel за вклад в событие. Наслаждайтесь!"
+          },
+          "add_gift": {
+            "label": "Благодарственный подарок сообщества",
+            "text": "Спасибо за поддержку нашего сообщества. Мы дарим вам {amount} papel."
+          },
+          "add_refund": {
+            "label": "Компенсация/возврат за ошибку",
+            "text": "Приносим извинения за неудобства. На баланс добавлено {amount} papel в качестве компенсации."
+          },
+          "add_milestone": {
+            "label": "Награда за уровень/вклад",
+            "text": "Спасибо за вклад в сообщество! На ваш счёт зачислено {amount} papel."
+          },
+          "add_support": {
+            "label": "Благодарность за поддержку",
+            "text": "В знак доброй воли после вашего обращения в поддержку на счёт добавлено {amount} papel."
+          },
+          "remove_penalty": {
+            "label": "Нарушение правил/штраф",
+            "text": "С вашего счёта списано {amount} papel из-за нарушения правил."
+          },
+          "remove_chargeback": {
+            "label": "Исправление ошибочной транзакции",
+            "text": "С баланса списано {amount} papel в рамках исправления ошибочной транзакции."
+          },
+          "remove_fee": {
+            "label": "Комиссия за транзакцию",
+            "text": "С баланса списано {amount} papel в качестве комиссии за транзакцию."
+          },
+          "remove_refund": {
+            "label": "Отмена возврата",
+            "text": "С баланса списано {amount} papel из-за отмены возврата."
+          },
+          "all_maintenance": {
+            "label": "Компенсация за обслуживание (всем)",
+            "text": "В качестве компенсации за плановое обслуживание всем участникам добавлено {amount} papel. Спасибо."
+          },
+          "all_announcement": {
+            "label": "Стимул сообщества (общий)",
+            "text": "Для мотивации сообщества всем участникам выдано {amount} papel. Наслаждайтесь!"
+          },
+          "all_event": {
+            "label": "Награда за событие (общая)",
+            "text": "В знак благодарности за участие в событии всем участникам распределено {amount} papel."
+          },
+          "all_season": {
+            "label": "Бонус закрытия сезона",
+            "text": "В качестве бонуса закрытия сезона всем участникам добавлено {amount} papel."
+          },
+          "all_promo": {
+            "label": "Промо-стимул",
+            "text": "В качестве стимула нового периода на балансы всех участников загружено {amount} papel."
+          },
+          "all_loyalty": {
+            "label": "Благодарность за лояльность",
+            "text": "Спасибо за ваш вклад — всем участникам подарено {amount} papel."
+          },
+          "remove_all_adjustment": {
+            "label": "Общая корректировка баланса",
+            "text": "Списание {amount} papel применено ко всем участникам в рамках общей корректировки баланса."
+          },
+          "remove_all_fee": {
+            "label": "Общая комиссия за транзакцию",
+            "text": "Списание {amount} papel применено ко всем участникам в качестве общей комиссии за транзакцию."
+          }
+        },
+        "mail": {
+          "title_add": "Баланс добавлен",
+          "title_remove": "Баланс снят",
+          "title_add_all": "Массовое добавление баланса",
+          "title_remove_all": "Массовое снятие баланса",
+          "heading_add": "✅ Баланс добавлен",
+          "heading_remove": "❌ Баланс снят",
+          "heading_add_all": "✅ Массовое добавление баланса",
+          "heading_remove_all": "❌ Массовое снятие баланса",
+          "amount_label": "Сумма транзакции:",
+          "amount_value": "{sign}{amount} Papel",
+          "description_label": "Описание транзакции:",
+          "footer_single": "Эта транзакция выполнена системой.",
+          "footer_all": "Эта массовая транзакция выполнена системой."
+        }
+      },
+      "earn": {
+        "title": "Настройки заработка",
+        "subtitle": "Управляйте экономикой сервера здесь.",
+        "undo": "Отменить",
+        "saving": "Сохранение...",
+        "save": "Сохранить изменения",
+        "load_error": "Произошла ошибка при загрузке настроек.",
+        "save_error": "Не удалось сохранить настройки.",
+        "save_success": "Настройки успешно сохранены.",
+        "data_error": "Не удалось загрузить данные.",
+        "verified_role_mock": "@Проверенный участник",
+        "message_activity": "Активность сообщений",
+        "earn_per_message": "Заработок за сообщение",
+        "voice_chat": "Голосовой чат",
+        "earn_per_voice": "Заработок за минуту",
+        "tag_bonus": "Бонус Tag",
+        "tag_bonus_desc": "Награждайте участников, использующих тег сервера.",
+        "tag_check_label": "Проверка Tag применяется к этому серверу:",
+        "message_bonus": "Бонус за сообщения",
+        "voice_bonus": "Бонус за голос",
+        "tag_not_configured": "На этом сервере не настроен Tag. Настройте подходящий Tag в Discord или завершите Setup бота перед включением требования Tag.",
+        "booster_bonus": "Бонус Booster",
+        "booster_bonus_desc": "Дополнительная награда для бустеров сервера.",
+        "security_title": "Безопасность и проверка",
+        "security_desc": "Этот раздел определяет, кто получает награды. Если оставить пустым, награды получают все участники.",
+        "verify_role_label": "ID роли проверки",
+        "verify_role_placeholder": "Введите ID роли",
+        "channels_title": "Каналы заработка",
+        "channels_load_error": "Не удалось загрузить информацию о каналах.",
+        "channels_desc": "Выберите, где участники могут зарабатывать papel.",
+        "mode_all_label": "Все каналы",
+        "mode_all_desc": "Заработок активен в каждом канале",
+        "mode_whitelist_label": "Белый список",
+        "mode_whitelist_desc": "Заработок только в выбранных каналах",
+        "mode_blacklist_label": "Чёрный список",
+        "mode_blacklist_desc": "Заработок везде, кроме выбранных каналов",
+        "message_channels": "Текстовые каналы",
+        "voice_channels": "Голосовые каналы",
+        "categories": "Категории",
+        "text_channels": "Текстовые каналы",
+        "voice_channel_list": "Голосовые каналы",
+        "summary_whitelist": "Заработок активен только в:",
+        "summary_blacklist": "Заработок активен, кроме:",
+        "suffix_message": "(сообщение)",
+        "suffix_voice": "(голос)",
+        "no_channels_selected": "Каналы ещё не выбраны."
+      },
+      "menu": {
+        "group_general": "Общее",
+        "group_store": "Магазин",
+        "group_community": "Сообщество",
+        "group_management": "Управление",
+        "section_create": "Создать",
+        "section_lists": "Списки",
+        "section_badges": "Значок Tag",
+        "new_product": "Новый товар",
+        "new_promo": "Промокод",
+        "new_discount": "Код скидки",
+        "product_list": "Список товаров",
+        "promo_list": "Список промо",
+        "discount_list": "Список скидок",
+        "tag_booster": "Tag и Booster",
+        "tag_settings": "Настройки Tag",
+        "booster_settings": "Настройки Booster",
+        "custom_roles": "Запросы на пользовательские роли"
+      },
+      "shell": {
+        "default_server": "Дата-центр",
+        "panel_label": "Панель администратора",
+        "collapse": "Свернуть боковую панель",
+        "expand": "Развернуть боковую панель",
+        "developer": "Панель разработчика",
+        "open_menu": "Открыть меню",
+        "close_menu": "Закрыть меню",
+        "menu_title": "Меню",
+        "admin_fallback": "Admin",
+        "role": "Admin",
+        "settings": "Настройки Setup",
+        "language_settings": "Языковые настройки",
+        "change_server": "Сменить сервер",
+        "switch_server_hint": "Выберите среди серверов, которыми можете управлять.",
+        "switch_server_current": "Вы на этом сервере",
+        "mobile_welcome": "Управляйте сервером, магазином и экономикой из панели администратора.",
+        "logout": "Выйти"
+      }
+    }
+  }
+}

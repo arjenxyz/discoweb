@@ -1,0 +1,1210 @@
+{
+  "id": {
+    "setup": {
+      "access_denied_title": "Akses ditolak",
+      "access_denied_body": "Anda harus menjadi pemilik server atau administrator untuk menjalankan Setup.",
+      "back": "Kembali",
+      "cancel": "Batal",
+      "steps_heading": "Langkah",
+      "close": "Tutup",
+      "no_roles": "Tidak ada peran ditemukan",
+      "guild_alt": "Server",
+      "phase_update": "Fase pembaruan",
+      "phase_setup": "Fase Setup",
+      "step": {
+        "roles": {
+          "title": "Peran",
+          "desc": "Pilih peran admin dan anggota"
+        },
+        "logs": {
+          "title": "Manajemen log",
+          "desc": "Tempat log akan ditulis"
+        },
+        "economy": {
+          "title": "Penghasilan",
+          "desc": "Tarif penghasilan Papel"
+        },
+        "bonuses": {
+          "title": "Bonus",
+          "desc": "Penghasilan ekstra Tag dan boost"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Konfirmasi dan mulai"
+        }
+      },
+      "roles": {
+        "heading": "Peran sistem",
+        "sub": "Pilih peran Discord untuk panel admin dan akses anggota.",
+        "admin_label": "Peran administrator",
+        "admin_hint": "Peran ini dapat masuk ke Panel Admin.",
+        "admin_placeholder": "Pilih peran admin...",
+        "member_label": "Peran anggota",
+        "member_hint": "Peran dasar untuk anggota terdaftar; mereka memperoleh papel.",
+        "member_placeholder": "Pilih peran anggota..."
+      },
+      "logs": {
+        "heading": "Manajemen log",
+        "sub": "Di mana log aktivitas harus ditulis?",
+        "current_title": "Pasang di server ini",
+        "recommended": "Direkomendasikan",
+        "current_desc": "Kategori DiscoWeb Logs akan dibuat di sini.",
+        "dedicated_title": "Server log terpisah",
+        "dedicated_desc": "Log dikirim ke server Discord lain.",
+        "target_id": "ID server target",
+        "checking": "Memeriksa…",
+        "found": "Server ditemukan",
+        "found_named": "Server ditemukan: {name}",
+        "invalid_id": "ID server tidak valid",
+        "not_found": "Tidak ada server untuk ID ini, atau bot tidak ada di server tersebut",
+        "bot_must_be": "Bot harus berada di server tersebut.",
+        "warning_title": "Perhatian",
+        "warning_body": "Selama Setup, saluran log lama mungkin dihapus dan dibuat ulang."
+      },
+      "economy": {
+        "heading": "Ekonomi",
+        "sub": "Atur tarif papel untuk pesan dan suara.",
+        "message_title": "Penghasilan pesan",
+        "message_sub": "Untuk setiap pesan",
+        "message_unit": "Papel / pesan",
+        "voice_title": "Penghasilan suara",
+        "voice_sub": "Untuk setiap menit suara",
+        "voice_unit": "Papel / mnt"
+      },
+      "bonuses": {
+        "heading": "Bonus",
+        "sub": "Papel ekstra untuk Tag dan boost.",
+        "tag_title": "Bonus Tag",
+        "tag_sub": "Anggota dengan tag server di nama mereka",
+        "boost_title": "Bonus Boost",
+        "boost_sub": "Anggota yang boost server",
+        "message": "Pesan",
+        "voice_min": "Suara / mnt"
+      },
+      "confirm": {
+        "ready_title": "Siap",
+        "ready_body": "Pengaturan terlihat baik. Memulai akan menerapkannya ke server.",
+        "start": "Mulai Setup",
+        "running": "Setup sedang berlangsung"
+      },
+      "nav": {
+        "back": "Kembali",
+        "next": "Berikutnya"
+      },
+      "error": {
+        "guild_info": "Tidak dapat memuat informasi server",
+        "guild_roles": "Tidak dapat memuat peran server",
+        "bot_inactive": "Setup bot tidak aktif di server ini. Hubungi pemilik atau administrator.",
+        "load_failed": "Terjadi kesalahan saat memuat informasi server.",
+        "roles_required": "Pilih peran admin dan verify.",
+        "guild_missing": "Informasi server tidak ditemukan.",
+        "failed": "Setup gagal",
+        "generic": "Terjadi kesalahan selama Setup."
+      },
+      "marks": {
+        "ok": "BERHASIL",
+        "fail": "GAGAL",
+        "done": "selesai"
+      },
+      "progress": {
+        "permissions": "> Memverifikasi izin...",
+        "api": "> Memulai integrasi Bot API...",
+        "webhooks": "> Menyiapkan layanan webhook...",
+        "log_server": "> Mengonfigurasi server log...",
+        "mock_roles": "> Menghubungkan peran contoh...",
+        "economy": "> Menulis pengaturan ekonomi...",
+        "bonuses": "> Menerapkan aturan bonus...",
+        "mock_done": "> Setup mock localhost selesai.",
+        "success": "> SETUP BERHASIL!",
+        "log_ok": "> Setup log: BERHASIL",
+        "log_fail": "> Setup log: GAGAL (pastikan bot ada di server)",
+        "db": "> Catatan database dibuat...",
+        "done": "> Setup berhasil diselesaikan!",
+        "redirect": "> Mengalihkan ke Panel Admin...",
+        "fail": "> SETUP GAGAL!"
+      },
+      "terminal": {
+        "missing_roles": "Informasi peran hilang. Kembali ke layar Setup.",
+        "unknown_guild": "Tidak diketahui",
+        "logged_in": "masuk: {name}",
+        "admin_role": "peran admin: {id}",
+        "verify_role": "peran verify: {id}",
+        "creating_categories": "membuat kategori saluran...",
+        "channels_created": "saluran dibuat",
+        "preparing_webhooks": "menyiapkan webhook...",
+        "failed": "Setup gagal",
+        "category_ok": "validasi kategori: ok",
+        "created_channels": "saluran yang dibuat:",
+        "webhook_created": "webhook dibuat: {name} ({type})",
+        "db_writing": "database: menulis catatan...",
+        "success": "setup: berhasil",
+        "redirecting": "mengalihkan pengguna...",
+        "countdown": "panel admin terbuka dalam {seconds} detik...",
+        "error_generic": "Terjadi kesalahan selama Setup.",
+        "fail_line": "setup: gagal",
+        "error_label": "✕ kesalahan",
+        "loading": "Memuat...",
+        "path": "~/pusat-data/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "es": {
+    "setup": {
+      "access_denied_title": "Acceso denegado",
+      "access_denied_body": "Debes ser el propietario del servidor o un administrador para ejecutar el Setup.",
+      "back": "Volver",
+      "cancel": "Cancelar",
+      "steps_heading": "Pasos",
+      "close": "Cerrar",
+      "no_roles": "No se encontraron roles",
+      "guild_alt": "Servidor",
+      "phase_update": "Fase de actualización",
+      "phase_setup": "Fase de Setup",
+      "step": {
+        "roles": {
+          "title": "Roles",
+          "desc": "Elige los roles de admin y miembro"
+        },
+        "logs": {
+          "title": "Gestión de logs",
+          "desc": "Dónde se escribirán los logs"
+        },
+        "economy": {
+          "title": "Ganancias",
+          "desc": "Tasas de ganancia de Papel"
+        },
+        "bonuses": {
+          "title": "Bonificaciones",
+          "desc": "Ganancias extra de Tag y boost"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Confirmar e iniciar"
+        }
+      },
+      "roles": {
+        "heading": "Roles del sistema",
+        "sub": "Elige los roles de Discord para el panel admin y el acceso de miembros.",
+        "admin_label": "Rol de administrador",
+        "admin_hint": "Este rol puede entrar al Panel Admin.",
+        "admin_placeholder": "Selecciona el rol admin...",
+        "member_label": "Rol de miembro",
+        "member_hint": "Rol base para miembros registrados; ganan papel.",
+        "member_placeholder": "Selecciona el rol de miembro..."
+      },
+      "logs": {
+        "heading": "Gestión de logs",
+        "sub": "¿Dónde deben escribirse los logs de actividad?",
+        "current_title": "Instalar en este servidor",
+        "recommended": "Recomendado",
+        "current_desc": "Se creará aquí una categoría DiscoWeb Logs.",
+        "dedicated_title": "Servidor de logs separado",
+        "dedicated_desc": "Los logs van a otro servidor de Discord.",
+        "target_id": "ID del servidor de destino",
+        "checking": "Comprobando…",
+        "found": "Servidor encontrado",
+        "found_named": "Servidor encontrado: {name}",
+        "invalid_id": "ID de servidor no válido",
+        "not_found": "No se encontró ningún servidor con este ID, o el bot no está en ese servidor",
+        "bot_must_be": "El bot debe estar en ese servidor.",
+        "warning_title": "Atención",
+        "warning_body": "Durante el Setup, los canales de log antiguos pueden eliminarse y recrearse."
+      },
+      "economy": {
+        "heading": "Economía",
+        "sub": "Define las tasas de papel para mensajes y voz.",
+        "message_title": "Ganancias por mensaje",
+        "message_sub": "Por cada mensaje",
+        "message_unit": "Papel / mensaje",
+        "voice_title": "Ganancias por voz",
+        "voice_sub": "Por cada minuto de voz",
+        "voice_unit": "Papel / min"
+      },
+      "bonuses": {
+        "heading": "Bonificaciones",
+        "sub": "Papel extra por Tag y boost.",
+        "tag_title": "Bonus de Tag",
+        "tag_sub": "Miembros con la tag del servidor en su nombre",
+        "boost_title": "Bonus de Boost",
+        "boost_sub": "Miembros que impulsan el servidor",
+        "message": "Mensaje",
+        "voice_min": "Voz / min"
+      },
+      "confirm": {
+        "ready_title": "Listo",
+        "ready_body": "La configuración parece correcta. Al iniciar se aplicará al servidor.",
+        "start": "Iniciar Setup",
+        "running": "Setup en curso"
+      },
+      "nav": {
+        "back": "Atrás",
+        "next": "Siguiente"
+      },
+      "error": {
+        "guild_info": "No se pudo cargar la información del servidor",
+        "guild_roles": "No se pudieron cargar los roles del servidor",
+        "bot_inactive": "El Setup del bot no está activo en este servidor. Contacta al propietario o a un administrador.",
+        "load_failed": "Ocurrió un error al cargar la información del servidor.",
+        "roles_required": "Selecciona los roles de admin y verify.",
+        "guild_missing": "No se encontró la información del servidor.",
+        "failed": "El Setup falló",
+        "generic": "Ocurrió un error durante el Setup."
+      },
+      "marks": {
+        "ok": "ÉXITO",
+        "fail": "FALLIDO",
+        "done": "completado"
+      },
+      "progress": {
+        "permissions": "> Verificando permisos...",
+        "api": "> Iniciando integración de Bot API...",
+        "webhooks": "> Preparando servicios de webhook...",
+        "log_server": "> Configurando servidor de logs...",
+        "mock_roles": "> Vinculando roles de ejemplo...",
+        "economy": "> Escribiendo ajustes de economía...",
+        "bonuses": "> Aplicando reglas de bonus...",
+        "mock_done": "> Setup mock de localhost completado.",
+        "success": "> ¡SETUP EXITOSO!",
+        "log_ok": "> Setup de logs: ÉXITO",
+        "log_fail": "> Setup de logs: FALLIDO (asegúrate de que el bot esté en el servidor)",
+        "db": "> Registros de base de datos creados...",
+        "done": "> ¡Setup completado con éxito!",
+        "redirect": "> Redirigiendo al Panel Admin...",
+        "fail": "> ¡SETUP FALLIDO!"
+      },
+      "terminal": {
+        "missing_roles": "Falta información de roles. Vuelve a la pantalla de Setup.",
+        "unknown_guild": "Desconocido",
+        "logged_in": "sesión iniciada: {name}",
+        "admin_role": "rol admin: {id}",
+        "verify_role": "rol verify: {id}",
+        "creating_categories": "creando categorías de canales...",
+        "channels_created": "canales creados",
+        "preparing_webhooks": "preparando webhooks...",
+        "failed": "El Setup falló",
+        "category_ok": "validación de categoría: ok",
+        "created_channels": "canales creados:",
+        "webhook_created": "webhook creado: {name} ({type})",
+        "db_writing": "database: escribiendo registros...",
+        "success": "setup: éxito",
+        "redirecting": "redirigiendo usuario...",
+        "countdown": "el panel admin se abre en {seconds} segundos...",
+        "error_generic": "Ocurrió un error durante el Setup.",
+        "fail_line": "setup: fallido",
+        "error_label": "✕ error",
+        "loading": "Cargando...",
+        "path": "~/centro-de-datos/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "de": {
+    "setup": {
+      "access_denied_title": "Zugriff verweigert",
+      "access_denied_body": "Du musst Serverbesitzer oder Administrator sein, um das Setup auszuführen.",
+      "back": "Zurück",
+      "cancel": "Abbrechen",
+      "steps_heading": "Schritte",
+      "close": "Schließen",
+      "no_roles": "Keine Rollen gefunden",
+      "guild_alt": "Server",
+      "phase_update": "Aktualisierungsphase",
+      "phase_setup": "Setup-Phase",
+      "step": {
+        "roles": {
+          "title": "Rollen",
+          "desc": "Admin- und Mitgliederrollen wählen"
+        },
+        "logs": {
+          "title": "Log-Verwaltung",
+          "desc": "Wohin Logs geschrieben werden"
+        },
+        "economy": {
+          "title": "Verdienste",
+          "desc": "Papel-Verdienstraten"
+        },
+        "bonuses": {
+          "title": "Boni",
+          "desc": "Extra-Verdienste für Tag und Boost"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Bestätigen und starten"
+        }
+      },
+      "roles": {
+        "heading": "Systemrollen",
+        "sub": "Wähle Discord-Rollen für das Admin-Panel und den Mitgliederzugriff.",
+        "admin_label": "Administratorrolle",
+        "admin_hint": "Diese Rolle kann das Admin-Panel betreten.",
+        "admin_placeholder": "Admin-Rolle auswählen...",
+        "member_label": "Mitgliederrolle",
+        "member_hint": "Basisrolle für registrierte Mitglieder; sie verdienen Papel.",
+        "member_placeholder": "Mitgliederrolle auswählen..."
+      },
+      "logs": {
+        "heading": "Log-Verwaltung",
+        "sub": "Wohin sollen Aktivitätslogs geschrieben werden?",
+        "current_title": "Auf diesem Server installieren",
+        "recommended": "Empfohlen",
+        "current_desc": "Hier wird eine DiscoWeb Logs-Kategorie erstellt.",
+        "dedicated_title": "Separater Log-Server",
+        "dedicated_desc": "Logs gehen an einen anderen Discord-Server.",
+        "target_id": "Ziel-Server-ID",
+        "checking": "Wird geprüft…",
+        "found": "Server gefunden",
+        "found_named": "Server gefunden: {name}",
+        "invalid_id": "Ungültige Server-ID",
+        "not_found": "Kein Server für diese ID gefunden, oder der Bot ist nicht auf diesem Server",
+        "bot_must_be": "Der Bot muss auf diesem Server sein.",
+        "warning_title": "Vorsicht",
+        "warning_body": "Während des Setups können alte Log-Kanäle gelöscht und neu erstellt werden."
+      },
+      "economy": {
+        "heading": "Wirtschaft",
+        "sub": "Papel-Raten für Nachrichten und Sprache festlegen.",
+        "message_title": "Nachrichtenverdienst",
+        "message_sub": "Pro Nachricht",
+        "message_unit": "Papel / Nachricht",
+        "voice_title": "Sprachverdienst",
+        "voice_sub": "Pro Sprachminute",
+        "voice_unit": "Papel / Min."
+      },
+      "bonuses": {
+        "heading": "Boni",
+        "sub": "Extra-Papel für Tag und Boost.",
+        "tag_title": "Tag-Bonus",
+        "tag_sub": "Mitglieder mit dem Server-Tag im Namen",
+        "boost_title": "Boost-Bonus",
+        "boost_sub": "Mitglieder, die den Server boosten",
+        "message": "Nachricht",
+        "voice_min": "Sprache / Min."
+      },
+      "confirm": {
+        "ready_title": "Bereit",
+        "ready_body": "Die Einstellungen sehen gut aus. Beim Start werden sie auf den Server angewendet.",
+        "start": "Setup starten",
+        "running": "Setup läuft"
+      },
+      "nav": {
+        "back": "Zurück",
+        "next": "Weiter"
+      },
+      "error": {
+        "guild_info": "Serverinformationen konnten nicht geladen werden",
+        "guild_roles": "Serverrollen konnten nicht geladen werden",
+        "bot_inactive": "Das Bot-Setup ist auf diesem Server nicht aktiv. Kontaktiere den Besitzer oder einen Administrator.",
+        "load_failed": "Beim Laden der Serverinformationen ist ein Fehler aufgetreten.",
+        "roles_required": "Bitte wähle sowohl die Admin- als auch die Verify-Rolle.",
+        "guild_missing": "Serverinformationen wurden nicht gefunden.",
+        "failed": "Setup fehlgeschlagen",
+        "generic": "Während des Setups ist ein Fehler aufgetreten."
+      },
+      "marks": {
+        "ok": "ERFOLG",
+        "fail": "FEHLGESCHLAGEN",
+        "done": "abgeschlossen"
+      },
+      "progress": {
+        "permissions": "> Berechtigungen werden geprüft...",
+        "api": "> Bot-API-Integration wird gestartet...",
+        "webhooks": "> Webhook-Dienste werden vorbereitet...",
+        "log_server": "> Log-Server wird konfiguriert...",
+        "mock_roles": "> Beispielrollen werden verknüpft...",
+        "economy": "> Wirtschaftseinstellungen werden geschrieben...",
+        "bonuses": "> Bonusregeln werden angewendet...",
+        "mock_done": "> Localhost-Mock-Setup abgeschlossen.",
+        "success": "> SETUP ERFOLGREICH!",
+        "log_ok": "> Log-Setup: ERFOLG",
+        "log_fail": "> Log-Setup: FEHLGESCHLAGEN (stelle sicher, dass der Bot auf dem Server ist)",
+        "db": "> Datenbankeinträge erstellt...",
+        "done": "> Setup erfolgreich abgeschlossen!",
+        "redirect": "> Weiterleitung zum Admin-Panel...",
+        "fail": "> SETUP FEHLGESCHLAGEN!"
+      },
+      "terminal": {
+        "missing_roles": "Rolleninformationen fehlen. Kehre zum Setup-Bildschirm zurück.",
+        "unknown_guild": "Unbekannt",
+        "logged_in": "angemeldet: {name}",
+        "admin_role": "Admin-Rolle: {id}",
+        "verify_role": "Verify-Rolle: {id}",
+        "creating_categories": "Kanalkategorien werden erstellt...",
+        "channels_created": "Kanäle erstellt",
+        "preparing_webhooks": "Webhooks werden vorbereitet...",
+        "failed": "Setup fehlgeschlagen",
+        "category_ok": "Kategorieprüfung: ok",
+        "created_channels": "erstellte Kanäle:",
+        "webhook_created": "Webhook erstellt: {name} ({type})",
+        "db_writing": "database: Einträge werden geschrieben...",
+        "success": "setup: erfolgreich",
+        "redirecting": "Benutzer wird weitergeleitet...",
+        "countdown": "Admin-Panel öffnet in {seconds} Sekunden...",
+        "error_generic": "Während des Setups ist ein Fehler aufgetreten.",
+        "fail_line": "setup: fehlgeschlagen",
+        "error_label": "✕ Fehler",
+        "loading": "Wird geladen...",
+        "path": "~/daten-zentrum/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "fr": {
+    "setup": {
+      "access_denied_title": "Accès refusé",
+      "access_denied_body": "Vous devez être le propriétaire du serveur ou un administrateur pour lancer le Setup.",
+      "back": "Retour",
+      "cancel": "Annuler",
+      "steps_heading": "Étapes",
+      "close": "Fermer",
+      "no_roles": "Aucun rôle trouvé",
+      "guild_alt": "Serveur",
+      "phase_update": "Phase de mise à jour",
+      "phase_setup": "Phase de Setup",
+      "step": {
+        "roles": {
+          "title": "Rôles",
+          "desc": "Choisir les rôles admin et membre"
+        },
+        "logs": {
+          "title": "Gestion des logs",
+          "desc": "Où les logs seront écrits"
+        },
+        "economy": {
+          "title": "Gains",
+          "desc": "Taux de gain de Papel"
+        },
+        "bonuses": {
+          "title": "Bonus",
+          "desc": "Gains supplémentaires Tag et boost"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Confirmer et démarrer"
+        }
+      },
+      "roles": {
+        "heading": "Rôles système",
+        "sub": "Choisissez les rôles Discord pour le panneau admin et l’accès des membres.",
+        "admin_label": "Rôle administrateur",
+        "admin_hint": "Ce rôle peut accéder au Panneau Admin.",
+        "admin_placeholder": "Sélectionner le rôle admin...",
+        "member_label": "Rôle membre",
+        "member_hint": "Rôle de base des membres inscrits ; ils gagnent du papel.",
+        "member_placeholder": "Sélectionner le rôle membre..."
+      },
+      "logs": {
+        "heading": "Gestion des logs",
+        "sub": "Où les logs d’activité doivent-ils être écrits ?",
+        "current_title": "Installer sur ce serveur",
+        "recommended": "Recommandé",
+        "current_desc": "Une catégorie DiscoWeb Logs sera créée ici.",
+        "dedicated_title": "Serveur de logs séparé",
+        "dedicated_desc": "Les logs vont vers un autre serveur Discord.",
+        "target_id": "ID du serveur cible",
+        "checking": "Vérification…",
+        "found": "Serveur trouvé",
+        "found_named": "Serveur trouvé : {name}",
+        "invalid_id": "ID de serveur invalide",
+        "not_found": "Aucun serveur trouvé pour cet ID, ou le bot n’est pas sur ce serveur",
+        "bot_must_be": "Le bot doit être sur ce serveur.",
+        "warning_title": "Attention",
+        "warning_body": "Pendant le Setup, d’anciens salons de logs peuvent être supprimés et recréés."
+      },
+      "economy": {
+        "heading": "Économie",
+        "sub": "Définissez les taux de papel pour les messages et la voix.",
+        "message_title": "Gains par message",
+        "message_sub": "Pour chaque message",
+        "message_unit": "Papel / message",
+        "voice_title": "Gains vocaux",
+        "voice_sub": "Pour chaque minute vocale",
+        "voice_unit": "Papel / min"
+      },
+      "bonuses": {
+        "heading": "Bonus",
+        "sub": "Papel supplémentaire pour Tag et boost.",
+        "tag_title": "Bonus Tag",
+        "tag_sub": "Membres avec le tag du serveur dans leur nom",
+        "boost_title": "Bonus Boost",
+        "boost_sub": "Membres qui boostent le serveur",
+        "message": "Message",
+        "voice_min": "Voix / min"
+      },
+      "confirm": {
+        "ready_title": "Prêt",
+        "ready_body": "Les paramètres semblent corrects. Le démarrage les applique au serveur.",
+        "start": "Démarrer le Setup",
+        "running": "Setup en cours"
+      },
+      "nav": {
+        "back": "Retour",
+        "next": "Suivant"
+      },
+      "error": {
+        "guild_info": "Impossible de charger les informations du serveur",
+        "guild_roles": "Impossible de charger les rôles du serveur",
+        "bot_inactive": "Le Setup du bot n’est pas actif sur ce serveur. Contactez le propriétaire ou un administrateur.",
+        "load_failed": "Une erreur s’est produite lors du chargement des informations du serveur.",
+        "roles_required": "Veuillez sélectionner les rôles admin et verify.",
+        "guild_missing": "Informations du serveur introuvables.",
+        "failed": "Échec du Setup",
+        "generic": "Une erreur s’est produite pendant le Setup."
+      },
+      "marks": {
+        "ok": "SUCCÈS",
+        "fail": "ÉCHEC",
+        "done": "terminé"
+      },
+      "progress": {
+        "permissions": "> Vérification des permissions...",
+        "api": "> Démarrage de l’intégration Bot API...",
+        "webhooks": "> Préparation des services webhook...",
+        "log_server": "> Configuration du serveur de logs...",
+        "mock_roles": "> Liaison des rôles d’exemple...",
+        "economy": "> Écriture des paramètres d’économie...",
+        "bonuses": "> Application des règles de bonus...",
+        "mock_done": "> Setup mock localhost terminé.",
+        "success": "> SETUP RÉUSSI !",
+        "log_ok": "> Setup des logs : SUCCÈS",
+        "log_fail": "> Setup des logs : ÉCHEC (assurez-vous que le bot est sur le serveur)",
+        "db": "> Enregistrements de base de données créés...",
+        "done": "> Setup terminé avec succès !",
+        "redirect": "> Redirection vers le Panneau Admin...",
+        "fail": "> ÉCHEC DU SETUP !"
+      },
+      "terminal": {
+        "missing_roles": "Informations de rôles manquantes. Revenez à l’écran de Setup.",
+        "unknown_guild": "Inconnu",
+        "logged_in": "connecté : {name}",
+        "admin_role": "rôle admin : {id}",
+        "verify_role": "rôle verify : {id}",
+        "creating_categories": "création des catégories de salons...",
+        "channels_created": "salons créés",
+        "preparing_webhooks": "préparation des webhooks...",
+        "failed": "Échec du Setup",
+        "category_ok": "validation de catégorie : ok",
+        "created_channels": "salons créés :",
+        "webhook_created": "webhook créé : {name} ({type})",
+        "db_writing": "database : écriture des enregistrements...",
+        "success": "setup : succès",
+        "redirecting": "redirection de l’utilisateur...",
+        "countdown": "le panneau admin s’ouvre dans {seconds} secondes...",
+        "error_generic": "Une erreur s’est produite pendant le Setup.",
+        "fail_line": "setup : échec",
+        "error_label": "✕ erreur",
+        "loading": "Chargement...",
+        "path": "~/centre-de-donnees/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "hu": {
+    "setup": {
+      "access_denied_title": "Hozzáférés megtagadva",
+      "access_denied_body": "A Setup futtatásához szervertulajdonosnak vagy adminisztrátornak kell lenned.",
+      "back": "Vissza",
+      "cancel": "Mégse",
+      "steps_heading": "Lépések",
+      "close": "Bezárás",
+      "no_roles": "Nem található szerepkör",
+      "guild_alt": "Szerver",
+      "phase_update": "Frissítési fázis",
+      "phase_setup": "Setup fázis",
+      "step": {
+        "roles": {
+          "title": "Szerepkörök",
+          "desc": "Válaszd ki az admin és tag szerepköröket"
+        },
+        "logs": {
+          "title": "Naplókezelés",
+          "desc": "Hová íródnak a naplók"
+        },
+        "economy": {
+          "title": "Kereset",
+          "desc": "Papel kereseti arányok"
+        },
+        "bonuses": {
+          "title": "Bónuszok",
+          "desc": "Extra Tag és boost keresetek"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Megerősítés és indítás"
+        }
+      },
+      "roles": {
+        "heading": "Rendszerszerepkörök",
+        "sub": "Válassz Discord szerepköröket az admin panelhez és a tagok hozzáféréséhez.",
+        "admin_label": "Adminisztrátori szerepkör",
+        "admin_hint": "Ez a szerepkör beléphet az Admin Panelbe.",
+        "admin_placeholder": "Admin szerepkör kiválasztása...",
+        "member_label": "Tag szerepkör",
+        "member_hint": "Alapszerepkör a regisztrált tagoknak; ők papel-t keresnek.",
+        "member_placeholder": "Tag szerepkör kiválasztása..."
+      },
+      "logs": {
+        "heading": "Naplókezelés",
+        "sub": "Hová kerüljenek az aktivitási naplók?",
+        "current_title": "Telepítés erre a szerverre",
+        "recommended": "Ajánlott",
+        "current_desc": "Itt létrejön egy DiscoWeb Logs kategória.",
+        "dedicated_title": "Külön naplószerver",
+        "dedicated_desc": "A naplók egy másik Discord szerverre mennek.",
+        "target_id": "Cél szerver ID",
+        "checking": "Ellenőrzés…",
+        "found": "Szerver megtalálva",
+        "found_named": "Szerver megtalálva: {name}",
+        "invalid_id": "Érvénytelen szerver ID",
+        "not_found": "Nincs szerver ezzel az ID-vel, vagy a bot nincs azon a szerveren",
+        "bot_must_be": "A botnak azon a szerveren kell lennie.",
+        "warning_title": "Figyelem",
+        "warning_body": "A Setup során a régi naplócsatornák törölhetők és újra létrehozhatók."
+      },
+      "economy": {
+        "heading": "Gazdaság",
+        "sub": "Állítsd be a papel arányokat üzenetekre és hangra.",
+        "message_title": "Üzenetkereset",
+        "message_sub": "Üzenetenként",
+        "message_unit": "Papel / üzenet",
+        "voice_title": "Hangkereset",
+        "voice_sub": "Hangpercenként",
+        "voice_unit": "Papel / perc"
+      },
+      "bonuses": {
+        "heading": "Bónuszok",
+        "sub": "Extra papel Tagért és boostért.",
+        "tag_title": "Tag bónusz",
+        "tag_sub": "Tagok, akiknek a szerver tagje van a nevükben",
+        "boost_title": "Boost bónusz",
+        "boost_sub": "Tagok, akik boostolják a szervert",
+        "message": "Üzenet",
+        "voice_min": "Hang / perc"
+      },
+      "confirm": {
+        "ready_title": "Kész",
+        "ready_body": "A beállítások jónak tűnnek. Az indítás alkalmazza őket a szerverre.",
+        "start": "Setup indítása",
+        "running": "Setup folyamatban"
+      },
+      "nav": {
+        "back": "Vissza",
+        "next": "Tovább"
+      },
+      "error": {
+        "guild_info": "Nem sikerült betölteni a szerverinformációkat",
+        "guild_roles": "Nem sikerült betölteni a szerver szerepköreit",
+        "bot_inactive": "A bot Setup nincs aktív ezen a szerveren. Lépj kapcsolatba a tulajdonossal vagy egy adminisztrátorral.",
+        "load_failed": "Hiba történt a szerverinformációk betöltésekor.",
+        "roles_required": "Válaszd ki az admin és a verify szerepkört is.",
+        "guild_missing": "A szerverinformáció nem található.",
+        "failed": "A Setup sikertelen",
+        "generic": "Hiba történt a Setup során."
+      },
+      "marks": {
+        "ok": "SIKERES",
+        "fail": "SIKERTELEN",
+        "done": "kész"
+      },
+      "progress": {
+        "permissions": "> Jogosultságok ellenőrzése...",
+        "api": "> Bot API integráció indítása...",
+        "webhooks": "> Webhook szolgáltatások előkészítése...",
+        "log_server": "> Naplószerver konfigurálása...",
+        "mock_roles": "> Mintaszerepkörök összekapcsolása...",
+        "economy": "> Gazdasági beállítások írása...",
+        "bonuses": "> Bónuszszabályok alkalmazása...",
+        "mock_done": "> Localhost mock Setup kész.",
+        "success": "> SETUP SIKERES!",
+        "log_ok": "> Napló Setup: SIKERES",
+        "log_fail": "> Napló Setup: SIKERTELEN (győződj meg róla, hogy a bot a szerveren van)",
+        "db": "> Adatbázis rekordok létrehozva...",
+        "done": "> Setup sikeresen befejezve!",
+        "redirect": "> Átirányítás az Admin Panelre...",
+        "fail": "> SETUP SIKERTELEN!"
+      },
+      "terminal": {
+        "missing_roles": "Hiányoznak a szerepkör-adatok. Térj vissza a Setup képernyőre.",
+        "unknown_guild": "Ismeretlen",
+        "logged_in": "bejelentkezve: {name}",
+        "admin_role": "admin szerepkör: {id}",
+        "verify_role": "verify szerepkör: {id}",
+        "creating_categories": "csatornakategóriák létrehozása...",
+        "channels_created": "csatornák létrehozva",
+        "preparing_webhooks": "webhookok előkészítése...",
+        "failed": "A Setup sikertelen",
+        "category_ok": "kategória ellenőrzés: ok",
+        "created_channels": "létrehozott csatornák:",
+        "webhook_created": "webhook létrehozva: {name} ({type})",
+        "db_writing": "database: rekordok írása...",
+        "success": "setup: sikeres",
+        "redirecting": "felhasználó átirányítása...",
+        "countdown": "az admin panel {seconds} másodperc múlva megnyílik...",
+        "error_generic": "Hiba történt a Setup során.",
+        "fail_line": "setup: sikertelen",
+        "error_label": "✕ hiba",
+        "loading": "Betöltés...",
+        "path": "~/adat-kozpont/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "ja": {
+    "setup": {
+      "access_denied_title": "アクセス拒否",
+      "access_denied_body": "Setup を実行するには、サーバー所有者または管理者である必要があります。",
+      "back": "戻る",
+      "cancel": "キャンセル",
+      "steps_heading": "手順",
+      "close": "閉じる",
+      "no_roles": "ロールが見つかりません",
+      "guild_alt": "サーバー",
+      "phase_update": "更新フェーズ",
+      "phase_setup": "Setup フェーズ",
+      "step": {
+        "roles": {
+          "title": "ロール",
+          "desc": "管理者とメンバーのロールを選択"
+        },
+        "logs": {
+          "title": "ログ管理",
+          "desc": "ログの書き込み先"
+        },
+        "economy": {
+          "title": "収益",
+          "desc": "Papel の獲得レート"
+        },
+        "bonuses": {
+          "title": "ボーナス",
+          "desc": "Tag とブーストの追加収益"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "確認して開始"
+        }
+      },
+      "roles": {
+        "heading": "システムロール",
+        "sub": "管理パネルとメンバーアクセス用の Discord ロールを選択してください。",
+        "admin_label": "管理者ロール",
+        "admin_hint": "このロールは管理パネルに入れます。",
+        "admin_placeholder": "管理者ロールを選択...",
+        "member_label": "メンバーロール",
+        "member_hint": "登録メンバーの基本ロール。papel を獲得します。",
+        "member_placeholder": "メンバーロールを選択..."
+      },
+      "logs": {
+        "heading": "ログ管理",
+        "sub": "アクティビティログはどこに書き込みますか？",
+        "current_title": "このサーバーにインストール",
+        "recommended": "おすすめ",
+        "current_desc": "ここに DiscoWeb Logs カテゴリが作成されます。",
+        "dedicated_title": "別のログサーバー",
+        "dedicated_desc": "ログは別の Discord サーバーに送られます。",
+        "target_id": "対象サーバー ID",
+        "checking": "確認中…",
+        "found": "サーバーが見つかりました",
+        "found_named": "サーバーが見つかりました: {name}",
+        "invalid_id": "無効なサーバー ID",
+        "not_found": "この ID のサーバーが見つからないか、ボットがそのサーバーにいません",
+        "bot_must_be": "ボットはそのサーバーにいる必要があります。",
+        "warning_title": "注意",
+        "warning_body": "Setup 中に古いログチャンネルが削除され、再作成される場合があります。"
+      },
+      "economy": {
+        "heading": "経済",
+        "sub": "メッセージとボイスの papel レートを設定します。",
+        "message_title": "メッセージ収益",
+        "message_sub": "メッセージごと",
+        "message_unit": "Papel / メッセージ",
+        "voice_title": "ボイス収益",
+        "voice_sub": "ボイス 1 分ごと",
+        "voice_unit": "Papel / 分"
+      },
+      "bonuses": {
+        "heading": "ボーナス",
+        "sub": "Tag とブーストの追加 papel。",
+        "tag_title": "Tag ボーナス",
+        "tag_sub": "名前にサーバーの Tag があるメンバー",
+        "boost_title": "ブーストボーナス",
+        "boost_sub": "サーバーをブーストするメンバー",
+        "message": "メッセージ",
+        "voice_min": "ボイス / 分"
+      },
+      "confirm": {
+        "ready_title": "準備完了",
+        "ready_body": "設定は問題なさそうです。開始するとサーバーに適用されます。",
+        "start": "Setup を開始",
+        "running": "Setup 進行中"
+      },
+      "nav": {
+        "back": "戻る",
+        "next": "次へ"
+      },
+      "error": {
+        "guild_info": "サーバー情報を読み込めませんでした",
+        "guild_roles": "サーバーロールを読み込めませんでした",
+        "bot_inactive": "このサーバーではボットの Setup が有効ではありません。所有者または管理者に連絡してください。",
+        "load_failed": "サーバー情報の読み込み中にエラーが発生しました。",
+        "roles_required": "管理者ロールと verify ロールの両方を選択してください。",
+        "guild_missing": "サーバー情報が見つかりませんでした。",
+        "failed": "Setup に失敗しました",
+        "generic": "Setup 中にエラーが発生しました。"
+      },
+      "marks": {
+        "ok": "成功",
+        "fail": "失敗",
+        "done": "完了"
+      },
+      "progress": {
+        "permissions": "> 権限を確認しています...",
+        "api": "> Bot API 連携を開始しています...",
+        "webhooks": "> webhook サービスを準備しています...",
+        "log_server": "> ログサーバーを設定しています...",
+        "mock_roles": "> サンプルロールを接続しています...",
+        "economy": "> 経済設定を書き込んでいます...",
+        "bonuses": "> ボーナスルールを適用しています...",
+        "mock_done": "> ローカルホストのモック Setup が完了しました。",
+        "success": "> SETUP 成功！",
+        "log_ok": "> ログ Setup: 成功",
+        "log_fail": "> ログ Setup: 失敗（ボットがサーバーにいることを確認してください）",
+        "db": "> データベースレコードを作成しました...",
+        "done": "> Setup が正常に完了しました！",
+        "redirect": "> 管理パネルへリダイレクトしています...",
+        "fail": "> SETUP 失敗！"
+      },
+      "terminal": {
+        "missing_roles": "ロール情報が不足しています。Setup 画面に戻ってください。",
+        "unknown_guild": "不明",
+        "logged_in": "サインイン済み: {name}",
+        "admin_role": "管理者ロール: {id}",
+        "verify_role": "verify ロール: {id}",
+        "creating_categories": "チャンネルカテゴリを作成中...",
+        "channels_created": "チャンネルを作成しました",
+        "preparing_webhooks": "webhook を準備中...",
+        "failed": "Setup に失敗しました",
+        "category_ok": "カテゴリ検証: ok",
+        "created_channels": "作成されたチャンネル:",
+        "webhook_created": "webhook 作成: {name} ({type})",
+        "db_writing": "database: レコードを書き込み中...",
+        "success": "setup: 成功",
+        "redirecting": "ユーザーをリダイレクト中...",
+        "countdown": "管理パネルは {seconds} 秒後に開きます...",
+        "error_generic": "Setup 中にエラーが発生しました。",
+        "fail_line": "setup: 失敗",
+        "error_label": "✕ エラー",
+        "loading": "読み込み中...",
+        "path": "~/data-center/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "ko": {
+    "setup": {
+      "access_denied_title": "액세스 거부됨",
+      "access_denied_body": "Setup을 실행하려면 서버 소유자이거나 관리자여야 합니다.",
+      "back": "뒤로",
+      "cancel": "취소",
+      "steps_heading": "단계",
+      "close": "닫기",
+      "no_roles": "역할을 찾을 수 없음",
+      "guild_alt": "서버",
+      "phase_update": "업데이트 단계",
+      "phase_setup": "Setup 단계",
+      "step": {
+        "roles": {
+          "title": "역할",
+          "desc": "관리자 및 멤버 역할 선택"
+        },
+        "logs": {
+          "title": "로그 관리",
+          "desc": "로그가 기록될 위치"
+        },
+        "economy": {
+          "title": "수익",
+          "desc": "Papel 적립 비율"
+        },
+        "bonuses": {
+          "title": "보너스",
+          "desc": "Tag 및 부스트 추가 수익"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "확인 후 시작"
+        }
+      },
+      "roles": {
+        "heading": "시스템 역할",
+        "sub": "관리자 패널과 멤버 접근을 위한 Discord 역할을 선택하세요.",
+        "admin_label": "관리자 역할",
+        "admin_hint": "이 역할은 관리자 패널에 들어갈 수 있습니다.",
+        "admin_placeholder": "관리자 역할 선택...",
+        "member_label": "멤버 역할",
+        "member_hint": "등록된 멤버의 기본 역할이며 papel을 적립합니다.",
+        "member_placeholder": "멤버 역할 선택..."
+      },
+      "logs": {
+        "heading": "로그 관리",
+        "sub": "활동 로그를 어디에 기록할까요?",
+        "current_title": "이 서버에 설치",
+        "recommended": "권장",
+        "current_desc": "여기에 DiscoWeb Logs 카테고리가 생성됩니다.",
+        "dedicated_title": "별도 로그 서버",
+        "dedicated_desc": "로그가 다른 Discord 서버로 전송됩니다.",
+        "target_id": "대상 서버 ID",
+        "checking": "확인 중…",
+        "found": "서버를 찾았습니다",
+        "found_named": "서버를 찾았습니다: {name}",
+        "invalid_id": "잘못된 서버 ID",
+        "not_found": "이 ID에 해당하는 서버가 없거나 봇이 해당 서버에 없습니다",
+        "bot_must_be": "봇이 해당 서버에 있어야 합니다.",
+        "warning_title": "주의",
+        "warning_body": "Setup 중 기존 로그 채널이 삭제되고 다시 생성될 수 있습니다."
+      },
+      "economy": {
+        "heading": "경제",
+        "sub": "메시지와 음성에 대한 papel 비율을 설정하세요.",
+        "message_title": "메시지 수익",
+        "message_sub": "메시지당",
+        "message_unit": "Papel / 메시지",
+        "voice_title": "음성 수익",
+        "voice_sub": "음성 분당",
+        "voice_unit": "Papel / 분"
+      },
+      "bonuses": {
+        "heading": "보너스",
+        "sub": "Tag 및 부스트에 대한 추가 papel.",
+        "tag_title": "Tag 보너스",
+        "tag_sub": "이름에 서버 태그가 있는 멤버",
+        "boost_title": "부스트 보너스",
+        "boost_sub": "서버를 부스트하는 멤버",
+        "message": "메시지",
+        "voice_min": "음성 / 분"
+      },
+      "confirm": {
+        "ready_title": "준비 완료",
+        "ready_body": "설정이 괜찮아 보입니다. 시작하면 서버에 적용됩니다.",
+        "start": "Setup 시작",
+        "running": "Setup 진행 중"
+      },
+      "nav": {
+        "back": "뒤로",
+        "next": "다음"
+      },
+      "error": {
+        "guild_info": "서버 정보를 불러올 수 없습니다",
+        "guild_roles": "서버 역할을 불러올 수 없습니다",
+        "bot_inactive": "이 서버에서 봇 Setup이 활성 상태가 아닙니다. 소유자 또는 관리자에게 문의하세요.",
+        "load_failed": "서버 정보를 불러오는 중 오류가 발생했습니다.",
+        "roles_required": "관리자 역할과 verify 역할을 모두 선택하세요.",
+        "guild_missing": "서버 정보를 찾을 수 없습니다.",
+        "failed": "Setup 실패",
+        "generic": "Setup 중 오류가 발생했습니다."
+      },
+      "marks": {
+        "ok": "성공",
+        "fail": "실패",
+        "done": "완료"
+      },
+      "progress": {
+        "permissions": "> 권한 확인 중...",
+        "api": "> Bot API 연동 시작 중...",
+        "webhooks": "> webhook 서비스 준비 중...",
+        "log_server": "> 로그 서버 구성 중...",
+        "mock_roles": "> 샘플 역할 연결 중...",
+        "economy": "> 경제 설정 기록 중...",
+        "bonuses": "> 보너스 규칙 적용 중...",
+        "mock_done": "> 로컬호스트 mock Setup 완료.",
+        "success": "> SETUP 성공!",
+        "log_ok": "> 로그 Setup: 성공",
+        "log_fail": "> 로그 Setup: 실패 (봇이 서버에 있는지 확인하세요)",
+        "db": "> 데이터베이스 기록 생성됨...",
+        "done": "> Setup이 성공적으로 완료되었습니다!",
+        "redirect": "> 관리자 패널로 이동 중...",
+        "fail": "> SETUP 실패!"
+      },
+      "terminal": {
+        "missing_roles": "역할 정보가 없습니다. Setup 화면으로 돌아가세요.",
+        "unknown_guild": "알 수 없음",
+        "logged_in": "로그인됨: {name}",
+        "admin_role": "관리자 역할: {id}",
+        "verify_role": "verify 역할: {id}",
+        "creating_categories": "채널 카테고리 생성 중...",
+        "channels_created": "채널 생성됨",
+        "preparing_webhooks": "webhook 준비 중...",
+        "failed": "Setup 실패",
+        "category_ok": "카테고리 검증: ok",
+        "created_channels": "생성된 채널:",
+        "webhook_created": "webhook 생성됨: {name} ({type})",
+        "db_writing": "database: 기록 작성 중...",
+        "success": "setup: 성공",
+        "redirecting": "사용자 리디렉션 중...",
+        "countdown": "관리자 패널이 {seconds}초 후에 열립니다...",
+        "error_generic": "Setup 중 오류가 발생했습니다.",
+        "fail_line": "setup: 실패",
+        "error_label": "✕ 오류",
+        "loading": "로딩 중...",
+        "path": "~/data-center/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "ru": {
+    "setup": {
+      "access_denied_title": "Доступ запрещён",
+      "access_denied_body": "Чтобы запустить Setup, вы должны быть владельцем сервера или администратором.",
+      "back": "Назад",
+      "cancel": "Отмена",
+      "steps_heading": "Шаги",
+      "close": "Закрыть",
+      "no_roles": "Роли не найдены",
+      "guild_alt": "Сервер",
+      "phase_update": "Этап обновления",
+      "phase_setup": "Этап Setup",
+      "step": {
+        "roles": {
+          "title": "Роли",
+          "desc": "Выберите роли администратора и участника"
+        },
+        "logs": {
+          "title": "Управление логами",
+          "desc": "Куда будут записываться логи"
+        },
+        "economy": {
+          "title": "Заработок",
+          "desc": "Ставки заработка Papel"
+        },
+        "bonuses": {
+          "title": "Бонусы",
+          "desc": "Дополнительный заработок за Tag и буст"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Подтвердить и запустить"
+        }
+      },
+      "roles": {
+        "heading": "Системные роли",
+        "sub": "Выберите роли Discord для панели администратора и доступа участников.",
+        "admin_label": "Роль администратора",
+        "admin_hint": "Эта роль может войти в панель администратора.",
+        "admin_placeholder": "Выберите роль администратора...",
+        "member_label": "Роль участника",
+        "member_hint": "Базовая роль для зарегистрированных участников; они зарабатывают papel.",
+        "member_placeholder": "Выберите роль участника..."
+      },
+      "logs": {
+        "heading": "Управление логами",
+        "sub": "Куда записывать логи активности?",
+        "current_title": "Установить на этом сервере",
+        "recommended": "Рекомендуется",
+        "current_desc": "Здесь будет создана категория DiscoWeb Logs.",
+        "dedicated_title": "Отдельный сервер логов",
+        "dedicated_desc": "Логи отправляются на другой сервер Discord.",
+        "target_id": "ID целевого сервера",
+        "checking": "Проверка…",
+        "found": "Сервер найден",
+        "found_named": "Сервер найден: {name}",
+        "invalid_id": "Недействительный ID сервера",
+        "not_found": "Сервер с этим ID не найден, или бот не находится на этом сервере",
+        "bot_must_be": "Бот должен быть на этом сервере.",
+        "warning_title": "Внимание",
+        "warning_body": "Во время Setup старые каналы логов могут быть удалены и созданы заново."
+      },
+      "economy": {
+        "heading": "Экономика",
+        "sub": "Задайте ставки papel для сообщений и голоса.",
+        "message_title": "Заработок за сообщения",
+        "message_sub": "За каждое сообщение",
+        "message_unit": "Papel / сообщение",
+        "voice_title": "Заработок за голос",
+        "voice_sub": "За каждую минуту голоса",
+        "voice_unit": "Papel / мин"
+      },
+      "bonuses": {
+        "heading": "Бонусы",
+        "sub": "Дополнительный papel за Tag и буст.",
+        "tag_title": "Бонус Tag",
+        "tag_sub": "Участники с тегом сервера в имени",
+        "boost_title": "Бонус буста",
+        "boost_sub": "Участники, которые бустят сервер",
+        "message": "Сообщение",
+        "voice_min": "Голос / мин"
+      },
+      "confirm": {
+        "ready_title": "Готово",
+        "ready_body": "Настройки выглядят хорошо. Запуск применит их к серверу.",
+        "start": "Запустить Setup",
+        "running": "Setup выполняется"
+      },
+      "nav": {
+        "back": "Назад",
+        "next": "Далее"
+      },
+      "error": {
+        "guild_info": "Не удалось загрузить информацию о сервере",
+        "guild_roles": "Не удалось загрузить роли сервера",
+        "bot_inactive": "Setup бота не активен на этом сервере. Свяжитесь с владельцем или администратором.",
+        "load_failed": "Произошла ошибка при загрузке информации о сервере.",
+        "roles_required": "Выберите роли admin и verify.",
+        "guild_missing": "Информация о сервере не найдена.",
+        "failed": "Setup не удался",
+        "generic": "Во время Setup произошла ошибка."
+      },
+      "marks": {
+        "ok": "УСПЕХ",
+        "fail": "ОШИБКА",
+        "done": "завершено"
+      },
+      "progress": {
+        "permissions": "> Проверка прав...",
+        "api": "> Запуск интеграции Bot API...",
+        "webhooks": "> Подготовка webhook-сервисов...",
+        "log_server": "> Настройка сервера логов...",
+        "mock_roles": "> Привязка примеров ролей...",
+        "economy": "> Запись настроек экономики...",
+        "bonuses": "> Применение правил бонусов...",
+        "mock_done": "> Mock Setup localhost завершён.",
+        "success": "> SETUP УСПЕШЕН!",
+        "log_ok": "> Setup логов: УСПЕХ",
+        "log_fail": "> Setup логов: ОШИБКА (убедитесь, что бот на сервере)",
+        "db": "> Записи базы данных созданы...",
+        "done": "> Setup успешно завершён!",
+        "redirect": "> Перенаправление в панель администратора...",
+        "fail": "> SETUP НЕ УДАЛСЯ!"
+      },
+      "terminal": {
+        "missing_roles": "Отсутствует информация о ролях. Вернитесь на экран Setup.",
+        "unknown_guild": "Неизвестно",
+        "logged_in": "вход выполнен: {name}",
+        "admin_role": "роль admin: {id}",
+        "verify_role": "роль verify: {id}",
+        "creating_categories": "создание категорий каналов...",
+        "channels_created": "каналы созданы",
+        "preparing_webhooks": "подготовка webhook...",
+        "failed": "Setup не удался",
+        "category_ok": "проверка категории: ok",
+        "created_channels": "созданные каналы:",
+        "webhook_created": "webhook создан: {name} ({type})",
+        "db_writing": "database: запись данных...",
+        "success": "setup: успех",
+        "redirecting": "перенаправление пользователя...",
+        "countdown": "панель администратора откроется через {seconds} сек...",
+        "error_generic": "Во время Setup произошла ошибка.",
+        "fail_line": "setup: ошибка",
+        "error_label": "✕ ошибка",
+        "loading": "Загрузка...",
+        "path": "~/data-center/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "sidebar": {
+    "dashboard": "Painel",
+    "bot_settings": "Configurações do bot",
+    "channels_logs": "Canais e logs",
+    "earn_settings": "Configurações de ganho",
+    "wallet": "Gestão de carteira",
+    "store": "Loja (Mercado)",
+    "user_management": "Gestão de usuários",
+    "global_announcements": "Anúncios globais",
+    "back_to_select": "Voltar à seleção de servidor",
+    "quiz_events": "Eventos de Quiz"
+  },
+  "promo": {
+    "title": "Código promocional",
+    "subtitle": "Digite seu código para adicionar Papel ao saldo.",
+    "placeholder": "Digite o código",
+    "redeem": "Resgatar",
+    "success": "{amount} Papel adicionados ao seu saldo!",
+    "error": {
+      "empty": "Digite um código.",
+      "generic": "Não foi possível resgatar o código.",
+      "invalid": "Código promocional inválido.",
+      "unauthorized": "Você precisa entrar.",
+      "server": "Servidor não encontrado.",
+      "wrong_server": "Este código pertence a outro servidor.",
+      "expired": "Este código expirou.",
+      "limit": "Este código atingiu o limite de uso.",
+      "already_used": "Você já usou este código.",
+      "maintenance": "O sistema de promoções está em manutenção."
+    }
+  }
+}

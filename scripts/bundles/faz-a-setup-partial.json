@@ -1,0 +1,455 @@
+{
+  "en": {
+    "setup": {
+      "access_denied_title": "Access Denied",
+      "access_denied_body": "You must be the server owner or an administrator to run setup.",
+      "back": "Go back",
+      "cancel": "Cancel",
+      "steps_heading": "Steps",
+      "close": "Close",
+      "no_roles": "No roles found",
+      "guild_alt": "Server",
+      "phase_update": "Update phase",
+      "phase_setup": "Setup phase",
+      "step": {
+        "roles": {
+          "title": "Roles",
+          "desc": "Choose admin and member roles"
+        },
+        "logs": {
+          "title": "Log management",
+          "desc": "Where logs will be written"
+        },
+        "economy": {
+          "title": "Earnings",
+          "desc": "Papel earning rates"
+        },
+        "bonuses": {
+          "title": "Bonuses",
+          "desc": "Extra Tag and boost earnings"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Confirm and start"
+        }
+      },
+      "roles": {
+        "heading": "System roles",
+        "sub": "Choose Discord roles for the admin panel and member access.",
+        "admin_label": "Administrator role",
+        "admin_hint": "This role can enter the Admin Panel.",
+        "admin_placeholder": "Select admin role...",
+        "member_label": "Member role",
+        "member_hint": "Base role for registered members; they earn papel.",
+        "member_placeholder": "Select member role..."
+      },
+      "logs": {
+        "heading": "Log management",
+        "sub": "Where should activity logs be written?",
+        "current_title": "Install on this server",
+        "recommended": "Recommended",
+        "current_desc": "A DiscoWeb Logs category will be created here.",
+        "dedicated_title": "Separate log server",
+        "dedicated_desc": "Logs go to another Discord server.",
+        "target_id": "Target server ID",
+        "checking": "Checking…",
+        "found": "Server found",
+        "found_named": "Server found: {name}",
+        "invalid_id": "Invalid server ID",
+        "not_found": "No server found for this ID, or the bot is not on that server",
+        "bot_must_be": "The bot must be on that server.",
+        "warning_title": "Caution",
+        "warning_body": "During setup, old log channels may be deleted and recreated."
+      },
+      "economy": {
+        "heading": "Economy",
+        "sub": "Set papel rates for messages and voice.",
+        "message_title": "Message earnings",
+        "message_sub": "For each message",
+        "message_unit": "Papel / message",
+        "voice_title": "Voice earnings",
+        "voice_sub": "For each voice minute",
+        "voice_unit": "Papel / min"
+      },
+      "bonuses": {
+        "heading": "Bonuses",
+        "sub": "Extra papel for Tag and boost.",
+        "tag_title": "Tag bonus",
+        "tag_sub": "Members with the server tag in their name",
+        "boost_title": "Boost bonus",
+        "boost_sub": "Members who boost the server",
+        "message": "Message",
+        "voice_min": "Voice / min"
+      },
+      "confirm": {
+        "ready_title": "Ready",
+        "ready_body": "Settings look good. Starting applies them to the server.",
+        "start": "Start setup",
+        "running": "Setup in progress"
+      },
+      "nav": {
+        "back": "Back",
+        "next": "Next"
+      },
+      "error": {
+        "guild_info": "Could not load server information",
+        "guild_roles": "Could not load server roles",
+        "bot_inactive": "Bot setup is not active on this server. Contact the owner or an administrator.",
+        "load_failed": "An error occurred while loading server information.",
+        "roles_required": "Please select both the admin and verify roles.",
+        "guild_missing": "Server information was not found.",
+        "failed": "Setup failed",
+        "generic": "An error occurred during setup."
+      },
+      "marks": {
+        "ok": "SUCCESS",
+        "fail": "FAILED",
+        "done": "completed"
+      },
+      "progress": {
+        "permissions": "> Verifying permissions...",
+        "api": "> Starting Bot API integration...",
+        "webhooks": "> Preparing webhook services...",
+        "log_server": "> Configuring log server...",
+        "mock_roles": "> Linking sample roles...",
+        "economy": "> Writing economy settings...",
+        "bonuses": "> Applying bonus rules...",
+        "mock_done": "> Localhost mock setup completed.",
+        "success": "> SETUP SUCCESS!",
+        "log_ok": "> Log setup: SUCCESS",
+        "log_fail": "> Log setup: FAILED (make sure the bot is on the server)",
+        "db": "> Database records created...",
+        "done": "> Setup completed successfully!",
+        "redirect": "> Redirecting to the Admin Panel...",
+        "fail": "> SETUP FAILED!"
+      },
+      "terminal": {
+        "missing_roles": "Role information is missing. Return to the setup screen.",
+        "unknown_guild": "Unknown",
+        "logged_in": "signed in: {name}",
+        "admin_role": "admin role: {id}",
+        "verify_role": "verify role: {id}",
+        "creating_categories": "creating channel categories...",
+        "channels_created": "channels created",
+        "preparing_webhooks": "preparing webhooks...",
+        "failed": "Setup failed",
+        "category_ok": "category validation: ok",
+        "created_channels": "created channels:",
+        "webhook_created": "webhook created: {name} ({type})",
+        "db_writing": "database: writing records...",
+        "success": "setup: success",
+        "redirecting": "redirecting user...",
+        "countdown": "admin panel opens in {seconds} seconds...",
+        "error_generic": "An error occurred during setup.",
+        "fail_line": "setup: failed",
+        "error_label": "✕ error",
+        "loading": "Loading...",
+        "path": "~/data-center/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "tr": {
+    "setup": {
+      "access_denied_title": "Erişim Reddedildi",
+      "access_denied_body": "Kurulum için sunucu sahibi veya yönetici olmalısınız.",
+      "back": "Geri Dön",
+      "cancel": "İptal",
+      "steps_heading": "Adımlar",
+      "close": "Kapat",
+      "no_roles": "Rol bulunamadı",
+      "guild_alt": "Sunucu",
+      "phase_update": "Güncelleme Aşaması",
+      "phase_setup": "Kurulum Aşaması",
+      "step": {
+        "roles": {
+          "title": "Roller",
+          "desc": "Admin ve üye rollerini seçin"
+        },
+        "logs": {
+          "title": "Log Yönetimi",
+          "desc": "Logların yazılacağı yer"
+        },
+        "economy": {
+          "title": "Kazanç",
+          "desc": "Papel kazanç oranları"
+        },
+        "bonuses": {
+          "title": "Bonuslar",
+          "desc": "Tag ve boost ek kazançları"
+        },
+        "confirm": {
+          "title": "Kurulum",
+          "desc": "Onayla ve başlat"
+        }
+      },
+      "roles": {
+        "heading": "Sistem Rolleri",
+        "sub": "Admin paneli ve üye erişimi için Discord rollerini seçin.",
+        "admin_label": "Yönetici Rolü",
+        "admin_hint": "Bu rolle Admin Paneline girilir.",
+        "admin_placeholder": "Admin rolünü seçin...",
+        "member_label": "Üye Rolü",
+        "member_hint": "Kayıtlı üyelerin temel rolü; papel kazanır.",
+        "member_placeholder": "Üye rolünü seçin..."
+      },
+      "logs": {
+        "heading": "Log Yönetimi",
+        "sub": "İşlem logları nereye yazılsın?",
+        "current_title": "Bu sunucuya kur",
+        "recommended": "Önerilen",
+        "current_desc": "DiscoWeb Logs kategorisi burada açılır.",
+        "dedicated_title": "Ayrı log sunucusu",
+        "dedicated_desc": "Loglar başka bir Discord sunucusuna gider.",
+        "target_id": "Hedef sunucu ID",
+        "checking": "Kontrol ediliyor…",
+        "found": "Sunucu bulundu",
+        "found_named": "Sunucu bulundu: {name}",
+        "invalid_id": "Geçersiz sunucu ID",
+        "not_found": "Bu ID ile sunucu bulunamadı veya bot o sunucuda değil",
+        "bot_must_be": "Bot o sunucuda olmalı.",
+        "warning_title": "Dikkat",
+        "warning_body": "Kurulumda eski log kanalları silinip yeniden açılabilir."
+      },
+      "economy": {
+        "heading": "Ekonomi",
+        "sub": "Mesaj ve ses için papel oranlarını ayarlayın.",
+        "message_title": "Mesaj Kazancı",
+        "message_sub": "Her mesaj için",
+        "message_unit": "Papel / mesaj",
+        "voice_title": "Ses Kazancı",
+        "voice_sub": "Her ses dakikası için",
+        "voice_unit": "Papel / dk"
+      },
+      "bonuses": {
+        "heading": "Bonuslar",
+        "sub": "Tag ve boost için ekstra papel.",
+        "tag_title": "Tag Bonusu",
+        "tag_sub": "İsminde sunucu tagı olanlar",
+        "boost_title": "Boost Bonusu",
+        "boost_sub": "Sunucuyu boostlayanlar",
+        "message": "Mesaj",
+        "voice_min": "Ses / dk"
+      },
+      "confirm": {
+        "ready_title": "Hazır",
+        "ready_body": "Ayarlar tamam. Başlatınca sunucuya uygulanır.",
+        "start": "Kurulumu Başlat",
+        "running": "Kurulum sürüyor"
+      },
+      "nav": {
+        "back": "Geri",
+        "next": "İleri"
+      },
+      "error": {
+        "guild_info": "Sunucu bilgileri alınamadı",
+        "guild_roles": "Sunucu rolleri alınamadı",
+        "bot_inactive": "Bu sunucuda bot kurulumu aktif değil. Sunucu sahibi veya yönetici ile iletişime geçin.",
+        "load_failed": "Sunucu bilgileri yüklenirken hata oluştu.",
+        "roles_required": "Lütfen hem admin hem de verify rolünü seçin.",
+        "guild_missing": "Sunucu bilgisi bulunamadı.",
+        "failed": "Kurulum başarısız",
+        "generic": "Kurulum sırasında hata oluştu."
+      },
+      "marks": {
+        "ok": "BAŞARILI",
+        "fail": "BAŞARISIZ",
+        "done": "tamamlandı"
+      },
+      "progress": {
+        "permissions": "> İzinler doğrulanıyor...",
+        "api": "> Bot API entegrasyonu başlatılıyor...",
+        "webhooks": "> Webhook servisleri hazırlanıyor...",
+        "log_server": "> Log sunucusu yapılandırılıyor...",
+        "mock_roles": "> Örnek roller bağlanıyor...",
+        "economy": "> Ekonomi ayarları yazılıyor...",
+        "bonuses": "> Bonus kuralları uygulanıyor...",
+        "mock_done": "> Localhost mock kurulum tamamlandı.",
+        "success": "> KURULUM BAŞARILI!",
+        "log_ok": "> Log Kurulumu: BAŞARILI",
+        "log_fail": "> Log Kurulumu: BAŞARISIZ (Lütfen botun sunucuda olduğundan emin olun)",
+        "db": "> Veritabanı kayıtları oluşturuldu...",
+        "done": "> Kurulum başarıyla tamamlandı!",
+        "redirect": "> Admin Paneline yönlendiriliyorsunuz...",
+        "fail": "> KURULUM BAŞARISIZ!"
+      },
+      "terminal": {
+        "missing_roles": "Rol bilgileri eksik. Kurulum ekranına geri dönün.",
+        "unknown_guild": "Bilinmiyor",
+        "logged_in": "giriş yapıldı: {name}",
+        "admin_role": "admin rolü: {id}",
+        "verify_role": "verify rolü: {id}",
+        "creating_categories": "kanal kategorileri oluşturuluyor...",
+        "channels_created": "kanallar oluşturuldu",
+        "preparing_webhooks": "webhooklar hazırlanıyor...",
+        "failed": "Kurulum başarısız",
+        "category_ok": "kategori doğrulama: tamam",
+        "created_channels": "oluşturulan kanallar:",
+        "webhook_created": "webhook oluşturuldu: {name} ({type})",
+        "db_writing": "database: kayıtlar yazılıyor...",
+        "success": "kurulum: başarılı",
+        "redirecting": "kullanıcı yönlendiriliyor...",
+        "countdown": "admin paneli {seconds} saniye içinde açılacak...",
+        "error_generic": "Kurulum sırasında hata oluştu.",
+        "fail_line": "kurulum: başarısız",
+        "error_label": "✕ hata",
+        "loading": "Yükleniyor...",
+        "path": "~/veri-merkezi/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  },
+  "pt": {
+    "setup": {
+      "access_denied_title": "Acesso negado",
+      "access_denied_body": "Você precisa ser o dono ou administrador do servidor para executar o Setup.",
+      "back": "Voltar",
+      "cancel": "Cancelar",
+      "steps_heading": "Etapas",
+      "close": "Fechar",
+      "no_roles": "Nenhum cargo encontrado",
+      "guild_alt": "Servidor",
+      "phase_update": "Fase de atualização",
+      "phase_setup": "Fase de Setup",
+      "step": {
+        "roles": {
+          "title": "Cargos",
+          "desc": "Escolha os cargos de admin e membro"
+        },
+        "logs": {
+          "title": "Gestão de logs",
+          "desc": "Onde os logs serão escritos"
+        },
+        "economy": {
+          "title": "Ganhos",
+          "desc": "Taxas de ganho de Papel"
+        },
+        "bonuses": {
+          "title": "Bônus",
+          "desc": "Ganhos extras de Tag e boost"
+        },
+        "confirm": {
+          "title": "Setup",
+          "desc": "Confirmar e iniciar"
+        }
+      },
+      "roles": {
+        "heading": "Cargos do sistema",
+        "sub": "Escolha os cargos Discord para o painel admin e o acesso de membros.",
+        "admin_label": "Cargo de administrador",
+        "admin_hint": "Este cargo pode entrar no Painel Admin.",
+        "admin_placeholder": "Selecione o cargo admin...",
+        "member_label": "Cargo de membro",
+        "member_hint": "Cargo base dos membros registrados; eles ganham papel.",
+        "member_placeholder": "Selecione o cargo de membro..."
+      },
+      "logs": {
+        "heading": "Gestão de logs",
+        "sub": "Onde os logs de atividade devem ser escritos?",
+        "current_title": "Instalar neste servidor",
+        "recommended": "Recomendado",
+        "current_desc": "Uma categoria DiscoWeb Logs será criada aqui.",
+        "dedicated_title": "Servidor de log separado",
+        "dedicated_desc": "Os logs vão para outro servidor Discord.",
+        "target_id": "ID do servidor de destino",
+        "checking": "Verificando…",
+        "found": "Servidor encontrado",
+        "found_named": "Servidor encontrado: {name}",
+        "invalid_id": "ID de servidor inválido",
+        "not_found": "Nenhum servidor encontrado para este ID, ou o bot não está nesse servidor",
+        "bot_must_be": "O bot precisa estar nesse servidor.",
+        "warning_title": "Atenção",
+        "warning_body": "Durante o Setup, canais de log antigos podem ser apagados e recriados."
+      },
+      "economy": {
+        "heading": "Economia",
+        "sub": "Defina as taxas de papel para mensagens e voz.",
+        "message_title": "Ganhos por mensagem",
+        "message_sub": "Por cada mensagem",
+        "message_unit": "Papel / mensagem",
+        "voice_title": "Ganhos por voz",
+        "voice_sub": "Por cada minuto de voz",
+        "voice_unit": "Papel / min"
+      },
+      "bonuses": {
+        "heading": "Bônus",
+        "sub": "Papel extra por Tag e boost.",
+        "tag_title": "Bônus de Tag",
+        "tag_sub": "Membros com a tag do servidor no nome",
+        "boost_title": "Bônus de Boost",
+        "boost_sub": "Membros que dão boost no servidor",
+        "message": "Mensagem",
+        "voice_min": "Voz / min"
+      },
+      "confirm": {
+        "ready_title": "Pronto",
+        "ready_body": "As configurações estão ok. Ao iniciar, serão aplicadas ao servidor.",
+        "start": "Iniciar Setup",
+        "running": "Setup em andamento"
+      },
+      "nav": {
+        "back": "Voltar",
+        "next": "Avançar"
+      },
+      "error": {
+        "guild_info": "Não foi possível carregar as informações do servidor",
+        "guild_roles": "Não foi possível carregar os cargos do servidor",
+        "bot_inactive": "O Setup do bot não está ativo neste servidor. Contate o dono ou um administrador.",
+        "load_failed": "Ocorreu um erro ao carregar as informações do servidor.",
+        "roles_required": "Selecione os cargos de admin e verify.",
+        "guild_missing": "Informações do servidor não encontradas.",
+        "failed": "Setup falhou",
+        "generic": "Ocorreu um erro durante o Setup."
+      },
+      "marks": {
+        "ok": "SUCESSO",
+        "fail": "FALHOU",
+        "done": "concluído"
+      },
+      "progress": {
+        "permissions": "> Verificando permissões...",
+        "api": "> Iniciando integração da Bot API...",
+        "webhooks": "> Preparando serviços de webhook...",
+        "log_server": "> Configurando servidor de logs...",
+        "mock_roles": "> Vinculando cargos de exemplo...",
+        "economy": "> Gravando configurações de economia...",
+        "bonuses": "> Aplicando regras de bônus...",
+        "mock_done": "> Setup mock de localhost concluído.",
+        "success": "> SETUP CONCLUÍDO!",
+        "log_ok": "> Setup de logs: SUCESSO",
+        "log_fail": "> Setup de logs: FALHOU (confirme que o bot está no servidor)",
+        "db": "> Registros do banco criados...",
+        "done": "> Setup concluído com sucesso!",
+        "redirect": "> Redirecionando para o Painel Admin...",
+        "fail": "> SETUP FALHOU!"
+      },
+      "terminal": {
+        "missing_roles": "Informações de cargo ausentes. Volte à tela de Setup.",
+        "unknown_guild": "Desconhecido",
+        "logged_in": "conectado: {name}",
+        "admin_role": "cargo admin: {id}",
+        "verify_role": "cargo verify: {id}",
+        "creating_categories": "criando categorias de canais...",
+        "channels_created": "canais criados",
+        "preparing_webhooks": "preparando webhooks...",
+        "failed": "Setup falhou",
+        "category_ok": "validação de categoria: ok",
+        "created_channels": "canais criados:",
+        "webhook_created": "webhook criado: {name} ({type})",
+        "db_writing": "database: gravando registros...",
+        "success": "setup: sucesso",
+        "redirecting": "redirecionando usuário...",
+        "countdown": "painel admin abre em {seconds} segundos...",
+        "error_generic": "Ocorreu um erro durante o Setup.",
+        "fail_line": "setup: falhou",
+        "error_label": "✕ erro",
+        "loading": "Carregando...",
+        "path": "~/centro-de-dados/setup",
+        "running": "running",
+        "done": "done"
+      }
+    }
+  }
+}

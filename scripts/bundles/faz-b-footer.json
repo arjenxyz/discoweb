@@ -1,0 +1,101 @@
+{
+  "tr": {
+    "status": {
+      "footer_inspired_before": "DiscoWeb sistem durumu sayfası",
+      "footer_inspired_after": "tasarımından esinlenilmiştir.",
+      "footer_report_before": "Sorun bildirmek için",
+      "footer_report_link": "Discord destek sunucusunu",
+      "footer_report_after": "kullanın. Veriler {seconds} saniyede bir güncellenir."
+    }
+  },
+  "en": {
+    "status": {
+      "footer_inspired_before": "The DiscoWeb system status page is inspired by",
+      "footer_inspired_after": ".",
+      "footer_report_before": "To report an issue, use the",
+      "footer_report_link": "Discord support server",
+      "footer_report_after": ". Data refreshes every {seconds} seconds."
+    }
+  },
+  "pt": {
+    "status": {
+      "footer_inspired_before": "A página de status do DiscoWeb é inspirada em",
+      "footer_inspired_after": ".",
+      "footer_report_before": "Para reportar um problema, use o",
+      "footer_report_link": "servidor de suporte Discord",
+      "footer_report_after": ". Os dados atualizam a cada {seconds} segundos."
+    }
+  },
+  "id": {
+    "status": {
+      "footer_inspired_before": "Halaman status sistem DiscoWeb terinspirasi dari",
+      "footer_inspired_after": ".",
+      "footer_report_before": "Untuk melaporkan masalah, gunakan",
+      "footer_report_link": "server dukungan Discord",
+      "footer_report_after": ". Data diperbarui setiap {seconds} detik."
+    }
+  },
+  "es": {
+    "status": {
+      "footer_inspired_before": "La página de estado de DiscoWeb está inspirada en",
+      "footer_inspired_after": ".",
+      "footer_report_before": "Para informar un problema, usa el",
+      "footer_report_link": "servidor de soporte de Discord",
+      "footer_report_after": ". Los datos se actualizan cada {seconds} segundos."
+    }
+  },
+  "de": {
+    "status": {
+      "footer_inspired_before": "Die DiscoWeb-Systemstatusseite ist inspiriert von",
+      "footer_inspired_after": ".",
+      "footer_report_before": "Um ein Problem zu melden, nutze den",
+      "footer_report_link": "Discord-Support-Server",
+      "footer_report_after": ". Daten werden alle {seconds} Sekunden aktualisiert."
+    }
+  },
+  "fr": {
+    "status": {
+      "footer_inspired_before": "La page d’état système DiscoWeb s’inspire de",
+      "footer_inspired_after": ".",
+      "footer_report_before": "Pour signaler un problème, utilisez le",
+      "footer_report_link": "serveur de support Discord",
+      "footer_report_after": ". Les données se rafraîchissent toutes les {seconds} secondes."
+    }
+  },
+  "hu": {
+    "status": {
+      "footer_inspired_before": "A DiscoWeb rendszerállapot oldal a következőből merít inspirációt:",
+      "footer_inspired_after": ".",
+      "footer_report_before": "Probléma jelentéséhez használd a",
+      "footer_report_link": "Discord támogatási szervert",
+      "footer_report_after": ". Az adatok {seconds} másodpercenként frissülnek."
+    }
+  },
+  "ja": {
+    "status": {
+      "footer_inspired_before": "DiscoWebのシステムステータスページは",
+      "footer_inspired_after": "に着想を得ています。",
+      "footer_report_before": "問題を報告するには",
+      "footer_report_link": "Discordサポートサーバー",
+      "footer_report_after": "をご利用ください。データは{seconds}秒ごとに更新されます。"
+    }
+  },
+  "ko": {
+    "status": {
+      "footer_inspired_before": "DiscoWeb 시스템 상태 페이지는",
+      "footer_inspired_after": "에서 영감을 받았습니다.",
+      "footer_report_before": "문제를 신고하려면",
+      "footer_report_link": "Discord 지원 서버",
+      "footer_report_after": "를 이용하세요. 데이터는 {seconds}초마다 새로고침됩니다."
+    }
+  },
+  "ru": {
+    "status": {
+      "footer_inspired_before": "Страница статуса системы DiscoWeb вдохновлена",
+      "footer_inspired_after": ".",
+      "footer_report_before": "Чтобы сообщить о проблеме, используйте",
+      "footer_report_link": "сервер поддержки Discord",
+      "footer_report_after": ". Данные обновляются каждые {seconds} секунд."
+    }
+  }
+}

@@ -1,0 +1,284 @@
+[
+  {
+    "f": "app\\admin\\page_new.tsx",
+    "count": 25,
+    "samples": [
+      {
+        "n": 38,
+        "t": "return selectedGuildId || GUILD_ID; // Varsayılan olarak config'deki guild ID"
+      },
+      {
+        "n": 205,
+        "t": "<h1 className=\"text-2xl font-bold text-red-400 mb-4\">Erişim Reddedildi</h1>"
+      },
+      {
+        "n": 207,
+        "t": "Bu sunucuda yönetici yetkiniz yok."
+      },
+      {
+        "n": 213,
+        "t": "Ana Sayfaya Dön"
+      },
+      {
+        "n": 228,
+        "t": "Admin verileri yüklenemedi. Sunucu ayarlarını ve yetkileri kontrol edin."
+      }
+    ]
+  },
+  {
+    "f": "app\\privacy\\page.tsx",
+    "count": 9,
+    "samples": [
+      {
+        "n": 111,
+        "t": "{/* Giriş */}"
+      },
+      {
+        "n": 120,
+        "t": "{/* Platform Hakkında */}"
+      },
+      {
+        "n": 167,
+        "t": "{/* Kullanım */}"
+      },
+      {
+        "n": 188,
+        "t": "{/* Üçüncü Taraflar */}"
+      },
+      {
+        "n": 208,
+        "t": "{/* Saklama Süresi */}"
+      }
+    ]
+  },
+  {
+    "f": "components\\CartDrawer.tsx",
+    "count": 8,
+    "samples": [
+      {
+        "n": 228,
+        "t": "{/* Sol taraftaki büyük GIF Efekti */}"
+      },
+      {
+        "n": 275,
+        "t": "{/* Ürün Görseli Yer Tutucu */}"
+      },
+      {
+        "n": 308,
+        "t": "{/* Promosyon kodu — her zaman görünür */}"
+      },
+      {
+        "n": 317,
+        "t": "{/* --- LİMİT BAR (Sadece Kupon Varsa ve Limit Varsa) --- */}"
+      },
+      {
+        "n": 397,
+        "t": "{/* Hoşgeldin Kuponu */}"
+      }
+    ]
+  },
+  {
+    "f": "app\\admin\\earn-settings\\page.tsx",
+    "count": 7,
+    "samples": [
+      {
+        "n": 439,
+        "t": "/* --- KANAL YAPILANDIRMA BİLEŞENİ --- */"
+      },
+      {
+        "n": 527,
+        "t": "{/* Mesaj Kanalları */}"
+      },
+      {
+        "n": 534,
+        "t": "{/* Kategori Seçimi */}"
+      },
+      {
+        "n": 560,
+        "t": "{/* Kanal Seçimi */}"
+      },
+      {
+        "n": 595,
+        "t": "{/* Kategori Seçimi */}"
+      }
+    ]
+  },
+  {
+    "f": "app\\economy\\basic\\page.tsx",
+    "count": 5,
+    "samples": [
+      {
+        "n": 112,
+        "t": "{/* Papel Kazanımı */}"
+      },
+      {
+        "n": 132,
+        "t": "{/* Mağaza */}"
+      },
+      {
+        "n": 152,
+        "t": "{/* Çekilişler */}"
+      },
+      {
+        "n": 189,
+        "t": "{/* Admin Araçları */}"
+      },
+      {
+        "n": 209,
+        "t": "{/* Kısıtlamalar */}"
+      }
+    ]
+  },
+  {
+    "f": "app\\terms\\page.tsx",
+    "count": 5,
+    "samples": [
+      {
+        "n": 119,
+        "t": "{/* Giriş */}"
+      },
+      {
+        "n": 139,
+        "t": "{/* Kullanım Şartları */}"
+      },
+      {
+        "n": 201,
+        "t": "{/* Değişiklikler */}"
+      },
+      {
+        "n": 212,
+        "t": "{/* İletişim */}"
+      },
+      {
+        "n": 244,
+        "t": "/* ─── Yardımcı bileşenler ─── */"
+      }
+    ]
+  },
+  {
+    "f": "components\\CuteNavbar.tsx",
+    "count": 3,
+    "samples": [
+      {
+        "n": 466,
+        "t": "{/* Navbar Container: overflow-visible önemli */}"
+      },
+      {
+        "n": 469,
+        "t": "{/* Logo / kullanıcı — select-server identity when menu closed; brand mark when menu open (no home link) */}"
+      },
+      {
+        "n": 540,
+        "t": "src=\"/gif/asılıpengu.gif\""
+      }
+    ]
+  },
+  {
+    "f": "app\\admin\\badges\\page.tsx",
+    "count": 2,
+    "samples": [
+      {
+        "n": 377,
+        "t": "{/* ── Ödüller ── */}"
+      },
+      {
+        "n": 512,
+        "t": "{/* ── Arkaplan Görseli ── */}"
+      }
+    ]
+  },
+  {
+    "f": "app\\admin\\boosters\\page.tsx",
+    "count": 2,
+    "samples": [
+      {
+        "n": 376,
+        "t": "{/* ── Ödüller ── */}"
+      },
+      {
+        "n": 512,
+        "t": "{/* ── Arkaplan Görseli ── */}"
+      }
+    ]
+  },
+  {
+    "f": "app\\developer\\broadcast\\page.tsx",
+    "count": 2,
+    "samples": [
+      {
+        "n": 183,
+        "t": "{/* Dinamik Değişken Kutuları */}"
+      },
+      {
+        "n": 207,
+        "t": "{/* Sağ Kolon: Önizleme */}"
+      }
+    ]
+  },
+  {
+    "f": "app\\developer\\quiz\\events\\page.tsx",
+    "count": 2,
+    "samples": [
+      {
+        "n": 54,
+        "t": "tr: 'Türkçe',"
+      },
+      {
+        "n": 59,
+        "t": "fr: 'Français',"
+      }
+    ]
+  },
+  {
+    "f": "app\\developer\\quiz\\questions\\page.tsx",
+    "count": 2,
+    "samples": [
+      {
+        "n": 37,
+        "t": "tr: 'Türkçe',"
+      },
+      {
+        "n": 42,
+        "t": "fr: 'Français',"
+      }
+    ]
+  },
+  {
+    "f": "app\\server-left\\layout.tsx",
+    "count": 2,
+    "samples": [
+      {
+        "n": 4,
+        "t": "title: 'Sunucudan Ayrıldınız',"
+      },
+      {
+        "n": 5,
+        "t": "description: 'Seçili sunucudan ayrıldığınız için erişim kısıtlandı.',"
+      }
+    ]
+  },
+  {
+    "f": "app\\admin\\page.tsx",
+    "count": 1,
+    "samples": [
+      {
+        "n": 51,
+        "t": "return selectedGuildId || GUILD_ID; // Varsayılan olarak config'deki guild ID"
+      }
+    ]
+  },
+  {
+    "f": "app\\docs\\page.tsx",
+    "count": 1,
+    "samples": [
+      {
+        "n": 156,
+        "t": "{/* YENİ BÖLÜM: Telif Hakkı Bildirimi */}"
+      }
+    ]
+  },
+  {
+    "f": "app\\privacy\\page2.tsx",
+    "note": "page2 leftover"
+  }
+]

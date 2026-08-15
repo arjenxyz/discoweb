@@ -1,0 +1,871 @@
+{
+  "tr": {
+    "meta": {
+      "title": "DiscoWeb - Discord Yönetim Paneli",
+      "description": "Özel Discord sunucuları için geliştirilmiş, yapay zeka destekli gelişmiş yönetim platformu."
+    },
+    "maintenance": {
+      "eyebrow": "Bakım Modu",
+      "site_message": "Üye paneli genel bakımda. Güvenlik ve performans için tüm dashboard servisleri geçici olarak durduruldu. Bakım tamamlandığında erişim otomatik olarak açılacaktır.",
+      "module_message": "Bilgilendirme: Seçili modül bakımda ve ilgili özellikler geçici olarak kapalı.",
+      "owner": "Bakım sorumlusu: {name}",
+      "back_home": "Ana sayfaya dön",
+      "member_panel": "Üye paneli",
+      "labels": {
+        "store": "Mağaza",
+        "transactions": "İşlemler",
+        "tracking": "Mağaza Takip",
+        "promotions": "Promosyon",
+        "discounts": "İndirim Kodu",
+        "transfers": "Papel Gönder"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Kullanıcı",
+      "badge": "Sunucudan Ayrıldınız",
+      "body_1": "Seçili sunucudan ayrıldığınız için bu sunucunun içeriklerine erişiminiz kısıtlanmıştır.",
+      "body_2": "Eğer bu sunucunun mağaza, cüzdan ve diğer özelliklerine erişmek istiyorsanız, sunucuya geri dönmeniz gerekmektedir.",
+      "select_server": "Sunucu Seçimine Dön",
+      "home": "Ana Sayfa",
+      "support": "Sorularınız için destek ekibimizle iletişime geçebilirsiniz."
+    },
+    "thank_you": {
+      "title": "Teşekkürler",
+      "body": "DiscoWeb Türkiye'yi ziyaret ettiğiniz için teşekkür ederiz. Mesajınızı aldık ve en kısa sürede sizinle iletişime geçeceğiz.",
+      "home": "Ana Sayfa"
+    },
+    "confirm": {
+      "title": "Onay",
+      "yes": "Evet",
+      "cancel": "İptal"
+    },
+    "panel_switcher": {
+      "admin": "Yönetici Paneli",
+      "admin_short": "Admin",
+      "developer": "Geliştirici Paneli",
+      "developer_short": "Dev",
+      "dashboard": "Üye Paneli",
+      "dashboard_short": "Üye"
+    },
+    "status": {
+      "meta_description": "DiscoWeb sistem durumu, servis çalışma süreleri ve olay geçmişi.",
+      "label": {
+        "operational": "Çalışıyor",
+        "degraded": "Performans Düşük",
+        "partial_outage": "Kısmi Kesinti",
+        "major_outage": "Büyük Kesinti",
+        "maintenance": "Bakım"
+      },
+      "headline": {
+        "operational": "Tüm Sistemler Çalışıyor",
+        "degraded": "Bazı Servislerde Performans Düşüklüğü",
+        "partial_outage": "Kısmi Sistem Kesintisi",
+        "major_outage": "Büyük Sistem Kesintisi",
+        "maintenance": "Planlı Bakım"
+      },
+      "phase": {
+        "investigating": "İnceleniyor",
+        "identified": "Tespit Edildi",
+        "monitoring": "İzleniyor",
+        "resolved": "Çözüldü"
+      },
+      "history_title": "Geçmiş Olaylar",
+      "days_ago": "90 gün önce",
+      "today": "Bugün",
+      "load_error": "Durum bilgileri yüklenemedi.",
+      "loading": "Durum yükleniyor…",
+      "past_uptime": "Geçmiş uptime",
+      "uptime_aria": "90 günlük çalışma süresi geçmişi"
+    }
+  },
+  "en": {
+    "meta": {
+      "title": "DiscoWeb - Discord Management Panel",
+      "description": "An advanced, AI-powered management platform built for private Discord servers."
+    },
+    "maintenance": {
+      "eyebrow": "Maintenance Mode",
+      "site_message": "The member panel is under site-wide maintenance. All dashboard services have been temporarily paused for security and performance. Access will reopen automatically when maintenance is complete.",
+      "module_message": "Notice: The selected module is under maintenance and related features are temporarily unavailable.",
+      "owner": "Maintenance owner: {name}",
+      "back_home": "Back to home",
+      "member_panel": "Member panel",
+      "labels": {
+        "store": "Store",
+        "transactions": "Transactions",
+        "tracking": "Store Tracking",
+        "promotions": "Promotions",
+        "discounts": "Discount Code",
+        "transfers": "Send Papel"
+      }
+    },
+    "server_left": {
+      "user_fallback": "User",
+      "badge": "You Left the Server",
+      "body_1": "Because you left the selected server, your access to this server’s content has been restricted.",
+      "body_2": "If you want to use this server’s store, wallet, and other features, you need to rejoin the server.",
+      "select_server": "Back to Server Selection",
+      "home": "Home",
+      "support": "If you have questions, you can contact our support team."
+    },
+    "thank_you": {
+      "title": "Thank You",
+      "body": "Thank you for visiting DiscoWeb. We’ve received your message and will get back to you as soon as possible.",
+      "home": "Home"
+    },
+    "confirm": {
+      "title": "Confirm",
+      "yes": "Yes",
+      "cancel": "Cancel"
+    },
+    "panel_switcher": {
+      "admin": "Admin Panel",
+      "admin_short": "Admin",
+      "developer": "Developer Panel",
+      "developer_short": "Dev",
+      "dashboard": "Member Panel",
+      "dashboard_short": "Member"
+    },
+    "status": {
+      "meta_description": "DiscoWeb system status, service uptime, and incident history.",
+      "label": {
+        "operational": "Operational",
+        "degraded": "Degraded Performance",
+        "partial_outage": "Partial Outage",
+        "major_outage": "Major Outage",
+        "maintenance": "Maintenance"
+      },
+      "headline": {
+        "operational": "All Systems Operational",
+        "degraded": "Degraded Performance",
+        "partial_outage": "Partial System Outage",
+        "major_outage": "Major System Outage",
+        "maintenance": "Scheduled Maintenance"
+      },
+      "phase": {
+        "investigating": "Investigating",
+        "identified": "Identified",
+        "monitoring": "Monitoring",
+        "resolved": "Resolved"
+      },
+      "history_title": "Past Incidents",
+      "days_ago": "90 days ago",
+      "today": "Today",
+      "load_error": "Could not load status information.",
+      "loading": "Loading status…",
+      "past_uptime": "Past uptime",
+      "uptime_aria": "90 day uptime history"
+    }
+  },
+  "pt": {
+    "meta": {
+      "title": "DiscoWeb - Painel de Gestão Discord",
+      "description": "Plataforma avançada de gestão com IA, desenvolvida para servidores Discord privados."
+    },
+    "maintenance": {
+      "eyebrow": "Modo de Manutenção",
+      "site_message": "O painel de membros está em manutenção geral. Por segurança e desempenho, todos os serviços do dashboard foram temporariamente interrompidos. O acesso será reaberto automaticamente quando a manutenção terminar.",
+      "module_message": "Aviso: o módulo selecionado está em manutenção e as funcionalidades relacionadas estão temporariamente indisponíveis.",
+      "owner": "Responsável pela manutenção: {name}",
+      "back_home": "Voltar à página inicial",
+      "member_panel": "Painel de membros",
+      "labels": {
+        "store": "Loja",
+        "transactions": "Transações",
+        "tracking": "Acompanhamento da Loja",
+        "promotions": "Promoções",
+        "discounts": "Código de Desconto",
+        "transfers": "Enviar Papel"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Utilizador",
+      "badge": "Saiu do Servidor",
+      "body_1": "Como saiu do servidor selecionado, o seu acesso aos conteúdos deste servidor foi restringido.",
+      "body_2": "Se quiser usar a loja, a carteira e outras funcionalidades deste servidor, precisa de voltar a entrar no servidor.",
+      "select_server": "Voltar à Seleção de Servidor",
+      "home": "Página Inicial",
+      "support": "Se tiver dúvidas, pode contactar a nossa equipa de suporte."
+    },
+    "thank_you": {
+      "title": "Obrigado",
+      "body": "Obrigado por visitar o DiscoWeb. Recebemos a sua mensagem e entraremos em contacto o mais breve possível.",
+      "home": "Página Inicial"
+    },
+    "confirm": {
+      "title": "Confirmar",
+      "yes": "Sim",
+      "cancel": "Cancelar"
+    },
+    "panel_switcher": {
+      "admin": "Painel de Administrador",
+      "admin_short": "Admin",
+      "developer": "Painel de Programador",
+      "developer_short": "Dev",
+      "dashboard": "Painel de Membros",
+      "dashboard_short": "Membro"
+    },
+    "status": {
+      "meta_description": "Estado do sistema DiscoWeb, tempo de atividade dos serviços e histórico de incidentes.",
+      "label": {
+        "operational": "Operacional",
+        "degraded": "Desempenho Degradado",
+        "partial_outage": "Interrupção Parcial",
+        "major_outage": "Interrupção Grave",
+        "maintenance": "Manutenção"
+      },
+      "headline": {
+        "operational": "Todos os Sistemas Operacionais",
+        "degraded": "Desempenho Degradado em Alguns Serviços",
+        "partial_outage": "Interrupção Parcial do Sistema",
+        "major_outage": "Interrupção Grave do Sistema",
+        "maintenance": "Manutenção Programada"
+      },
+      "phase": {
+        "investigating": "A investigar",
+        "identified": "Identificado",
+        "monitoring": "A monitorizar",
+        "resolved": "Resolvido"
+      },
+      "history_title": "Incidentes Anteriores",
+      "days_ago": "há 90 dias",
+      "today": "Hoje",
+      "load_error": "Não foi possível carregar as informações de estado.",
+      "loading": "A carregar o estado…",
+      "past_uptime": "Uptime anterior",
+      "uptime_aria": "Histórico de uptime de 90 dias"
+    }
+  },
+  "id": {
+    "meta": {
+      "title": "DiscoWeb - Panel Manajemen Discord",
+      "description": "Platform manajemen canggih berbantuan AI yang dibuat untuk server Discord privat."
+    },
+    "maintenance": {
+      "eyebrow": "Mode Pemeliharaan",
+      "site_message": "Panel anggota sedang dalam pemeliharaan menyeluruh. Demi keamanan dan performa, semua layanan dashboard sementara dihentikan. Akses akan dibuka otomatis setelah pemeliharaan selesai.",
+      "module_message": "Pemberitahuan: Modul yang dipilih sedang dalam pemeliharaan dan fitur terkait sementara tidak tersedia.",
+      "owner": "Penanggung jawab pemeliharaan: {name}",
+      "back_home": "Kembali ke beranda",
+      "member_panel": "Panel anggota",
+      "labels": {
+        "store": "Toko",
+        "transactions": "Transaksi",
+        "tracking": "Pelacakan Toko",
+        "promotions": "Promosi",
+        "discounts": "Kode Diskon",
+        "transfers": "Kirim Papel"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Pengguna",
+      "badge": "Anda Meninggalkan Server",
+      "body_1": "Karena Anda meninggalkan server yang dipilih, akses Anda ke konten server ini telah dibatasi.",
+      "body_2": "Jika ingin menggunakan toko, dompet, dan fitur lain di server ini, Anda perlu bergabung kembali ke server.",
+      "select_server": "Kembali ke Pemilihan Server",
+      "home": "Beranda",
+      "support": "Jika ada pertanyaan, Anda dapat menghubungi tim dukungan kami."
+    },
+    "thank_you": {
+      "title": "Terima Kasih",
+      "body": "Terima kasih telah mengunjungi DiscoWeb. Kami telah menerima pesan Anda dan akan segera menghubungi Anda.",
+      "home": "Beranda"
+    },
+    "confirm": {
+      "title": "Konfirmasi",
+      "yes": "Ya",
+      "cancel": "Batal"
+    },
+    "panel_switcher": {
+      "admin": "Panel Admin",
+      "admin_short": "Admin",
+      "developer": "Panel Pengembang",
+      "developer_short": "Dev",
+      "dashboard": "Panel Anggota",
+      "dashboard_short": "Anggota"
+    },
+    "status": {
+      "meta_description": "Status sistem DiscoWeb, waktu aktif layanan, dan riwayat insiden.",
+      "label": {
+        "operational": "Beroperasi",
+        "degraded": "Performa Menurun",
+        "partial_outage": "Gangguan Sebagian",
+        "major_outage": "Gangguan Besar",
+        "maintenance": "Pemeliharaan"
+      },
+      "headline": {
+        "operational": "Semua Sistem Beroperasi",
+        "degraded": "Performa Menurun di Beberapa Layanan",
+        "partial_outage": "Gangguan Sistem Sebagian",
+        "major_outage": "Gangguan Sistem Besar",
+        "maintenance": "Pemeliharaan Terjadwal"
+      },
+      "phase": {
+        "investigating": "Sedang diselidiki",
+        "identified": "Teridentifikasi",
+        "monitoring": "Sedang dipantau",
+        "resolved": "Selesai"
+      },
+      "history_title": "Insiden Sebelumnya",
+      "days_ago": "90 hari yang lalu",
+      "today": "Hari ini",
+      "load_error": "Informasi status tidak dapat dimuat.",
+      "loading": "Memuat status…",
+      "past_uptime": "Uptime sebelumnya",
+      "uptime_aria": "Riwayat uptime 90 hari"
+    }
+  },
+  "es": {
+    "meta": {
+      "title": "DiscoWeb - Panel de Gestión de Discord",
+      "description": "Plataforma avanzada de gestión con IA, desarrollada para servidores Discord privados."
+    },
+    "maintenance": {
+      "eyebrow": "Modo de Mantenimiento",
+      "site_message": "El panel de miembros está en mantenimiento general. Por seguridad y rendimiento, todos los servicios del dashboard se han detenido temporalmente. El acceso se reabrirá automáticamente cuando finalice el mantenimiento.",
+      "module_message": "Aviso: el módulo seleccionado está en mantenimiento y las funciones relacionadas están temporalmente desactivadas.",
+      "owner": "Responsable del mantenimiento: {name}",
+      "back_home": "Volver al inicio",
+      "member_panel": "Panel de miembros",
+      "labels": {
+        "store": "Tienda",
+        "transactions": "Transacciones",
+        "tracking": "Seguimiento de Tienda",
+        "promotions": "Promociones",
+        "discounts": "Código de Descuento",
+        "transfers": "Enviar Papel"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Usuario",
+      "badge": "Has Abandonado el Servidor",
+      "body_1": "Como has abandonado el servidor seleccionado, tu acceso a los contenidos de este servidor se ha restringido.",
+      "body_2": "Si quieres usar la tienda, la cartera y otras funciones de este servidor, debes volver a unirte.",
+      "select_server": "Volver a la Selección de Servidor",
+      "home": "Inicio",
+      "support": "Si tienes preguntas, puedes contactar con nuestro equipo de soporte."
+    },
+    "thank_you": {
+      "title": "Gracias",
+      "body": "Gracias por visitar DiscoWeb. Hemos recibido tu mensaje y nos pondremos en contacto contigo lo antes posible.",
+      "home": "Inicio"
+    },
+    "confirm": {
+      "title": "Confirmar",
+      "yes": "Sí",
+      "cancel": "Cancelar"
+    },
+    "panel_switcher": {
+      "admin": "Panel de Administrador",
+      "admin_short": "Admin",
+      "developer": "Panel de Desarrollador",
+      "developer_short": "Dev",
+      "dashboard": "Panel de Miembros",
+      "dashboard_short": "Miembro"
+    },
+    "status": {
+      "meta_description": "Estado del sistema DiscoWeb, tiempo de actividad de los servicios e historial de incidentes.",
+      "label": {
+        "operational": "Operativo",
+        "degraded": "Rendimiento Degradado",
+        "partial_outage": "Interrupción Parcial",
+        "major_outage": "Interrupción Mayor",
+        "maintenance": "Mantenimiento"
+      },
+      "headline": {
+        "operational": "Todos los Sistemas Operativos",
+        "degraded": "Rendimiento Degradado en Algunos Servicios",
+        "partial_outage": "Interrupción Parcial del Sistema",
+        "major_outage": "Interrupción Mayor del Sistema",
+        "maintenance": "Mantenimiento Programado"
+      },
+      "phase": {
+        "investigating": "Investigando",
+        "identified": "Identificado",
+        "monitoring": "Monitoreando",
+        "resolved": "Resuelto"
+      },
+      "history_title": "Incidentes Anteriores",
+      "days_ago": "hace 90 días",
+      "today": "Hoy",
+      "load_error": "No se pudo cargar la información de estado.",
+      "loading": "Cargando estado…",
+      "past_uptime": "Uptime anterior",
+      "uptime_aria": "Historial de uptime de 90 días"
+    }
+  },
+  "de": {
+    "meta": {
+      "title": "DiscoWeb - Discord-Verwaltungspanel",
+      "description": "Eine fortschrittliche, KI-gestützte Verwaltungsplattform für private Discord-Server."
+    },
+    "maintenance": {
+      "eyebrow": "Wartungsmodus",
+      "site_message": "Das Mitgliederpanel befindet sich in allgemeiner Wartung. Aus Sicherheits- und Leistungsgründen wurden alle Dashboard-Dienste vorübergehend gestoppt. Der Zugriff wird automatisch wieder geöffnet, sobald die Wartung abgeschlossen ist.",
+      "module_message": "Hinweis: Das ausgewählte Modul ist in Wartung und die zugehörigen Funktionen sind vorübergehend deaktiviert.",
+      "owner": "Wartungsverantwortlicher: {name}",
+      "back_home": "Zur Startseite",
+      "member_panel": "Mitgliederpanel",
+      "labels": {
+        "store": "Shop",
+        "transactions": "Transaktionen",
+        "tracking": "Shop-Tracking",
+        "promotions": "Aktionen",
+        "discounts": "Rabattcode",
+        "transfers": "Papel senden"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Benutzer",
+      "badge": "Server verlassen",
+      "body_1": "Da Sie den ausgewählten Server verlassen haben, ist Ihr Zugriff auf die Inhalte dieses Servers eingeschränkt.",
+      "body_2": "Wenn Sie Shop, Wallet und andere Funktionen dieses Servers nutzen möchten, müssen Sie dem Server erneut beitreten.",
+      "select_server": "Zur Serverauswahl zurück",
+      "home": "Startseite",
+      "support": "Bei Fragen können Sie sich an unser Support-Team wenden."
+    },
+    "thank_you": {
+      "title": "Danke",
+      "body": "Vielen Dank für Ihren Besuch bei DiscoWeb. Wir haben Ihre Nachricht erhalten und melden uns so schnell wie möglich.",
+      "home": "Startseite"
+    },
+    "confirm": {
+      "title": "Bestätigung",
+      "yes": "Ja",
+      "cancel": "Abbrechen"
+    },
+    "panel_switcher": {
+      "admin": "Admin-Panel",
+      "admin_short": "Admin",
+      "developer": "Entwickler-Panel",
+      "developer_short": "Dev",
+      "dashboard": "Mitglieder-Panel",
+      "dashboard_short": "Mitglied"
+    },
+    "status": {
+      "meta_description": "DiscoWeb-Systemstatus, Dienstlaufzeiten und Vorfallverlauf.",
+      "label": {
+        "operational": "Betriebsbereit",
+        "degraded": "Eingeschränkte Leistung",
+        "partial_outage": "Teilausfall",
+        "major_outage": "Schwerer Ausfall",
+        "maintenance": "Wartung"
+      },
+      "headline": {
+        "operational": "Alle Systeme betriebsbereit",
+        "degraded": "Eingeschränkte Leistung bei einigen Diensten",
+        "partial_outage": "Teilweiser Systemausfall",
+        "major_outage": "Schwerer Systemausfall",
+        "maintenance": "Geplante Wartung"
+      },
+      "phase": {
+        "investigating": "Untersuchung",
+        "identified": "Identifiziert",
+        "monitoring": "Überwachung",
+        "resolved": "Behoben"
+      },
+      "history_title": "Vergangene Vorfälle",
+      "days_ago": "vor 90 Tagen",
+      "today": "Heute",
+      "load_error": "Statusinformationen konnten nicht geladen werden.",
+      "loading": "Status wird geladen…",
+      "past_uptime": "Vergangene Uptime",
+      "uptime_aria": "90-Tage-Uptime-Verlauf"
+    }
+  },
+  "fr": {
+    "meta": {
+      "title": "DiscoWeb - Panneau de gestion Discord",
+      "description": "Plateforme de gestion avancée assistée par IA, conçue pour les serveurs Discord privés."
+    },
+    "maintenance": {
+      "eyebrow": "Mode maintenance",
+      "site_message": "Le panneau membre est en maintenance générale. Pour la sécurité et les performances, tous les services du dashboard ont été temporairement interrompus. L’accès se rouvrira automatiquement une fois la maintenance terminée.",
+      "module_message": "Information : le module sélectionné est en maintenance et les fonctionnalités associées sont temporairement indisponibles.",
+      "owner": "Responsable de la maintenance : {name}",
+      "back_home": "Retour à l’accueil",
+      "member_panel": "Panneau membre",
+      "labels": {
+        "store": "Boutique",
+        "transactions": "Transactions",
+        "tracking": "Suivi boutique",
+        "promotions": "Promotions",
+        "discounts": "Code promo",
+        "transfers": "Envoyer Papel"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Utilisateur",
+      "badge": "Vous avez quitté le serveur",
+      "body_1": "Comme vous avez quitté le serveur sélectionné, votre accès aux contenus de ce serveur a été restreint.",
+      "body_2": "Si vous souhaitez utiliser la boutique, le portefeuille et les autres fonctionnalités de ce serveur, vous devez le rejoindre à nouveau.",
+      "select_server": "Retour à la sélection de serveur",
+      "home": "Accueil",
+      "support": "Pour toute question, vous pouvez contacter notre équipe d’assistance."
+    },
+    "thank_you": {
+      "title": "Merci",
+      "body": "Merci d’avoir visité DiscoWeb. Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.",
+      "home": "Accueil"
+    },
+    "confirm": {
+      "title": "Confirmation",
+      "yes": "Oui",
+      "cancel": "Annuler"
+    },
+    "panel_switcher": {
+      "admin": "Panneau administrateur",
+      "admin_short": "Admin",
+      "developer": "Panneau développeur",
+      "developer_short": "Dev",
+      "dashboard": "Panneau membre",
+      "dashboard_short": "Membre"
+    },
+    "status": {
+      "meta_description": "État du système DiscoWeb, disponibilité des services et historique des incidents.",
+      "label": {
+        "operational": "Opérationnel",
+        "degraded": "Performances dégradées",
+        "partial_outage": "Interruption partielle",
+        "major_outage": "Interruption majeure",
+        "maintenance": "Maintenance"
+      },
+      "headline": {
+        "operational": "Tous les systèmes opérationnels",
+        "degraded": "Performances dégradées sur certains services",
+        "partial_outage": "Interruption partielle du système",
+        "major_outage": "Interruption majeure du système",
+        "maintenance": "Maintenance planifiée"
+      },
+      "phase": {
+        "investigating": "Enquête en cours",
+        "identified": "Identifié",
+        "monitoring": "Surveillance",
+        "resolved": "Résolu"
+      },
+      "history_title": "Incidents passés",
+      "days_ago": "il y a 90 jours",
+      "today": "Aujourd’hui",
+      "load_error": "Impossible de charger les informations d’état.",
+      "loading": "Chargement de l’état…",
+      "past_uptime": "Uptime passé",
+      "uptime_aria": "Historique d’uptime sur 90 jours"
+    }
+  },
+  "hu": {
+    "meta": {
+      "title": "DiscoWeb - Discord kezelőpanel",
+      "description": "Fejlett, mesterséges intelligenciával támogatott kezelőplatform privát Discord-szerverekhez."
+    },
+    "maintenance": {
+      "eyebrow": "Karbantartási mód",
+      "site_message": "A tagpanel általános karbantartás alatt áll. A biztonság és a teljesítmény érdekében az összes dashboard szolgáltatás ideiglenesen leállt. A hozzáférés a karbantartás után automatikusan megnyílik.",
+      "module_message": "Tájékoztatás: A kiválasztott modul karbantartás alatt áll, a kapcsolódó funkciók ideiglenesen nem elérhetők.",
+      "owner": "Karbantartás felelőse: {name}",
+      "back_home": "Vissza a főoldalra",
+      "member_panel": "Tagpanel",
+      "labels": {
+        "store": "Áruház",
+        "transactions": "Tranzakciók",
+        "tracking": "Áruház követés",
+        "promotions": "Promóció",
+        "discounts": "Kedvezménykód",
+        "transfers": "Papel küldése"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Felhasználó",
+      "badge": "Elhagytad a szervert",
+      "body_1": "Mivel elhagytad a kiválasztott szervert, a szerver tartalmaihoz való hozzáférésed korlátozva lett.",
+      "body_2": "Ha szeretnéd használni a szerver áruházát, pénztárcáját és egyéb funkcióit, újra csatlakoznod kell a szerverhez.",
+      "select_server": "Vissza a szerverválasztáshoz",
+      "home": "Főoldal",
+      "support": "Kérdéseiddel fordulhatsz ügyfélszolgálatunkhoz."
+    },
+    "thank_you": {
+      "title": "Köszönjük",
+      "body": "Köszönjük, hogy meglátogattad a DiscoWebet. Üzenetedet megkaptuk, és hamarosan felvesszük veled a kapcsolatot.",
+      "home": "Főoldal"
+    },
+    "confirm": {
+      "title": "Megerősítés",
+      "yes": "Igen",
+      "cancel": "Mégse"
+    },
+    "panel_switcher": {
+      "admin": "Adminisztrátori panel",
+      "admin_short": "Admin",
+      "developer": "Fejlesztői panel",
+      "developer_short": "Dev",
+      "dashboard": "Tagpanel",
+      "dashboard_short": "Tag"
+    },
+    "status": {
+      "meta_description": "DiscoWeb rendszerállapot, szolgáltatások rendelkezésre állása és eseménytörténet.",
+      "label": {
+        "operational": "Működik",
+        "degraded": "Csökkent teljesítmény",
+        "partial_outage": "Részleges kiesés",
+        "major_outage": "Nagy kiesés",
+        "maintenance": "Karbantartás"
+      },
+      "headline": {
+        "operational": "Minden rendszer működik",
+        "degraded": "Csökkent teljesítmény egyes szolgáltatásoknál",
+        "partial_outage": "Részleges rendszerkiesés",
+        "major_outage": "Nagy rendszerkiesés",
+        "maintenance": "Tervezett karbantartás"
+      },
+      "phase": {
+        "investigating": "Vizsgálat alatt",
+        "identified": "Azonosítva",
+        "monitoring": "Figyelés alatt",
+        "resolved": "Megoldva"
+      },
+      "history_title": "Korábbi események",
+      "days_ago": "90 napja",
+      "today": "Ma",
+      "load_error": "Az állapotinformációk nem tölthetők be.",
+      "loading": "Állapot betöltése…",
+      "past_uptime": "Korábbi uptime",
+      "uptime_aria": "90 napos uptime előzmény"
+    }
+  },
+  "ja": {
+    "meta": {
+      "title": "DiscoWeb - Discord管理パネル",
+      "description": "プライベートなDiscordサーバー向けに開発された、AI対応の高度な管理プラットフォーム。"
+    },
+    "maintenance": {
+      "eyebrow": "メンテナンスモード",
+      "site_message": "メンバーパネルは全体メンテナンス中です。セキュリティとパフォーマンスのため、すべてのダッシュボードサービスを一時停止しています。メンテナンス完了後、アクセスは自動的に再開されます。",
+      "module_message": "お知らせ: 選択中のモジュールはメンテナンス中のため、関連機能は一時的に利用できません。",
+      "owner": "メンテナンス担当: {name}",
+      "back_home": "ホームに戻る",
+      "member_panel": "メンバーパネル",
+      "labels": {
+        "store": "ストア",
+        "transactions": "取引",
+        "tracking": "ストア追跡",
+        "promotions": "プロモーション",
+        "discounts": "割引コード",
+        "transfers": "Papel送信"
+      }
+    },
+    "server_left": {
+      "user_fallback": "ユーザー",
+      "badge": "サーバーを退出しました",
+      "body_1": "選択したサーバーを退出したため、このサーバーのコンテンツへのアクセスが制限されています。",
+      "body_2": "このサーバーのストア、ウォレット、その他の機能を利用するには、サーバーに再参加する必要があります。",
+      "select_server": "サーバー選択に戻る",
+      "home": "ホーム",
+      "support": "ご質問がある場合は、サポートチームまでお問い合わせください。"
+    },
+    "thank_you": {
+      "title": "ありがとうございます",
+      "body": "DiscoWebをご訪問いただきありがとうございます。メッセージを受け取りました。できるだけ早くご連絡いたします。",
+      "home": "ホーム"
+    },
+    "confirm": {
+      "title": "確認",
+      "yes": "はい",
+      "cancel": "キャンセル"
+    },
+    "panel_switcher": {
+      "admin": "管理者パネル",
+      "admin_short": "Admin",
+      "developer": "開発者パネル",
+      "developer_short": "Dev",
+      "dashboard": "メンバーパネル",
+      "dashboard_short": "メンバー"
+    },
+    "status": {
+      "meta_description": "DiscoWebのシステム状態、サービス稼働時間、インシデント履歴。",
+      "label": {
+        "operational": "正常稼働",
+        "degraded": "パフォーマンス低下",
+        "partial_outage": "一部障害",
+        "major_outage": "重大障害",
+        "maintenance": "メンテナンス"
+      },
+      "headline": {
+        "operational": "すべてのシステムが正常稼働中",
+        "degraded": "一部サービスでパフォーマンス低下",
+        "partial_outage": "システムの一部障害",
+        "major_outage": "システムの重大障害",
+        "maintenance": "計画メンテナンス"
+      },
+      "phase": {
+        "investigating": "調査中",
+        "identified": "原因特定",
+        "monitoring": "監視中",
+        "resolved": "解決済み"
+      },
+      "history_title": "過去のインシデント",
+      "days_ago": "90日前",
+      "today": "今日",
+      "load_error": "ステータス情報を読み込めませんでした。",
+      "loading": "ステータスを読み込み中…",
+      "past_uptime": "過去の稼働状況",
+      "uptime_aria": "90日間の稼働履歴"
+    }
+  },
+  "ko": {
+    "meta": {
+      "title": "DiscoWeb - Discord 관리 패널",
+      "description": "프라이빗 Discord 서버를 위해 개발된 AI 기반 고급 관리 플랫폼입니다."
+    },
+    "maintenance": {
+      "eyebrow": "점검 모드",
+      "site_message": "멤버 패널이 전체 점검 중입니다. 보안과 성능을 위해 모든 대시보드 서비스가 일시적으로 중단되었습니다. 점검이 끝나면 접근이 자동으로 다시 열립니다.",
+      "module_message": "안내: 선택한 모듈이 점검 중이며 관련 기능이 일시적으로 비활성화되어 있습니다.",
+      "owner": "점검 담당자: {name}",
+      "back_home": "홈으로 돌아가기",
+      "member_panel": "멤버 패널",
+      "labels": {
+        "store": "상점",
+        "transactions": "거래",
+        "tracking": "상점 추적",
+        "promotions": "프로모션",
+        "discounts": "할인 코드",
+        "transfers": "Papel 보내기"
+      }
+    },
+    "server_left": {
+      "user_fallback": "사용자",
+      "badge": "서버에서 나갔습니다",
+      "body_1": "선택한 서버에서 나갔기 때문에 이 서버 콘텐츠에 대한 접근이 제한되었습니다.",
+      "body_2": "이 서버의 상점, 지갑 및 기타 기능을 사용하려면 서버에 다시 참여해야 합니다.",
+      "select_server": "서버 선택으로 돌아가기",
+      "home": "홈",
+      "support": "궁금한 점이 있으면 지원팀에 문의할 수 있습니다."
+    },
+    "thank_you": {
+      "title": "감사합니다",
+      "body": "DiscoWeb을 방문해 주셔서 감사합니다. 메시지를 받았으며 최대한 빠르게 연락드리겠습니다.",
+      "home": "홈"
+    },
+    "confirm": {
+      "title": "확인",
+      "yes": "예",
+      "cancel": "취소"
+    },
+    "panel_switcher": {
+      "admin": "관리자 패널",
+      "admin_short": "Admin",
+      "developer": "개발자 패널",
+      "developer_short": "Dev",
+      "dashboard": "멤버 패널",
+      "dashboard_short": "멤버"
+    },
+    "status": {
+      "meta_description": "DiscoWeb 시스템 상태, 서비스 가동 시간 및 장애 기록.",
+      "label": {
+        "operational": "정상 작동",
+        "degraded": "성능 저하",
+        "partial_outage": "부분 장애",
+        "major_outage": "주요 장애",
+        "maintenance": "점검"
+      },
+      "headline": {
+        "operational": "모든 시스템 정상 작동",
+        "degraded": "일부 서비스 성능 저하",
+        "partial_outage": "시스템 부분 장애",
+        "major_outage": "시스템 주요 장애",
+        "maintenance": "예정된 점검"
+      },
+      "phase": {
+        "investigating": "조사 중",
+        "identified": "원인 파악됨",
+        "monitoring": "모니터링 중",
+        "resolved": "해결됨"
+      },
+      "history_title": "이전 장애",
+      "days_ago": "90일 전",
+      "today": "오늘",
+      "load_error": "상태 정보를 불러올 수 없습니다.",
+      "loading": "상태 불러오는 중…",
+      "past_uptime": "이전 가동률",
+      "uptime_aria": "90일 가동 기록"
+    }
+  },
+  "ru": {
+    "meta": {
+      "title": "DiscoWeb - Панель управления Discord",
+      "description": "Продвинутая платформа управления с поддержкой ИИ для частных Discord-серверов."
+    },
+    "maintenance": {
+      "eyebrow": "Режим обслуживания",
+      "site_message": "Панель участника на общем обслуживании. В целях безопасности и производительности все сервисы dashboard временно остановлены. Доступ откроется автоматически после завершения обслуживания.",
+      "module_message": "Уведомление: выбранный модуль на обслуживании, связанные функции временно недоступны.",
+      "owner": "Ответственный за обслуживание: {name}",
+      "back_home": "На главную",
+      "member_panel": "Панель участника",
+      "labels": {
+        "store": "Магазин",
+        "transactions": "Операции",
+        "tracking": "Отслеживание магазина",
+        "promotions": "Промоакции",
+        "discounts": "Код скидки",
+        "transfers": "Отправить Papel"
+      }
+    },
+    "server_left": {
+      "user_fallback": "Пользователь",
+      "badge": "Вы покинули сервер",
+      "body_1": "Поскольку вы покинули выбранный сервер, доступ к содержимому этого сервера ограничен.",
+      "body_2": "Чтобы пользоваться магазином, кошельком и другими функциями этого сервера, вам нужно снова присоединиться к нему.",
+      "select_server": "Вернуться к выбору сервера",
+      "home": "Главная",
+      "support": "По вопросам вы можете связаться с нашей службой поддержки."
+    },
+    "thank_you": {
+      "title": "Спасибо",
+      "body": "Спасибо, что посетили DiscoWeb. Мы получили ваше сообщение и свяжемся с вами в ближайшее время.",
+      "home": "Главная"
+    },
+    "confirm": {
+      "title": "Подтверждение",
+      "yes": "Да",
+      "cancel": "Отмена"
+    },
+    "panel_switcher": {
+      "admin": "Панель администратора",
+      "admin_short": "Admin",
+      "developer": "Панель разработчика",
+      "developer_short": "Dev",
+      "dashboard": "Панель участника",
+      "dashboard_short": "Участник"
+    },
+    "status": {
+      "meta_description": "Состояние системы DiscoWeb, время работы сервисов и история инцидентов.",
+      "label": {
+        "operational": "Работает",
+        "degraded": "Снижена производительность",
+        "partial_outage": "Частичный сбой",
+        "major_outage": "Крупный сбой",
+        "maintenance": "Обслуживание"
+      },
+      "headline": {
+        "operational": "Все системы работают",
+        "degraded": "Снижена производительность некоторых сервисов",
+        "partial_outage": "Частичный сбой системы",
+        "major_outage": "Крупный сбой системы",
+        "maintenance": "Плановое обслуживание"
+      },
+      "phase": {
+        "investigating": "Расследование",
+        "identified": "Причина найдена",
+        "monitoring": "Наблюдение",
+        "resolved": "Устранено"
+      },
+      "history_title": "Прошлые инциденты",
+      "days_ago": "90 дней назад",
+      "today": "Сегодня",
+      "load_error": "Не удалось загрузить сведения о состоянии.",
+      "loading": "Загрузка состояния…",
+      "past_uptime": "Прошлый uptime",
+      "uptime_aria": "История uptime за 90 дней"
+    }
+  }
+}

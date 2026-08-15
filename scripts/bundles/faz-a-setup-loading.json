@@ -1,0 +1,57 @@
+{
+  "tr": {
+    "setup": {
+      "loading": "Sistem hazırlanıyor..."
+    }
+  },
+  "en": {
+    "setup": {
+      "loading": "Preparing system..."
+    }
+  },
+  "pt": {
+    "setup": {
+      "loading": "Preparando o sistema..."
+    }
+  },
+  "id": {
+    "setup": {
+      "loading": "Menyiapkan sistem..."
+    }
+  },
+  "es": {
+    "setup": {
+      "loading": "Preparando el sistema..."
+    }
+  },
+  "de": {
+    "setup": {
+      "loading": "System wird vorbereitet..."
+    }
+  },
+  "fr": {
+    "setup": {
+      "loading": "Préparation du système..."
+    }
+  },
+  "hu": {
+    "setup": {
+      "loading": "Rendszer előkészítése..."
+    }
+  },
+  "ja": {
+    "setup": {
+      "loading": "システムを準備しています..."
+    }
+  },
+  "ko": {
+    "setup": {
+      "loading": "시스템 준비 중..."
+    }
+  },
+  "ru": {
+    "setup": {
+      "loading": "Подготовка системы..."
+    }
+  }
+}
