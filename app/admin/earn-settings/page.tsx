@@ -76,6 +76,21 @@ type EarnSettings = {
 
 type TransferCountPeriod = 'day' | 'week' | 'month';
 
+const EARN_RATE_MAX = 5000;
+const EARN_RATE_KEYS = new Set<keyof EarnSettings>([
+  'earn_per_message',
+  'earn_per_voice_minute',
+  'tag_bonus_message',
+  'tag_bonus_voice',
+  'booster_bonus_message',
+  'booster_bonus_voice',
+]);
+
+function clampEarnRate(value: number): number {
+  if (!Number.isFinite(value) || value < 0) return 0;
+  return Math.min(EARN_RATE_MAX, Number(value.toFixed(2)));
+}
+
 function deriveTransferCounts(count: number, period: TransferCountPeriod) {
   const n = Math.max(0, Math.round(count));
   if (period === 'day') {
@@ -109,6 +124,12 @@ export default function EarnSettingsPage() {
         const data = await res.json();
         const normalized = {
           ...data,
+          earn_per_message: clampEarnRate(Number(data.earn_per_message ?? 0)),
+          earn_per_voice_minute: clampEarnRate(Number(data.earn_per_voice_minute ?? 0)),
+          tag_bonus_message: clampEarnRate(Number(data.tag_bonus_message ?? 0)),
+          tag_bonus_voice: clampEarnRate(Number(data.tag_bonus_voice ?? 0)),
+          booster_bonus_message: clampEarnRate(Number(data.booster_bonus_message ?? 0)),
+          booster_bonus_voice: clampEarnRate(Number(data.booster_bonus_voice ?? 0)),
           transfer_tax_rate: Number(data.transfer_tax_rate ?? 0) || 0,
           transfer_daily_limit: Number(data.transfer_daily_limit ?? 200) || 0,
           transfer_count_limit:
@@ -203,9 +224,10 @@ export default function EarnSettingsPage() {
 
   const updateNumber = (key: keyof EarnSettings, value: number) => {
     if (!settings || isNaN(value) || value < 0) return;
+    const next = EARN_RATE_KEYS.has(key) ? clampEarnRate(value) : value;
     const current = settings[key];
-    if (typeof current === 'number' && current === value) return;
-    setSettings({ ...settings, [key]: value });
+    if (typeof current === 'number' && current === next) return;
+    setSettings({ ...settings, [key]: next });
   };
 
   if (loading) return (
@@ -284,12 +306,14 @@ export default function EarnSettingsPage() {
             <input
               type="number"
               min={0}
+              max={5000}
               step="0.01"
               value={settings?.earn_per_message ?? 0}
               onChange={(e) => updateNumber('earn_per_message', Number(e.target.value))}
               className={`${fieldClass} pl-8`}
             />
           </div>
+          <p className="mt-1.5 text-[10px] text-white/35">0 – 5.000 Papel</p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
@@ -307,12 +331,14 @@ export default function EarnSettingsPage() {
             <input
               type="number"
               min={0}
+              max={5000}
               step="0.01"
               value={settings?.earn_per_voice_minute ?? 0}
               onChange={(e) => updateNumber('earn_per_voice_minute', Number(e.target.value))}
               className={`${fieldClass} pl-8`}
             />
           </div>
+          <p className="mt-1.5 text-[10px] text-white/35">0 – 5.000 Papel</p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
@@ -373,6 +399,7 @@ export default function EarnSettingsPage() {
               <input
                 type="number"
                 min={0}
+                max={5000}
                 step="0.01"
                 value={settings?.tag_bonus_message ?? 0}
                 onChange={(e) => updateNumber('tag_bonus_message', Number(e.target.value))}
@@ -385,6 +412,7 @@ export default function EarnSettingsPage() {
               <input
                 type="number"
                 min={0}
+                max={5000}
                 step="0.01"
                 value={settings?.tag_bonus_voice ?? 0}
                 onChange={(e) => updateNumber('tag_bonus_voice', Number(e.target.value))}
@@ -393,8 +421,10 @@ export default function EarnSettingsPage() {
               />
             </div>
           </div>
-          {!settings.tag_configured && (
+          {!settings.tag_configured ? (
             <p className="mt-2.5 text-xs leading-relaxed text-white/40">{t('admin.earn.tag_not_configured')}</p>
+          ) : (
+            <p className="mt-2 text-[10px] text-white/35">0 – 5.000 Papel</p>
           )}
         </div>
 
@@ -441,6 +471,7 @@ export default function EarnSettingsPage() {
               <input
                 type="number"
                 min={0}
+                max={5000}
                 step="0.01"
                 value={settings?.booster_bonus_message ?? 0}
                 onChange={(e) => updateNumber('booster_bonus_message', Number(e.target.value))}
@@ -452,6 +483,7 @@ export default function EarnSettingsPage() {
               <input
                 type="number"
                 min={0}
+                max={5000}
                 step="0.01"
                 value={settings?.booster_bonus_voice ?? 0}
                 onChange={(e) => updateNumber('booster_bonus_voice', Number(e.target.value))}
@@ -459,6 +491,7 @@ export default function EarnSettingsPage() {
               />
             </div>
           </div>
+          <p className="mt-2 text-[10px] text-white/35">0 – 5.000 Papel</p>
         </div>
 
         <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.06] p-4 lg:col-span-2">

@@ -48,6 +48,14 @@ const clampCap = (value: unknown) => {
   return Math.min(1_000_000, Number(n.toFixed(2)));
 };
 
+/** Per-message / per-minute / bonus rates: 0 … 5000 Papel */
+const EARN_RATE_MAX = 5000;
+const clampEarnRate = (value: unknown) => {
+  const n = Number(value ?? 0);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return Math.min(EARN_RATE_MAX, Number(n.toFixed(2)));
+};
+
 const clampTaxRate = (value: unknown) => {
   // Accept either fraction (0.05) or percent (5) from older clients
   let n = Number(value ?? 0);
@@ -150,6 +158,12 @@ export async function GET() {
     return NextResponse.json({
     ...SPAM_DEFAULTS,
     ...data,
+    earn_per_message: clampEarnRate(data?.earn_per_message),
+    earn_per_voice_minute: clampEarnRate(data?.earn_per_voice_minute),
+    tag_bonus_message: clampEarnRate(data?.tag_bonus_message),
+    tag_bonus_voice: clampEarnRate(data?.tag_bonus_voice),
+    booster_bonus_message: clampEarnRate(data?.booster_bonus_message),
+    booster_bonus_voice: clampEarnRate(data?.booster_bonus_voice),
     spam_message_cooldown_ms: data?.spam_message_cooldown_ms ?? SPAM_DEFAULTS.spam_message_cooldown_ms,
     spam_min_message_length: data?.spam_min_message_length ?? SPAM_DEFAULTS.spam_min_message_length,
     spam_flood_count: data?.spam_flood_count ?? SPAM_DEFAULTS.spam_flood_count,
@@ -238,17 +252,17 @@ export async function PUT(request: Request) {
     const countPeriod = normalizeCountPeriod(payload.transfer_count_period, countLimit);
 
     const updateObj: ServerUpdate = {
-      earn_per_message: Number(payload.earn_per_message ?? 0),
+      earn_per_message: clampEarnRate(payload.earn_per_message),
       message_earn_enabled: Boolean(payload.message_earn_enabled),
-      earn_per_voice_minute: Number(payload.earn_per_voice_minute ?? 0),
+      earn_per_voice_minute: clampEarnRate(payload.earn_per_voice_minute),
       voice_earn_enabled: Boolean(payload.voice_earn_enabled),
       verify_role_id: resolvedVerifyRoleId,
       tag_required: Boolean(payload.tag_required),
       tag_id: payload.tag_required ? guildId : null,
-      tag_bonus_message: Number(payload.tag_bonus_message ?? 0),
-      tag_bonus_voice: Number(payload.tag_bonus_voice ?? 0),
-      booster_bonus_message: Number(payload.booster_bonus_message ?? 0),
-      booster_bonus_voice: Number(payload.booster_bonus_voice ?? 0),
+      tag_bonus_message: clampEarnRate(payload.tag_bonus_message),
+      tag_bonus_voice: clampEarnRate(payload.tag_bonus_voice),
+      booster_bonus_message: clampEarnRate(payload.booster_bonus_message),
+      booster_bonus_voice: clampEarnRate(payload.booster_bonus_voice),
       earn_channels: payload.earn_channels ?? null,
       spam_message_cooldown_ms: clampInt(payload.spam_message_cooldown_ms, SPAM_DEFAULTS.spam_message_cooldown_ms, 0, 300000),
       spam_min_message_length: clampInt(payload.spam_min_message_length, SPAM_DEFAULTS.spam_min_message_length, 0, 500),
